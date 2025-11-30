@@ -20,7 +20,7 @@ struct ContentView: View {
                 meTab
             }
 
-            Tab(role: .search, value: .search) {
+            Tab(value: .search, role: .search) {
                 searchTab
             }
         }

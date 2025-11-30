@@ -79,33 +79,26 @@ final class JokeViewModel: ObservableObject {
         guard !isRefreshing else { return }
         isRefreshing = true
 
-        do {
-            // Fetch new jokes from API with cancellation support
-            let newJokes = try await withTaskCancellationHandler {
-                await api.fetchMultipleJokes(count: 5)
-            } onCancel: {
-                // Task was cancelled, nothing to clean up
-            }
-
-            // Check if task was cancelled before updating UI
-            guard !Task.isCancelled else {
-                isRefreshing = false
-                return
-            }
-
-            // Cache them
-            for joke in newJokes {
-                storage.appendCachedJoke(joke)
-            }
-
-            // Reload all jokes
-            loadJokes()
-        } catch {
-            // Handle cancellation gracefully
-            if Task.isCancelled {
-                // Silently handle cancellation
-            }
+        // Fetch new jokes from API with cancellation support
+        let newJokes = await withTaskCancellationHandler {
+            await api.fetchMultipleJokes(count: 5)
+        } onCancel: {
+            // Task was cancelled, nothing to clean up
         }
+
+        // Check if task was cancelled before updating UI
+        guard !Task.isCancelled else {
+            isRefreshing = false
+            return
+        }
+
+        // Cache them
+        for joke in newJokes {
+            storage.appendCachedJoke(joke)
+        }
+
+        // Reload all jokes
+        loadJokes()
 
         isRefreshing = false
     }
