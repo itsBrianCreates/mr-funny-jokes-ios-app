@@ -11,7 +11,7 @@ struct ShimmerModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .opacity(0.4 + 0.3 * sin(phase))
+            .opacity(0.4 + 0.3 * Darwin.sin(Double(phase)))
             .onAppear {
                 // Continuous pulse animation with smooth easing
                 withAnimation(
