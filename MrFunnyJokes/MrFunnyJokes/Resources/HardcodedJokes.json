@@ -1,0 +1,182 @@
+[
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440001",
+        "category": "Dad Jokes",
+        "setup": "Why don't scientists trust atoms?",
+        "punchline": "Because they make up everything!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440002",
+        "category": "Dad Jokes",
+        "setup": "What do you call a fake noodle?",
+        "punchline": "An impasta!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440003",
+        "category": "Dad Jokes",
+        "setup": "Why did the scarecrow win an award?",
+        "punchline": "Because he was outstanding in his field!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440004",
+        "category": "Dad Jokes",
+        "setup": "What do you call a bear with no teeth?",
+        "punchline": "A gummy bear!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440005",
+        "category": "Dad Jokes",
+        "setup": "Why don't eggs tell jokes?",
+        "punchline": "They'd crack each other up!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440006",
+        "category": "Dad Jokes",
+        "setup": "What do you call a can opener that doesn't work?",
+        "punchline": "A can't opener!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440007",
+        "category": "Dad Jokes",
+        "setup": "I'm reading a book about anti-gravity.",
+        "punchline": "It's impossible to put down!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440008",
+        "category": "Dad Jokes",
+        "setup": "Why did the bicycle fall over?",
+        "punchline": "Because it was two-tired!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440009",
+        "category": "Dad Jokes",
+        "setup": "What do you call a fish without eyes?",
+        "punchline": "A fsh!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440010",
+        "category": "Dad Jokes",
+        "setup": "Why did the math book look so sad?",
+        "punchline": "Because it had too many problems!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440011",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Lettuce.",
+        "punchline": "Lettuce who? Lettuce in, it's cold out here!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440012",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Boo.",
+        "punchline": "Boo who? Don't cry, it's just a joke!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440013",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Cow says.",
+        "punchline": "Cow says who? No silly, cow says moo!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440014",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Atch.",
+        "punchline": "Atch who? Bless you!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440015",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Harry.",
+        "punchline": "Harry who? Harry up and open the door!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440016",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Banana. Banana who? Knock knock. Who's there? Orange.",
+        "punchline": "Orange who? Orange you glad I didn't say banana?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440017",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Tank.",
+        "punchline": "Tank who? You're welcome!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440018",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Nobel.",
+        "punchline": "Nobel who? Nobel, that's why I knocked!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440019",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Wooden shoe.",
+        "punchline": "Wooden shoe who? Wooden shoe like to hear another joke?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440020",
+        "category": "Knock-Knock Jokes",
+        "setup": "Knock knock. Who's there? Interrupting cow.",
+        "punchline": "Interrupting cow wh— MOOOOO!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440021",
+        "category": "Pick Up Lines",
+        "setup": "Are you a magician?",
+        "punchline": "Because whenever I look at you, everyone else disappears!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440022",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a map?",
+        "punchline": "Because I just got lost in your eyes!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440023",
+        "category": "Pick Up Lines",
+        "setup": "Is your name Google?",
+        "punchline": "Because you have everything I've been searching for!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440024",
+        "category": "Pick Up Lines",
+        "setup": "Are you a parking ticket?",
+        "punchline": "Because you've got 'fine' written all over you!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440025",
+        "category": "Pick Up Lines",
+        "setup": "Do you believe in love at first sight?",
+        "punchline": "Or should I walk by again?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440026",
+        "category": "Pick Up Lines",
+        "setup": "Is your dad a boxer?",
+        "punchline": "Because you're a knockout!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440027",
+        "category": "Pick Up Lines",
+        "setup": "Are you a campfire?",
+        "punchline": "Because you're hot and I want s'more!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440028",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a Band-Aid?",
+        "punchline": "Because I just scraped my knee falling for you!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440029",
+        "category": "Pick Up Lines",
+        "setup": "Are you a bank loan?",
+        "punchline": "Because you've got my interest!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440030",
+        "category": "Pick Up Lines",
+        "setup": "Is there an airport nearby?",
+        "punchline": "Or is that just my heart taking off?"
+    }
+]
