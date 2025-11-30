@@ -15,19 +15,10 @@ struct JokeCardView: View {
             showingSheet = true
         } label: {
             VStack(alignment: .leading, spacing: 12) {
-                // Header row
-                HStack {
-                    HStack(spacing: 4) {
-                        Image(systemName: joke.category.icon)
-                        Text(joke.category.rawValue)
-                    }
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-
-                    Spacer()
-
-                    // Show rating emoji if rated, otherwise show expand hint
-                    if let rating = joke.userRating {
+                // Header row - rating only
+                if let rating = joke.userRating {
+                    HStack {
+                        Spacer()
                         CompactGroanOMeterView(rating: rating)
                     }
                 }
@@ -38,6 +29,14 @@ struct JokeCardView: View {
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
+
+                // Category
+                HStack(spacing: 4) {
+                    Image(systemName: joke.category.icon)
+                    Text(joke.category.rawValue)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
             .padding()
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
