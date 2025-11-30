@@ -25,6 +25,11 @@
 		A10000000000000000000017 /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* MeView.swift */; };
 		A10000000000000000000019 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* SearchView.swift */; };
 		A10000000000000000000020 /* JokeDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* JokeDetailSheet.swift */; };
+		C308B0482EDC4787002FE3D7 /* SkeletonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C308B0442EDC4787002FE3D7 /* SkeletonCardView.swift */; };
+		C308B0492EDC4787002FE3D7 /* SkeletonJokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C308B0462EDC4787002FE3D7 /* SkeletonJokeOfTheDayView.swift */; };
+		C308B04A2EDC4787002FE3D7 /* ShimmerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C308B0432EDC4787002FE3D7 /* ShimmerModifier.swift */; };
+		C308B04B2EDC4787002FE3D7 /* SkeletonFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C308B0452EDC4787002FE3D7 /* SkeletonFeedView.swift */; };
+		C308B04D2EDC4787002FE3D7 /* File.txt in Resources */ = {isa = PBXBuildFile; fileRef = C308B04C2EDC4787002FE3D7 /* File.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +52,11 @@
 		A20000000000000000000019 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		A20000000000000000000020 /* JokeDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeDetailSheet.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* MrFunnyJokes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MrFunnyJokes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C308B0432EDC4787002FE3D7 /* ShimmerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerModifier.swift; sourceTree = "<group>"; };
+		C308B0442EDC4787002FE3D7 /* SkeletonCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonCardView.swift; sourceTree = "<group>"; };
+		C308B0452EDC4787002FE3D7 /* SkeletonFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonFeedView.swift; sourceTree = "<group>"; };
+		C308B0462EDC4787002FE3D7 /* SkeletonJokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonJokeOfTheDayView.swift; sourceTree = "<group>"; };
+		C308B04C2EDC4787002FE3D7 /* File.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = File.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +122,7 @@
 		A50000000000000000000006 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C308B0472EDC4787002FE3D7 /* Skeleton */,
 				A20000000000000000000002 /* ContentView.swift */,
 				A20000000000000000000007 /* JokeCardView.swift */,
 				A20000000000000000000008 /* JokeFeedView.swift */,
@@ -163,6 +174,18 @@
 				A20000000000000000000004 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C308B0472EDC4787002FE3D7 /* Skeleton */ = {
+			isa = PBXGroup;
+			children = (
+				C308B04C2EDC4787002FE3D7 /* File.txt */,
+				C308B0432EDC4787002FE3D7 /* ShimmerModifier.swift */,
+				C308B0442EDC4787002FE3D7 /* SkeletonCardView.swift */,
+				C308B0452EDC4787002FE3D7 /* SkeletonFeedView.swift */,
+				C308B0462EDC4787002FE3D7 /* SkeletonJokeOfTheDayView.swift */,
+			);
+			path = Skeleton;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,6 +248,7 @@
 			files = (
 				A10000000000000000000004 /* Preview Assets.xcassets in Resources */,
 				A10000000000000000000003 /* Assets.xcassets in Resources */,
+				C308B04D2EDC4787002FE3D7 /* File.txt in Resources */,
 				A10000000000000000000015 /* HardcodedJokes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -246,6 +270,10 @@
 				A10000000000000000000011 /* JokeAPIService.swift in Sources */,
 				A10000000000000000000012 /* LocalStorageService.swift in Sources */,
 				A10000000000000000000013 /* Color+Extensions.swift in Sources */,
+				C308B0482EDC4787002FE3D7 /* SkeletonCardView.swift in Sources */,
+				C308B0492EDC4787002FE3D7 /* SkeletonJokeOfTheDayView.swift in Sources */,
+				C308B04A2EDC4787002FE3D7 /* ShimmerModifier.swift in Sources */,
+				C308B04B2EDC4787002FE3D7 /* SkeletonFeedView.swift in Sources */,
 				A10000000000000000000014 /* HapticManager.swift in Sources */,
 				A10000000000000000000016 /* GrainOMeterView.swift in Sources */,
 				A10000000000000000000017 /* MeView.swift in Sources */,

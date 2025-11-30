@@ -1,0 +1,1 @@
+git reset --hard origin/claude/joke-sheet-copy-spacing-012uRgBUkfRsSfD3pHek7CTo
