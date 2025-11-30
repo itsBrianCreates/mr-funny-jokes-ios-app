@@ -38,14 +38,27 @@ struct ContentView: View {
 
     private var homeTab: some View {
         NavigationStack {
-            JokeFeedView(viewModel: viewModel)
-                .navigationTitle(headerTitle)
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        filterMenu
-                    }
+            ZStack {
+                // Skeleton loading view - shown during initial load
+                if viewModel.isInitialLoading {
+                    SkeletonFeedView()
+                        .transition(.opacity)
                 }
+
+                // Actual content - shown after loading completes
+                if !viewModel.isInitialLoading {
+                    JokeFeedView(viewModel: viewModel)
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeInOut(duration: 0.4), value: viewModel.isInitialLoading)
+            .navigationTitle(headerTitle)
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    filterMenu
+                }
+            }
         }
     }
 
