@@ -20,9 +20,6 @@ struct YouTubePromoCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Placeholder image area (16:9 aspect ratio)
-            placeholderImage
-
             // Text content
             VStack(alignment: .leading, spacing: 8) {
                 Text("Mr. Funny Jokes is on YouTube!")
@@ -65,19 +62,6 @@ struct YouTubePromoCardView: View {
                 isAppearing = true
             }
         }
-    }
-
-    /// Placeholder image with play button icon
-    private var placeholderImage: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.primary.opacity(0.08))
-
-            Image(systemName: "play.circle.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-        }
-        .aspectRatio(16/9, contentMode: .fit)
     }
 }
 
