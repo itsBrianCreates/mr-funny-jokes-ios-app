@@ -31,3 +31,16 @@ extension Color {
         })
     }
 }
+
+// MARK: - ShapeStyle Extension for leading-dot syntax support
+
+extension ShapeStyle where Self == Color {
+    /// Accessible yellow that meets WCAG contrast ratios
+    static var accessibleYellow: Color { Color.accessibleYellow }
+
+    /// Brand yellow (#FFE135) - the signature Mr. Funny Jokes yellow
+    static var brandYellow: Color { Color.brandYellow }
+
+    /// Softer brand yellow for backgrounds
+    static var brandYellowLight: Color { Color.brandYellowLight }
+}
