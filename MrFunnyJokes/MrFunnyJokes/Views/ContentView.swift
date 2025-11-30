@@ -2,26 +2,27 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = JokeViewModel()
-    @State private var selectedTab = 0
+    @State private var selectedTab: AppTab = .home
+
+    enum AppTab: Hashable {
+        case home
+        case me
+        case search
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            homeTab
-                .tabItem {                    Label("Home", systemImage: "house.fill")
-                }
-                .tag(0)
+            Tab("Home", systemImage: "house.fill", value: .home) {
+                homeTab
+            }
 
-            meTab
-                .tabItem {
-                    Label("Me", systemImage: "person.fill")
-                }
-                .tag(1)
+            Tab("Me", systemImage: "person.fill", value: .me) {
+                meTab
+            }
 
-            searchTab
-                .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
-                }
-                .tag(2)
+            Tab(role: .search, value: .search) {
+                searchTab
+            }
         }
     }
 
