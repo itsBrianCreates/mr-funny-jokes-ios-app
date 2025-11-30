@@ -23,13 +23,13 @@ struct JokeOfTheDayView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles")
                             .symbolEffect(.pulse, options: .repeating)
-                            .foregroundStyle(Color.brandYellow)
+                            .foregroundColor(Color.brandYellow)
                         Text("Joke of the Day")
                             .font(.caption.weight(.bold))
                             .textCase(.uppercase)
                             .tracking(0.5)
                     }
-                    .foregroundStyle(Color.accessibleYellow)
+                    .foregroundColor(Color.accessibleYellow)
 
                     Spacer()
 
