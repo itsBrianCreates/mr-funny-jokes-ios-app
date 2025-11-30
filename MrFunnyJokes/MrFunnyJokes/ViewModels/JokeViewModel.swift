@@ -42,6 +42,17 @@ final class JokeViewModel: ObservableObject {
         jokes.filter { $0.userRating == 1 }
     }
 
+    /// Joke of the Day - deterministically selected based on the current date
+    /// Returns the same joke for everyone on any given day
+    var jokeOfTheDay: Joke? {
+        guard !jokes.isEmpty else { return nil }
+        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
+        let index = dayOfYear % jokes.count
+        // Sort by ID to ensure consistent ordering regardless of shuffle
+        let sortedJokes = jokes.sorted { $0.id.uuidString < $1.id.uuidString }
+        return sortedJokes[index]
+    }
+
     init() {
         loadJokes()
     }
