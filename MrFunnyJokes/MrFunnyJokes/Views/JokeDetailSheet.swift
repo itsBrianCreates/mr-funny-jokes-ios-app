@@ -12,20 +12,20 @@ struct JokeDetailSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    // Category badge
-                    Label(joke.category.rawValue, systemImage: joke.category.icon)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(.ultraThinMaterial, in: Capsule())
-
                     // Setup and Punchline - formatted differently for knock-knock jokes
                     if joke.category == .knockKnock {
                         knockKnockContent
                     } else {
                         standardContent
                     }
+
+                    // Category
+                    HStack(spacing: 4) {
+                        Image(systemName: joke.category.icon)
+                        Text(joke.category.rawValue)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
                     Divider()
                         .padding(.vertical, 8)
