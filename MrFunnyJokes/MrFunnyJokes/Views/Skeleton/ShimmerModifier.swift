@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 // MARK: - Shimmer Effect Modifier
 // A subtle pulsing animation applied to skeleton placeholder views.
