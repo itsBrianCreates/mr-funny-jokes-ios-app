@@ -9,7 +9,6 @@ struct JokeOfTheDayView: View {
 
     @State private var showingSheet = false
     @State private var isAppearing = false
-    @State private var sparklePhase: CGFloat = 0
 
     var body: some View {
         Button {
@@ -17,27 +16,12 @@ struct JokeOfTheDayView: View {
             showingSheet = true
         } label: {
             VStack(alignment: .leading, spacing: 16) {
-                // Header with badge and rating
-                HStack {
-                    // "Joke of the Day" badge with sparkle
-                    HStack(spacing: 6) {
-                        Image(systemName: "sparkles")
-                            .symbolEffect(.pulse, options: .repeating)
-                            .foregroundStyle(.brandYellow)
-                        Text("Joke of the Day")
-                            .font(.caption.weight(.bold))
-                            .textCase(.uppercase)
-                            .tracking(0.5)
-                    }
+                // Header badge
+                Text("Joke of the Day")
+                    .font(.caption.weight(.bold))
+                    .textCase(.uppercase)
+                    .tracking(0.5)
                     .foregroundStyle(.accessibleYellow)
-
-                    Spacer()
-
-                    // Rating if present
-                    if let rating = joke.userRating {
-                        CompactGroanOMeterView(rating: rating)
-                    }
-                }
 
                 // Setup text - larger for hero card
                 Text(joke.setup)
@@ -47,41 +31,24 @@ struct JokeOfTheDayView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(4)
 
-                // Tap hint
+                // Category and rating row
                 HStack {
-                    Text("Tap to reveal punchline")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    Spacer()
-
-                    // Category badge
                     HStack(spacing: 4) {
                         Image(systemName: joke.category.icon)
                         Text(joke.category.rawValue)
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                    Spacer()
+
+                    if let rating = joke.userRating {
+                        CompactGroanOMeterView(rating: rating)
+                    }
                 }
             }
             .padding(20)
-            .background {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.brandYellowLight)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(
-                                LinearGradient(
-                                    colors: [.brandYellow, .brandYellow.opacity(0.5)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 2
-                            )
-                    }
-            }
-            .shadow(color: .brandYellow.opacity(0.2), radius: 8, x: 0, y: 4)
-            .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
+            .background(.brandYellowLight, in: RoundedRectangle(cornerRadius: 20))
         }
         .buttonStyle(.plain)
         .scaleEffect(isAppearing ? 1 : 0.9)
