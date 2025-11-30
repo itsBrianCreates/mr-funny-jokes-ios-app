@@ -27,14 +27,10 @@ struct JokeDetailSheet: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                    Divider()
-                        .padding(.vertical, 8)
-
-                    // Rating section
+                    // Rating section in card
                     GroanOMeterView(currentRating: joke.userRating, onRate: onRate)
-
-                    Divider()
-                        .padding(.vertical, 8)
+                        .padding(16)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
 
                     // Action buttons - iOS style
                     VStack(spacing: 12) {
