@@ -98,6 +98,7 @@ struct MeView: View {
                     } label: {
                         Label("Remove", systemImage: "trash")
                     }
+                    .tint(.red)
                 }
                 .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             }
