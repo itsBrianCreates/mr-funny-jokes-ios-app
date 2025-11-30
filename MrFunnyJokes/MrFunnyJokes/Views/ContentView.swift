@@ -24,6 +24,7 @@ struct ContentView: View {
                 searchTab
             }
         }
+        .tint(.accessibleYellow)
     }
 
     // MARK: - Home Tab
