@@ -21,27 +21,13 @@ struct JokeFeedView: View {
             LazyVStack(spacing: 16) {
                 // Joke of the Day hero section (only when "All" is selected)
                 if showJokeOfTheDay, let jokeOfTheDay = viewModel.jokeOfTheDay {
-                    VStack(alignment: .leading, spacing: 12) {
-                        JokeOfTheDayView(
-                            joke: jokeOfTheDay,
-                            isCopied: viewModel.copiedJokeId == jokeOfTheDay.id,
-                            onShare: { viewModel.shareJoke(jokeOfTheDay) },
-                            onCopy: { viewModel.copyJoke(jokeOfTheDay) },
-                            onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) }
-                        )
-                    }
-
-                    // Divider between hero and feed
-                    HStack {
-                        VStack { Divider() }
-                        Text("More Jokes")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                            .tracking(0.5)
-                        VStack { Divider() }
-                    }
-                    .padding(.vertical, 8)
+                    JokeOfTheDayView(
+                        joke: jokeOfTheDay,
+                        isCopied: viewModel.copiedJokeId == jokeOfTheDay.id,
+                        onShare: { viewModel.shareJoke(jokeOfTheDay) },
+                        onCopy: { viewModel.copyJoke(jokeOfTheDay) },
+                        onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) }
+                    )
                 }
 
                 // Regular joke feed
