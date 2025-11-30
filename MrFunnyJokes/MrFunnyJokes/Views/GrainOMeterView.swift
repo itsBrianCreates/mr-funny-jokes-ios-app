@@ -24,7 +24,7 @@ struct GroanOMeterView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Header row with label and current rating name
             HStack {
-                Text("Rate this joke")
+                Text("Rate joke")
                     .font(.headline)
 
                 Spacer()
