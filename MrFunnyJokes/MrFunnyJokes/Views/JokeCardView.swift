@@ -32,18 +32,12 @@ struct JokeCardView: View {
                     }
                 }
 
-                // Setup text with mystery ellipsis
-                HStack(alignment: .bottom, spacing: 4) {
-                    Text(joke.setup)
-                        .font(.title3.weight(.medium))
-                        .foregroundStyle(.primary)
-                        .multilineTextAlignment(.leading)
-
-                    Text("...")
-                        .font(.title3.weight(.medium))
-                        .foregroundStyle(.tertiary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                // Setup text
+                Text(joke.setup)
+                    .font(.title3.weight(.medium))
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding()
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
