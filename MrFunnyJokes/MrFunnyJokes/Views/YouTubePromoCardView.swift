@@ -81,21 +81,6 @@ struct YouTubePromoCardView: View {
     }
 }
 
-// MARK: - Color Helper for Light/Dark Mode
-
-private extension Color {
-    init(light: Color, dark: Color) {
-        self.init(uiColor: UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .dark:
-                return UIColor(dark)
-            default:
-                return UIColor(light)
-            }
-        })
-    }
-}
-
 #Preview {
     ScrollView {
         VStack(spacing: 20) {
