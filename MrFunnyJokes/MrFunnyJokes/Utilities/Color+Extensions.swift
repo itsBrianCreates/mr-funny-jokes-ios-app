@@ -7,6 +7,16 @@ extension Color {
         light: Color(red: 0.70, green: 0.50, blue: 0.0),  // Deep amber for light mode
         dark: Color(red: 0.90, green: 0.68, blue: 0.05)   // Rich gold for dark mode
     )
+
+    /// Brand yellow (#FFE135) - the signature Mr. Funny Jokes yellow
+    /// Used prominently for featured content like Joke of the Day
+    static let brandYellow = Color(red: 1.0, green: 0.882, blue: 0.208)  // #FFE135
+
+    /// Softer brand yellow for backgrounds that need less intensity
+    static let brandYellowLight = Color(
+        light: Color(red: 1.0, green: 0.95, blue: 0.8),   // Very soft yellow for light mode
+        dark: Color(red: 0.25, green: 0.22, blue: 0.1)    // Warm dark background for dark mode
+    )
 }
 
 extension Color {
