@@ -8,6 +8,9 @@ final class JokeViewModel: ObservableObject {
     @Published var isRefreshing = false
     @Published var copiedJokeId: UUID?
 
+    /// Tracks initial app launch loading state for skeleton display
+    @Published var isInitialLoading = true
+
     private let storage = LocalStorageService.shared
     private let api = JokeAPIService.shared
     private var copyTask: Task<Void, Never>?
@@ -73,6 +76,15 @@ final class JokeViewModel: ObservableObject {
         }
 
         jokes = allJokes.shuffled()
+
+        // Mark initial loading complete after data is ready
+        // Small delay ensures skeleton is briefly visible for smooth transition
+        if isInitialLoading {
+            Task {
+                try? await Task.sleep(for: .milliseconds(300))
+                isInitialLoading = false
+            }
+        }
     }
 
     func refresh() async {
