@@ -3,6 +3,7 @@ import SwiftUI
 struct SearchView: View {
     @ObservedObject var viewModel: JokeViewModel
     @State private var searchText = ""
+    @State private var animateIcon = false
 
     private var searchResults: [Joke] {
         guard !searchText.isEmpty else { return [] }
@@ -27,11 +28,30 @@ struct SearchView: View {
     }
 
     private var emptyState: some View {
-        ContentUnavailableView(
-            "Search for Jokes",
-            systemImage: "magnifyingglass",
-            description: Text("Search by keyword in setup or punchline")
-        )
+        VStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 48, weight: .light))
+                .foregroundStyle(.secondary)
+                .scaleEffect(animateIcon ? 1.0 : 0.8)
+                .rotationEffect(.degrees(animateIcon ? 0 : -10))
+                .animation(
+                    .spring(response: 0.6, dampingFraction: 0.5, blendDuration: 0)
+                        .delay(0.1),
+                    value: animateIcon
+                )
+
+            Text("Looking for a laugh?")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundStyle(.primary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            animateIcon = true
+        }
+        .onDisappear {
+            animateIcon = false
+        }
     }
 
     private var noResultsState: some View {
