@@ -11,6 +11,14 @@ struct JokeFeedView: View {
         viewModel.selectedCategory == nil
     }
 
+    /// Show YouTube promo card only when viewing "All" jokes
+    private var showYouTubePromo: Bool {
+        viewModel.selectedCategory == nil
+    }
+
+    /// Position to insert YouTube promo card (after 4 jokes, so 5th item)
+    private let youtubePromoPosition = 4
+
     /// Filtered jokes excluding the Joke of the Day to avoid duplicates
     private var feedJokes: [Joke] {
         guard showJokeOfTheDay, let jotd = viewModel.jokeOfTheDay else {
@@ -39,8 +47,13 @@ struct JokeFeedView: View {
                         )
                     }
 
-                    // Regular joke feed
-                    ForEach(feedJokes) { joke in
+                    // Regular joke feed with YouTube promo card inserted
+                    ForEach(Array(feedJokes.enumerated()), id: \.element.id) { index, joke in
+                        // Insert YouTube promo card at position 4 (5th item)
+                        if showYouTubePromo && index == youtubePromoPosition {
+                            YouTubePromoCardView()
+                        }
+
                         JokeCardView(
                             joke: joke,
                             isCopied: viewModel.copiedJokeId == joke.id,
@@ -48,6 +61,11 @@ struct JokeFeedView: View {
                             onCopy: { viewModel.copyJoke(joke) },
                             onRate: { rating in viewModel.rateJoke(joke, rating: rating) }
                         )
+                    }
+
+                    // If we have fewer jokes than the promo position, show promo at the end
+                    if showYouTubePromo && feedJokes.count > 0 && feedJokes.count <= youtubePromoPosition {
+                        YouTubePromoCardView()
                     }
                 }
                 .padding(.horizontal)
