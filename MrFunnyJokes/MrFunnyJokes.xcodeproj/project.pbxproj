@@ -25,6 +25,12 @@
 		A10000000000000000000017 /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* MeView.swift */; };
 		A10000000000000000000019 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* SearchView.swift */; };
 		A10000000000000000000020 /* JokeDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* JokeDetailSheet.swift */; };
+		A10000000000000000000021 /* JokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* JokeOfTheDayView.swift */; };
+		A10000000000000000000022 /* YouTubePromoCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* YouTubePromoCardView.swift */; };
+		A10000000000000000000023 /* ShimmerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* ShimmerModifier.swift */; };
+		A10000000000000000000024 /* SkeletonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* SkeletonCardView.swift */; };
+		A10000000000000000000025 /* SkeletonFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* SkeletonFeedView.swift */; };
+		A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +52,12 @@
 		A20000000000000000000017 /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
 		A20000000000000000000019 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		A20000000000000000000020 /* JokeDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeDetailSheet.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* JokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayView.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* YouTubePromoCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePromoCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000023 /* ShimmerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerModifier.swift; sourceTree = "<group>"; };
+		A20000000000000000000024 /* SkeletonCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000025 /* SkeletonFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonFeedView.swift; sourceTree = "<group>"; };
+		A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonJokeOfTheDayView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* MrFunnyJokes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MrFunnyJokes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -112,6 +124,7 @@
 		A50000000000000000000006 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A50000000000000000000012 /* Skeleton */,
 				A20000000000000000000002 /* ContentView.swift */,
 				A20000000000000000000007 /* JokeCardView.swift */,
 				A20000000000000000000008 /* JokeFeedView.swift */,
@@ -119,8 +132,21 @@
 				A20000000000000000000017 /* MeView.swift */,
 				A20000000000000000000019 /* SearchView.swift */,
 				A20000000000000000000020 /* JokeDetailSheet.swift */,
+				A20000000000000000000021 /* JokeOfTheDayView.swift */,
+				A20000000000000000000022 /* YouTubePromoCardView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		A50000000000000000000012 /* Skeleton */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000023 /* ShimmerModifier.swift */,
+				A20000000000000000000024 /* SkeletonCardView.swift */,
+				A20000000000000000000025 /* SkeletonFeedView.swift */,
+				A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */,
+			);
+			path = Skeleton;
 			sourceTree = "<group>";
 		};
 		A50000000000000000000007 /* ViewModels */ = {
@@ -251,6 +277,12 @@
 				A10000000000000000000017 /* MeView.swift in Sources */,
 				A10000000000000000000019 /* SearchView.swift in Sources */,
 				A10000000000000000000020 /* JokeDetailSheet.swift in Sources */,
+				A10000000000000000000021 /* JokeOfTheDayView.swift in Sources */,
+				A10000000000000000000022 /* YouTubePromoCardView.swift in Sources */,
+				A10000000000000000000023 /* ShimmerModifier.swift in Sources */,
+				A10000000000000000000024 /* SkeletonCardView.swift in Sources */,
+				A10000000000000000000025 /* SkeletonFeedView.swift in Sources */,
+				A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
