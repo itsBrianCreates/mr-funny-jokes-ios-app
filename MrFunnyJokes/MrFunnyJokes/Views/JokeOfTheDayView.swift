@@ -23,13 +23,13 @@ struct JokeOfTheDayView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles")
                             .symbolEffect(.pulse, options: .repeating)
-                            .foregroundStyle(.brandYellow)
+                            .foregroundStyle(Color.brandYellow)
                         Text("Joke of the Day")
                             .font(.caption.weight(.bold))
                             .textCase(.uppercase)
                             .tracking(0.5)
                     }
-                    .foregroundStyle(.accessibleYellow)
+                    .foregroundStyle(Color.accessibleYellow)
 
                     Spacer()
 
@@ -67,12 +67,12 @@ struct JokeOfTheDayView: View {
             .padding(20)
             .background {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(.brandYellowLight)
+                    .fill(Color.brandYellowLight)
                     .overlay {
                         RoundedRectangle(cornerRadius: 20)
                             .strokeBorder(
                                 LinearGradient(
-                                    colors: [.brandYellow, .brandYellow.opacity(0.5)],
+                                    colors: [Color.brandYellow, Color.brandYellow.opacity(0.5)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
@@ -80,7 +80,7 @@ struct JokeOfTheDayView: View {
                             )
                     }
             }
-            .shadow(color: .brandYellow.opacity(0.2), radius: 8, x: 0, y: 4)
+            .shadow(color: Color.brandYellow.opacity(0.2), radius: 8, x: 0, y: 4)
             .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
