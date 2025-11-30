@@ -1,11 +1,10 @@
 import SwiftUI
 
 extension Color {
-    /// Accessible yellow that meets WCAG contrast ratios in both light and dark modes
-    /// Uses a deep golden/amber tone for better text contrast against backgrounds
+    /// Accessible yellow for tab bar - meets WCAG contrast ratios
     static let accessibleYellow = Color(
-        light: Color(red: 0.70, green: 0.50, blue: 0.0),  // Deep amber for light mode
-        dark: Color(red: 0.90, green: 0.68, blue: 0.05)   // Rich gold for dark mode
+        light: Color(red: 216/255, green: 167/255, blue: 0/255),    // #D8A700
+        dark: Color(red: 242/255, green: 201/255, blue: 76/255)     // #F2C94C
     )
 
     /// Brand yellow (#FFE135) - the signature Mr. Funny Jokes yellow
