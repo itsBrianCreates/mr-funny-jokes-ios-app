@@ -15,14 +15,6 @@ struct JokeCardView: View {
             showingSheet = true
         } label: {
             VStack(alignment: .leading, spacing: 12) {
-                // Header row - rating only
-                if let rating = joke.userRating {
-                    HStack {
-                        Spacer()
-                        CompactGroanOMeterView(rating: rating)
-                    }
-                }
-
                 // Setup text
                 Text(joke.setup)
                     .font(.title3.weight(.medium))
@@ -30,13 +22,21 @@ struct JokeCardView: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                // Category
-                HStack(spacing: 4) {
-                    Image(systemName: joke.category.icon)
-                    Text(joke.category.rawValue)
+                // Category and rating row
+                HStack {
+                    HStack(spacing: 4) {
+                        Image(systemName: joke.category.icon)
+                        Text(joke.category.rawValue)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                    Spacer()
+
+                    if let rating = joke.userRating {
+                        CompactGroanOMeterView(rating: rating)
+                    }
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
             }
             .padding()
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
