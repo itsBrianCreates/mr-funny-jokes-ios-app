@@ -208,8 +208,8 @@ final class JokeViewModel: ObservableObject {
 
     func selectCategory(_ category: JokeCategory?) {
         HapticManager.shared.lightTap()
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-            selectedCategory = category
-        }
+        // Update the category without animation here - the scroll animation
+        // in JokeFeedView handles the visual transition to prevent conflicts
+        selectedCategory = category
     }
 }
