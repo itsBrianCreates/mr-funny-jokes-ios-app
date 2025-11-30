@@ -43,13 +43,15 @@ struct JokeDetailSheet: View {
                         } label: {
                             HStack {
                                 Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+                                    .contentTransition(.symbolEffect(.replace))
                                 Text(isCopied ? "Copied" : "Copy")
                             }
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, minHeight: 24)
                             .padding(.vertical, 14)
                         }
                         .buttonStyle(.bordered)
                         .tint(isCopied ? .green : .blue)
+                        .animation(.easeInOut(duration: 0.2), value: isCopied)
 
                         Button {
                             onShare()
