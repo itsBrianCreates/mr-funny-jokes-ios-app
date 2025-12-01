@@ -31,7 +31,42 @@
 		A10000000000000000000024 /* SkeletonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* SkeletonCardView.swift */; };
 		A10000000000000000000025 /* SkeletonFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* SkeletonFeedView.swift */; };
 		A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */; };
+		B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* SharedJokeOfTheDay.swift */; };
+		B10000000000000000000002 /* SharedStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* SharedStorageService.swift */; };
+		B10000000000000000000003 /* SharedJokeOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* SharedJokeOfTheDay.swift */; };
+		B10000000000000000000004 /* SharedStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* SharedStorageService.swift */; };
+		B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* JokeOfTheDayWidget.swift */; };
+		B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000004 /* JokeOfTheDayProvider.swift */; };
+		B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */; };
+		B10000000000000000000008 /* WidgetAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000006 /* Assets.xcassets */; };
+		B10000000000000000000009 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B20000000000000000000007 /* WidgetKit.framework */; };
+		B10000000000000000000010 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B20000000000000000000008 /* SwiftUI.framework */; };
+		B10000000000000000000011 /* JokeOfTheDayWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B40000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA0000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B60000000000000000000001;
+			remoteInfo = JokeOfTheDayWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B50000000000000000000001 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B10000000000000000000011 /* JokeOfTheDayWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -60,6 +95,15 @@
 		A20000000000000000000025 /* SkeletonFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonFeedView.swift; sourceTree = "<group>"; };
 		A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonJokeOfTheDayView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* MrFunnyJokes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MrFunnyJokes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B20000000000000000000001 /* SharedJokeOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJokeOfTheDay.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* SharedStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStorageService.swift; sourceTree = "<group>"; };
+		B20000000000000000000003 /* JokeOfTheDayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayWidget.swift; sourceTree = "<group>"; };
+		B20000000000000000000004 /* JokeOfTheDayProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayProvider.swift; sourceTree = "<group>"; };
+		B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayWidgetViews.swift; sourceTree = "<group>"; };
+		B20000000000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B20000000000000000000007 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		B20000000000000000000008 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JokeOfTheDayWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +114,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B70000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000010 /* SwiftUI.framework in Frameworks */,
+				B10000000000000000000009 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -77,6 +130,9 @@
 			isa = PBXGroup;
 			children = (
 				A50000000000000000000002 /* MrFunnyJokes */,
+				B50000000000000000000002 /* Shared */,
+				B50000000000000000000003 /* JokeOfTheDayWidget */,
+				B50000000000000000000004 /* Frameworks */,
 				A50000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -102,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				A30000000000000000000001 /* MrFunnyJokes.app */,
+				B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -193,6 +250,35 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		B50000000000000000000002 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000001 /* SharedJokeOfTheDay.swift */,
+				B20000000000000000000002 /* SharedStorageService.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		B50000000000000000000003 /* JokeOfTheDayWidget */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000003 /* JokeOfTheDayWidget.swift */,
+				B20000000000000000000004 /* JokeOfTheDayProvider.swift */,
+				B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */,
+				B20000000000000000000006 /* Assets.xcassets */,
+			);
+			path = JokeOfTheDayWidget;
+			sourceTree = "<group>";
+		};
+		B50000000000000000000004 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000007 /* WidgetKit.framework */,
+				B20000000000000000000008 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -203,15 +289,34 @@
 				A80000000000000000000001 /* Sources */,
 				A40000000000000000000001 /* Frameworks */,
 				A90000000000000000000001 /* Resources */,
+				B50000000000000000000001 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B40000000000000000000002 /* PBXTargetDependency */,
 			);
 			name = MrFunnyJokes;
 			productName = MrFunnyJokes;
 			productReference = A30000000000000000000001 /* MrFunnyJokes.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B60000000000000000000001 /* JokeOfTheDayWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B80000000000000000000001 /* Build configuration list for PBXNativeTarget "JokeOfTheDayWidgetExtension" */;
+			buildPhases = (
+				B80000000000000000000002 /* Sources */,
+				B70000000000000000000001 /* Frameworks */,
+				B90000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JokeOfTheDayWidgetExtension;
+			productName = JokeOfTheDayWidgetExtension;
+			productReference = B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -224,6 +329,9 @@
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					A60000000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					B60000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
@@ -242,6 +350,7 @@
 			projectRoot = "";
 			targets = (
 				A60000000000000000000001 /* MrFunnyJokes */,
+				B60000000000000000000001 /* JokeOfTheDayWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -254,6 +363,14 @@
 				A10000000000000000000004 /* Preview Assets.xcassets in Resources */,
 				A10000000000000000000003 /* Assets.xcassets in Resources */,
 				A10000000000000000000015 /* HardcodedJokes.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B90000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000008 /* WidgetAssets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,10 +402,32 @@
 				A10000000000000000000024 /* SkeletonCardView.swift in Sources */,
 				A10000000000000000000025 /* SkeletonFeedView.swift in Sources */,
 				A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */,
+				B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */,
+				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B80000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000003 /* SharedJokeOfTheDay.swift in Sources */,
+				B10000000000000000000004 /* SharedStorageService.swift in Sources */,
+				B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */,
+				B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */,
+				B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B40000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B60000000000000000000001 /* JokeOfTheDayWidgetExtension */;
+			targetProxy = B40000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AC0000000000000000000001 /* Debug */ = {
@@ -417,8 +556,10 @@
 		AD0000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
@@ -447,8 +588,10 @@
 		AD0000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
@@ -474,6 +617,60 @@
 			};
 			name = Release;
 		};
+		AE0000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bvanaski.mrfunnyjokes.JokeOfTheDayWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AE0000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bvanaski.mrfunnyjokes.JokeOfTheDayWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -491,6 +688,15 @@
 			buildConfigurations = (
 				AC0000000000000000000001 /* Debug */,
 				AC0000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B80000000000000000000001 /* Build configuration list for PBXNativeTarget "JokeOfTheDayWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE0000000000000000000001 /* Debug */,
+				AE0000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
