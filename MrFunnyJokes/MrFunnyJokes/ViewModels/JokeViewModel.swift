@@ -62,8 +62,40 @@ final class JokeViewModel: ObservableObject {
         jokes.filter { $0.userRating == 1 }
     }
 
-    /// Joke of the Day - deterministically selected based on the current date
+    /// The cached joke of the day ID - persisted across app/widget
+    @Published private(set) var jokeOfTheDayId: String?
+
+    /// Cached joke data from shared storage (used as fallback if joke not in array)
+    private var cachedJokeOfTheDayData: SharedJokeOfTheDay?
+
+    /// Joke of the Day - sourced from shared storage to ensure consistency with widget
     var jokeOfTheDay: Joke? {
+        guard let id = jokeOfTheDayId else { return nil }
+
+        // First, try to find the joke in our array
+        if let joke = jokes.first(where: { $0.id.uuidString == id }) {
+            return joke
+        }
+
+        // Fallback: reconstruct from shared storage data
+        // This handles the case where the saved joke ID doesn't match any joke in our array
+        // (e.g., if the joke was saved with a different UUID)
+        if let sharedJoke = cachedJokeOfTheDayData {
+            let category = JokeCategory(rawValue: sharedJoke.category ?? "") ?? .dadJoke
+            return Joke(
+                id: UUID(uuidString: sharedJoke.id) ?? UUID(),
+                category: category,
+                setup: sharedJoke.setup,
+                punchline: sharedJoke.punchline
+            )
+        }
+
+        return nil
+    }
+
+    /// Compute a new joke of the day deterministically based on the current date
+    /// This should only be called when we need a NEW joke (new day or first run)
+    private func computeNewJokeOfTheDay() -> Joke? {
         guard !jokes.isEmpty else { return nil }
         let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
         let index = dayOfYear % jokes.count
@@ -108,8 +140,49 @@ final class JokeViewModel: ObservableObject {
 
         jokes = allJokes.shuffled()
 
-        // Sync joke of the day to widget
-        syncJokeOfTheDayToWidget()
+        // Initialize joke of the day - check shared storage first for persistence
+        initializeJokeOfTheDay()
+    }
+
+    /// Initialize joke of the day from shared storage or compute new one
+    /// This ensures the same joke persists for 24 hours across app and widget
+    private func initializeJokeOfTheDay() {
+        // First, check if we have a valid joke of the day saved from today
+        if !sharedStorage.needsUpdate(), let savedJoke = sharedStorage.loadJokeOfTheDay() {
+            // Use the saved joke ID - this ensures consistency with widget
+            jokeOfTheDayId = savedJoke.id
+            // Cache the full joke data for fallback reconstruction
+            cachedJokeOfTheDayData = savedJoke
+            return
+        }
+
+        // No saved joke for today - compute a new one
+        guard let newJoke = computeNewJokeOfTheDay() else { return }
+
+        // Save and sync to widget
+        jokeOfTheDayId = newJoke.id.uuidString
+        saveJokeOfTheDayToWidget(newJoke)
+
+        // Also cache the data locally for fallback
+        cachedJokeOfTheDayData = SharedJokeOfTheDay(
+            id: newJoke.id.uuidString,
+            setup: newJoke.setup,
+            punchline: newJoke.punchline,
+            category: newJoke.category.rawValue
+        )
+    }
+
+    /// Save a specific joke as the joke of the day to shared storage
+    private func saveJokeOfTheDayToWidget(_ joke: Joke) {
+        let sharedJoke = SharedJokeOfTheDay(
+            id: joke.id.uuidString,
+            setup: joke.setup,
+            punchline: joke.punchline,
+            category: joke.category.rawValue
+        )
+
+        sharedStorage.saveJokeOfTheDay(sharedJoke)
+        WidgetCenter.shared.reloadTimelines(ofKind: "JokeOfTheDayWidget")
     }
 
     /// Fetch initial content from all APIs
@@ -375,20 +448,4 @@ final class JokeViewModel: ObservableObject {
         hasMoreJokes = true // Reset when changing categories
     }
 
-    // MARK: - Widget Sync
-
-    /// Sync the current joke of the day to shared storage for widget access
-    private func syncJokeOfTheDayToWidget() {
-        guard let joke = jokeOfTheDay else { return }
-
-        let sharedJoke = SharedJokeOfTheDay(
-            id: joke.id.uuidString,
-            setup: joke.setup,
-            punchline: joke.punchline,
-            category: joke.category.rawValue
-        )
-
-        sharedStorage.saveJokeOfTheDay(sharedJoke)
-        WidgetCenter.shared.reloadTimelines(ofKind: "JokeOfTheDayWidget")
-    }
 }
