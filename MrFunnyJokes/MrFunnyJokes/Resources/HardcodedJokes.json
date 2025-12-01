@@ -88,5 +88,575 @@
         "category": "Pick Up Lines",
         "setup": "Do you believe in love at first sight?",
         "punchline": "Or should I walk by again?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440026",
+        "category": "Pick Up Lines",
+        "setup": "If beauty were time,",
+        "punchline": "you'd be eternity."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440027",
+        "category": "Pick Up Lines",
+        "setup": "Is it hot in here?",
+        "punchline": "Or is it just you?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440028",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a Band-Aid?",
+        "punchline": "Because I just scraped my knee falling for you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440029",
+        "category": "Pick Up Lines",
+        "setup": "If you were a vegetable,",
+        "punchline": "you'd be a cute-cumber."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440030",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a name?",
+        "punchline": "Or can I call you mine?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440031",
+        "category": "Pick Up Lines",
+        "setup": "Are you a camera?",
+        "punchline": "Because every time I look at you, I smile."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440032",
+        "category": "Pick Up Lines",
+        "setup": "If you were a fruit,",
+        "punchline": "you'd be a fineapple."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440033",
+        "category": "Pick Up Lines",
+        "setup": "Are you Wi-Fi?",
+        "punchline": "Because I'm feeling a connection."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440034",
+        "category": "Pick Up Lines",
+        "setup": "If you were a cat,",
+        "punchline": "you'd purr-sistently steal my heart."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440035",
+        "category": "Pick Up Lines",
+        "setup": "Are you a dictionary?",
+        "punchline": "Because you add meaning to my life."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440036",
+        "category": "Pick Up Lines",
+        "setup": "If you were a triangle,",
+        "punchline": "you'd be acute one."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440037",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a sunburn?",
+        "punchline": "Or are you always this hot?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440038",
+        "category": "Pick Up Lines",
+        "setup": "If stars would fall every time I think of you,",
+        "punchline": "the sky would soon be empty."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440039",
+        "category": "Pick Up Lines",
+        "setup": "Are you a pie?",
+        "punchline": "Because you're as sweet as 3.14."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440040",
+        "category": "Pick Up Lines",
+        "setup": "Can I follow you?",
+        "punchline": "Because my mom told me to follow my dreams."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440041",
+        "category": "Pick Up Lines",
+        "setup": "Are you a bank loan?",
+        "punchline": "Because you have my interest."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440042",
+        "category": "Pick Up Lines",
+        "setup": "If you were words on a page,",
+        "punchline": "you'd be fine print."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440043",
+        "category": "Pick Up Lines",
+        "setup": "Do you have an eraser?",
+        "punchline": "Because I can't get you out of my mind."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440044",
+        "category": "Pick Up Lines",
+        "setup": "Are you a beaver?",
+        "punchline": "Because dam!"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440045",
+        "category": "Pick Up Lines",
+        "setup": "If kisses were snowflakes,",
+        "punchline": "I'd send you a blizzard."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440046",
+        "category": "Pick Up Lines",
+        "setup": "Are you a candle?",
+        "punchline": "Because you light up my life."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440047",
+        "category": "Pick Up Lines",
+        "setup": "Is this the Hogwarts Express?",
+        "punchline": "Because it feels like you and I are headed somewhere magical."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440048",
+        "category": "Pick Up Lines",
+        "setup": "If you were a tropical fruit,",
+        "punchline": "you'd be a bae-nana."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440049",
+        "category": "Pick Up Lines",
+        "setup": "Do you like Star Wars?",
+        "punchline": "Because Yoda only one for me."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440050",
+        "category": "Pick Up Lines",
+        "setup": "Are you a 90-degree angle?",
+        "punchline": "Because you're looking right."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440051",
+        "category": "Pick Up Lines",
+        "setup": "If you were a flower,",
+        "punchline": "you'd be a damndelion."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440052",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a pencil?",
+        "punchline": "Because I want to erase your past and write our future."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440053",
+        "category": "Pick Up Lines",
+        "setup": "Are you an alien?",
+        "punchline": "Because you just abducted my heart."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440054",
+        "category": "Pick Up Lines",
+        "setup": "Do you play soccer?",
+        "punchline": "Because you're a keeper."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440055",
+        "category": "Pick Up Lines",
+        "setup": "Are you a time traveler?",
+        "punchline": "Because I see you in my future."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440056",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a compass?",
+        "punchline": "Because I'd be lost without you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440057",
+        "category": "Pick Up Lines",
+        "setup": "If you were a burger at McDonald's,",
+        "punchline": "you'd be the McGorgeous."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440058",
+        "category": "Pick Up Lines",
+        "setup": "Are you a blanket?",
+        "punchline": "Because you've got me feeling cozy."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440059",
+        "category": "Pick Up Lines",
+        "setup": "If you were a box of crayons,",
+        "punchline": "you'd be the big industrial name-brand one with a built-in sharpener."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440060",
+        "category": "Pick Up Lines",
+        "setup": "Are you a 45-degree angle?",
+        "punchline": "Because you're acute-y."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440061",
+        "category": "Pick Up Lines",
+        "setup": "If you were a YouTube ad,",
+        "punchline": "I wouldn't skip."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440062",
+        "category": "Pick Up Lines",
+        "setup": "Are you a keyboard?",
+        "punchline": "Because you're just my type."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440063",
+        "category": "Pick Up Lines",
+        "setup": "If beauty were a grain of sand,",
+        "punchline": "you'd be a million beaches."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440064",
+        "category": "Pick Up Lines",
+        "setup": "Are you a volcano?",
+        "punchline": "Because I lava you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440065",
+        "category": "Pick Up Lines",
+        "setup": "Do you like science?",
+        "punchline": "Because I've got my ion you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440066",
+        "category": "Pick Up Lines",
+        "setup": "If you were a coffee,",
+        "punchline": "you'd be Espresso, because you're so intense."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440067",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a license?",
+        "punchline": "Because you're driving me crazy."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440068",
+        "category": "Pick Up Lines",
+        "setup": "If you were a desert,",
+        "punchline": "you'd be my sweet oasis."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440069",
+        "category": "Pick Up Lines",
+        "setup": "Are you an elevator?",
+        "punchline": "Because you lift me up."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440070",
+        "category": "Pick Up Lines",
+        "setup": "Do you like gardening?",
+        "punchline": "Because I love you a lily more each day."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440071",
+        "category": "Pick Up Lines",
+        "setup": "If you were a gem,",
+        "punchline": "you'd be a diamond, because you're so precious."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440072",
+        "category": "Pick Up Lines",
+        "setup": "Are you a ghost?",
+        "punchline": "Because you've haunted my dreams."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440073",
+        "category": "Pick Up Lines",
+        "setup": "If you were a star,",
+        "punchline": "you'd be the brightest in the galaxy."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440074",
+        "category": "Pick Up Lines",
+        "setup": "If you were a book,",
+        "punchline": "I'd read you over and over."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440075",
+        "category": "Pick Up Lines",
+        "setup": "Are you a light bulb?",
+        "punchline": "Because you brighten my day."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440076",
+        "category": "Pick Up Lines",
+        "setup": "Do you like cats?",
+        "punchline": "Because you're purr-fect."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440077",
+        "category": "Pick Up Lines",
+        "setup": "Are you a thief?",
+        "punchline": "Because you stole my heart."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440078",
+        "category": "Pick Up Lines",
+        "setup": "Do you play the piano?",
+        "punchline": "Because you're striking a chord with me."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440079",
+        "category": "Pick Up Lines",
+        "setup": "If you were a color,",
+        "punchline": "you'd be rainbow, because you brighten my world."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440080",
+        "category": "Pick Up Lines",
+        "setup": "Are you a unicorn?",
+        "punchline": "Because you're my fantasy."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440081",
+        "category": "Pick Up Lines",
+        "setup": "If you were a planet,",
+        "punchline": "you'd be Earth, because you mean the world to me."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440082",
+        "category": "Pick Up Lines",
+        "setup": "Are you a library book?",
+        "punchline": "Because I can't stop checking you out."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440083",
+        "category": "Pick Up Lines",
+        "setup": "Do you have an extra heart?",
+        "punchline": "Mine was stolen by you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440084",
+        "category": "Pick Up Lines",
+        "setup": "If you were a melody,",
+        "punchline": "you'd be the sweetest tune."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440085",
+        "category": "Pick Up Lines",
+        "setup": "Are you a rainbow?",
+        "punchline": "Because you color my world."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440086",
+        "category": "Pick Up Lines",
+        "setup": "Do you like coffee?",
+        "punchline": "Because you're espresso-ly my type."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440087",
+        "category": "Pick Up Lines",
+        "setup": "If you were a season,",
+        "punchline": "you'd be spring, because you bring new life to everything."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440088",
+        "category": "Pick Up Lines",
+        "setup": "Are you a camera?",
+        "punchline": "Because I picture us together."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440089",
+        "category": "Pick Up Lines",
+        "setup": "If you were a bird,",
+        "punchline": "you'd be a lovebird."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440090",
+        "category": "Pick Up Lines",
+        "setup": "Do you play chess?",
+        "punchline": "Because you're my queen."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440091",
+        "category": "Pick Up Lines",
+        "setup": "If you were a song,",
+        "punchline": "you'd be the best track on the album."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440092",
+        "category": "Pick Up Lines",
+        "setup": "Do you believe in fate?",
+        "punchline": "Because I think we were meant to be."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440093",
+        "category": "Pick Up Lines",
+        "setup": "If you were a fruit,",
+        "punchline": "you'd be a mango, because you're the sweetest."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440094",
+        "category": "Pick Up Lines",
+        "setup": "Do you like stars?",
+        "punchline": "Because you shine brighter than any."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440095",
+        "category": "Pick Up Lines",
+        "setup": "If you were a city,",
+        "punchline": "you'd be Paris, the city of love."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440096",
+        "category": "Pick Up Lines",
+        "setup": "If you were a dessert,",
+        "punchline": "you'd be a cupcake, because you're so sweet."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440097",
+        "category": "Pick Up Lines",
+        "setup": "Are you a treasure?",
+        "punchline": "Because you're so valuable to me."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440098",
+        "category": "Pick Up Lines",
+        "setup": "Do you play basketball?",
+        "punchline": "Because you're a slam dunk in my heart."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440099",
+        "category": "Pick Up Lines",
+        "setup": "If you were a day of the week,",
+        "punchline": "you'd be Sunday, because you're my favorite."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440100",
+        "category": "Pick Up Lines",
+        "setup": "If you were a painting,",
+        "punchline": "you'd be a masterpiece."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440101",
+        "category": "Pick Up Lines",
+        "setup": "If you were a movie,",
+        "punchline": "you'd be a blockbuster, because you've got my attention."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440102",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a mirror in your pocket?",
+        "punchline": "Because I can see myself in your future."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440103",
+        "category": "Pick Up Lines",
+        "setup": "Are you a charger?",
+        "punchline": "Because I'm dying without you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440104",
+        "category": "Pick Up Lines",
+        "setup": "If you were a pizza,",
+        "punchline": "you'd be a fine-apple pizza."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440105",
+        "category": "Pick Up Lines",
+        "setup": "Are you Australian?",
+        "punchline": "Because you meet all of my koala-fications."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440106",
+        "category": "Pick Up Lines",
+        "setup": "Do you work at Starbucks?",
+        "punchline": "Because I like you a latte."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440107",
+        "category": "Pick Up Lines",
+        "setup": "Are you a snowflake?",
+        "punchline": "Because I've fallen for you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440108",
+        "category": "Pick Up Lines",
+        "setup": "Is your dad a boxer?",
+        "punchline": "Because you're a knockout."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440109",
+        "category": "Pick Up Lines",
+        "setup": "Are you a campfire?",
+        "punchline": "Because you're hot and I want s'more."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440110",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a jersey?",
+        "punchline": "Because I need your name and number."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440111",
+        "category": "Pick Up Lines",
+        "setup": "Are you made of copper and tellurium?",
+        "punchline": "Because you're Cu-Te."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440112",
+        "category": "Pick Up Lines",
+        "setup": "Is your name Chapstick?",
+        "punchline": "Because you're da balm."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440113",
+        "category": "Pick Up Lines",
+        "setup": "Are you a Netflix series?",
+        "punchline": "Because I could watch you for hours."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440114",
+        "category": "Pick Up Lines",
+        "setup": "Do you have a shovel?",
+        "punchline": "Because I'm digging you."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440115",
+        "category": "Pick Up Lines",
+        "setup": "Are you a banana?",
+        "punchline": "Because I find you a-peeling."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440116",
+        "category": "Pick Up Lines",
+        "setup": "Is there an airport nearby?",
+        "punchline": "Or is that just my heart taking off?"
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440117",
+        "category": "Pick Up Lines",
+        "setup": "Are you a broom?",
+        "punchline": "Because you just swept me off my feet."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440118",
+        "category": "Pick Up Lines",
+        "setup": "Do you work at Build-A-Bear?",
+        "punchline": "Because I want you to stuff me."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440119",
+        "category": "Pick Up Lines",
+        "setup": "Are you a microwave?",
+        "punchline": "Because you make my heart melt."
+    },
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440120",
+        "category": "Pick Up Lines",
+        "setup": "Is your dad a terrorist?",
+        "punchline": "Because you're the bomb."
     }
 ]
