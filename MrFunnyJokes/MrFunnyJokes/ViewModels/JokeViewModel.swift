@@ -27,9 +27,9 @@ final class JokeViewModel: ObservableObject {
     private var initialLoadTask: Task<Void, Never>?
 
     /// Number of jokes to fetch per batch
-    private let batchSize = 6
+    private let batchSize = 9
     /// Number of jokes to fetch per category on initial load
-    private let initialLoadPerCategory = 5
+    private let initialLoadPerCategory = 8
 
     var filteredJokes: [Joke] {
         guard let category = selectedCategory else {
@@ -99,7 +99,7 @@ final class JokeViewModel: ObservableObject {
 
         // Add fallback jokes that aren't duplicates
         for joke in fallback {
-            if !allJokes.contains(where: { $0.setup == joke.setup }) {
+            if !allJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
                 allJokes.append(joke)
             }
         }
@@ -136,7 +136,7 @@ final class JokeViewModel: ObservableObject {
             // Add new jokes to our list, avoiding duplicates
             var updatedJokes = jokes
             for joke in newJokes {
-                if !updatedJokes.contains(where: { $0.setup == joke.setup }) {
+                if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
                     updatedJokes.append(joke)
                 }
             }
@@ -187,7 +187,7 @@ final class JokeViewModel: ObservableObject {
             // Add to beginning of list
             var updatedJokes = jokes
             for joke in newJokes.reversed() {
-                if !updatedJokes.contains(where: { $0.setup == joke.setup }) {
+                if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
                     updatedJokes.insert(joke, at: 0)
                 }
             }
@@ -260,7 +260,7 @@ final class JokeViewModel: ObservableObject {
             // Add to end of list, avoiding duplicates
             var updatedJokes = jokes
             for joke in newJokes {
-                if !updatedJokes.contains(where: { $0.setup == joke.setup }) {
+                if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
                     updatedJokes.append(joke)
                 }
             }

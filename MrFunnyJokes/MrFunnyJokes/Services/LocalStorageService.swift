@@ -9,7 +9,7 @@ final class LocalStorageService: @unchecked Sendable {
     private let queue = DispatchQueue(label: "com.mrfunnyjokes.storage", qos: .userInitiated)
 
     /// Maximum number of jokes to cache per category
-    private let maxCachePerCategory = 20
+    private let maxCachePerCategory = 50
 
     private init() {
         self.userDefaults = UserDefaults.standard
@@ -106,7 +106,7 @@ final class LocalStorageService: @unchecked Sendable {
 
             // Add new jokes, avoiding duplicates
             for joke in jokes where joke.category == category {
-                if !existingJokes.contains(where: { $0.setup == joke.setup }) {
+                if !existingJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
                     existingJokes.insert(joke, at: 0) // Insert at beginning (newest first)
                 }
             }
