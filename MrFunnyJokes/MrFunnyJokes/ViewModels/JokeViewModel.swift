@@ -11,9 +11,25 @@ final class JokeViewModel: ObservableObject {
     /// Tracks initial app launch loading state for skeleton display
     @Published var isInitialLoading = true
 
+    /// Tracks if more jokes are being loaded (for infinite scroll)
+    @Published var isLoadingMore = false
+
+    /// Indicates if we're currently offline (showing cached content)
+    @Published var isOffline = false
+
+    /// Indicates if we've reached the end and no more jokes are available
+    @Published var hasMoreJokes = true
+
     private let storage = LocalStorageService.shared
     private let api = JokeAPIService.shared
     private var copyTask: Task<Void, Never>?
+    private var loadMoreTask: Task<Void, Never>?
+    private var initialLoadTask: Task<Void, Never>?
+
+    /// Number of jokes to fetch per batch
+    private let batchSize = 6
+    /// Number of jokes to fetch per category on initial load
+    private let initialLoadPerCategory = 5
 
     var filteredJokes: [Joke] {
         guard let category = selectedCategory else {
@@ -28,7 +44,6 @@ final class JokeViewModel: ObservableObject {
     }
 
     // Jokes grouped by rating (1-4 scale)
-    // 4 = Hilarious, 3 = Funny, 2 = Meh, 1 = Groan-worthy
     var hilariousJokes: [Joke] {
         jokes.filter { $0.userRating == 4 }
     }
@@ -46,73 +61,211 @@ final class JokeViewModel: ObservableObject {
     }
 
     /// Joke of the Day - deterministically selected based on the current date
-    /// Returns the same joke for everyone on any given day
     var jokeOfTheDay: Joke? {
         guard !jokes.isEmpty else { return nil }
         let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
         let index = dayOfYear % jokes.count
-        // Sort by ID to ensure consistent ordering regardless of shuffle
         let sortedJokes = jokes.sorted { $0.id.uuidString < $1.id.uuidString }
         return sortedJokes[index]
     }
 
     init() {
-        loadJokes()
+        loadInitialContent()
     }
 
-    // MARK: - Loading
+    // MARK: - Initial Load
 
-    func loadJokes() {
-        // Load hardcoded jokes first (offline-first)
-        let hardcoded = storage.loadHardcodedJokes()
-        let cached = storage.loadCachedJokes()
+    /// Load content on app start - first from cache/fallback, then fetch from APIs
+    private func loadInitialContent() {
+        // First, load cached + fallback jokes immediately for instant display
+        loadLocalJokes()
 
-        // Combine and deduplicate
-        var allJokes = hardcoded
-        for joke in cached {
+        // Then fetch fresh content from APIs in background
+        initialLoadTask = Task {
+            await fetchInitialAPIContent()
+        }
+    }
+
+    /// Load jokes from local storage (cached + hardcoded fallback)
+    private func loadLocalJokes() {
+        let cached = storage.loadAllCachedJokes()
+        let fallback = storage.loadHardcodedJokes()
+
+        // Combine: use cached if available, fallback otherwise
+        var allJokes: [Joke] = []
+
+        // Add cached jokes first (they're fresher)
+        allJokes.append(contentsOf: cached)
+
+        // Add fallback jokes that aren't duplicates
+        for joke in fallback {
             if !allJokes.contains(where: { $0.setup == joke.setup }) {
                 allJokes.append(joke)
             }
         }
 
         jokes = allJokes.shuffled()
-
-        // Mark initial loading complete after data is ready
-        // Small delay ensures skeleton is briefly visible for smooth transition
-        if isInitialLoading {
-            Task {
-                try? await Task.sleep(for: .milliseconds(300))
-                isInitialLoading = false
-            }
-        }
     }
+
+    /// Fetch initial content from all APIs
+    private func fetchInitialAPIContent() async {
+        // Check connectivity first
+        let isConnected = await api.checkConnectivity()
+
+        if !isConnected {
+            // We're offline - mark it and complete initial loading
+            isOffline = true
+            await completeInitialLoading()
+            return
+        }
+
+        isOffline = false
+
+        // Fetch jokes from all categories
+        let newJokes = await api.fetchInitialJokes(countPerCategory: initialLoadPerCategory)
+
+        guard !Task.isCancelled else { return }
+
+        if !newJokes.isEmpty {
+            // Cache the new jokes by category
+            let grouped = Dictionary(grouping: newJokes, by: { $0.category })
+            for (category, categoryJokes) in grouped {
+                storage.saveCachedJokes(categoryJokes, for: category)
+            }
+
+            // Add new jokes to our list, avoiding duplicates
+            var updatedJokes = jokes
+            for joke in newJokes {
+                if !updatedJokes.contains(where: { $0.setup == joke.setup }) {
+                    updatedJokes.append(joke)
+                }
+            }
+            jokes = updatedJokes.shuffled()
+        }
+
+        await completeInitialLoading()
+    }
+
+    private func completeInitialLoading() async {
+        // Small delay ensures skeleton is briefly visible for smooth transition
+        try? await Task.sleep(for: .milliseconds(300))
+        isInitialLoading = false
+    }
+
+    // MARK: - Refresh (Pull-to-Refresh)
 
     func refresh() async {
         guard !isRefreshing else { return }
         isRefreshing = true
 
-        // Fetch new jokes from API with cancellation support
-        let newJokes = await withTaskCancellationHandler {
-            await api.fetchMultipleJokes(count: 5)
-        } onCancel: {
-            // Task was cancelled, nothing to clean up
+        // Check connectivity
+        let isConnected = await api.checkConnectivity()
+
+        if !isConnected {
+            isOffline = true
+            isRefreshing = false
+            return
         }
 
-        // Check if task was cancelled before updating UI
+        isOffline = false
+
+        // Fetch new jokes
+        let newJokes = await api.fetchMoreJokes(category: selectedCategory, count: batchSize)
+
         guard !Task.isCancelled else {
             isRefreshing = false
             return
         }
 
-        // Cache them
-        for joke in newJokes {
-            storage.appendCachedJoke(joke)
+        if !newJokes.isEmpty {
+            // Cache them
+            let grouped = Dictionary(grouping: newJokes, by: { $0.category })
+            for (category, categoryJokes) in grouped {
+                storage.saveCachedJokes(categoryJokes, for: category)
+            }
+
+            // Add to beginning of list
+            var updatedJokes = jokes
+            for joke in newJokes.reversed() {
+                if !updatedJokes.contains(where: { $0.setup == joke.setup }) {
+                    updatedJokes.insert(joke, at: 0)
+                }
+            }
+            jokes = updatedJokes
         }
 
-        // Reload all jokes
-        loadJokes()
-
         isRefreshing = false
+    }
+
+    // MARK: - Infinite Scroll (Load More)
+
+    /// Called when user scrolls near the bottom of the list
+    func loadMoreIfNeeded(currentItem: Joke) {
+        // Check if we're near the end of the list
+        let thresholdIndex = filteredJokes.index(filteredJokes.endIndex, offsetBy: -3, limitedBy: filteredJokes.startIndex) ?? filteredJokes.startIndex
+
+        guard let currentIndex = filteredJokes.firstIndex(where: { $0.id == currentItem.id }),
+              currentIndex >= thresholdIndex else {
+            return
+        }
+
+        loadMore()
+    }
+
+    /// Load more jokes (for infinite scroll)
+    func loadMore() {
+        guard !isLoadingMore && !isRefreshing && hasMoreJokes else { return }
+
+        loadMoreTask?.cancel()
+        loadMoreTask = Task {
+            await performLoadMore()
+        }
+    }
+
+    private func performLoadMore() async {
+        isLoadingMore = true
+
+        // Check connectivity
+        let isConnected = await api.checkConnectivity()
+
+        if !isConnected {
+            isOffline = true
+            isLoadingMore = false
+            return
+        }
+
+        isOffline = false
+
+        // Fetch more jokes for current category (or all if no filter)
+        let newJokes = await api.fetchMoreJokes(category: selectedCategory, count: batchSize)
+
+        guard !Task.isCancelled else {
+            isLoadingMore = false
+            return
+        }
+
+        if newJokes.isEmpty {
+            // No more jokes available from API
+            // (In practice, these APIs always return something, but handle edge case)
+            hasMoreJokes = true // Keep trying - APIs are random so there's always more
+        } else {
+            // Cache them
+            let grouped = Dictionary(grouping: newJokes, by: { $0.category })
+            for (category, categoryJokes) in grouped {
+                storage.saveCachedJokes(categoryJokes, for: category)
+            }
+
+            // Add to end of list, avoiding duplicates
+            var updatedJokes = jokes
+            for joke in newJokes {
+                if !updatedJokes.contains(where: { $0.setup == joke.setup }) {
+                    updatedJokes.append(joke)
+                }
+            }
+            jokes = updatedJokes
+        }
+
+        isLoadingMore = false
     }
 
     // MARK: - Ratings
@@ -120,14 +273,12 @@ final class JokeViewModel: ObservableObject {
     func rateJoke(_ joke: Joke, rating: Int) {
         HapticManager.shared.selection()
 
-        // Rating 0 means remove rating
         if rating == 0 {
             storage.removeRating(for: joke.id)
             if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
                 jokes[index].userRating = nil
             }
         } else {
-            // Validate rating range (1-4)
             let clampedRating = min(max(rating, 1), 4)
             storage.saveRating(for: joke.id, rating: clampedRating)
             if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
@@ -148,7 +299,6 @@ final class JokeViewModel: ObservableObject {
             applicationActivities: nil
         )
 
-        // Get the key window scene safely
         guard let windowScene = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first(where: { $0.activationState == .foregroundActive }),
@@ -157,13 +307,11 @@ final class JokeViewModel: ObservableObject {
             return
         }
 
-        // Find the topmost presented view controller
         var topVC = rootVC
         while let presented = topVC.presentedViewController {
             topVC = presented
         }
 
-        // Handle iPad
         if let popover = activityVC.popoverPresentationController {
             popover.sourceView = topVC.view
             popover.sourceRect = CGRect(
@@ -184,13 +332,9 @@ final class JokeViewModel: ObservableObject {
         let text = "\(joke.setup)\n\n\(joke.punchline)"
         UIPasteboard.general.string = text
 
-        // Show copied indicator
         copiedJokeId = joke.id
 
-        // Cancel any existing copy task
         copyTask?.cancel()
-
-        // Hide after delay with proper cancellation
         copyTask = Task { [weak self, jokeId = joke.id] in
             do {
                 try await Task.sleep(for: .seconds(2))
@@ -199,7 +343,7 @@ final class JokeViewModel: ObservableObject {
                     self?.copiedJokeId = nil
                 }
             } catch {
-                // Task was cancelled, ignore
+                // Task was cancelled
             }
         }
     }
@@ -208,8 +352,7 @@ final class JokeViewModel: ObservableObject {
 
     func selectCategory(_ category: JokeCategory?) {
         HapticManager.shared.lightTap()
-        // Update the category without animation here - the scroll animation
-        // in JokeFeedView handles the visual transition to prevent conflicts
         selectedCategory = category
+        hasMoreJokes = true // Reset when changing categories
     }
 }

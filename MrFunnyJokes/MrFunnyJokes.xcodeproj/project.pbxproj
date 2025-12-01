@@ -34,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A20000000000000000000027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000001 /* MrFunnyJokesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrFunnyJokesApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A20000000000000000000003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -83,6 +84,7 @@
 		A50000000000000000000002 /* MrFunnyJokes */ = {
 			isa = PBXGroup;
 			children = (
+				A20000000000000000000027 /* Info.plist */,
 				A50000000000000000000004 /* App */,
 				A50000000000000000000005 /* Models */,
 				A50000000000000000000006 /* Views */,
@@ -422,6 +424,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MrFunnyJokes/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Mr. Funny Jokes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -451,6 +454,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MrFunnyJokes/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Mr. Funny Jokes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -44,3 +44,9 @@ struct OfficialJokeResponse: Codable {
     let setup: String
     let punchline: String
 }
+
+struct PickupLineResponse: Codable {
+    let id: Int
+    let mood: String
+    let pickupline: String
+}
