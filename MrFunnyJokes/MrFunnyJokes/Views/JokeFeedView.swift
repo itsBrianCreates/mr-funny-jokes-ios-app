@@ -36,6 +36,12 @@ struct JokeFeedView: View {
                         .frame(height: 0)
                         .id(topAnchorID)
 
+                    // Offline indicator banner
+                    if viewModel.isOffline {
+                        OfflineBannerView()
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+
                     // Joke of the Day hero section (only when "All" is selected)
                     if showJokeOfTheDay, let jokeOfTheDay = viewModel.jokeOfTheDay {
                         JokeOfTheDayView(
@@ -61,11 +67,21 @@ struct JokeFeedView: View {
                             onCopy: { viewModel.copyJoke(joke) },
                             onRate: { rating in viewModel.rateJoke(joke, rating: rating) }
                         )
+                        .onAppear {
+                            // Trigger load more when this joke appears
+                            viewModel.loadMoreIfNeeded(currentItem: joke)
+                        }
                     }
 
                     // If we have fewer jokes than the promo position, show promo at the end
                     if showYouTubePromo && feedJokes.count > 0 && feedJokes.count <= youtubePromoPosition {
                         YouTubePromoCardView()
+                    }
+
+                    // Loading more indicator (skeleton cards at bottom)
+                    if viewModel.isLoadingMore {
+                        LoadingMoreView()
+                            .transition(.opacity)
                     }
                 }
                 .padding(.horizontal)
@@ -77,16 +93,50 @@ struct JokeFeedView: View {
             }
             .onChange(of: viewModel.selectedCategory) {
                 // Scroll to top when filter changes
-                // Use Task to ensure we're on the next run loop after content updates
                 Task { @MainActor in
-                    // Small delay to let SwiftUI complete any pending layout updates
-                    // This prevents race conditions between content changes and scroll position
                     try? await Task.sleep(for: .milliseconds(50))
                     withAnimation(.easeOut(duration: 0.25)) {
                         proxy.scrollTo(topAnchorID, anchor: .top)
                     }
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: viewModel.isOffline)
+        }
+    }
+}
+
+// MARK: - Offline Banner View
+
+struct OfflineBannerView: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "wifi.slash")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Text("You're offline")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Text("Showing saved jokes")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+// MARK: - Loading More View (Skeleton cards at bottom)
+
+struct LoadingMoreView: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            SkeletonCardView(lineCount: 2, lastLineWidth: 0.6)
+            SkeletonCardView(lineCount: 1, lastLineWidth: 0.8)
         }
     }
 }

@@ -6,6 +6,7 @@ enum JokeAPIError: Error, LocalizedError {
     case decodingError(Error)
     case noData
     case cancelled
+    case offline
 
     var errorDescription: String? {
         switch self {
@@ -19,6 +20,8 @@ enum JokeAPIError: Error, LocalizedError {
             return "No data received"
         case .cancelled:
             return "Request was cancelled"
+        case .offline:
+            return "No internet connection"
         }
     }
 }
@@ -32,31 +35,30 @@ final class JokeAPIService: Sendable {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 10
         config.timeoutIntervalForResource = 15
-        config.waitsForConnectivity = true
+        config.waitsForConnectivity = false // Don't wait - we want to fail fast for offline detection
         self.session = URLSession(configuration: config)
     }
 
     // MARK: - Dad Jokes API
+    // GET https://icanhazdadjoke.com/
+    // Headers: Accept: application/json, User-Agent: JokesApp
 
     func fetchDadJoke() async throws -> Joke {
-        // Check for cancellation before starting
         try Task.checkCancellation()
 
-        guard let url = URL(string: "https://icanhazdadjoke.com") else {
+        guard let url = URL(string: "https://icanhazdadjoke.com/") else {
             throw JokeAPIError.invalidURL
         }
 
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("MrFunnyJokes iOS App", forHTTPHeaderField: "User-Agent")
+        request.setValue("JokesApp", forHTTPHeaderField: "User-Agent")
 
         do {
             let (data, response) = try await session.data(for: request)
 
-            // Check for cancellation after network call
             try Task.checkCancellation()
 
-            // Validate response
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
                 throw JokeAPIError.networkError(URLError(.badServerResponse))
@@ -64,7 +66,7 @@ final class JokeAPIService: Sendable {
 
             let jokeResponse = try JSONDecoder().decode(DadJokeResponse.self, from: data)
 
-            // Dad jokes from this API come as a single string
+            // Dad jokes come as a single string - split into setup/punchline
             let (setup, punchline) = splitJoke(jokeResponse.joke)
 
             return Joke(
@@ -74,6 +76,8 @@ final class JokeAPIService: Sendable {
             )
         } catch is CancellationError {
             throw JokeAPIError.cancelled
+        } catch let error as URLError where error.code == .notConnectedToInternet || error.code == .networkConnectionLost {
+            throw JokeAPIError.offline
         } catch let error as DecodingError {
             throw JokeAPIError.decodingError(error)
         } catch let error as JokeAPIError {
@@ -83,7 +87,9 @@ final class JokeAPIService: Sendable {
         }
     }
 
-    // MARK: - Official Joke API (Knock-Knock and General)
+    // MARK: - Knock-Knock Jokes API
+    // GET https://official-joke-api.appspot.com/jokes/knock-knock/random
+    // Response: [{ "id": 1, "type": "knock-knock", "setup": "...", "punchline": "..." }]
 
     func fetchKnockKnockJoke() async throws -> Joke {
         try Task.checkCancellation()
@@ -92,58 +98,163 @@ final class JokeAPIService: Sendable {
             throw JokeAPIError.invalidURL
         }
 
-        return try await fetchFromOfficialAPI(url: url, category: .knockKnock)
-    }
-
-    func fetchRandomJoke() async throws -> Joke {
-        try Task.checkCancellation()
-
-        guard let url = URL(string: "https://official-joke-api.appspot.com/random_joke") else {
-            throw JokeAPIError.invalidURL
-        }
-
-        // This API returns general jokes, we'll categorize as dad jokes
-        return try await fetchFromOfficialAPI(url: url, category: .dadJoke)
-    }
-
-    private func fetchFromOfficialAPI(url: URL, category: JokeCategory) async throws -> Joke {
         do {
             let (data, response) = try await session.data(from: url)
 
-            // Check for cancellation after network call
             try Task.checkCancellation()
 
-            // Validate response
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
                 throw JokeAPIError.networkError(URLError(.badServerResponse))
             }
 
-            // Try parsing as array first (knock-knock endpoint returns array)
-            if let jokes = try? JSONDecoder().decode([OfficialJokeResponse].self, from: data),
-               let first = jokes.first {
-                return Joke(
-                    category: category,
-                    setup: first.setup,
-                    punchline: first.punchline
-                )
+            // This API returns an array with one joke
+            let jokes = try JSONDecoder().decode([OfficialJokeResponse].self, from: data)
+            guard let first = jokes.first else {
+                throw JokeAPIError.noData
             }
 
-            // Try parsing as single object
-            let jokeResponse = try JSONDecoder().decode(OfficialJokeResponse.self, from: data)
             return Joke(
-                category: category,
-                setup: jokeResponse.setup,
-                punchline: jokeResponse.punchline
+                category: .knockKnock,
+                setup: first.setup,
+                punchline: first.punchline
             )
         } catch is CancellationError {
             throw JokeAPIError.cancelled
+        } catch let error as URLError where error.code == .notConnectedToInternet || error.code == .networkConnectionLost {
+            throw JokeAPIError.offline
         } catch let error as DecodingError {
             throw JokeAPIError.decodingError(error)
         } catch let error as JokeAPIError {
             throw error
         } catch {
             throw JokeAPIError.networkError(error)
+        }
+    }
+
+    // MARK: - Pickup Lines API
+    // GET http://ec2-3-7-73-121.ap-south-1.compute.amazonaws.com:8000/lines/random
+    // Response: { "id": 1, "mood": "Flirty", "pickupline": "..." }
+
+    func fetchPickupLine() async throws -> Joke {
+        try Task.checkCancellation()
+
+        guard let url = URL(string: "http://ec2-3-7-73-121.ap-south-1.compute.amazonaws.com:8000/lines/random") else {
+            throw JokeAPIError.invalidURL
+        }
+
+        do {
+            let (data, response) = try await session.data(from: url)
+
+            try Task.checkCancellation()
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                throw JokeAPIError.networkError(URLError(.badServerResponse))
+            }
+
+            let pickupResponse = try JSONDecoder().decode(PickupLineResponse.self, from: data)
+
+            // Convert pickup line to joke format
+            // Use the pickup line as the punchline with a generic setup
+            return Joke(
+                category: .pickupLine,
+                setup: "Try this pickup line:",
+                punchline: pickupResponse.pickupline
+            )
+        } catch is CancellationError {
+            throw JokeAPIError.cancelled
+        } catch let error as URLError where error.code == .notConnectedToInternet || error.code == .networkConnectionLost {
+            throw JokeAPIError.offline
+        } catch let error as DecodingError {
+            throw JokeAPIError.decodingError(error)
+        } catch let error as JokeAPIError {
+            throw error
+        } catch {
+            throw JokeAPIError.networkError(error)
+        }
+    }
+
+    // MARK: - Category-Specific Fetching
+
+    func fetchJoke(for category: JokeCategory) async throws -> Joke {
+        switch category {
+        case .dadJoke:
+            return try await fetchDadJoke()
+        case .knockKnock:
+            return try await fetchKnockKnockJoke()
+        case .pickupLine:
+            return try await fetchPickupLine()
+        }
+    }
+
+    func fetchJokes(for category: JokeCategory, count: Int) async -> [Joke] {
+        guard !Task.isCancelled else { return [] }
+
+        var jokes: [Joke] = []
+
+        await withTaskGroup(of: Joke?.self) { group in
+            for _ in 0..<count {
+                guard !Task.isCancelled else { break }
+
+                group.addTask {
+                    guard !Task.isCancelled else { return nil }
+                    do {
+                        return try await self.fetchJoke(for: category)
+                    } catch {
+                        return nil
+                    }
+                }
+            }
+
+            for await joke in group {
+                guard !Task.isCancelled else { break }
+                if let joke = joke {
+                    jokes.append(joke)
+                }
+            }
+        }
+
+        return jokes
+    }
+
+    // MARK: - Batch Fetching (Mixed Categories)
+
+    /// Fetch jokes across all categories for initial load
+    /// Returns jokes evenly distributed across categories
+    func fetchInitialJokes(countPerCategory: Int = 5) async -> [Joke] {
+        guard !Task.isCancelled else { return [] }
+
+        var allJokes: [Joke] = []
+
+        await withTaskGroup(of: [Joke].self) { group in
+            for category in JokeCategory.allCases {
+                group.addTask {
+                    await self.fetchJokes(for: category, count: countPerCategory)
+                }
+            }
+
+            for await jokes in group {
+                guard !Task.isCancelled else { break }
+                allJokes.append(contentsOf: jokes)
+            }
+        }
+
+        return allJokes.shuffled()
+    }
+
+    /// Fetch more jokes (for infinite scrolling)
+    /// If category is nil, fetches across all categories
+    func fetchMoreJokes(category: JokeCategory?, count: Int = 5) async -> [Joke] {
+        guard !Task.isCancelled else { return [] }
+
+        if let category = category {
+            // Fetch for specific category
+            return await fetchJokes(for: category, count: count)
+        } else {
+            // Fetch across all categories (distribute count)
+            let countPerCategory = max(1, count / JokeCategory.allCases.count)
+            return await fetchInitialJokes(countPerCategory: countPerCategory)
         }
     }
 
@@ -155,7 +266,7 @@ final class JokeAPIService: Sendable {
             "? ",      // Question mark followed by space
             "... ",    // Ellipsis
             "! ",      // Exclamation followed by space
-            ". ",      // Period followed by space (take first occurrence)
+            ". ",      // Period followed by space
         ]
 
         for pattern in patterns {
@@ -173,49 +284,21 @@ final class JokeAPIService: Sendable {
         return ("Ready for a joke?", joke)
     }
 
-    // MARK: - Batch Fetching
+    // MARK: - Network Connectivity Check
 
-    func fetchMultipleJokes(count: Int = 5) async -> [Joke] {
-        // Return empty if cancelled
-        guard !Task.isCancelled else { return [] }
+    /// Quick check if we can reach the network
+    func checkConnectivity() async -> Bool {
+        guard let url = URL(string: "https://icanhazdadjoke.com/") else { return false }
 
-        var jokes: [Joke] = []
+        var request = URLRequest(url: url)
+        request.httpMethod = "HEAD"
+        request.timeoutInterval = 5
 
-        await withTaskGroup(of: Joke?.self) { group in
-            for i in 0..<count {
-                // Check cancellation before adding each task
-                guard !Task.isCancelled else { break }
-
-                group.addTask {
-                    // Check cancellation inside each task
-                    guard !Task.isCancelled else { return nil }
-
-                    do {
-                        switch i % 3 {
-                        case 0:
-                            return try await self.fetchDadJoke()
-                        case 1:
-                            return try await self.fetchKnockKnockJoke()
-                        default:
-                            return try await self.fetchRandomJoke()
-                        }
-                    } catch {
-                        // Silently handle errors - don't crash, just skip this joke
-                        return nil
-                    }
-                }
-            }
-
-            for await joke in group {
-                // Check cancellation while collecting results
-                guard !Task.isCancelled else { break }
-
-                if let joke = joke {
-                    jokes.append(joke)
-                }
-            }
+        do {
+            let (_, response) = try await session.data(for: request)
+            return (response as? HTTPURLResponse)?.statusCode == 200
+        } catch {
+            return false
         }
-
-        return jokes
     }
 }
