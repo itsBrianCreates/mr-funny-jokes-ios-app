@@ -101,6 +101,7 @@ struct JokeFeedView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.3), value: viewModel.isOffline)
+            .animation(.easeInOut(duration: 0.3), value: viewModel.isLoadingMore)
         }
     }
 }
