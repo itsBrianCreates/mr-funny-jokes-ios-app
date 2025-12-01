@@ -224,12 +224,14 @@ final class JokeViewModel: ObservableObject {
 
     private func performLoadMore() async {
         isLoadingMore = true
+        let startTime = Date()
 
         // Check connectivity
         let isConnected = await api.checkConnectivity()
 
         if !isConnected {
             isOffline = true
+            await ensureMinimumLoadingTime(startTime: startTime)
             isLoadingMore = false
             return
         }
@@ -265,7 +267,19 @@ final class JokeViewModel: ObservableObject {
             jokes = updatedJokes
         }
 
+        // Ensure skeleton is visible for at least a short time
+        await ensureMinimumLoadingTime(startTime: startTime)
         isLoadingMore = false
+    }
+
+    /// Ensures the loading indicator is shown for at least 400ms for better UX
+    private func ensureMinimumLoadingTime(startTime: Date) async {
+        let minimumLoadingDuration: TimeInterval = 0.4
+        let elapsed = Date().timeIntervalSince(startTime)
+        if elapsed < minimumLoadingDuration {
+            let remaining = minimumLoadingDuration - elapsed
+            try? await Task.sleep(for: .milliseconds(Int(remaining * 1000)))
+        }
     }
 
     // MARK: - Ratings

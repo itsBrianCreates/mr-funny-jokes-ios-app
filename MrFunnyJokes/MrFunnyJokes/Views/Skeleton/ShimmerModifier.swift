@@ -1,5 +1,4 @@
 import SwiftUI
-import Foundation
 
 // MARK: - Shimmer Effect Modifier
 // A subtle pulsing animation applied to skeleton placeholder views.
@@ -7,18 +6,18 @@ import Foundation
 // while being performant and non-distracting.
 
 struct ShimmerModifier: ViewModifier {
-    @State private var phase: CGFloat = 0
+    @State private var isAnimating = false
 
     func body(content: Content) -> some View {
         content
-            .opacity(0.4 + 0.3 * Darwin.sin(Double(phase)))
+            .opacity(isAnimating ? 0.7 : 0.4)
             .onAppear {
                 // Continuous pulse animation with smooth easing
                 withAnimation(
-                    .easeInOut(duration: 1.2)
+                    .easeInOut(duration: 1.0)
                     .repeatForever(autoreverses: true)
                 ) {
-                    phase = .pi
+                    isAnimating = true
                 }
             }
     }
