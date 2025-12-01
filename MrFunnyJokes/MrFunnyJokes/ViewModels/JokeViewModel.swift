@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 @MainActor
 final class JokeViewModel: ObservableObject {
@@ -21,6 +22,7 @@ final class JokeViewModel: ObservableObject {
     @Published var hasMoreJokes = true
 
     private let storage = LocalStorageService.shared
+    private let sharedStorage = SharedStorageService.shared
     private let api = JokeAPIService.shared
     private var copyTask: Task<Void, Never>?
     private var loadMoreTask: Task<Void, Never>?
@@ -105,6 +107,9 @@ final class JokeViewModel: ObservableObject {
         }
 
         jokes = allJokes.shuffled()
+
+        // Sync joke of the day to widget
+        syncJokeOfTheDayToWidget()
     }
 
     /// Fetch initial content from all APIs
@@ -368,5 +373,22 @@ final class JokeViewModel: ObservableObject {
         HapticManager.shared.lightTap()
         selectedCategory = category
         hasMoreJokes = true // Reset when changing categories
+    }
+
+    // MARK: - Widget Sync
+
+    /// Sync the current joke of the day to shared storage for widget access
+    private func syncJokeOfTheDayToWidget() {
+        guard let joke = jokeOfTheDay else { return }
+
+        let sharedJoke = SharedJokeOfTheDay(
+            id: joke.id.uuidString,
+            setup: joke.setup,
+            punchline: joke.punchline,
+            category: joke.category.rawValue
+        )
+
+        sharedStorage.saveJokeOfTheDay(sharedJoke)
+        WidgetCenter.shared.reloadTimelines(ofKind: "JokeOfTheDayWidget")
     }
 }

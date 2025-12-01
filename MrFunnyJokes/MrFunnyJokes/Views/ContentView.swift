@@ -25,6 +25,26 @@ struct ContentView: View {
             }
         }
         .tint(.accessibleYellow)
+        .onOpenURL { url in
+            handleDeepLink(url)
+        }
+    }
+
+    // MARK: - Deep Linking
+
+    private func handleDeepLink(_ url: URL) {
+        guard url.scheme == "mrfunnyjokes" else { return }
+
+        switch url.host {
+        case "home":
+            selectedTab = .home
+        case "me":
+            selectedTab = .me
+        case "search":
+            selectedTab = .search
+        default:
+            selectedTab = .home
+        }
     }
 
     // MARK: - Home Tab
