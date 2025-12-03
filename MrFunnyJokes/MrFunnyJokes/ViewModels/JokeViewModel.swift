@@ -220,6 +220,10 @@ final class JokeViewModel: ObservableObject {
             // Network error - mark as offline and use cached content (including hardcoded fallback)
             print("Firestore fetch error: \(error)")
             isOffline = true
+            // Ensure local jokes are loaded if jokes array is empty
+            if jokes.isEmpty {
+                loadLocalJokes()
+            }
         }
 
         await completeInitialLoading()
@@ -280,6 +284,8 @@ final class JokeViewModel: ObservableObject {
         } catch {
             print("Firestore refresh error: \(error)")
             isOffline = true
+            // Reload local jokes (cached + hardcoded) as fallback when offline
+            loadLocalJokes()
         }
 
         isRefreshing = false
