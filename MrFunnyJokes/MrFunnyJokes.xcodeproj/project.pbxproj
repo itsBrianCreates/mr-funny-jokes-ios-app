@@ -18,6 +18,8 @@
 		A10000000000000000000010 /* JokeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* JokeViewModel.swift */; };
 		A10000000000000000000011 /* JokeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* JokeAPIService.swift */; };
 		A10000000000000000000012 /* LocalStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* LocalStorageService.swift */; };
+		A10000000000000000000028 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* FirestoreService.swift */; };
+		A10000000000000000000029 /* FirestoreModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* FirestoreModels.swift */; };
 		A10000000000000000000013 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* Color+Extensions.swift */; };
 		A10000000000000000000014 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* HapticManager.swift */; };
 		A10000000000000000000016 /* GrainOMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* GrainOMeterView.swift */; };
@@ -80,6 +82,8 @@
 		A20000000000000000000010 /* JokeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeViewModel.swift; sourceTree = "<group>"; };
 		A20000000000000000000011 /* JokeAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeAPIService.swift; sourceTree = "<group>"; };
 		A20000000000000000000012 /* LocalStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageService.swift; sourceTree = "<group>"; };
+		A20000000000000000000028 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		A20000000000000000000029 /* FirestoreModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreModels.swift; sourceTree = "<group>"; };
 		A20000000000000000000013 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		A20000000000000000000014 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		A20000000000000000000016 /* GrainOMeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrainOMeterView.swift; sourceTree = "<group>"; };
@@ -174,6 +178,7 @@
 			children = (
 				A20000000000000000000005 /* Joke.swift */,
 				A20000000000000000000006 /* JokeCategory.swift */,
+				A20000000000000000000029 /* FirestoreModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 			children = (
 				A20000000000000000000011 /* JokeAPIService.swift */,
 				A20000000000000000000012 /* LocalStorageService.swift */,
+				A20000000000000000000028 /* FirestoreService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -386,6 +392,8 @@
 				A10000000000000000000010 /* JokeViewModel.swift in Sources */,
 				A10000000000000000000011 /* JokeAPIService.swift in Sources */,
 				A10000000000000000000012 /* LocalStorageService.swift in Sources */,
+				A10000000000000000000028 /* FirestoreService.swift in Sources */,
+				A10000000000000000000029 /* FirestoreModels.swift in Sources */,
 				A10000000000000000000013 /* Color+Extensions.swift in Sources */,
 				A10000000000000000000014 /* HapticManager.swift in Sources */,
 				A10000000000000000000016 /* GrainOMeterView.swift in Sources */,
