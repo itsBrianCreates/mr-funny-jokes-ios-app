@@ -85,7 +85,7 @@ struct ContentView: View {
                     filterMenu
                 }
             }
-            .navigationDestination(for: Character.self) { character in
+            .navigationDestination(for: JokeCharacter.self) { character in
                 CharacterDetailView(character: character)
             }
         }

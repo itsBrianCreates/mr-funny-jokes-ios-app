@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Represents a character persona that categorizes jokes in the app
-struct Character: Identifiable, Hashable {
+/// Named JokeCharacter to avoid conflict with Swift's built-in Character type
+struct JokeCharacter: Identifiable, Hashable {
     let id: String
     let name: String
     let fullName: String
@@ -10,7 +11,7 @@ struct Character: Identifiable, Hashable {
     let color: Color
 
     /// All available characters in the app
-    static let allCharacters: [Character] = [
+    static let allCharacters: [JokeCharacter] = [
         .mrFunny,
         .mrBad,
         .mrSad,
@@ -20,7 +21,7 @@ struct Character: Identifiable, Hashable {
 
     // MARK: - Character Definitions
 
-    static let mrFunny = Character(
+    static let mrFunny = JokeCharacter(
         id: "mr_funny",
         name: "Mr. Funny",
         fullName: "Mr. Funny",
@@ -29,7 +30,7 @@ struct Character: Identifiable, Hashable {
         color: .yellow
     )
 
-    static let mrBad = Character(
+    static let mrBad = JokeCharacter(
         id: "mr_bad",
         name: "Mr. Bad",
         fullName: "Mr. Bad",
@@ -38,7 +39,7 @@ struct Character: Identifiable, Hashable {
         color: .purple
     )
 
-    static let mrSad = Character(
+    static let mrSad = JokeCharacter(
         id: "mr_sad",
         name: "Mr. Sad",
         fullName: "Mr. Sad",
@@ -47,7 +48,7 @@ struct Character: Identifiable, Hashable {
         color: .blue
     )
 
-    static let mrPotty = Character(
+    static let mrPotty = JokeCharacter(
         id: "mr_potty",
         name: "Mr. Potty",
         fullName: "Mr. Potty",
@@ -56,7 +57,7 @@ struct Character: Identifiable, Hashable {
         color: .brown
     )
 
-    static let mrLove = Character(
+    static let mrLove = JokeCharacter(
         id: "mr_love",
         name: "Mr. Love",
         fullName: "Mr. Love",
@@ -66,12 +67,12 @@ struct Character: Identifiable, Hashable {
     )
 
     /// Find a character by its ID
-    static func find(byId id: String) -> Character? {
+    static func find(byId id: String) -> JokeCharacter? {
         allCharacters.first { $0.id == id }
     }
 
     /// Find a character by name (case-insensitive)
-    static func find(byName name: String) -> Character? {
+    static func find(byName name: String) -> JokeCharacter? {
         let normalizedName = name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         return allCharacters.first { character in
             character.name.lowercased() == normalizedName ||

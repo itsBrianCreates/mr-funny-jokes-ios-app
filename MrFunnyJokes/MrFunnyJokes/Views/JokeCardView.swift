@@ -10,9 +10,9 @@ struct JokeCardView: View {
     @State private var showingSheet = false
 
     /// The character associated with this joke, if any
-    private var character: Character? {
+    private var jokeCharacter: JokeCharacter? {
         guard let characterName = joke.character else { return nil }
-        return Character.find(byName: characterName)
+        return JokeCharacter.find(byName: characterName)
     }
 
     var body: some View {
@@ -31,7 +31,7 @@ struct JokeCardView: View {
                 // Character, category and rating row
                 HStack(spacing: 8) {
                     // Character indicator (if available)
-                    if let character = character {
+                    if let character = jokeCharacter {
                         CharacterIndicatorView(character: character)
                     }
 
@@ -72,7 +72,7 @@ struct JokeCardView: View {
 
 /// A small circular indicator showing the character who tells this joke
 struct CharacterIndicatorView: View {
-    let character: Character
+    let character: JokeCharacter
 
     /// Size of the indicator circle
     private let size: CGFloat = 20

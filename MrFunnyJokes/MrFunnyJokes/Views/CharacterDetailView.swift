@@ -6,9 +6,9 @@ struct CharacterDetailView: View {
     @StateObject private var viewModel: CharacterDetailViewModel
     @Environment(\.dismiss) private var dismiss
 
-    let character: Character
+    let character: JokeCharacter
 
-    init(character: Character) {
+    init(character: JokeCharacter) {
         self.character = character
         self._viewModel = StateObject(wrappedValue: CharacterDetailViewModel(character: character))
     }

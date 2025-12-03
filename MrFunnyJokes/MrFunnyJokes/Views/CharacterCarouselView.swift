@@ -3,12 +3,12 @@ import SwiftUI
 /// A horizontal scrolling carousel displaying all character personas
 /// Inspired by Apple Fitness+ trainer carousel design
 struct CharacterCarouselView: View {
-    let characters: [Character]
-    let onCharacterTap: (Character) -> Void
+    let characters: [JokeCharacter]
+    let onCharacterTap: (JokeCharacter) -> Void
 
     init(
-        characters: [Character] = Character.allCharacters,
-        onCharacterTap: @escaping (Character) -> Void
+        characters: [JokeCharacter] = JokeCharacter.allCharacters,
+        onCharacterTap: @escaping (JokeCharacter) -> Void
     ) {
         self.characters = characters
         self.onCharacterTap = onCharacterTap
@@ -50,7 +50,7 @@ struct CharacterCarouselView: View {
 
 /// A circular view displaying a character's icon and name
 struct CharacterCircleView: View {
-    let character: Character
+    let character: JokeCharacter
 
     /// Size of the circular image
     private let circleSize: CGFloat = 80

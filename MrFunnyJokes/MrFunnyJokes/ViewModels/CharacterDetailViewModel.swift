@@ -10,7 +10,7 @@ final class CharacterDetailViewModel: ObservableObject {
     @Published var selectedJokeType: JokeCategory? = nil
     @Published var copiedJokeId: UUID?
 
-    let character: Character
+    let character: JokeCharacter
 
     private let firestoreService = FirestoreService.shared
     private let storage = LocalStorageService.shared
@@ -34,7 +34,7 @@ final class CharacterDetailViewModel: ObservableObject {
         return JokeCategory.allCases.filter { types.contains($0) }
     }
 
-    init(character: Character) {
+    init(character: JokeCharacter) {
         self.character = character
     }
 
