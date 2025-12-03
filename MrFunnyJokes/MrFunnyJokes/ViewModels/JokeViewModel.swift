@@ -23,13 +23,13 @@ final class JokeViewModel: ObservableObject {
 
     private let storage = LocalStorageService.shared
     private let sharedStorage = SharedStorageService.shared
-    private let api = JokeAPIService.shared
+    private let firestoreService = FirestoreService.shared
     private var copyTask: Task<Void, Never>?
     private var loadMoreTask: Task<Void, Never>?
     private var initialLoadTask: Task<Void, Never>?
 
     /// Number of jokes to fetch per batch
-    private let batchSize = 9
+    private let batchSize = 10
     /// Number of jokes to fetch per category on initial load
     private let initialLoadPerCategory = 8
 
@@ -185,40 +185,43 @@ final class JokeViewModel: ObservableObject {
         WidgetCenter.shared.reloadTimelines(ofKind: "JokeOfTheDayWidget")
     }
 
-    /// Fetch initial content from all APIs
+    /// Fetch initial content from Firestore
     private func fetchInitialAPIContent() async {
-        // Check connectivity first
-        let isConnected = await api.checkConnectivity()
+        do {
+            // Fetch jokes from Firestore
+            let newJokes = try await firestoreService.fetchInitialJokes(limit: 24)
 
-        if !isConnected {
-            // We're offline - mark it and complete initial loading
-            isOffline = true
-            await completeInitialLoading()
-            return
-        }
+            guard !Task.isCancelled else { return }
 
-        isOffline = false
+            isOffline = false
 
-        // Fetch jokes from all categories
-        let newJokes = await api.fetchInitialJokes(countPerCategory: initialLoadPerCategory)
-
-        guard !Task.isCancelled else { return }
-
-        if !newJokes.isEmpty {
-            // Cache the new jokes by category
-            let grouped = Dictionary(grouping: newJokes, by: { $0.category })
-            for (category, categoryJokes) in grouped {
-                storage.saveCachedJokes(categoryJokes, for: category)
-            }
-
-            // Add new jokes to our list, avoiding duplicates
-            var updatedJokes = jokes
-            for joke in newJokes {
-                if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                    updatedJokes.append(joke)
+            if !newJokes.isEmpty {
+                // Cache the new jokes by category
+                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
+                for (category, categoryJokes) in grouped {
+                    storage.saveCachedJokes(categoryJokes, for: category)
                 }
+
+                // Apply user ratings from local storage
+                var jokesWithRatings = newJokes.map { joke -> Joke in
+                    var mutableJoke = joke
+                    mutableJoke.userRating = storage.getRating(for: joke.id)
+                    return mutableJoke
+                }
+
+                // Add new jokes to our list, avoiding duplicates
+                var updatedJokes = jokes
+                for joke in jokesWithRatings {
+                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
+                        updatedJokes.append(joke)
+                    }
+                }
+                jokes = updatedJokes.shuffled()
             }
-            jokes = updatedJokes.shuffled()
+        } catch {
+            // Network error - mark as offline and use cached content
+            print("Firestore fetch error: \(error)")
+            isOffline = true
         }
 
         await completeInitialLoading()
@@ -236,40 +239,51 @@ final class JokeViewModel: ObservableObject {
         guard !isRefreshing else { return }
         isRefreshing = true
 
-        // Check connectivity
-        let isConnected = await api.checkConnectivity()
+        do {
+            // Reset pagination to get fresh data
+            firestoreService.resetPagination()
 
-        if !isConnected {
-            isOffline = true
-            isRefreshing = false
-            return
-        }
-
-        isOffline = false
-
-        // Fetch new jokes
-        let newJokes = await api.fetchMoreJokes(category: selectedCategory, count: batchSize)
-
-        guard !Task.isCancelled else {
-            isRefreshing = false
-            return
-        }
-
-        if !newJokes.isEmpty {
-            // Cache them
-            let grouped = Dictionary(grouping: newJokes, by: { $0.category })
-            for (category, categoryJokes) in grouped {
-                storage.saveCachedJokes(categoryJokes, for: category)
+            // Fetch new jokes from Firestore
+            let newJokes: [Joke]
+            if let category = selectedCategory {
+                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize)
+            } else {
+                newJokes = try await firestoreService.fetchInitialJokes(limit: batchSize)
             }
 
-            // Add to beginning of list
-            var updatedJokes = jokes
-            for joke in newJokes.reversed() {
-                if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                    updatedJokes.insert(joke, at: 0)
+            guard !Task.isCancelled else {
+                isRefreshing = false
+                return
+            }
+
+            isOffline = false
+
+            if !newJokes.isEmpty {
+                // Cache them
+                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
+                for (category, categoryJokes) in grouped {
+                    storage.saveCachedJokes(categoryJokes, for: category)
                 }
+
+                // Apply user ratings
+                let jokesWithRatings = newJokes.map { joke -> Joke in
+                    var mutableJoke = joke
+                    mutableJoke.userRating = storage.getRating(for: joke.id)
+                    return mutableJoke
+                }
+
+                // Add to beginning of list
+                var updatedJokes = jokes
+                for joke in jokesWithRatings.reversed() {
+                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
+                        updatedJokes.insert(joke, at: 0)
+                    }
+                }
+                jokes = updatedJokes
             }
-            jokes = updatedJokes
+        } catch {
+            print("Firestore refresh error: \(error)")
+            isOffline = true
         }
 
         isRefreshing = false
@@ -304,45 +318,51 @@ final class JokeViewModel: ObservableObject {
         isLoadingMore = true
         let startTime = Date()
 
-        // Check connectivity
-        let isConnected = await api.checkConnectivity()
-
-        if !isConnected {
-            isOffline = true
-            await ensureMinimumLoadingTime(startTime: startTime)
-            isLoadingMore = false
-            return
-        }
-
-        isOffline = false
-
-        // Fetch more jokes for current category (or all if no filter)
-        let newJokes = await api.fetchMoreJokes(category: selectedCategory, count: batchSize)
-
-        guard !Task.isCancelled else {
-            isLoadingMore = false
-            return
-        }
-
-        if newJokes.isEmpty {
-            // No more jokes available from API
-            // (In practice, these APIs always return something, but handle edge case)
-            hasMoreJokes = true // Keep trying - APIs are random so there's always more
-        } else {
-            // Cache them
-            let grouped = Dictionary(grouping: newJokes, by: { $0.category })
-            for (category, categoryJokes) in grouped {
-                storage.saveCachedJokes(categoryJokes, for: category)
+        do {
+            // Fetch more jokes from Firestore
+            let newJokes: [Joke]
+            if let category = selectedCategory {
+                newJokes = try await firestoreService.fetchMoreJokes(category: category, limit: batchSize)
+            } else {
+                newJokes = try await firestoreService.fetchMoreJokes(limit: batchSize)
             }
 
-            // Add to end of list, avoiding duplicates
-            var updatedJokes = jokes
-            for joke in newJokes {
-                if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                    updatedJokes.append(joke)
+            guard !Task.isCancelled else {
+                isLoadingMore = false
+                return
+            }
+
+            isOffline = false
+
+            if newJokes.isEmpty {
+                // No more jokes available
+                hasMoreJokes = false
+            } else {
+                // Cache them
+                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
+                for (category, categoryJokes) in grouped {
+                    storage.saveCachedJokes(categoryJokes, for: category)
                 }
+
+                // Apply user ratings
+                let jokesWithRatings = newJokes.map { joke -> Joke in
+                    var mutableJoke = joke
+                    mutableJoke.userRating = storage.getRating(for: joke.id)
+                    return mutableJoke
+                }
+
+                // Add to end of list, avoiding duplicates
+                var updatedJokes = jokes
+                for joke in jokesWithRatings {
+                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
+                        updatedJokes.append(joke)
+                    }
+                }
+                jokes = updatedJokes
             }
-            jokes = updatedJokes
+        } catch {
+            print("Firestore load more error: \(error)")
+            isOffline = true
         }
 
         // Ensure skeleton is visible for at least a short time
@@ -375,6 +395,17 @@ final class JokeViewModel: ObservableObject {
             storage.saveRating(for: joke.id, rating: clampedRating)
             if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
                 jokes[index].userRating = clampedRating
+            }
+
+            // Sync rating to Firestore if we have a Firestore ID
+            if let firestoreId = joke.firestoreId {
+                Task {
+                    do {
+                        try await firestoreService.updateJokeRating(jokeId: firestoreId, rating: clampedRating)
+                    } catch {
+                        print("Failed to sync rating to Firestore: \(error)")
+                    }
+                }
             }
         }
     }
@@ -446,6 +477,7 @@ final class JokeViewModel: ObservableObject {
         HapticManager.shared.lightTap()
         selectedCategory = category
         hasMoreJokes = true // Reset when changing categories
+        firestoreService.resetPagination() // Reset Firestore pagination
     }
 
 }
