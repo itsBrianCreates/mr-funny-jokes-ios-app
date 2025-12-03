@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = JokeViewModel()
     @State private var selectedTab: AppTab = .home
+    @State private var navigationPath = NavigationPath()
 
     enum AppTab: Hashable {
         case home
@@ -57,7 +58,7 @@ struct ContentView: View {
     }
 
     private var homeTab: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             ZStack {
                 // Skeleton loading view - shown during initial load
                 if viewModel.isInitialLoading {
@@ -67,8 +68,13 @@ struct ContentView: View {
 
                 // Actual content - shown after loading completes
                 if !viewModel.isInitialLoading {
-                    JokeFeedView(viewModel: viewModel)
-                        .transition(.opacity)
+                    JokeFeedView(
+                        viewModel: viewModel,
+                        onCharacterTap: { character in
+                            navigationPath.append(character)
+                        }
+                    )
+                    .transition(.opacity)
                 }
             }
             .animation(.easeInOut(duration: 0.4), value: viewModel.isInitialLoading)
@@ -78,6 +84,9 @@ struct ContentView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     filterMenu
                 }
+            }
+            .navigationDestination(for: Character.self) { character in
+                CharacterDetailView(character: character)
             }
         }
     }

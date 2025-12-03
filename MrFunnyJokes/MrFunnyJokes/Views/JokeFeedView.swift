@@ -2,9 +2,15 @@ import SwiftUI
 
 struct JokeFeedView: View {
     @ObservedObject var viewModel: JokeViewModel
+    let onCharacterTap: (Character) -> Void
 
     /// Unique identifier for the top anchor - used for reliable scroll-to-top
     private let topAnchorID = "feed-top-anchor"
+
+    /// Show character carousel only when viewing "All" jokes (no category filter)
+    private var showCharacterCarousel: Bool {
+        viewModel.selectedCategory == nil
+    }
 
     /// Show Joke of the Day only when viewing "All" jokes (no category filter)
     private var showJokeOfTheDay: Bool {
@@ -40,6 +46,12 @@ struct JokeFeedView: View {
                     if viewModel.isOffline {
                         OfflineBannerView()
                             .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+
+                    // Character carousel (only when "All" is selected)
+                    if showCharacterCarousel {
+                        CharacterCarouselView(onCharacterTap: onCharacterTap)
+                            .padding(.bottom, 8)
                     }
 
                     // Joke of the Day hero section (only when "All" is selected)
@@ -144,8 +156,13 @@ struct LoadingMoreView: View {
 
 #Preview {
     NavigationStack {
-        JokeFeedView(viewModel: JokeViewModel())
-            .navigationTitle("All Jokes")
-            .navigationBarTitleDisplayMode(.large)
+        JokeFeedView(
+            viewModel: JokeViewModel(),
+            onCharacterTap: { character in
+                print("Tapped: \(character.name)")
+            }
+        )
+        .navigationTitle("All Jokes")
+        .navigationBarTitleDisplayMode(.large)
     }
 }
