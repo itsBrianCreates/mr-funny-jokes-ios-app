@@ -120,25 +120,10 @@ final class JokeViewModel: ObservableObject {
         }
     }
 
-    /// Load jokes from local storage (cached + hardcoded fallback)
+    /// Load jokes from local cache (Firebase jokes only - no hardcoded fallback)
     private func loadLocalJokes() {
         let cached = storage.loadAllCachedJokes()
-        let fallback = storage.loadHardcodedJokes()
-
-        // Combine: use cached if available, fallback otherwise
-        var allJokes: [Joke] = []
-
-        // Add cached jokes first (they're fresher)
-        allJokes.append(contentsOf: cached)
-
-        // Add fallback jokes that aren't duplicates
-        for joke in fallback {
-            if !allJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                allJokes.append(joke)
-            }
-        }
-
-        jokes = allJokes.shuffled()
+        jokes = cached.shuffled()
 
         // Initialize joke of the day - check shared storage first for persistence
         initializeJokeOfTheDay()
@@ -217,10 +202,10 @@ final class JokeViewModel: ObservableObject {
                 initializeJokeOfTheDay()
             }
         } catch {
-            // Network error - mark as offline and use cached content (including hardcoded fallback)
+            // Network error - mark as offline and use cached content
             print("Firestore fetch error: \(error)")
             isOffline = true
-            // Ensure local jokes are loaded if jokes array is empty
+            // Ensure cached jokes are loaded if jokes array is empty
             if jokes.isEmpty {
                 loadLocalJokes()
             }
@@ -284,7 +269,7 @@ final class JokeViewModel: ObservableObject {
         } catch {
             print("Firestore refresh error: \(error)")
             isOffline = true
-            // Reload local jokes (cached + hardcoded) as fallback when offline
+            // Reload cached jokes as fallback when offline
             loadLocalJokes()
         }
 
