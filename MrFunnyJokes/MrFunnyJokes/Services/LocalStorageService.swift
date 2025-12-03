@@ -15,26 +15,16 @@ final class LocalStorageService: @unchecked Sendable {
         self.userDefaults = UserDefaults.standard
     }
 
-    // MARK: - Hardcoded Jokes (Fallback)
+    // MARK: - Hardcoded Jokes (Removed - Firebase only)
 
+    /// Hardcoded jokes have been removed - app now uses Firebase as the only data source
     func loadHardcodedJokes() -> [Joke] {
-        guard let url = Bundle.main.url(forResource: "HardcodedJokes", withExtension: "json") else {
-            return []
-        }
-
-        do {
-            let data = try Data(contentsOf: url)
-            let jokes = try JSONDecoder().decode([Joke].self, from: data)
-            return applyStoredRatings(to: jokes)
-        } catch {
-            return []
-        }
+        return []
     }
 
-    /// Load fallback jokes for a specific category
+    /// Load fallback jokes for a specific category (disabled - Firebase only)
     func loadFallbackJokes(for category: JokeCategory) -> [Joke] {
-        let allFallback = loadHardcodedJokes()
-        return allFallback.filter { $0.category == category }
+        return []
     }
 
     // MARK: - Ratings
