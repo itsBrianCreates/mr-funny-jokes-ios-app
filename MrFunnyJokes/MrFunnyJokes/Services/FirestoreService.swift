@@ -238,7 +238,7 @@ final class FirestoreService {
     func updateJokeRating(jokeId: String, rating: Int) async throws {
         let jokeRef = db.collection(jokesCollection).document(jokeId)
 
-        try await db.runTransaction { transaction, errorPointer in
+        _ = try await db.runTransaction { transaction, errorPointer in
             let document: DocumentSnapshot
             do {
                 document = try transaction.getDocument(jokeRef)
