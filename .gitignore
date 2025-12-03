@@ -57,3 +57,9 @@ iOSInjectionProject/
 
 # Claude Code
 .claude/
+
+# Node.js
+node_modules/
+
+# Firebase
+firebase-key.json

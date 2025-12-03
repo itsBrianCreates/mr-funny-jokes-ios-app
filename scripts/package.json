@@ -1,0 +1,12 @@
+{
+  "name": "mr-funny-jokes-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for managing Mr. Funny Jokes Firestore data",
+  "type": "module",
+  "scripts": {
+    "import-jokes": "node import-jokes.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
