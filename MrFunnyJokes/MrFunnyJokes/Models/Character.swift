@@ -1,0 +1,83 @@
+import SwiftUI
+
+/// Represents a character persona that categorizes jokes in the app
+struct Character: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let fullName: String
+    let bio: String
+    let sfSymbol: String
+    let color: Color
+
+    /// All available characters in the app
+    static let allCharacters: [Character] = [
+        .mrFunny,
+        .mrBad,
+        .mrSad,
+        .mrPotty,
+        .mrLove
+    ]
+
+    // MARK: - Character Definitions
+
+    static let mrFunny = Character(
+        id: "mr_funny",
+        name: "Mr. Funny",
+        fullName: "Mr. Funny",
+        bio: "Your friendly neighborhood dad joke enthusiast. Bringing wholesome laughs and guaranteed groans since... well, since dads existed.",
+        sfSymbol: "face.smiling.inverse",
+        color: .yellow
+    )
+
+    static let mrBad = Character(
+        id: "mr_bad",
+        name: "Mr. Bad",
+        fullName: "Mr. Bad",
+        bio: "Dark humor connoisseur. Not for the faint of heart, but perfect for those who laugh at life's absurdities.",
+        sfSymbol: "theatermasks.fill",
+        color: .purple
+    )
+
+    static let mrSad = Character(
+        id: "mr_sad",
+        name: "Mr. Sad",
+        fullName: "Mr. Sad",
+        bio: "Finding humor in melancholy. Sometimes you just need to laugh to keep from crying.",
+        sfSymbol: "cloud.rain.fill",
+        color: .blue
+    )
+
+    static let mrPotty = Character(
+        id: "mr_potty",
+        name: "Mr. Potty",
+        fullName: "Mr. Potty",
+        bio: "Embracing the humor that makes you say 'ew' and 'haha' at the same time. You've been warned.",
+        sfSymbol: "toilet.fill",
+        color: .brown
+    )
+
+    static let mrLove = Character(
+        id: "mr_love",
+        name: "Mr. Love",
+        fullName: "Mr. Love",
+        bio: "Smooth operator with lines that are so cheesy they just might work. Use responsibly.",
+        sfSymbol: "heart.fill",
+        color: .pink
+    )
+
+    /// Find a character by its ID
+    static func find(byId id: String) -> Character? {
+        allCharacters.first { $0.id == id }
+    }
+
+    /// Find a character by name (case-insensitive)
+    static func find(byName name: String) -> Character? {
+        let normalizedName = name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        return allCharacters.first { character in
+            character.name.lowercased() == normalizedName ||
+            character.id.lowercased() == normalizedName ||
+            // Handle variations like "Mr Funny" vs "Mr. Funny"
+            character.name.lowercased().replacingOccurrences(of: ".", with: "") == normalizedName.replacingOccurrences(of: ".", with: "")
+        }
+    }
+}

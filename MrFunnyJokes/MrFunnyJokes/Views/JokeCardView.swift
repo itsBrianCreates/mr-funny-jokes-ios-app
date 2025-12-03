@@ -9,6 +9,12 @@ struct JokeCardView: View {
 
     @State private var showingSheet = false
 
+    /// The character associated with this joke, if any
+    private var character: Character? {
+        guard let characterName = joke.character else { return nil }
+        return Character.find(byName: characterName)
+    }
+
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
@@ -22,8 +28,14 @@ struct JokeCardView: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                // Category and rating row
-                HStack {
+                // Character, category and rating row
+                HStack(spacing: 8) {
+                    // Character indicator (if available)
+                    if let character = character {
+                        CharacterIndicatorView(character: character)
+                    }
+
+                    // Category
                     HStack(spacing: 4) {
                         Image(systemName: joke.category.icon)
                         Text(joke.category.rawValue)
@@ -56,6 +68,36 @@ struct JokeCardView: View {
     }
 }
 
+// MARK: - Character Indicator View
+
+/// A small circular indicator showing the character who tells this joke
+struct CharacterIndicatorView: View {
+    let character: Character
+
+    /// Size of the indicator circle
+    private let size: CGFloat = 20
+
+    var body: some View {
+        HStack(spacing: 4) {
+            // Small circular icon
+            ZStack {
+                Circle()
+                    .fill(character.color.opacity(0.2))
+                    .frame(width: size, height: size)
+
+                Image(systemName: character.sfSymbol)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(character.color)
+            }
+
+            // Character name
+            Text(character.name)
+                .font(.caption)
+                .foregroundStyle(character.color)
+        }
+    }
+}
+
 #Preview {
     ScrollView {
         VStack(spacing: 16) {
@@ -63,7 +105,8 @@ struct JokeCardView: View {
                 joke: Joke(
                     category: .dadJoke,
                     setup: "Why don't scientists trust atoms?",
-                    punchline: "Because they make up everything!"
+                    punchline: "Because they make up everything!",
+                    character: "Mr. Funny"
                 ),
                 isCopied: false,
                 onShare: {},
@@ -76,7 +119,8 @@ struct JokeCardView: View {
                     category: .knockKnock,
                     setup: "Knock knock. Who's there? Lettuce.",
                     punchline: "Lettuce who? Lettuce in, it's cold out here!",
-                    userRating: 3
+                    userRating: 3,
+                    character: "Mr. Potty"
                 ),
                 isCopied: true,
                 onShare: {},
@@ -89,7 +133,21 @@ struct JokeCardView: View {
                     category: .pickupLine,
                     setup: "Are you a magician?",
                     punchline: "Because whenever I look at you, everyone else disappears!",
-                    userRating: 4
+                    userRating: 4,
+                    character: "Mr. Love"
+                ),
+                isCopied: false,
+                onShare: {},
+                onCopy: {},
+                onRate: { _ in }
+            )
+
+            // Card without character
+            JokeCardView(
+                joke: Joke(
+                    category: .dadJoke,
+                    setup: "What do you call a fake noodle?",
+                    punchline: "An impasta!"
                 ),
                 isCopied: false,
                 onShare: {},
