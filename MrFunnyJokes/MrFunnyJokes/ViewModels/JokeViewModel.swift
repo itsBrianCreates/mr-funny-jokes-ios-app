@@ -203,23 +203,21 @@ final class JokeViewModel: ObservableObject {
                 }
 
                 // Apply user ratings from local storage
-                var jokesWithRatings = newJokes.map { joke -> Joke in
+                let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
                     mutableJoke.userRating = storage.getRating(for: joke.id)
                     return mutableJoke
                 }
 
-                // Add new jokes to our list, avoiding duplicates
-                var updatedJokes = jokes
-                for joke in jokesWithRatings {
-                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                        updatedJokes.append(joke)
-                    }
-                }
-                jokes = updatedJokes.shuffled()
+                // Replace local/hardcoded jokes with Firebase jokes
+                // Firebase is now the primary data source
+                jokes = jokesWithRatings.shuffled()
+
+                // Re-initialize joke of the day with the new Firebase jokes
+                initializeJokeOfTheDay()
             }
         } catch {
-            // Network error - mark as offline and use cached content
+            // Network error - mark as offline and use cached content (including hardcoded fallback)
             print("Firestore fetch error: \(error)")
             isOffline = true
         }
@@ -242,6 +240,7 @@ final class JokeViewModel: ObservableObject {
         do {
             // Reset pagination to get fresh data
             firestoreService.resetPagination()
+            hasMoreJokes = true
 
             // Fetch new jokes from Firestore
             let newJokes: [Joke]
@@ -272,14 +271,11 @@ final class JokeViewModel: ObservableObject {
                     return mutableJoke
                 }
 
-                // Add to beginning of list
-                var updatedJokes = jokes
-                for joke in jokesWithRatings.reversed() {
-                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                        updatedJokes.insert(joke, at: 0)
-                    }
-                }
-                jokes = updatedJokes
+                // Replace with fresh Firebase jokes
+                jokes = jokesWithRatings.shuffled()
+
+                // Re-initialize joke of the day with refreshed jokes
+                initializeJokeOfTheDay()
             }
         } catch {
             print("Firestore refresh error: \(error)")
