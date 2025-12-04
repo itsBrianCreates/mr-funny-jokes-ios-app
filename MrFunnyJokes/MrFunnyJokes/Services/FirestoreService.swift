@@ -5,7 +5,7 @@ import FirebaseFirestore
 final class FirestoreService {
     static let shared = FirestoreService()
 
-    private let db = Firestore.firestore()
+    private let db: Firestore
     private let jokesCollection = "jokes"
     private let charactersCollection = "characters"
 
@@ -13,7 +13,18 @@ final class FirestoreService {
     private var lastDocument: DocumentSnapshot?
     private var lastDocumentsByCategory: [JokeCategory: DocumentSnapshot] = [:]
 
-    private init() {}
+    private init() {
+        // Configure Firestore for optimal performance
+        let settings = FirestoreSettings()
+
+        // Enable persistent cache for faster loads on subsequent launches
+        // 50MB cache provides good balance between storage and performance
+        settings.cacheSettings = PersistentCacheSettings(sizeBytes: 50 * 1024 * 1024 as NSNumber)
+
+        let firestore = Firestore.firestore()
+        firestore.settings = settings
+        self.db = firestore
+    }
 
     // MARK: - Fetch Jokes
 
