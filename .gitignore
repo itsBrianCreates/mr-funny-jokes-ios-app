@@ -57,3 +57,5 @@ iOSInjectionProject/
 
 # Claude Code
 .claude/
+firebase-key.json
+GoogleService-Info.plist
