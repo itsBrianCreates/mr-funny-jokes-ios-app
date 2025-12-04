@@ -23,8 +23,22 @@ struct CharacterDetailView: View {
                 jokesSection
             }
         }
-        .background(Color(.systemBackground))
+        .background(
+            // Full-bleed gradient background
+            LinearGradient(
+                colors: [
+                    character.color.opacity(0.3),
+                    character.color.opacity(0.15),
+                    character.color.opacity(0.05),
+                    Color(.systemBackground)
+                ],
+                startPoint: .top,
+                endPoint: .init(x: 0.5, y: 0.4)
+            )
+            .ignoresSafeArea()
+        )
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .task {
             await viewModel.loadJokes()
         }
@@ -35,37 +49,23 @@ struct CharacterDetailView: View {
     private var heroSection: some View {
         VStack(spacing: 0) {
             // Character icon/image area
-            ZStack {
-                // Gradient background
-                LinearGradient(
-                    colors: [
-                        character.color.opacity(0.3),
-                        character.color.opacity(0.1),
-                        Color(.systemBackground)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+            VStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(character.color.opacity(0.2))
+                        .frame(width: 120, height: 120)
 
-                // Large character icon
-                VStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(character.color.opacity(0.2))
-                            .frame(width: 120, height: 120)
-
-                        Image(systemName: character.sfSymbol)
-                            .font(.system(size: 56, weight: .medium))
-                            .foregroundStyle(character.color)
-                    }
-                    .overlay(
-                        Circle()
-                            .strokeBorder(character.color.opacity(0.4), lineWidth: 3)
-                    )
+                    Image(systemName: character.sfSymbol)
+                        .font(.system(size: 56, weight: .medium))
+                        .foregroundStyle(character.color)
                 }
-                .padding(.top, 20)
-                .padding(.bottom, 40)
+                .overlay(
+                    Circle()
+                        .strokeBorder(character.color.opacity(0.4), lineWidth: 3)
+                )
             }
+            .padding(.top, 20)
+            .padding(.bottom, 40)
             .frame(height: 200)
 
             // Character name and bio
