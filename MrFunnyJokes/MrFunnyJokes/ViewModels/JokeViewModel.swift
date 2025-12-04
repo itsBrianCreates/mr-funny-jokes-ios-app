@@ -465,6 +465,11 @@ final class JokeViewModel: ObservableObject {
         selectedCategory = category
         hasMoreJokes = true // Reset when changing categories
         firestoreService.resetPagination() // Reset Firestore pagination
+
+        // Fetch jokes for the selected category
+        Task {
+            await refresh()
+        }
     }
 
 }
