@@ -46,8 +46,10 @@ final class CharacterDetailViewModel: ObservableObject {
         isLoading = true
 
         do {
+            // Use character.id for Firebase query as Firestore stores character IDs (e.g., "mr_funny")
+            // rather than display names (e.g., "Mr. Funny")
             let newJokes = try await firestoreService.fetchJokes(
-                byCharacter: character.name,
+                byCharacter: character.id,
                 limit: batchSize
             )
 
@@ -76,7 +78,7 @@ final class CharacterDetailViewModel: ObservableObject {
             // Fetch more jokes - we'll use the current count as offset indicator
             let existingIds = Set(jokes.compactMap { $0.firestoreId })
             let newJokes = try await firestoreService.fetchJokes(
-                byCharacter: character.name,
+                byCharacter: character.id,
                 limit: batchSize * 2 // Fetch more to find new ones
             )
 
