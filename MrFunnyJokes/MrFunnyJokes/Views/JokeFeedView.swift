@@ -2,7 +2,7 @@ import SwiftUI
 
 struct JokeFeedView: View {
     @ObservedObject var viewModel: JokeViewModel
-    let onCharacterTap: (Character) -> Void
+    let onCharacterTap: (JokeCharacter) -> Void
 
     /// Unique identifier for the top anchor - used for reliable scroll-to-top
     private let topAnchorID = "feed-top-anchor"
