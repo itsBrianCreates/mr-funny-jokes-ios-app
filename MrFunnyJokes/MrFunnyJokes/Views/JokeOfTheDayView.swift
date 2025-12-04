@@ -10,6 +10,12 @@ struct JokeOfTheDayView: View {
     @State private var showingSheet = false
     @State private var isAppearing = false
 
+    /// The character associated with this joke, if any
+    private var jokeCharacter: JokeCharacter? {
+        guard let characterName = joke.character else { return nil }
+        return JokeCharacter.find(byName: characterName)
+    }
+
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
@@ -31,8 +37,14 @@ struct JokeOfTheDayView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(4)
 
-                // Category and rating row
-                HStack {
+                // Character, category and rating row
+                HStack(spacing: 8) {
+                    // Character indicator (if available)
+                    if let character = jokeCharacter {
+                        CharacterIndicatorView(character: character)
+                    }
+
+                    // Category
                     HStack(spacing: 4) {
                         Image(systemName: joke.category.icon)
                         Text(joke.category.rawValue)
@@ -78,7 +90,8 @@ struct JokeOfTheDayView: View {
                 joke: Joke(
                     category: .dadJoke,
                     setup: "Why don't scientists trust atoms?",
-                    punchline: "Because they make up everything!"
+                    punchline: "Because they make up everything!",
+                    character: "Mr. Funny"
                 ),
                 isCopied: false,
                 onShare: {},
@@ -91,7 +104,8 @@ struct JokeOfTheDayView: View {
                     category: .knockKnock,
                     setup: "Knock knock. Who's there? Lettuce.",
                     punchline: "Lettuce who? Lettuce in, it's cold out here!",
-                    userRating: 4
+                    userRating: 4,
+                    character: "Mr. Potty"
                 ),
                 isCopied: false,
                 onShare: {},

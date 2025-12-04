@@ -129,6 +129,12 @@ struct JokeRowView: View {
 
     @State private var showingSheet = false
 
+    /// The character associated with this joke, if any
+    private var jokeCharacter: JokeCharacter? {
+        guard let characterName = joke.character else { return nil }
+        return JokeCharacter.find(byName: characterName)
+    }
+
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
@@ -141,13 +147,21 @@ struct JokeRowView: View {
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
 
-                // Category
-                HStack(spacing: 4) {
-                    Image(systemName: joke.category.icon)
-                    Text(joke.category.rawValue)
+                // Character and Category
+                HStack(spacing: 8) {
+                    // Character indicator (if available)
+                    if let character = jokeCharacter {
+                        CharacterIndicatorView(character: character)
+                    }
+
+                    // Category
+                    HStack(spacing: 4) {
+                        Image(systemName: joke.category.icon)
+                        Text(joke.category.rawValue)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 4)
