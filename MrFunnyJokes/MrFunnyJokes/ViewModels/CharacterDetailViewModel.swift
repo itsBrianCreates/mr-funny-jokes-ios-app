@@ -46,27 +46,87 @@ final class CharacterDetailViewModel: ObservableObject {
         isLoading = true
 
         do {
-            // Use character.id for Firebase query as Firestore stores character IDs (e.g., "mr_funny")
-            // rather than display names (e.g., "Mr. Funny")
-            let newJokes = try await firestoreService.fetchJokes(
-                byCharacter: character.id,
-                limit: batchSize
-            )
+            // Fetch all jokes and filter client-side for this character
+            // This is more reliable than querying by character field since:
+            // 1. The character field may use different formats (id vs name)
+            // 2. The compound query requires a Firestore index
+            let allJokes = try await firestoreService.fetchInitialJokes(limit: 100)
+
+            // Filter jokes for this character using flexible matching
+            let characterJokes = allJokes.filter { joke in
+                matchesCharacter(joke: joke, character: character)
+            }
 
             // Apply user ratings
-            let jokesWithRatings = newJokes.map { joke -> Joke in
+            let jokesWithRatings = characterJokes.map { joke -> Joke in
                 var mutableJoke = joke
                 mutableJoke.userRating = storage.getRating(for: joke.id)
                 return mutableJoke
             }
 
             jokes = jokesWithRatings
-            hasMoreJokes = newJokes.count >= batchSize
+            hasMoreJokes = characterJokes.count >= batchSize
         } catch {
             print("Error loading jokes for \(character.name): \(error)")
         }
 
         isLoading = false
+    }
+
+    /// Checks if a joke belongs to the specified character
+    /// Uses flexible matching to handle various character field formats,
+    /// with a fallback to category-based assignment when character field is not set
+    private func matchesCharacter(joke: Joke, character: JokeCharacter) -> Bool {
+        // First, try to match by the character field if it's set
+        if let jokeCharacter = joke.character?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines),
+           !jokeCharacter.isEmpty {
+            let characterId = character.id.lowercased()
+            let characterName = character.name.lowercased()
+            let characterNameNoPeriod = characterName.replacingOccurrences(of: ".", with: "")
+            let characterIdWithSpaces = characterId.replacingOccurrences(of: "_", with: " ")
+
+            // Match against various possible formats
+            if jokeCharacter == characterId ||                          // "mr_funny"
+               jokeCharacter == characterName ||                        // "mr. funny"
+               jokeCharacter == characterNameNoPeriod ||                // "mr funny"
+               jokeCharacter == characterIdWithSpaces ||                // "mr funny"
+               jokeCharacter.replacingOccurrences(of: " ", with: "_") == characterId ||
+               jokeCharacter.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: " ", with: "_") == characterId {
+                return true
+            }
+        }
+
+        // Fallback: assign jokes to characters based on category
+        // This ensures jokes show up even if the character field isn't populated
+        return matchesByCategory(joke: joke, character: character)
+    }
+
+    /// Maps joke categories to characters as a fallback when character field is not set
+    /// Based on character personalities:
+    /// - Mr. Funny: Dad joke enthusiast
+    /// - Mr. Love: Pickup lines specialist
+    /// - Mr. Bad, Mr. Sad, Mr. Potty: Share knock-knock jokes
+    private func matchesByCategory(joke: Joke, character: JokeCharacter) -> Bool {
+        switch character.id {
+        case "mr_funny":
+            // Mr. Funny specializes in dad jokes
+            return joke.category == .dadJoke
+        case "mr_love":
+            // Mr. Love specializes in pickup lines
+            return joke.category == .pickupLine
+        case "mr_bad", "mr_sad", "mr_potty":
+            // These characters share knock-knock jokes
+            // Distribute them evenly by using joke ID hash
+            if joke.category == .knockKnock {
+                let characters = ["mr_bad", "mr_sad", "mr_potty"]
+                let jokeHash = abs(joke.id.hashValue)
+                let assignedCharacter = characters[jokeHash % characters.count]
+                return assignedCharacter == character.id
+            }
+            return false
+        default:
+            return false
+        }
     }
 
     /// Loads more jokes (for infinite scroll)
@@ -75,15 +135,17 @@ final class CharacterDetailViewModel: ObservableObject {
         isLoadingMore = true
 
         do {
-            // Fetch more jokes - we'll use the current count as offset indicator
+            // Fetch more jokes and filter client-side for this character
             let existingIds = Set(jokes.compactMap { $0.firestoreId })
-            let newJokes = try await firestoreService.fetchJokes(
-                byCharacter: character.id,
-                limit: batchSize * 2 // Fetch more to find new ones
-            )
+            let allJokes = try await firestoreService.fetchMoreJokes(limit: 50)
+
+            // Filter jokes for this character using flexible matching
+            let characterJokes = allJokes.filter { joke in
+                matchesCharacter(joke: joke, character: character)
+            }
 
             // Filter out duplicates
-            let uniqueNewJokes = newJokes.filter { joke in
+            let uniqueNewJokes = characterJokes.filter { joke in
                 guard let id = joke.firestoreId else { return true }
                 return !existingIds.contains(id)
             }.prefix(batchSize)
