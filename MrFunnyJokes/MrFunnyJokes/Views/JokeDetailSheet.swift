@@ -8,6 +8,12 @@ struct JokeDetailSheet: View {
     let onCopy: () -> Void
     let onRate: (Int) -> Void
 
+    /// The character associated with this joke, if any
+    private var jokeCharacter: JokeCharacter? {
+        guard let characterName = joke.character else { return nil }
+        return JokeCharacter.find(byName: characterName)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -19,13 +25,21 @@ struct JokeDetailSheet: View {
                         standardContent
                     }
 
-                    // Category
-                    HStack(spacing: 4) {
-                        Image(systemName: joke.category.icon)
-                        Text(joke.category.rawValue)
+                    // Character and Category
+                    HStack(spacing: 8) {
+                        // Character indicator (if available)
+                        if let character = jokeCharacter {
+                            CharacterIndicatorView(character: character)
+                        }
+
+                        // Category
+                        HStack(spacing: 4) {
+                            Image(systemName: joke.category.icon)
+                            Text(joke.category.rawValue)
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
 
                     // Rating section
                     GroanOMeterView(currentRating: joke.userRating, onRate: onRate)
@@ -176,7 +190,8 @@ struct JokeDetailSheet: View {
                     category: .dadJoke,
                     setup: "Why don't scientists trust atoms?",
                     punchline: "Because they make up everything!",
-                    userRating: 4
+                    userRating: 4,
+                    character: "Mr. Funny"
                 ),
                 isCopied: false,
                 onDismiss: {},
@@ -195,7 +210,8 @@ struct JokeDetailSheet: View {
                     category: .knockKnock,
                     setup: "Knock knock. Who's there? Lettuce.",
                     punchline: "Lettuce who? Lettuce in, it's cold out here!",
-                    userRating: 3
+                    userRating: 3,
+                    character: "Mr. Potty"
                 ),
                 isCopied: false,
                 onDismiss: {},
