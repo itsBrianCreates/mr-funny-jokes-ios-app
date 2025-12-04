@@ -173,8 +173,8 @@ final class JokeViewModel: ObservableObject {
     /// Fetch initial content from Firestore
     private func fetchInitialAPIContent() async {
         do {
-            // Fetch jokes from Firestore
-            let newJokes = try await firestoreService.fetchInitialJokes(limit: 24)
+            // Fetch jokes from Firestore using concurrent category loading for faster results
+            let newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory)
 
             guard !Task.isCancelled else { return }
 
