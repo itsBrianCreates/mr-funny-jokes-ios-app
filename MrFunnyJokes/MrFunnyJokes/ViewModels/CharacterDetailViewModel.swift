@@ -28,10 +28,10 @@ final class CharacterDetailViewModel: ObservableObject {
         return jokes.filter { $0.category == category }
     }
 
-    /// Available joke types for this character (based on jokes loaded)
+    /// Available joke types for this character (based on character's allowed categories)
     var availableJokeTypes: [JokeCategory] {
-        let types = Set(jokes.map { $0.category })
-        return JokeCategory.allCases.filter { types.contains($0) }
+        // Only return categories that this character is allowed to tell
+        return character.allowedCategories
     }
 
     init(character: JokeCharacter) {
@@ -102,31 +102,10 @@ final class CharacterDetailViewModel: ObservableObject {
     }
 
     /// Maps joke categories to characters as a fallback when character field is not set
-    /// Based on character personalities:
-    /// - Mr. Funny: Dad joke enthusiast
-    /// - Mr. Love: Pickup lines specialist
-    /// - Mr. Bad, Mr. Sad, Mr. Potty: Share knock-knock jokes
+    /// Uses the character's allowedCategories to determine if a joke matches
     private func matchesByCategory(joke: Joke, character: JokeCharacter) -> Bool {
-        switch character.id {
-        case "mr_funny":
-            // Mr. Funny specializes in dad jokes
-            return joke.category == .dadJoke
-        case "mr_love":
-            // Mr. Love specializes in pickup lines
-            return joke.category == .pickupLine
-        case "mr_bad", "mr_sad", "mr_potty":
-            // These characters share knock-knock jokes
-            // Distribute them evenly by using joke ID hash
-            if joke.category == .knockKnock {
-                let characters = ["mr_bad", "mr_sad", "mr_potty"]
-                let jokeHash = abs(joke.id.hashValue)
-                let assignedCharacter = characters[jokeHash % characters.count]
-                return assignedCharacter == character.id
-            }
-            return false
-        default:
-            return false
-        }
+        // Check if the joke's category is in the character's allowed categories
+        return character.allowedCategories.contains(joke.category)
     }
 
     /// Loads more jokes (for infinite scroll)

@@ -91,15 +91,17 @@ struct CharacterDetailView: View {
 
     private var jokesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Section header with filter
+            // Section header with filter (only show filter if character has multiple categories)
             HStack {
                 Text("Jokes")
                     .font(.title2.weight(.bold))
 
                 Spacer()
 
-                // Filter button
-                filterMenu
+                // Only show filter button if character has multiple categories
+                if character.hasMultipleCategories {
+                    filterMenu
+                }
             }
             .padding(.horizontal, 20)
 

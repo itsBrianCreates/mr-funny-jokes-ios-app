@@ -9,6 +9,13 @@ struct JokeCharacter: Identifiable, Hashable {
     let bio: String
     let sfSymbol: String
     let color: Color
+    /// The joke categories this character can tell
+    let allowedCategories: [JokeCategory]
+
+    /// Whether this character has multiple categories (and thus needs a filter)
+    var hasMultipleCategories: Bool {
+        allowedCategories.count > 1
+    }
 
     /// All available characters in the app
     static let allCharacters: [JokeCharacter] = [
@@ -27,7 +34,8 @@ struct JokeCharacter: Identifiable, Hashable {
         fullName: "Mr. Funny",
         bio: "Your friendly neighborhood dad joke enthusiast. Bringing wholesome laughs and guaranteed groans since... well, since dads existed.",
         sfSymbol: "face.smiling.inverse",
-        color: .yellow
+        color: .yellow,
+        allowedCategories: [.dadJoke, .knockKnock]
     )
 
     static let mrBad = JokeCharacter(
@@ -36,7 +44,8 @@ struct JokeCharacter: Identifiable, Hashable {
         fullName: "Mr. Bad",
         bio: "Dark humor connoisseur. Not for the faint of heart, but perfect for those who laugh at life's absurdities.",
         sfSymbol: "theatermasks.fill",
-        color: .purple
+        color: .purple,
+        allowedCategories: [.dadJoke, .knockKnock]
     )
 
     static let mrSad = JokeCharacter(
@@ -45,7 +54,8 @@ struct JokeCharacter: Identifiable, Hashable {
         fullName: "Mr. Sad",
         bio: "Finding humor in melancholy. Sometimes you just need to laugh to keep from crying.",
         sfSymbol: "cloud.rain.fill",
-        color: .blue
+        color: .blue,
+        allowedCategories: [.dadJoke, .knockKnock]
     )
 
     static let mrPotty = JokeCharacter(
@@ -54,7 +64,8 @@ struct JokeCharacter: Identifiable, Hashable {
         fullName: "Mr. Potty",
         bio: "Embracing the humor that makes you say 'ew' and 'haha' at the same time. You've been warned.",
         sfSymbol: "toilet.fill",
-        color: .brown
+        color: .brown,
+        allowedCategories: [.dadJoke, .knockKnock]
     )
 
     static let mrLove = JokeCharacter(
@@ -63,7 +74,8 @@ struct JokeCharacter: Identifiable, Hashable {
         fullName: "Mr. Love",
         bio: "Smooth operator with lines that are so cheesy they just might work. Use responsibly.",
         sfSymbol: "heart.fill",
-        color: .pink
+        color: .pink,
+        allowedCategories: [.pickupLine]
     )
 
     /// Find a character by its ID
