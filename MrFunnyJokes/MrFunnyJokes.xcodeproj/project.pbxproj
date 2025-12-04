@@ -45,6 +45,8 @@
 		B10000000000000000000011 /* JokeOfTheDayWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C333E63D2EE10888007377F4 /* CharacterCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */; };
 		C333E63E2EE10888007377F4 /* CharacterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E63C2EE10888007377F4 /* CharacterDetailView.swift */; };
+		C333E63F2EE10888007377F4 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E6402EE10888007377F4 /* Character.swift */; };
+		C333E6412EE10888007377F4 /* CharacterDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */; };
 		C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9622EE0A55A007A6AFF /* FirebaseCore */; };
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
@@ -113,6 +115,8 @@
 		B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JokeOfTheDayWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterCarouselView.swift; sourceTree = "<group>"; };
 		C333E63C2EE10888007377F4 /* CharacterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailView.swift; sourceTree = "<group>"; };
+		C333E6402EE10888007377F4 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
+		C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailViewModel.swift; sourceTree = "<group>"; };
 		C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -187,6 +191,7 @@
 		A50000000000000000000005 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C333E6402EE10888007377F4 /* Character.swift */,
 				A20000000000000000000005 /* Joke.swift */,
 				A20000000000000000000006 /* JokeCategory.swift */,
 				A20000000000000000000029 /* FirestoreModels.swift */,
@@ -216,6 +221,7 @@
 		A50000000000000000000007 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */,
 				A20000000000000000000010 /* JokeViewModel.swift */,
 			);
 			path = ViewModels;
@@ -409,6 +415,8 @@
 				A10000000000000000000010 /* JokeViewModel.swift in Sources */,
 				C333E63D2EE10888007377F4 /* CharacterCarouselView.swift in Sources */,
 				C333E63E2EE10888007377F4 /* CharacterDetailView.swift in Sources */,
+				C333E63F2EE10888007377F4 /* Character.swift in Sources */,
+				C333E6412EE10888007377F4 /* CharacterDetailViewModel.swift in Sources */,
 				A10000000000000000000011 /* JokeAPIService.swift in Sources */,
 				A10000000000000000000012 /* LocalStorageService.swift in Sources */,
 				A10000000000000000000028 /* FirestoreService.swift in Sources */,
