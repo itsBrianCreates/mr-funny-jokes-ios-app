@@ -15,34 +15,21 @@ struct CharacterCarouselView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Section header
-            HStack {
-                Text("Characters")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(.primary)
-
-                Image(systemName: "chevron.right")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.secondary)
+        // Horizontal scrolling carousel
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                ForEach(characters) { character in
+                    CharacterCircleView(character: character)
+                        .onTapGesture {
+                            HapticManager.shared.lightTap()
+                            onCharacterTap(character)
+                        }
+                }
             }
             .padding(.horizontal)
-
-            // Horizontal scrolling carousel
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 20) {
-                    ForEach(characters) { character in
-                        CharacterCircleView(character: character)
-                            .onTapGesture {
-                                HapticManager.shared.lightTap()
-                                onCharacterTap(character)
-                            }
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 4)
-            }
+            .padding(.vertical, 4)
         }
+        .scrollClipDisabled()
     }
 }
 
