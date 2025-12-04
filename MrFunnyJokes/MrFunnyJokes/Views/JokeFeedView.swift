@@ -51,7 +51,6 @@ struct JokeFeedView: View {
                     // Character carousel (only when "All" is selected)
                     if showCharacterCarousel {
                         CharacterCarouselView(onCharacterTap: onCharacterTap)
-                            .padding(.bottom, 8)
                     }
 
                     // Joke of the Day hero section (only when "All" is selected)

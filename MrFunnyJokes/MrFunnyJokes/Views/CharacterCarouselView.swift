@@ -26,7 +26,8 @@ struct CharacterCarouselView: View {
                         }
                 }
             }
-            .padding(.horizontal)
+            .padding(.leading, 0)
+            .padding(.trailing)
             .padding(.vertical, 4)
         }
         .scrollClipDisabled()
