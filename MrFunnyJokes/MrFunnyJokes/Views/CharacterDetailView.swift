@@ -93,7 +93,7 @@ struct CharacterDetailView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header with filter (only show filter if character has multiple categories)
             HStack {
-                Text("Jokes")
+                Text(character.id == "mr_love" ? "Pick up lines" : "Jokes")
                     .font(.title2.weight(.bold))
 
                 Spacer()
