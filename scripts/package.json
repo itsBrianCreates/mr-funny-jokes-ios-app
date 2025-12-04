@@ -1,0 +1,14 @@
+{
+  "name": "mr-funny-jokes-firebase-scripts",
+  "version": "1.0.0",
+  "description": "Firebase migration scripts for Mr Funny Jokes",
+  "type": "module",
+  "scripts": {
+    "migrate": "node migrate-joke-ids.js",
+    "backup": "node migrate-joke-ids.js --backup-only",
+    "verify": "node migrate-joke-ids.js --verify-only"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

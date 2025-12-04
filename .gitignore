@@ -59,3 +59,11 @@ iOSInjectionProject/
 .claude/
 firebase-key.json
 GoogleService-Info.plist
+
+# Firebase scripts
+scripts/serviceAccountKey.json
+scripts/node_modules/
+scripts/*.json
+!scripts/package.json
+scripts/jokes-backup-*.json
+scripts/migration-log-*.json
