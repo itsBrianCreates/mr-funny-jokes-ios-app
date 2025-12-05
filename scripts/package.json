@@ -6,7 +6,9 @@
   "scripts": {
     "migrate": "node migrate-joke-ids.js",
     "backup": "node migrate-joke-ids.js --backup-only",
-    "verify": "node migrate-joke-ids.js --verify-only"
+    "verify": "node migrate-joke-ids.js --verify-only",
+    "add-jokes": "node add-jokes.js",
+    "add-jokes:dry-run": "node add-jokes.js --dry-run"
   },
   "dependencies": {
     "firebase-admin": "^12.0.0"
