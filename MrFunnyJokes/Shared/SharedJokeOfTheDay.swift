@@ -17,12 +17,12 @@ struct SharedJokeOfTheDay: Codable {
         self.lastUpdated = lastUpdated
     }
 
-    /// Default placeholder joke for when no data is available
+    /// Default placeholder for when no data is available yet
     static let placeholder = SharedJokeOfTheDay(
         id: "placeholder",
-        setup: "Why don't scientists trust atoms?",
-        punchline: "Because they make up everything!",
-        category: "Dad Jokes",
+        setup: "Loading jokes...",
+        punchline: "Open the app to get today's joke!",
+        category: nil,
         lastUpdated: Date()
     )
 }

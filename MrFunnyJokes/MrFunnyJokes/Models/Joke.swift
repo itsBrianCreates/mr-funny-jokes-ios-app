@@ -95,24 +95,3 @@ struct Joke: Identifiable, Codable, Equatable {
 
     static let ratingEmojis = ["🫠", "😩", "😐", "😄", "😂"]
 }
-
-// MARK: - API Response Models
-
-struct DadJokeResponse: Codable {
-    let id: String
-    let joke: String
-    let status: Int
-}
-
-struct OfficialJokeResponse: Codable {
-    let id: Int
-    let type: String
-    let setup: String
-    let punchline: String
-}
-
-struct PickupLineResponse: Codable {
-    let id: Int
-    let mood: String
-    let pickupline: String
-}
