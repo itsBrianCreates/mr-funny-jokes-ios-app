@@ -128,14 +128,15 @@ extension JokeCategory {
     }
 
     /// Returns the Firestore type string for this category
+    /// Must match the type values stored in the database (e.g., from add-jokes.js)
     var firestoreType: String {
         switch self {
         case .dadJoke:
-            return "dad"
+            return "dad_joke"
         case .knockKnock:
-            return "knock-knock"
+            return "knock_knock"
         case .pickupLine:
-            return "pickup"
+            return "pickup_line"
         }
     }
 }
