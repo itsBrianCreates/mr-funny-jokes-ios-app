@@ -187,4 +187,27 @@ final class LocalStorageService: @unchecked Sendable {
             }
         }
     }
+
+    /// Clear cache for a specific category
+    func clearCache(for category: JokeCategory) {
+        queue.sync {
+            userDefaults.removeObject(forKey: cacheKey(for: category))
+        }
+    }
+
+    /// Replace all cached jokes for a category (clears old cache first)
+    func replaceCachedJokes(_ jokes: [Joke], for category: JokeCategory) {
+        queue.sync {
+            let key = cacheKey(for: category)
+            let categoryJokes = jokes.filter { $0.category == category }
+
+            // Keep only the most recent maxCachePerCategory jokes
+            let jokesToCache = Array(categoryJokes.prefix(maxCachePerCategory))
+
+            // Save (replaces existing cache entirely)
+            if let data = try? JSONEncoder().encode(jokesToCache) {
+                userDefaults.set(data, forKey: key)
+            }
+        }
+    }
 }

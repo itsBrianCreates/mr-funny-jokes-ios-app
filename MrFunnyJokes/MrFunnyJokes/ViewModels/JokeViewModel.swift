@@ -231,12 +231,20 @@ final class JokeViewModel: ObservableObject {
             firestoreService.resetPagination()
             hasMoreJokes = true
 
-            // Fetch new jokes from Firestore
+            // Clear local cache to remove old database jokes
+            // This ensures we don't mix old cached jokes with fresh data
+            if let category = selectedCategory {
+                storage.clearCache(for: category)
+            } else {
+                storage.clearCache()
+            }
+
+            // Fetch new jokes from Firestore, forcing server fetch to bypass Firestore cache
             let newJokes: [Joke]
             if let category = selectedCategory {
-                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize)
+                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize, forceRefresh: true)
             } else {
-                newJokes = try await firestoreService.fetchInitialJokes(limit: batchSize)
+                newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory, forceRefresh: true)
             }
 
             guard !Task.isCancelled else {
@@ -247,10 +255,10 @@ final class JokeViewModel: ObservableObject {
             isOffline = false
 
             if !newJokes.isEmpty {
-                // Cache them
+                // Replace cache with fresh jokes (not append)
                 let grouped = Dictionary(grouping: newJokes, by: { $0.category })
                 for (category, categoryJokes) in grouped {
-                    storage.saveCachedJokes(categoryJokes, for: category)
+                    storage.replaceCachedJokes(categoryJokes, for: category)
                 }
 
                 // Apply user ratings
