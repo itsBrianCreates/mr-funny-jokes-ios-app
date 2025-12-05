@@ -75,7 +75,7 @@ final class CharacterDetailViewModel: ObservableObject {
 
     /// Checks if a joke belongs to the specified character
     /// Uses flexible matching to handle various character field formats,
-    /// with a fallback to category-based assignment when character field is not set
+    /// with a fallback to category-based assignment ONLY when character field is not set
     private func matchesCharacter(joke: Joke, character: JokeCharacter) -> Bool {
         // First, try to match by the character field if it's set
         if let jokeCharacter = joke.character?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines),
@@ -86,18 +86,18 @@ final class CharacterDetailViewModel: ObservableObject {
             let characterIdWithSpaces = characterId.replacingOccurrences(of: "_", with: " ")
 
             // Match against various possible formats
-            if jokeCharacter == characterId ||                          // "mr_funny"
-               jokeCharacter == characterName ||                        // "mr. funny"
-               jokeCharacter == characterNameNoPeriod ||                // "mr funny"
-               jokeCharacter == characterIdWithSpaces ||                // "mr funny"
-               jokeCharacter.replacingOccurrences(of: " ", with: "_") == characterId ||
-               jokeCharacter.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: " ", with: "_") == characterId {
-                return true
-            }
+            // If the joke has a character field set, we return the result directly
+            // and do NOT fall back to category matching (which would cause cross-character leakage)
+            return jokeCharacter == characterId ||                          // "mr_funny"
+                   jokeCharacter == characterName ||                        // "mr. funny"
+                   jokeCharacter == characterNameNoPeriod ||                // "mr funny"
+                   jokeCharacter == characterIdWithSpaces ||                // "mr funny"
+                   jokeCharacter.replacingOccurrences(of: " ", with: "_") == characterId ||
+                   jokeCharacter.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: " ", with: "_") == characterId
         }
 
         // Fallback: assign jokes to characters based on category
-        // This ensures jokes show up even if the character field isn't populated
+        // This ONLY applies when the character field is nil or empty
         return matchesByCategory(joke: joke, character: character)
     }
 
