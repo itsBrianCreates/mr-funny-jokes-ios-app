@@ -25,6 +25,7 @@ const __dirname = dirname(__filename);
 // Configuration
 const COLLECTION_NAME = 'jokes';
 const BATCH_SIZE = 500; // Firestore batch limit is 500
+const FIREBASE_PROJECT_ID = 'mr-funny-jokes';
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -44,35 +45,7 @@ const log = {
 const JOKES_TO_ADD = [
   {
     "character": "mr_funny",
-    "text": "Why don't skeletons fight each other? They don't have the guts.",
-    "type": "dad_joke",
-    "tags": ["holidays"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "How do you make a tissue dance? Put a little boogie in it!",
-    "type": "dad_joke",
-    "tags": ["health"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "Want to hear a joke about construction? I'm still working on it.",
+    "text": "Why did the scarecrow win an award? Because he was outstanding in his field.",
     "type": "dad_joke",
     "tags": ["work"],
     "sfw": true,
@@ -86,21 +59,7 @@ const JOKES_TO_ADD = [
   },
   {
     "character": "mr_funny",
-    "text": "Why can't you give Elsa a balloon? Because she will let it go.",
-    "type": "dad_joke",
-    "tags": ["movies"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "What do you call cheese that isn't yours? Nacho cheese.",
+    "text": "What do you call fake spaghetti? An impasta.",
     "type": "dad_joke",
     "tags": ["food"],
     "sfw": true,
@@ -114,9 +73,9 @@ const JOKES_TO_ADD = [
   },
   {
     "character": "mr_funny",
-    "text": "Why did the coffee file a police report? It got mugged.",
+    "text": "What do you call a factory that makes okay products? A satisfactory.",
     "type": "dad_joke",
-    "tags": ["food"],
+    "tags": ["work"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -128,9 +87,9 @@ const JOKES_TO_ADD = [
   },
   {
     "character": "mr_funny",
-    "text": "What do you call a belt made of watches? A waist of time.",
+    "text": "Why did the math book look sad? Because it had too many problems.",
     "type": "dad_joke",
-    "tags": ["classic"],
+    "tags": ["school"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -142,9 +101,9 @@ const JOKES_TO_ADD = [
   },
   {
     "character": "mr_funny",
-    "text": "I'm reading a book on anti-gravity. It's impossible to put down!",
+    "text": "Did you hear about the restaurant on the moon? Great food, no atmosphere.",
     "type": "dad_joke",
-    "tags": ["science"],
+    "tags": ["food", "science"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -156,9 +115,9 @@ const JOKES_TO_ADD = [
   },
   {
     "character": "mr_funny",
-    "text": "Why don't scientists trust atoms? Because they make up everything!",
+    "text": "Why can't your nose be 12 inches long? Because then it would be a foot.",
     "type": "dad_joke",
-    "tags": ["science"],
+    "tags": ["health"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -170,9 +129,37 @@ const JOKES_TO_ADD = [
   },
   {
     "character": "mr_funny",
-    "text": "I used to play piano by ear, but now I use my hands.",
+    "text": "What did one wall say to the other wall? I'll meet you at the corner.",
     "type": "dad_joke",
-    "tags": ["music"],
+    "tags": ["home"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0,
+    "dislikes": 0,
+    "rating_sum": 0,
+    "rating_count": 0,
+    "rating_avg": 0,
+    "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "How does a penguin build its house? Igloos it together.",
+    "type": "dad_joke",
+    "tags": ["animals"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0,
+    "dislikes": 0,
+    "rating_sum": 0,
+    "rating_count": 0,
+    "rating_avg": 0,
+    "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "What do you call an alligator in a vest? An investigator.",
+    "type": "dad_joke",
+    "tags": ["animals"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -206,16 +193,25 @@ function initializeFirebase() {
     log.info(`Using GOOGLE_APPLICATION_CREDENTIALS: ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
     initializeApp();
   } else {
-    throw new Error(
-      'No Firebase credentials found!\n' +
-      'Please either:\n' +
-      '  1. Place serviceAccountKey.json in the scripts/ directory\n' +
-      '  2. Set GOOGLE_APPLICATION_CREDENTIALS environment variable\n\n' +
-      'To get a service account key:\n' +
-      '  1. Go to Firebase Console > Project Settings > Service Accounts\n' +
-      '  2. Click "Generate new private key"\n' +
-      '  3. Save the JSON file as scripts/serviceAccountKey.json'
-    );
+    // Try Application Default Credentials (ADC) for cloud environments
+    log.info('Attempting to use Application Default Credentials...');
+    try {
+      initializeApp({
+        projectId: FIREBASE_PROJECT_ID
+      });
+      log.info(`Successfully initialized with Application Default Credentials for project: ${FIREBASE_PROJECT_ID}`);
+    } catch (adcError) {
+      throw new Error(
+        'No Firebase credentials found!\n' +
+        'Please either:\n' +
+        '  1. Place serviceAccountKey.json in the scripts/ directory\n' +
+        '  2. Set GOOGLE_APPLICATION_CREDENTIALS environment variable\n\n' +
+        'To get a service account key:\n' +
+        '  1. Go to Firebase Console > Project Settings > Service Accounts\n' +
+        '  2. Click "Generate new private key"\n' +
+        '  3. Save the JSON file as scripts/serviceAccountKey.json'
+      );
+    }
   }
 
   return getFirestore();
