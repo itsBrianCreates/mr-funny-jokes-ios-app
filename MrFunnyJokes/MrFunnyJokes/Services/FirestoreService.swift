@@ -126,33 +126,35 @@ final class FirestoreService {
         }
     }
 
-    /// Fetches initial jokes for all categories
+    /// Fetches initial jokes for "All Jokes" feed (no category filtering)
     /// - Parameters:
-    ///   - countPerCategory: Number of jokes per category (default 8)
+    ///   - limit: Total number of jokes to fetch (default 24)
     ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
-    /// - Returns: Array of Joke objects from all categories
+    /// - Returns: Array of Joke objects from all categories, shuffled
     func fetchInitialJokesAllCategories(countPerCategory: Int = 8, forceRefresh: Bool = false) async throws -> [Joke] {
-        var allJokes: [Joke] = []
+        // Reset pagination for "All Jokes" feed
+        lastDocument = nil
 
-        // Fetch from all categories concurrently
-        await withTaskGroup(of: [Joke].self) { group in
-            for category in JokeCategory.allCases {
-                group.addTask {
-                    do {
-                        return try await self.fetchJokes(category: category, limit: countPerCategory, forceRefresh: forceRefresh)
-                    } catch {
-                        print("Error fetching \(category) jokes: \(error)")
-                        return []
-                    }
-                }
-            }
+        // Calculate total limit based on countPerCategory * number of categories
+        let totalLimit = countPerCategory * JokeCategory.allCases.count
 
-            for await jokes in group {
-                allJokes.append(contentsOf: jokes)
-            }
+        // Fetch ALL jokes without type filtering - every joke in the database
+        // should be eligible to appear in the "All Jokes" feed
+        let query = db.collection(jokesCollection)
+            .order(by: "popularity_score", descending: true)
+            .limit(to: totalLimit)
+
+        let snapshot = forceRefresh
+            ? try await query.getDocuments(source: .server)
+            : try await query.getDocuments()
+
+        lastDocument = snapshot.documents.last
+
+        let allJokes = snapshot.documents.compactMap { document in
+            try? document.data(as: FirestoreJoke.self).toJoke()
         }
 
-        // Shuffle to mix categories
+        // Shuffle to mix categories for variety
         return allJokes.shuffled()
     }
 
