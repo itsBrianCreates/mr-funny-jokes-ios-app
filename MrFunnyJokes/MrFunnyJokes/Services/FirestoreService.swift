@@ -31,15 +31,18 @@ final class FirestoreService {
     /// Fetches initial jokes from Firestore
     /// - Parameters:
     ///   - limit: Number of jokes to fetch (default 20)
+    ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
     /// - Returns: Array of Joke objects
-    func fetchInitialJokes(limit: Int = 20) async throws -> [Joke] {
+    func fetchInitialJokes(limit: Int = 20, forceRefresh: Bool = false) async throws -> [Joke] {
         lastDocument = nil
 
         let query = db.collection(jokesCollection)
             .order(by: "popularity_score", descending: true)
             .limit(to: limit)
 
-        let snapshot = try await query.getDocuments()
+        let snapshot = forceRefresh
+            ? try await query.getDocuments(source: .server)
+            : try await query.getDocuments()
         lastDocument = snapshot.documents.last
 
         return snapshot.documents.compactMap { document in
@@ -76,8 +79,9 @@ final class FirestoreService {
     /// - Parameters:
     ///   - category: The joke category to filter by
     ///   - limit: Number of jokes to fetch (default 20)
+    ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
     /// - Returns: Array of Joke objects
-    func fetchJokes(category: JokeCategory, limit: Int = 20) async throws -> [Joke] {
+    func fetchJokes(category: JokeCategory, limit: Int = 20, forceRefresh: Bool = false) async throws -> [Joke] {
         lastDocumentsByCategory[category] = nil
 
         let query = db.collection(jokesCollection)
@@ -85,7 +89,9 @@ final class FirestoreService {
             .order(by: "popularity_score", descending: true)
             .limit(to: limit)
 
-        let snapshot = try await query.getDocuments()
+        let snapshot = forceRefresh
+            ? try await query.getDocuments(source: .server)
+            : try await query.getDocuments()
         lastDocumentsByCategory[category] = snapshot.documents.last
 
         return snapshot.documents.compactMap { document in
@@ -123,8 +129,9 @@ final class FirestoreService {
     /// Fetches initial jokes for all categories
     /// - Parameters:
     ///   - countPerCategory: Number of jokes per category (default 8)
+    ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
     /// - Returns: Array of Joke objects from all categories
-    func fetchInitialJokesAllCategories(countPerCategory: Int = 8) async throws -> [Joke] {
+    func fetchInitialJokesAllCategories(countPerCategory: Int = 8, forceRefresh: Bool = false) async throws -> [Joke] {
         var allJokes: [Joke] = []
 
         // Fetch from all categories concurrently
@@ -132,7 +139,7 @@ final class FirestoreService {
             for category in JokeCategory.allCases {
                 group.addTask {
                     do {
-                        return try await self.fetchJokes(category: category, limit: countPerCategory)
+                        return try await self.fetchJokes(category: category, limit: countPerCategory, forceRefresh: forceRefresh)
                     } catch {
                         print("Error fetching \(category) jokes: \(error)")
                         return []
