@@ -50,19 +50,16 @@ struct CharacterDetailView: View {
         VStack(spacing: 0) {
             // Character icon/image area
             VStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(character.color.opacity(0.2))
-                        .frame(width: 120, height: 120)
-
-                    Image(systemName: character.sfSymbol)
-                        .font(.system(size: 56, weight: .medium))
-                        .foregroundStyle(character.color)
-                }
-                .overlay(
-                    Circle()
-                        .strokeBorder(character.color.opacity(0.4), lineWidth: 3)
-                )
+                Image(character.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 120, height: 120)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .strokeBorder(character.color.opacity(0.4), lineWidth: 3)
+                    )
+                    .shadow(color: character.color.opacity(0.3), radius: 12, y: 4)
             }
             .padding(.top, 20)
             .padding(.bottom, 40)
