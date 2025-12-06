@@ -45,22 +45,16 @@ struct CharacterCircleView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            // Circular character icon
-            ZStack {
-                // Background circle
-                Circle()
-                    .fill(character.color.opacity(0.15))
-                    .frame(width: circleSize, height: circleSize)
-
-                // Character icon
-                Image(systemName: character.sfSymbol)
-                    .font(.system(size: 32, weight: .medium))
-                    .foregroundStyle(character.color)
-            }
-            .overlay(
-                Circle()
-                    .strokeBorder(character.color.opacity(0.3), lineWidth: 2)
-            )
+            // Circular character image
+            Image(character.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: circleSize, height: circleSize)
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .strokeBorder(character.color.opacity(0.3), lineWidth: 2)
+                )
 
             // Character name
             Text(character.name)

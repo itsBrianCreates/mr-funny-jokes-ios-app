@@ -163,15 +163,12 @@ struct WaveCharacterCircle: View {
                     .blur(radius: 4)
                     .scaleEffect(pulseScale)
 
-                // Background circle
-                Circle()
-                    .fill(character.color.opacity(0.15))
+                // Character image
+                Image(character.imageName)
+                    .resizable()
+                    .scaledToFill()
                     .frame(width: circleSize, height: circleSize)
-
-                // Character icon
-                Image(systemName: character.sfSymbol)
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundStyle(character.color)
+                    .clipShape(Circle())
             }
             .overlay(
                 Circle()

@@ -79,16 +79,12 @@ struct CharacterIndicatorView: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            // Small circular icon
-            ZStack {
-                Circle()
-                    .fill(character.color.opacity(0.2))
-                    .frame(width: size, height: size)
-
-                Image(systemName: character.sfSymbol)
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(character.color)
-            }
+            // Small circular character image
+            Image(character.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
 
             // Character name
             Text(character.name)
