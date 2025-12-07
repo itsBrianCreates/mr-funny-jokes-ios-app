@@ -11,10 +11,15 @@ struct SearchView: View {
 
     private let firestoreService = FirestoreService.shared
 
+    /// Minimum characters required before searching
+    private let minimumSearchLength = 2
+
     var body: some View {
         Group {
             if searchText.isEmpty {
                 emptyState
+            } else if searchText.count < minimumSearchLength {
+                typeMoreState
             } else if isSearching {
                 searchingState
             } else if searchResults.isEmpty {
@@ -29,12 +34,19 @@ struct SearchView: View {
         }
     }
 
-    /// Performs search with debouncing to avoid excessive API calls
+    /// Performs search with debouncing and local-first strategy
     private func performSearch(query: String) {
         // Cancel any pending search
         searchTask?.cancel()
 
         guard !query.isEmpty else {
+            searchResults = []
+            isSearching = false
+            return
+        }
+
+        // Don't search if below minimum length
+        guard query.count >= minimumSearchLength else {
             searchResults = []
             isSearching = false
             return
@@ -48,6 +60,24 @@ struct SearchView: View {
 
             guard !Task.isCancelled else { return }
 
+            // First, try local search from already-loaded jokes (instant results)
+            let queryLower = query.lowercased()
+            let localResults = viewModel.jokes.filter { joke in
+                joke.setup.lowercased().contains(queryLower) ||
+                joke.punchline.lowercased().contains(queryLower) ||
+                (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
+            }.sorted { $0.popularityScore > $1.popularityScore }
+
+            // If we have good local results, use them immediately
+            if !localResults.isEmpty {
+                await MainActor.run {
+                    searchResults = Array(localResults.prefix(50))
+                    isSearching = false
+                }
+                return
+            }
+
+            // Only query Firestore if no local results found
             do {
                 let results = try await firestoreService.searchJokes(searchText: query, limit: 50)
 
@@ -61,13 +91,8 @@ struct SearchView: View {
                 guard !Task.isCancelled else { return }
 
                 await MainActor.run {
-                    // On error, fall back to local search
-                    let queryLower = query.lowercased()
-                    searchResults = viewModel.jokes.filter { joke in
-                        joke.setup.lowercased().contains(queryLower) ||
-                        joke.punchline.lowercased().contains(queryLower) ||
-                        (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
-                    }
+                    // On error, show empty results (local search already tried above)
+                    searchResults = []
                     isSearching = false
                 }
             }
@@ -99,6 +124,24 @@ struct SearchView: View {
         .onDisappear {
             animateIcon = false
         }
+    }
+
+    private var typeMoreState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "character.cursor.ibeam")
+                .font(.system(size: 40, weight: .light))
+                .foregroundStyle(.secondary)
+
+            Text("Keep typing...")
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundStyle(.primary)
+
+            Text("Enter at least \(minimumSearchLength) characters")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var searchingState: some View {
