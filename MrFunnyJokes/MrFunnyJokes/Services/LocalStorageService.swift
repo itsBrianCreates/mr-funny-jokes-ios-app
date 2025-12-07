@@ -29,6 +29,39 @@ final class LocalStorageService: @unchecked Sendable {
 
     // MARK: - Ratings
 
+    /// Save rating using firestoreId as the key for cross-view consistency
+    /// Falls back to UUID string if firestoreId is not available
+    func saveRating(for jokeId: UUID, firestoreId: String?, rating: Int) {
+        let key = firestoreId ?? jokeId.uuidString
+        queue.sync {
+            var ratings = self.loadRatingsSync()
+            ratings[key] = rating
+            self.saveRatingsSync(ratings)
+        }
+    }
+
+    /// Remove rating using firestoreId as the key
+    func removeRating(for jokeId: UUID, firestoreId: String?) {
+        let key = firestoreId ?? jokeId.uuidString
+        queue.sync {
+            var ratings = self.loadRatingsSync()
+            ratings.removeValue(forKey: key)
+            self.saveRatingsSync(ratings)
+        }
+    }
+
+    /// Get rating using firestoreId as the key for cross-view consistency
+    func getRating(for jokeId: UUID, firestoreId: String?) -> Int? {
+        let key = firestoreId ?? jokeId.uuidString
+        return queue.sync {
+            let ratings = self.loadRatingsSync()
+            return ratings[key]
+        }
+    }
+
+    // MARK: - Legacy Rating Methods (deprecated)
+
+    @available(*, deprecated, message: "Use saveRating(for:firestoreId:rating:) instead")
     func saveRating(for jokeId: UUID, rating: Int) {
         queue.sync {
             var ratings = self.loadRatingsSync()
@@ -37,6 +70,7 @@ final class LocalStorageService: @unchecked Sendable {
         }
     }
 
+    @available(*, deprecated, message: "Use removeRating(for:firestoreId:) instead")
     func removeRating(for jokeId: UUID) {
         queue.sync {
             var ratings = self.loadRatingsSync()
@@ -45,6 +79,7 @@ final class LocalStorageService: @unchecked Sendable {
         }
     }
 
+    @available(*, deprecated, message: "Use getRating(for:firestoreId:) instead")
     func getRating(for jokeId: UUID) -> Int? {
         queue.sync {
             let ratings = self.loadRatingsSync()
@@ -70,7 +105,9 @@ final class LocalStorageService: @unchecked Sendable {
         let ratings = loadRatings()
         return jokes.map { joke in
             var updatedJoke = joke
-            if let rating = ratings[joke.id.uuidString] {
+            // Try firestoreId first (preferred), then fall back to UUID
+            let key = joke.firestoreId ?? joke.id.uuidString
+            if let rating = ratings[key] {
                 updatedJoke.userRating = rating
             }
             return updatedJoke
