@@ -32,7 +32,7 @@ struct JokeCharacter: Identifiable, Hashable {
         id: "mr_funny",
         name: "Mr. Funny",
         fullName: "Mr. Funny",
-        bio: "Your friendly neighborhood dad joke enthusiast. Bringing wholesome laughs and guaranteed groans since... well, since dads existed.",
+        bio: "Dad jokes so good, they're bad. So bad, they're good. Your kids will hate you. You're welcome.",
         imageName: "MrFunny",
         color: .yellow,
         allowedCategories: [.dadJoke, .knockKnock]
@@ -42,7 +42,7 @@ struct JokeCharacter: Identifiable, Hashable {
         id: "mr_bad",
         name: "Mr. Bad",
         fullName: "Mr. Bad",
-        bio: "Dark humor connoisseur. Not for the faint of heart, but perfect for those who laugh at life's absurdities.",
+        bio: "Dark humor for twisted minds. If you laughed at that funeral scene, you're in the right place.",
         imageName: "MrBad",
         color: .red,
         allowedCategories: [.dadJoke, .knockKnock]
@@ -52,7 +52,7 @@ struct JokeCharacter: Identifiable, Hashable {
         id: "mr_sad",
         name: "Mr. Sad",
         fullName: "Mr. Sad",
-        bio: "Finding humor in melancholy. Sometimes you just need to laugh to keep from crying.",
+        bio: "Jokes so bleak they circle back to funny. Laugh now, cry later. Or both at once.",
         imageName: "MrSad",
         color: .blue,
         allowedCategories: [.dadJoke, .knockKnock]
@@ -62,7 +62,7 @@ struct JokeCharacter: Identifiable, Hashable {
         id: "mr_potty",
         name: "Mr. Potty",
         fullName: "Mr. Potty",
-        bio: "Embracing the humor that makes you say 'ew' and 'haha' at the same time. You've been warned.",
+        bio: "Farts, butts, and bodily functions. Juvenile? Absolutely. Hilarious? Also yes.",
         imageName: "MrPotty",
         color: .brown,
         allowedCategories: [.dadJoke, .knockKnock]
@@ -72,7 +72,7 @@ struct JokeCharacter: Identifiable, Hashable {
         id: "mr_love",
         name: "Mr. Love",
         fullName: "Mr. Love",
-        bio: "Smooth operator with lines that are so cheesy they just might work. Use responsibly.",
+        bio: "Pickup lines so smooth, they actually work. Trust me. I've never been rejected. Not once.",
         imageName: "MrLove",
         color: .pink,
         allowedCategories: [.pickupLine]
