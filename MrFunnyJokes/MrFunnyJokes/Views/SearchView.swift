@@ -108,15 +108,6 @@ struct SearchView: View {
         }
     }
 
-    /// Immediately cancels any ongoing search and resets state
-    private func cancelSearch() {
-        searchTask?.cancel()
-        searchTask = nil
-        searchText = ""
-        searchResults = []
-        isSearching = false
-    }
-
     private var emptyState: some View {
         VStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
@@ -163,22 +154,13 @@ struct SearchView: View {
     }
 
     private var searchingState: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             ProgressView()
                 .scaleEffect(1.2)
 
             Text("Searching...")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-
-            Button {
-                cancelSearch()
-            } label: {
-                Text("Cancel")
-                    .font(.subheadline)
-                    .foregroundStyle(.blue)
-            }
-            .buttonStyle(.plain)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
