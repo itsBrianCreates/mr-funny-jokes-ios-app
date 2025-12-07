@@ -15,10 +15,14 @@ final class CharacterDetailViewModel: ObservableObject {
     private let firestoreService = FirestoreService.shared
     private let storage = LocalStorageService.shared
     private var copyTask: Task<Void, Never>?
-    private var lastDocument: String?
+    private var loadMoreTask: Task<Void, Never>?
 
-    /// Batch size for loading jokes
+    /// Batch size for filtering character jokes from each fetch
     private let batchSize = 15
+    /// Number of jokes to fetch from Firestore per batch (larger to ensure we find enough character matches)
+    private let fetchBatchSize = 50
+    /// Maximum consecutive empty batches before giving up
+    private let maxEmptyBatches = 3
 
     /// Filtered jokes based on selected joke type
     var filteredJokes: [Joke] {
@@ -46,11 +50,11 @@ final class CharacterDetailViewModel: ObservableObject {
         isLoading = true
 
         do {
-            // Fetch all jokes and filter client-side for this character
-            // This is more reliable than querying by character field since:
-            // 1. The character field may use different formats (id vs name)
-            // 2. The compound query requires a Firestore index
-            let allJokes = try await firestoreService.fetchInitialJokes(limit: 100)
+            // Use character-specific pagination to avoid conflicts with home tab
+            let allJokes = try await firestoreService.fetchInitialJokesForCharacter(
+                characterId: character.id,
+                limit: fetchBatchSize
+            )
 
             // Filter jokes for this character using flexible matching
             let characterJokes = allJokes.filter { joke in
@@ -65,7 +69,9 @@ final class CharacterDetailViewModel: ObservableObject {
             }
 
             jokes = jokesWithRatings
-            hasMoreJokes = characterJokes.count >= batchSize
+
+            // If we got a full batch from Firestore, there might be more
+            hasMoreJokes = allJokes.count >= fetchBatchSize
         } catch {
             print("Error loading jokes for \(character.name): \(error)")
         }
@@ -112,40 +118,84 @@ final class CharacterDetailViewModel: ObservableObject {
     func loadMoreJokes() async {
         guard !isLoadingMore && hasMoreJokes else { return }
         isLoadingMore = true
+        let startTime = Date()
 
         do {
-            // Fetch more jokes and filter client-side for this character
             let existingIds = Set(jokes.compactMap { $0.firestoreId })
-            let allJokes = try await firestoreService.fetchMoreJokes(limit: 50)
+            var emptyBatchCount = 0
+            var foundNewJokes = false
 
-            // Filter jokes for this character using flexible matching
-            let characterJokes = allJokes.filter { joke in
-                matchesCharacter(joke: joke, character: character)
-            }
+            // Keep fetching batches until we find character jokes or exhaust the database
+            while emptyBatchCount < maxEmptyBatches && !foundNewJokes {
+                // Use character-specific pagination
+                let (allJokes, hasMore) = try await firestoreService.fetchMoreJokesForCharacter(
+                    characterId: character.id,
+                    limit: fetchBatchSize
+                )
 
-            // Filter out duplicates
-            let uniqueNewJokes = characterJokes.filter { joke in
-                guard let id = joke.firestoreId else { return true }
-                return !existingIds.contains(id)
-            }.prefix(batchSize)
-
-            if uniqueNewJokes.isEmpty {
-                hasMoreJokes = false
-            } else {
-                // Apply user ratings
-                let jokesWithRatings = uniqueNewJokes.map { joke -> Joke in
-                    var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id)
-                    return mutableJoke
+                // If we got no results from Firestore, we've exhausted the database
+                if allJokes.isEmpty {
+                    hasMoreJokes = false
+                    break
                 }
 
-                jokes.append(contentsOf: jokesWithRatings)
+                // Filter jokes for this character using flexible matching
+                let characterJokes = allJokes.filter { joke in
+                    matchesCharacter(joke: joke, character: character)
+                }
+
+                // Filter out duplicates
+                let uniqueNewJokes = characterJokes.filter { joke in
+                    guard let id = joke.firestoreId else { return true }
+                    return !existingIds.contains(id)
+                }
+
+                if uniqueNewJokes.isEmpty {
+                    // No matching jokes in this batch, but there might be more in the database
+                    emptyBatchCount += 1
+                    if !hasMore {
+                        // Database is exhausted
+                        hasMoreJokes = false
+                        break
+                    }
+                    // Continue to next batch
+                } else {
+                    // Found new jokes for this character
+                    foundNewJokes = true
+
+                    // Apply user ratings
+                    let jokesWithRatings = uniqueNewJokes.map { joke -> Joke in
+                        var mutableJoke = joke
+                        mutableJoke.userRating = storage.getRating(for: joke.id)
+                        return mutableJoke
+                    }
+
+                    jokes.append(contentsOf: jokesWithRatings)
+                    hasMoreJokes = hasMore
+                }
+            }
+
+            // If we hit max empty batches, assume no more character jokes
+            if emptyBatchCount >= maxEmptyBatches {
+                hasMoreJokes = false
             }
         } catch {
             print("Error loading more jokes for \(character.name): \(error)")
         }
 
+        // Ensure minimum loading time for smooth UX
+        await ensureMinimumLoadingTime(startTime: startTime)
         isLoadingMore = false
+    }
+
+    /// Ensures the loading indicator is shown for at least 400ms for better UX
+    private func ensureMinimumLoadingTime(startTime: Date) async {
+        let minimumLoadingDuration: TimeInterval = 0.4
+        let elapsed = Date().timeIntervalSince(startTime)
+        if elapsed < minimumLoadingDuration {
+            let remaining = minimumLoadingDuration - elapsed
+            try? await Task.sleep(for: .milliseconds(Int(remaining * 1000)))
+        }
     }
 
     /// Checks if more jokes should be loaded based on current scroll position
@@ -161,7 +211,15 @@ final class CharacterDetailViewModel: ObservableObject {
             return
         }
 
-        Task {
+        loadMore()
+    }
+
+    /// Triggers loading more jokes with task management
+    func loadMore() {
+        guard !isLoadingMore && hasMoreJokes else { return }
+
+        loadMoreTask?.cancel()
+        loadMoreTask = Task {
             await loadMoreJokes()
         }
     }

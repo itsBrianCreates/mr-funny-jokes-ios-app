@@ -12,6 +12,7 @@ final class FirestoreService {
     // Pagination
     private var lastDocument: DocumentSnapshot?
     private var lastDocumentsByCategory: [JokeCategory: DocumentSnapshot] = [:]
+    private var lastDocumentsByCharacter: [String: DocumentSnapshot] = [:]
 
     private init() {
         // Configure Firestore for optimal performance
@@ -286,6 +287,64 @@ final class FirestoreService {
         }
     }
 
+    // MARK: - Character Pagination
+
+    /// Fetches initial jokes for a character view with independent pagination
+    /// - Parameters:
+    ///   - characterId: The character ID for pagination tracking
+    ///   - limit: Number of jokes to fetch (default 50)
+    /// - Returns: Array of Joke objects
+    func fetchInitialJokesForCharacter(characterId: String, limit: Int = 50) async throws -> [Joke] {
+        // Reset character-specific pagination
+        lastDocumentsByCharacter[characterId] = nil
+
+        let query = db.collection(jokesCollection)
+            .order(by: "popularity_score", descending: true)
+            .limit(to: limit)
+
+        let snapshot = try await query.getDocuments()
+        lastDocumentsByCharacter[characterId] = snapshot.documents.last
+
+        return snapshot.documents.compactMap { document in
+            try? document.data(as: FirestoreJoke.self).toJoke()
+        }
+    }
+
+    /// Fetches more jokes for a character view (independent pagination)
+    /// - Parameters:
+    ///   - characterId: The character ID for pagination tracking
+    ///   - limit: Number of jokes to fetch (default 50)
+    /// - Returns: Tuple of (jokes array, hasMoreInDatabase flag)
+    func fetchMoreJokesForCharacter(characterId: String, limit: Int = 50) async throws -> (jokes: [Joke], hasMore: Bool) {
+        guard let lastDoc = lastDocumentsByCharacter[characterId] else {
+            let jokes = try await fetchInitialJokesForCharacter(characterId: characterId, limit: limit)
+            return (jokes, jokes.count >= limit)
+        }
+
+        let query = db.collection(jokesCollection)
+            .order(by: "popularity_score", descending: true)
+            .start(afterDocument: lastDoc)
+            .limit(to: limit)
+
+        let snapshot = try await query.getDocuments()
+
+        if let newLastDoc = snapshot.documents.last {
+            lastDocumentsByCharacter[characterId] = newLastDoc
+        }
+
+        let jokes = snapshot.documents.compactMap { document in
+            try? document.data(as: FirestoreJoke.self).toJoke()
+        }
+
+        // hasMore is true if we got a full batch (there might be more in DB)
+        return (jokes, jokes.count >= limit)
+    }
+
+    /// Resets pagination for a specific character
+    func resetCharacterPagination(characterId: String) {
+        lastDocumentsByCharacter[characterId] = nil
+    }
+
     // MARK: - Update Ratings
 
     /// Updates the rating for a joke in Firestore
@@ -342,6 +401,7 @@ final class FirestoreService {
     func resetPagination() {
         lastDocument = nil
         lastDocumentsByCategory.removeAll()
+        lastDocumentsByCharacter.removeAll()
     }
 }
 

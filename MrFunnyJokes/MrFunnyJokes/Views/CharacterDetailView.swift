@@ -178,14 +178,15 @@ struct CharacterDetailView: View {
                 }
             }
 
-            // Loading more indicator
+            // Loading more indicator with skeleton cards (matches main feed UX)
             if viewModel.isLoadingMore {
-                ProgressView()
-                    .padding(.vertical, 20)
+                CharacterLoadingMoreView()
+                    .transition(.opacity)
             }
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
+        .animation(.easeInOut(duration: 0.3), value: viewModel.isLoadingMore)
     }
 
     // MARK: - Loading View
@@ -278,6 +279,18 @@ struct CharacterJokeCardView: View {
                 onCopy: onCopy,
                 onRate: onRate
             )
+        }
+    }
+}
+
+// MARK: - Character Loading More View
+
+/// Skeleton loading view for infinite scroll in character detail
+struct CharacterLoadingMoreView: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            SkeletonCardView(lineCount: 2, lastLineWidth: 0.6)
+            SkeletonCardView(lineCount: 1, lastLineWidth: 0.8)
         }
     }
 }
