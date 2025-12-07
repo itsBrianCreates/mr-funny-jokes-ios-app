@@ -93,10 +93,17 @@ final class JokeViewModel: ObservableObject {
         return nil
     }
 
-    /// Fetch a random joke of the day from Firebase
-    /// This should only be called when we need a NEW joke (new day or first run)
+    /// Fetch the joke of the day from Firebase
+    /// First tries to get the designated joke for today from daily_jokes collection,
+    /// falls back to a random joke if no designated joke exists
     private func fetchJokeOfTheDayFromFirebase() async -> Joke? {
         do {
+            // First, try to fetch the designated joke of the day for today
+            if let designatedJoke = try await firestoreService.fetchJokeOfTheDay() {
+                return designatedJoke
+            }
+
+            // Fallback to a random joke if no designated joke for today
             return try await firestoreService.fetchRandomJoke()
         } catch {
             print("Failed to fetch joke of the day from Firebase: \(error)")
