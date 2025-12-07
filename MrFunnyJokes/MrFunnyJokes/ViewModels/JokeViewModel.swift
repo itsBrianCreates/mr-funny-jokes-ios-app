@@ -187,23 +187,33 @@ final class JokeViewModel: ObservableObject {
         // Set initial offline state
         isOffline = networkMonitor.isOffline
 
-        loadInitialContent()
+        // Load joke of the day from storage immediately (lightweight)
+        loadJokeOfTheDayFromStorage()
+
+        // Start async content loading - doesn't block the main thread
+        initialLoadTask = Task {
+            await loadInitialContentAsync()
+        }
     }
 
     // MARK: - Initial Load
 
-    /// Load content on app start - first from cache/fallback, then fetch from APIs
-    private func loadInitialContent() {
-        // First, load cached + fallback jokes immediately for instant display
-        loadLocalJokes()
+    /// Load content on app start asynchronously - cache first, then API
+    /// This is fully async to avoid blocking the main thread during startup
+    private func loadInitialContentAsync() async {
+        // Load cached jokes asynchronously (off main thread)
+        let cached = await storage.loadAllCachedJokesAsync()
 
-        // Then fetch fresh content from APIs in background
-        initialLoadTask = Task {
-            await fetchInitialAPIContent()
+        // Update UI with cached jokes
+        if !cached.isEmpty {
+            jokes = cached.shuffled()
         }
+
+        // Then fetch fresh content from APIs
+        await fetchInitialAPIContent()
     }
 
-    /// Load jokes from local cache (Firebase jokes only - no hardcoded fallback)
+    /// Legacy sync method - kept for refresh scenarios where we're already on main thread
     private func loadLocalJokes() {
         let cached = storage.loadAllCachedJokes()
         jokes = cached.shuffled()
@@ -335,8 +345,7 @@ final class JokeViewModel: ObservableObject {
     }
 
     private func completeInitialLoading() async {
-        // Small delay ensures skeleton is briefly visible for smooth transition
-        try? await Task.sleep(for: .milliseconds(300))
+        // No artificial delay - let the UI become interactive as soon as data is ready
         isInitialLoading = false
     }
 

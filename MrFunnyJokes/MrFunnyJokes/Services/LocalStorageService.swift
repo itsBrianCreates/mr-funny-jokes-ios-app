@@ -175,6 +175,62 @@ final class LocalStorageService: @unchecked Sendable {
         return allJokes
     }
 
+    // MARK: - Async Cache Loading (Non-blocking)
+
+    /// Load cached jokes for a specific category asynchronously (non-blocking)
+    func loadCachedJokesAsync(for category: JokeCategory) async -> [Joke] {
+        await withCheckedContinuation { continuation in
+            queue.async { [weak self] in
+                guard let self = self else {
+                    continuation.resume(returning: [])
+                    return
+                }
+
+                guard let data = self.userDefaults.data(forKey: self.cacheKey(for: category)) else {
+                    continuation.resume(returning: [])
+                    return
+                }
+
+                do {
+                    let jokes = try JSONDecoder().decode([Joke].self, from: data)
+                    let ratingsDict = self.userDefaults.dictionary(forKey: self.ratingsKey) as? [String: Int] ?? [:]
+
+                    // Apply ratings inline to avoid additional sync calls
+                    let jokesWithRatings = jokes.map { joke in
+                        var updatedJoke = joke
+                        let key = joke.firestoreId ?? joke.id.uuidString
+                        if let rating = ratingsDict[key] {
+                            updatedJoke.userRating = rating
+                        }
+                        return updatedJoke
+                    }
+
+                    continuation.resume(returning: jokesWithRatings)
+                } catch {
+                    continuation.resume(returning: [])
+                }
+            }
+        }
+    }
+
+    /// Load all cached jokes across all categories asynchronously (non-blocking)
+    /// Uses concurrent loading for better performance
+    func loadAllCachedJokesAsync() async -> [Joke] {
+        await withTaskGroup(of: [Joke].self) { group in
+            for category in JokeCategory.allCases {
+                group.addTask {
+                    await self.loadCachedJokesAsync(for: category)
+                }
+            }
+
+            var allJokes: [Joke] = []
+            for await jokes in group {
+                allJokes.append(contentsOf: jokes)
+            }
+            return allJokes
+        }
+    }
+
     /// Append a single joke to the appropriate category cache
     func appendCachedJoke(_ joke: Joke) {
         saveCachedJokes([joke], for: joke.category)

@@ -19,18 +19,21 @@ struct MrFunnyJokesApp: App {
 /// Manages the transition from splash screen to main content
 /// Coordinates background loading during splash for a snappier experience
 struct RootView: View {
-    @StateObject private var viewModel = JokeViewModel()
+    /// ViewModel is created lazily AFTER splash screen renders to avoid blocking the main thread
+    @State private var viewModel: JokeViewModel?
     @State private var showSplash = true
     @State private var splashMinimumTimePassed = false
 
-    /// Minimum time to show splash (ensures animation is visible)
-    private let minimumSplashDuration: Double = 2.0
+    /// Minimum time to show splash (reduced for faster perceived startup)
+    private let minimumSplashDuration: Double = 1.0
 
     var body: some View {
         ZStack {
-            // Main content (loads in background during splash)
-            MainContentView(viewModel: viewModel)
-                .opacity(showSplash ? 0 : 1)
+            // Main content - only created after viewModel is initialized
+            if let viewModel = viewModel {
+                MainContentView(viewModel: viewModel)
+                    .opacity(showSplash ? 0 : 1)
+            }
 
             // Splash screen overlay
             if showSplash {
@@ -40,9 +43,16 @@ struct RootView: View {
             }
         }
         .onAppear {
-            startSplashTimer()
+            // Defer ViewModel creation to next run loop tick
+            // This allows splash screen to render first, eliminating white screen
+            Task { @MainActor in
+                // Small yield to ensure splash is visible before heavy init
+                await Task.yield()
+                viewModel = JokeViewModel()
+                startSplashTimer()
+            }
         }
-        .onChange(of: viewModel.isInitialLoading) { _, isLoading in
+        .onChange(of: viewModel?.isInitialLoading) { _, isLoading in
             checkTransitionConditions()
         }
     }
@@ -58,8 +68,8 @@ struct RootView: View {
     private func checkTransitionConditions() {
         // Transition when both conditions are met:
         // 1. Minimum splash duration has passed
-        // 2. Initial loading is complete
-        guard splashMinimumTimePassed && !viewModel.isInitialLoading else { return }
+        // 2. Initial loading is complete (or viewModel not yet created)
+        guard splashMinimumTimePassed, let vm = viewModel, !vm.isInitialLoading else { return }
 
         withAnimation(.easeInOut(duration: 0.5)) {
             showSplash = false
