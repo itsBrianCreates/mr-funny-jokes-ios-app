@@ -207,7 +207,9 @@ final class JokeViewModel: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            self?.handleRatingNotification(notification)
+            Task { @MainActor in
+                self?.handleRatingNotification(notification)
+            }
         }
     }
 
