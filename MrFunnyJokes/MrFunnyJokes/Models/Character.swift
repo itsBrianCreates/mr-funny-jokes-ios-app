@@ -21,9 +21,9 @@ struct JokeCharacter: Identifiable, Hashable {
     static let allCharacters: [JokeCharacter] = [
         .mrFunny,
         .mrBad,
-        .mrSad,
+        .mrLove,
         .mrPotty,
-        .mrLove
+        .mrSad
     ]
 
     // MARK: - Character Definitions
