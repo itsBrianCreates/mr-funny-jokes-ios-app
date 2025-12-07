@@ -34,7 +34,7 @@ struct JokeCharacter: Identifiable, Hashable {
         fullName: "Mr. Funny",
         bio: "Dad jokes so good, they're bad. So bad, they're good. Your kids will hate you. You're welcome.",
         imageName: "MrFunny",
-        color: .yellow,
+        color: .accessibleYellow,
         allowedCategories: [.dadJoke, .knockKnock]
     )
 
