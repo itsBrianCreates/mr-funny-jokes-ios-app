@@ -119,11 +119,51 @@ struct ContentView: View {
 
     // MARK: - Me Tab
 
+    private var meHeaderTitle: String {
+        if let category = viewModel.selectedMeCategory {
+            return category.rawValue
+        }
+        return "My Jokes"
+    }
+
+    private var meFilterMenu: some View {
+        Menu {
+            Button {
+                viewModel.selectMeCategory(nil)
+            } label: {
+                Label("All Jokes", systemImage: "sparkles")
+            }
+
+            Divider()
+
+            ForEach(JokeCategory.allCases) { category in
+                Button {
+                    viewModel.selectMeCategory(category)
+                } label: {
+                    Label(category.rawValue, systemImage: category.icon)
+                }
+            }
+        } label: {
+            Image(systemName: viewModel.selectedMeCategory == nil
+                  ? "line.3.horizontal.decrease.circle"
+                  : "line.3.horizontal.decrease.circle.fill")
+                .font(.title3)
+                .foregroundStyle(.primary)
+        }
+    }
+
+    // MARK: - Me Tab View
+
     private var meTab: some View {
         NavigationStack {
             MeView(viewModel: viewModel)
-                .navigationTitle("My Jokes")
+                .navigationTitle(meHeaderTitle)
                 .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        meFilterMenu
+                    }
+                }
         }
     }
 

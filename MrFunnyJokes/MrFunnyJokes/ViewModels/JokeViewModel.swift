@@ -6,6 +6,7 @@ import Combine
 final class JokeViewModel: ObservableObject {
     @Published var jokes: [Joke] = []
     @Published var selectedCategory: JokeCategory? = nil
+    @Published var selectedMeCategory: JokeCategory? = nil
     @Published var isLoading = false
     @Published var isRefreshing = false
     @Published var copiedJokeId: UUID?
@@ -65,6 +66,48 @@ final class JokeViewModel: ObservableObject {
 
     var groanJokes: [Joke] {
         jokes.filter { $0.userRating == 1 }
+    }
+
+    // MARK: - Filtered Rated Jokes (for Me tab)
+
+    /// Rated jokes filtered by the selected Me tab category
+    var filteredRatedJokes: [Joke] {
+        guard let category = selectedMeCategory else {
+            return ratedJokes
+        }
+        return ratedJokes.filter { $0.category == category }
+    }
+
+    /// Hilarious jokes filtered by the selected Me tab category
+    var filteredHilariousJokes: [Joke] {
+        guard let category = selectedMeCategory else {
+            return hilariousJokes
+        }
+        return hilariousJokes.filter { $0.category == category }
+    }
+
+    /// Funny jokes filtered by the selected Me tab category
+    var filteredFunnyJokes: [Joke] {
+        guard let category = selectedMeCategory else {
+            return funnyJokes
+        }
+        return funnyJokes.filter { $0.category == category }
+    }
+
+    /// Meh jokes filtered by the selected Me tab category
+    var filteredMehJokes: [Joke] {
+        guard let category = selectedMeCategory else {
+            return mehJokes
+        }
+        return mehJokes.filter { $0.category == category }
+    }
+
+    /// Groan jokes filtered by the selected Me tab category
+    var filteredGroanJokes: [Joke] {
+        guard let category = selectedMeCategory else {
+            return groanJokes
+        }
+        return groanJokes.filter { $0.category == category }
     }
 
     /// The cached joke of the day firestoreId - used to match Firebase jokes
@@ -537,6 +580,13 @@ final class JokeViewModel: ObservableObject {
         Task {
             await refresh()
         }
+    }
+
+    // MARK: - Me Tab Category Selection
+
+    func selectMeCategory(_ category: JokeCategory?) {
+        HapticManager.shared.lightTap()
+        selectedMeCategory = category
     }
 
 }

@@ -6,6 +6,8 @@ struct MeView: View {
     var body: some View {
         if viewModel.ratedJokes.isEmpty {
             emptyState
+        } else if viewModel.filteredRatedJokes.isEmpty {
+            filteredEmptyState
         } else {
             ratedJokesList
         }
@@ -35,43 +37,67 @@ struct MeView: View {
         .padding()
     }
 
+    // MARK: - Filtered Empty State
+
+    private var filteredEmptyState: some View {
+        VStack(spacing: 16) {
+            Spacer()
+
+            Image(systemName: viewModel.selectedMeCategory?.icon ?? "line.3.horizontal.decrease.circle")
+                .font(.system(size: 56))
+                .foregroundStyle(.tertiary)
+
+            Text("No \(viewModel.selectedMeCategory?.rawValue ?? "Jokes") Rated")
+                .font(.title2.weight(.semibold))
+
+            Text("You haven't rated any \(viewModel.selectedMeCategory?.rawValue.lowercased() ?? "jokes") yet.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
+
     // MARK: - Rated Jokes List
 
     private var ratedJokesList: some View {
         List {
             // Hilarious (4)
-            if !viewModel.hilariousJokes.isEmpty {
+            if !viewModel.filteredHilariousJokes.isEmpty {
                 ratingSection(
                     title: "Hilarious",
                     emoji: "😂",
-                    jokes: viewModel.hilariousJokes
+                    jokes: viewModel.filteredHilariousJokes
                 )
             }
 
             // Funny (3)
-            if !viewModel.funnyJokes.isEmpty {
+            if !viewModel.filteredFunnyJokes.isEmpty {
                 ratingSection(
                     title: "Funny",
                     emoji: "😄",
-                    jokes: viewModel.funnyJokes
+                    jokes: viewModel.filteredFunnyJokes
                 )
             }
 
             // Meh (2)
-            if !viewModel.mehJokes.isEmpty {
+            if !viewModel.filteredMehJokes.isEmpty {
                 ratingSection(
                     title: "Meh",
                     emoji: "😐",
-                    jokes: viewModel.mehJokes
+                    jokes: viewModel.filteredMehJokes
                 )
             }
 
             // Groan-worthy (1)
-            if !viewModel.groanJokes.isEmpty {
+            if !viewModel.filteredGroanJokes.isEmpty {
                 ratingSection(
                     title: "Groan-Worthy",
                     emoji: "😩",
-                    jokes: viewModel.groanJokes
+                    jokes: viewModel.filteredGroanJokes
                 )
             }
         }
