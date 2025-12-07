@@ -1,5 +1,6 @@
 import SwiftUI
 import WidgetKit
+import Combine
 
 @MainActor
 final class JokeViewModel: ObservableObject {
@@ -15,8 +16,11 @@ final class JokeViewModel: ObservableObject {
     /// Tracks if more jokes are being loaded (for infinite scroll)
     @Published var isLoadingMore = false
 
-    /// Indicates if we're currently offline (showing cached content)
-    @Published var isOffline = false
+    /// Network monitor for detecting actual connectivity status
+    private let networkMonitor = NetworkMonitor.shared
+
+    /// Indicates if we're currently offline based on actual network connectivity
+    @Published private(set) var isOffline = false
 
     /// Indicates if we've reached the end and no more jokes are available
     @Published var hasMoreJokes = true
@@ -27,6 +31,7 @@ final class JokeViewModel: ObservableObject {
     private var copyTask: Task<Void, Never>?
     private var loadMoreTask: Task<Void, Never>?
     private var initialLoadTask: Task<Void, Never>?
+    private var networkCancellable: AnyCancellable?
 
     /// Number of jokes to fetch per batch
     private let batchSize = 10
@@ -117,6 +122,16 @@ final class JokeViewModel: ObservableObject {
     }
 
     init() {
+        // Subscribe to network connectivity changes
+        networkCancellable = networkMonitor.$isConnected
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isConnected in
+                self?.isOffline = !isConnected
+            }
+
+        // Set initial offline state
+        isOffline = networkMonitor.isOffline
+
         loadInitialContent()
     }
 
@@ -231,8 +246,6 @@ final class JokeViewModel: ObservableObject {
 
             guard !Task.isCancelled else { return }
 
-            isOffline = false
-
             if !newJokes.isEmpty {
                 // Cache the new jokes by category
                 let grouped = Dictionary(grouping: newJokes, by: { $0.category })
@@ -255,9 +268,8 @@ final class JokeViewModel: ObservableObject {
                 await initializeJokeOfTheDayAsync()
             }
         } catch {
-            // Network error - mark as offline and use cached content
+            // Network error - use cached content as fallback
             print("Firestore fetch error: \(error)")
-            isOffline = true
             // Ensure cached jokes are loaded if jokes array is empty
             if jokes.isEmpty {
                 loadLocalJokes()
@@ -304,8 +316,6 @@ final class JokeViewModel: ObservableObject {
                 return
             }
 
-            isOffline = false
-
             if !newJokes.isEmpty {
                 // Replace cache with fresh jokes (not append)
                 let grouped = Dictionary(grouping: newJokes, by: { $0.category })
@@ -328,8 +338,7 @@ final class JokeViewModel: ObservableObject {
             }
         } catch {
             print("Firestore refresh error: \(error)")
-            isOffline = true
-            // Reload cached jokes as fallback when offline
+            // Reload cached jokes as fallback on error
             loadLocalJokes()
         }
 
@@ -379,8 +388,6 @@ final class JokeViewModel: ObservableObject {
                 return
             }
 
-            isOffline = false
-
             if newJokes.isEmpty {
                 // No more jokes available
                 hasMoreJokes = false
@@ -409,7 +416,7 @@ final class JokeViewModel: ObservableObject {
             }
         } catch {
             print("Firestore load more error: \(error)")
-            isOffline = true
+            // Network error during load more - no action needed, user can retry
         }
 
         // Ensure skeleton is visible for at least a short time
