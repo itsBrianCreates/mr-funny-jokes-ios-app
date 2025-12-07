@@ -158,8 +158,37 @@ final class FirestoreService {
         return allJokes.shuffled()
     }
 
-    /// Fetches a random joke for Joke of the Day
-    /// - Returns: A random Joke object
+    /// Fetches the Joke of the Day from the daily_jokes collection
+    /// - Parameter date: The date to fetch the joke for (defaults to today)
+    /// - Returns: The designated Joke of the Day, or nil if not found
+    func fetchJokeOfTheDay(for date: Date = Date()) async throws -> Joke? {
+        // Format date as document ID (e.g., "2025-12-07")
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(identifier: "America/New_York") // Use consistent timezone
+        let dateString = dateFormatter.string(from: date)
+
+        // Try to fetch from daily_jokes collection
+        let dailyJokeDoc = try await db.collection("daily_jokes").document(dateString).getDocument()
+
+        if dailyJokeDoc.exists, let data = dailyJokeDoc.data() {
+            // Check if it has a joke_id reference to fetch from jokes collection
+            if let jokeId = data["joke_id"] as? String {
+                return try await fetchJoke(byId: jokeId)
+            }
+
+            // Otherwise, try to decode the joke directly from the document
+            if let firestoreJoke = try? dailyJokeDoc.data(as: FirestoreJoke.self) {
+                return firestoreJoke.toJoke()
+            }
+        }
+
+        // No joke found for this date
+        return nil
+    }
+
+    /// Fetches a random joke as fallback for Joke of the Day
+    /// - Returns: A random Joke object from top popular jokes
     func fetchRandomJoke() async throws -> Joke? {
         // Fetch a few top jokes and pick one randomly
         let query = db.collection(jokesCollection)
