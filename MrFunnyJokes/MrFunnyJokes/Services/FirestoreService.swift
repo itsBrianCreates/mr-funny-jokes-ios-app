@@ -217,38 +217,43 @@ final class FirestoreService {
         return try document.data(as: FirestoreJoke.self).toJoke()
     }
 
-    /// Searches jokes by text
+    /// Searches jokes by text across the entire database
     /// - Parameters:
     ///   - searchText: Text to search for
     ///   - limit: Maximum number of results (default 20)
     /// - Returns: Array of matching Joke objects
     func searchJokes(searchText: String, limit: Int = 20) async throws -> [Joke] {
         // Firestore doesn't support full-text search natively
-        // This fetches all jokes and filters client-side
-        // For production, consider using Algolia or Firebase Extensions
+        // Fetch all jokes and filter client-side to ensure complete coverage
+        // For production at scale, consider using Algolia or Firebase Extensions
         let query = db.collection(jokesCollection)
-            .order(by: "popularity_score", descending: true)
-            .limit(to: 100)
 
         let snapshot = try await query.getDocuments()
         let searchLower = searchText.lowercased()
 
-        return snapshot.documents.compactMap { document -> Joke? in
+        let matchingJokes = snapshot.documents.compactMap { document -> Joke? in
             guard let firestoreJoke = try? document.data(as: FirestoreJoke.self) else {
                 return nil
             }
 
             let joke = firestoreJoke.toJoke()
 
-            // Search in setup, punchline, and tags
+            // Search in setup, punchline, tags, and type
             if joke.setup.lowercased().contains(searchLower) ||
                 joke.punchline.lowercased().contains(searchLower) ||
-                (joke.tags?.contains { $0.lowercased().contains(searchLower) } ?? false) {
+                (joke.tags?.contains { $0.lowercased().contains(searchLower) } ?? false) ||
+                joke.category.rawValue.lowercased().contains(searchLower) {
                 return joke
             }
 
             return nil
-        }.prefix(limit).map { $0 }
+        }
+
+        // Sort by popularity and return top results
+        return matchingJokes
+            .sorted { $0.popularityScore > $1.popularityScore }
+            .prefix(limit)
+            .map { $0 }
     }
 
     // MARK: - Fetch Characters
