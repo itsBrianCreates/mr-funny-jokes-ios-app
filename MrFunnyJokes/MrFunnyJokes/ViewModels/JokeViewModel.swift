@@ -275,7 +275,10 @@ final class JokeViewModel: ObservableObject {
 
     // MARK: - Refresh (Pull-to-Refresh)
 
-    func refresh() async {
+    /// Refreshes the joke feed
+    /// - Parameter forceServerFetch: When true, bypasses Firestore cache and fetches from server.
+    ///   Use true for pull-to-refresh, false for category changes (allows graceful cache fallback).
+    func refresh(forceServerFetch: Bool = false) async {
         guard !isRefreshing else { return }
         isRefreshing = true
 
@@ -287,12 +290,13 @@ final class JokeViewModel: ObservableObject {
             // Note: We don't clear cache here - it's replaced after successful fetch
             // This preserves fallback data if the network request fails
 
-            // Fetch new jokes from Firestore, forcing server fetch to bypass Firestore cache
+            // Fetch new jokes from Firestore
+            // Only force server fetch for explicit pull-to-refresh, not for category changes
             let newJokes: [Joke]
             if let category = selectedCategory {
-                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize, forceRefresh: true)
+                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize, forceRefresh: forceServerFetch)
             } else {
-                newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory, forceRefresh: true)
+                newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory, forceRefresh: forceServerFetch)
             }
 
             guard !Task.isCancelled else {
