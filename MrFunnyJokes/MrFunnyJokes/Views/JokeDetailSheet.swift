@@ -97,7 +97,7 @@ struct JokeDetailSheet: View {
                                         .contentTransition(.symbolEffect(.replace))
                                 }
                                 .font(.caption2)
-                                .foregroundStyle(isJokeIdCopied ? .green : .tertiary)
+                                .foregroundColor(isJokeIdCopied ? .green : Color(.tertiaryLabel))
 
                                 Text(jokeId)
                                     .font(.caption.monospaced())
