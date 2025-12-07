@@ -175,30 +175,34 @@ struct JokeDetailSheet: View {
     }
 
     private func formatKnockKnockSetup() -> [String] {
-        // Split by common knock-knock patterns
+        // Format knock-knock setup into lines
+        // Input: "Knock, knock. Who's there? Nobel."
+        // Output: ["Knock, knock. Who's there?", "Nobel."]
         var lines: [String] = []
-        var remaining = joke.setup
 
-        // Extract "Knock knock"
-        if let range = remaining.range(of: "Knock knock", options: .caseInsensitive) {
-            lines.append("Knock knock!")
-            remaining = String(remaining[range.upperBound...]).trimmingCharacters(in: .punctuationCharacters).trimmingCharacters(in: .whitespaces)
+        // Find "Who's there?" and split there
+        if let range = joke.setup.range(of: "Who's there?", options: .caseInsensitive) {
+            // First line: everything up to and including "Who's there?"
+            let firstLine = String(joke.setup[...range.upperBound])
+            lines.append(firstLine)
+
+            // Second line: the answer (e.g., "Nobel.")
+            let answer = String(joke.setup[range.upperBound...])
+                .trimmingCharacters(in: .whitespaces)
+            if !answer.isEmpty {
+                // Ensure proper capitalization and ending punctuation
+                var formattedAnswer = answer.prefix(1).uppercased() + answer.dropFirst()
+                if !formattedAnswer.hasSuffix(".") && !formattedAnswer.hasSuffix("!") {
+                    formattedAnswer += "."
+                }
+                lines.append(formattedAnswer)
+            }
+        } else {
+            // Fallback: return the setup as-is
+            lines.append(joke.setup)
         }
 
-        // Extract "Who's there?"
-        if let range = remaining.range(of: "Who's there", options: .caseInsensitive) {
-            lines.append("Who's there?")
-            remaining = String(remaining[range.upperBound...]).trimmingCharacters(in: .punctuationCharacters).trimmingCharacters(in: .whitespaces)
-        }
-
-        // The rest is the answer (the name/thing)
-        if !remaining.isEmpty {
-            // Capitalize first letter
-            let answer = remaining.prefix(1).uppercased() + remaining.dropFirst()
-            lines.append(answer + ".")
-        }
-
-        return lines.isEmpty ? [joke.setup] : lines
+        return lines
     }
 
     private func formatKnockKnockPunchline() -> [String] {
@@ -250,8 +254,8 @@ struct JokeDetailSheet: View {
             JokeDetailSheet(
                 joke: Joke(
                     category: .knockKnock,
-                    setup: "Knock knock. Who's there? Lettuce.",
-                    punchline: "Lettuce who? Lettuce in, it's cold out here!",
+                    setup: "Knock, knock. Who's there? Nobel.",
+                    punchline: "Nobel who? Nobel … that's why I knocked.",
                     userRating: 3,
                     firestoreId: "ABC123XYZ456example",
                     character: "Mr. Potty"
