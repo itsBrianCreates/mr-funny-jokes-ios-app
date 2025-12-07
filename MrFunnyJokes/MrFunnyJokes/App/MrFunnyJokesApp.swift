@@ -146,6 +146,13 @@ struct MainContentView: View {
         .onOpenURL { url in
             handleDeepLink(url)
         }
+        .onAppear {
+            // Clear navigation state on app launch to prevent returning to
+            // a frozen screen after force-close. SwiftUI's state restoration
+            // can preserve navigationPath, so we reset it to ensure users
+            // always start at the home screen.
+            navigationPath = NavigationPath()
+        }
     }
 
     // MARK: - Deep Linking
