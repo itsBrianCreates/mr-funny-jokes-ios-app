@@ -37,18 +37,12 @@ struct SplashScreenView: View {
                 Spacer()
 
                 // App title with playful entrance
-                VStack(spacing: 8) {
-                    Text("Mr. Funny")
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
-                        .foregroundStyle(.primary)
-
-                    Text("Jokes")
-                        .font(.system(size: 36, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Color.brandYellow)
-                }
-                .opacity(showTitle ? 1 : 0)
-                .scaleEffect(showTitle ? 1 : 0.8)
-                .offset(y: showTitle ? 0 : 20)
+                Text("Mr. Funny Jokes")
+                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
+                    .opacity(showTitle ? 1 : 0)
+                    .scaleEffect(showTitle ? 1 : 0.8)
+                    .offset(y: showTitle ? 0 : 20)
 
                 // Animated character circles with wave effect
                 TimelineView(.animation(minimumInterval: 0.05)) { timeline in
