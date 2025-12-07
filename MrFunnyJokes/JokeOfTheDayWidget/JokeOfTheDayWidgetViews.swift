@@ -25,13 +25,18 @@ struct SmallWidgetView: View {
     let joke: SharedJokeOfTheDay
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Header
+        VStack(alignment: .leading, spacing: 4) {
+            // Header with character photo
             HStack(spacing: 4) {
-                Text("😄")
-                    .font(.caption)
+                if let characterImageName = characterImageName(for: joke.character) {
+                    Image(characterImageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 16, height: 16)
+                        .clipShape(Circle())
+                }
                 Text("Joke of the Day")
-                    .font(.caption)
+                    .font(.caption2)
                     .fontWeight(.semibold)
                     .foregroundStyle(.secondary)
             }
@@ -40,9 +45,9 @@ struct SmallWidgetView: View {
 
             // Truncated setup text (teaser)
             Text(joke.setup)
-                .font(.subheadline)
+                .font(.footnote)
                 .fontWeight(.medium)
-                .lineLimit(4)
+                .lineLimit(5)
                 .multilineTextAlignment(.leading)
 
             Spacer()
@@ -52,7 +57,7 @@ struct SmallWidgetView: View {
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
-        .padding(16)
+        .padding(10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .widgetURL(URL(string: "mrfunnyjokes://home"))
     }
@@ -65,10 +70,15 @@ struct MediumWidgetView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Header
-            HStack(spacing: 4) {
-                Text("😄")
-                    .font(.subheadline)
+            // Header with character photo
+            HStack(spacing: 6) {
+                if let characterImageName = characterImageName(for: joke.character) {
+                    Image(characterImageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 20, height: 20)
+                        .clipShape(Circle())
+                }
                 Text("Joke of the Day")
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -107,10 +117,15 @@ struct LargeWidgetView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header
-            HStack(spacing: 6) {
-                Text("😄")
-                    .font(.title3)
+            // Header with character photo
+            HStack(spacing: 8) {
+                if let characterImageName = characterImageName(for: joke.character) {
+                    Image(characterImageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 24, height: 24)
+                        .clipShape(Circle())
+                }
                 Text("Joke of the Day")
                     .font(.headline)
                     .fontWeight(.bold)
@@ -166,6 +181,31 @@ extension Color {
     static let widgetAccent = Color(red: 0.85, green: 0.65, blue: 0.0)
 }
 
+// MARK: - Character Image Helper
+
+/// Maps character name or ID to the corresponding image asset name
+func characterImageName(for character: String?) -> String? {
+    guard let character = character else { return nil }
+
+    let normalizedName = character.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+
+    // Map character IDs and names to their image asset names
+    switch normalizedName {
+    case "mr_funny", "mr. funny", "mr funny", "mrfunny":
+        return "MrFunny"
+    case "mr_bad", "mr. bad", "mr bad", "mrbad":
+        return "MrBad"
+    case "mr_sad", "mr. sad", "mr sad", "mrsad":
+        return "MrSad"
+    case "mr_potty", "mr. potty", "mr potty", "mrpotty":
+        return "MrPotty"
+    case "mr_love", "mr. love", "mr love", "mrlove":
+        return "MrLove"
+    default:
+        return nil
+    }
+}
+
 // MARK: - Previews
 
 #Preview("Small", as: .systemSmall) {
@@ -178,7 +218,8 @@ extension Color {
             id: "1",
             setup: "What do you call a fake noodle?",
             punchline: "An impasta!",
-            category: "Dad Jokes"
+            category: "Dad Jokes",
+            character: "mr_funny"
         )
     )
 }
@@ -193,7 +234,8 @@ extension Color {
             id: "1",
             setup: "Why did the scarecrow win an award?",
             punchline: "Because he was outstanding in his field!",
-            category: "Dad Jokes"
+            category: "Dad Jokes",
+            character: "mr_funny"
         )
     )
 }
@@ -208,7 +250,8 @@ extension Color {
             id: "1",
             setup: "I told my wife she was drawing her eyebrows too high.",
             punchline: "She looked surprised.",
-            category: "Dad Jokes"
+            category: "Dad Jokes",
+            character: "mr_funny"
         )
     )
 }
