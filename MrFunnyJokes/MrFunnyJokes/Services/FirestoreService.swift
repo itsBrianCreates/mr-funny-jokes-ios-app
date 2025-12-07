@@ -289,27 +289,28 @@ final class FirestoreService {
 
     // MARK: - Character Pagination
 
-    /// Fetches initial jokes for a character view with independent pagination
+    /// Fetches all jokes for a character view
     /// - Parameters:
-    ///   - characterId: The character ID for pagination tracking
-    ///   - limit: Number of jokes to fetch (default 50)
-    /// - Returns: Array of Joke objects
+    ///   - characterId: The character ID to fetch jokes for
+    ///   - limit: Ignored - kept for API compatibility. All jokes are returned.
+    /// - Returns: Array of Joke objects sorted by popularity score
+    /// - Note: Fetches all jokes at once to avoid requiring a Firestore composite index.
+    ///         The view model handles client-side display limiting if needed.
     func fetchInitialJokesForCharacter(characterId: String, limit: Int = 50) async throws -> [Joke] {
-        // Reset character-specific pagination
-        lastDocumentsByCharacter[characterId] = nil
-
-        // Filter by character field in Firestore to ensure we get jokes for this specific character
+        // Filter by character field in Firestore
+        // Note: We don't use orderBy here to avoid requiring a composite index
+        // Sorting is done client-side after fetching
         let query = db.collection(jokesCollection)
             .whereField("character", isEqualTo: characterId)
-            .order(by: "popularity_score", descending: true)
-            .limit(to: limit)
 
         let snapshot = try await query.getDocuments()
-        lastDocumentsByCharacter[characterId] = snapshot.documents.last
 
-        return snapshot.documents.compactMap { document in
+        let jokes = snapshot.documents.compactMap { document in
             try? document.data(as: FirestoreJoke.self).toJoke()
         }
+
+        // Sort client-side by popularity score (descending)
+        return jokes.sorted { $0.popularityScore > $1.popularityScore }
     }
 
     /// Fetches more jokes for a character view (independent pagination)
@@ -317,31 +318,13 @@ final class FirestoreService {
     ///   - characterId: The character ID for pagination tracking
     ///   - limit: Number of jokes to fetch (default 50)
     /// - Returns: Tuple of (jokes array, hasMoreInDatabase flag)
+    /// - Note: Since we fetch all character jokes at once (to avoid composite index requirement),
+    ///         this returns empty results - all jokes are loaded in the initial fetch
     func fetchMoreJokesForCharacter(characterId: String, limit: Int = 50) async throws -> (jokes: [Joke], hasMore: Bool) {
-        guard let lastDoc = lastDocumentsByCharacter[characterId] else {
-            let jokes = try await fetchInitialJokesForCharacter(characterId: characterId, limit: limit)
-            return (jokes, jokes.count >= limit)
-        }
-
-        // Filter by character field in Firestore to ensure we get jokes for this specific character
-        let query = db.collection(jokesCollection)
-            .whereField("character", isEqualTo: characterId)
-            .order(by: "popularity_score", descending: true)
-            .start(afterDocument: lastDoc)
-            .limit(to: limit)
-
-        let snapshot = try await query.getDocuments()
-
-        if let newLastDoc = snapshot.documents.last {
-            lastDocumentsByCharacter[characterId] = newLastDoc
-        }
-
-        let jokes = snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
-
-        // hasMore is true if we got a full batch (there might be more in DB)
-        return (jokes, jokes.count >= limit)
+        // Since fetchInitialJokesForCharacter now fetches ALL jokes for a character
+        // (to avoid requiring a composite index), there are no more jokes to fetch
+        // The view model handles pagination from the already-loaded jokes array
+        return ([], false)
     }
 
     /// Resets pagination for a specific character
