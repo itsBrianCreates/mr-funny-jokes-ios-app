@@ -93,14 +93,17 @@ final class JokeViewModel: ObservableObject {
         return nil
     }
 
-    /// Compute a new joke of the day deterministically based on the current date
+    /// Fetch a random joke of the day from Firebase
     /// This should only be called when we need a NEW joke (new day or first run)
-    private func computeNewJokeOfTheDay() -> Joke? {
-        guard !jokes.isEmpty else { return nil }
-        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
-        let index = dayOfYear % jokes.count
-        let sortedJokes = jokes.sorted { $0.id.uuidString < $1.id.uuidString }
-        return sortedJokes[index]
+    private func fetchJokeOfTheDayFromFirebase() async -> Joke? {
+        do {
+            return try await firestoreService.fetchRandomJoke()
+        } catch {
+            print("Failed to fetch joke of the day from Firebase: \(error)")
+            // Fallback to local jokes if Firebase fetch fails
+            guard !jokes.isEmpty else { return nil }
+            return jokes.randomElement()
+        }
     }
 
     init() {
@@ -129,7 +132,16 @@ final class JokeViewModel: ObservableObject {
         initializeJokeOfTheDay()
     }
 
-    /// Initialize joke of the day from shared storage or compute new one
+    /// Initialize joke of the day from shared storage only (sync)
+    /// Use this for initial load from cache
+    private func loadJokeOfTheDayFromStorage() {
+        if let savedJoke = sharedStorage.loadJokeOfTheDay() {
+            jokeOfTheDayId = savedJoke.id
+            cachedJokeOfTheDayData = savedJoke
+        }
+    }
+
+    /// Initialize joke of the day - checks storage first, fetches from Firebase if needed
     /// This ensures the same joke persists for 24 hours across app and widget
     private func initializeJokeOfTheDay() {
         // First, check if we have a valid joke of the day saved from today
@@ -141,8 +153,31 @@ final class JokeViewModel: ObservableObject {
             return
         }
 
-        // No saved joke for today - compute a new one
-        guard let newJoke = computeNewJokeOfTheDay() else { return }
+        // No saved joke for today - fetch from Firebase in background
+        Task {
+            await fetchAndSaveJokeOfTheDay()
+        }
+    }
+
+    /// Async version: Initialize joke of the day - checks storage first, fetches from Firebase if needed
+    /// Call this from async contexts to avoid spawning unnecessary Tasks
+    private func initializeJokeOfTheDayAsync() async {
+        // First, check if we have a valid joke of the day saved from today
+        if !sharedStorage.needsUpdate(), let savedJoke = sharedStorage.loadJokeOfTheDay() {
+            // Use the saved joke ID - this ensures consistency with widget
+            jokeOfTheDayId = savedJoke.id
+            // Cache the full joke data for fallback reconstruction
+            cachedJokeOfTheDayData = savedJoke
+            return
+        }
+
+        // No saved joke for today - fetch from Firebase
+        await fetchAndSaveJokeOfTheDay()
+    }
+
+    /// Fetch a new joke of the day from Firebase and save it
+    private func fetchAndSaveJokeOfTheDay() async {
+        guard let newJoke = await fetchJokeOfTheDayFromFirebase() else { return }
 
         // Save and sync to widget
         jokeOfTheDayId = newJoke.id.uuidString
@@ -198,8 +233,8 @@ final class JokeViewModel: ObservableObject {
                 // Firebase is now the primary data source
                 jokes = jokesWithRatings.shuffled()
 
-                // Re-initialize joke of the day with the new Firebase jokes
-                initializeJokeOfTheDay()
+                // Re-initialize joke of the day - fetches from Firebase if needed
+                await initializeJokeOfTheDayAsync()
             }
         } catch {
             // Network error - mark as offline and use cached content
@@ -271,8 +306,8 @@ final class JokeViewModel: ObservableObject {
                 // Replace with fresh Firebase jokes
                 jokes = jokesWithRatings.shuffled()
 
-                // Re-initialize joke of the day with refreshed jokes
-                initializeJokeOfTheDay()
+                // Re-initialize joke of the day - fetches from Firebase if needed
+                await initializeJokeOfTheDayAsync()
             }
         } catch {
             print("Firestore refresh error: \(error)")
