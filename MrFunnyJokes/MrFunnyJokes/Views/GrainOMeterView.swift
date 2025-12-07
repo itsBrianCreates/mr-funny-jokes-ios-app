@@ -13,7 +13,7 @@ struct GroanOMeterView: View {
         ("😂", "Hilarious")
     ]
 
-    @State private var selectedIndex: Int = 0
+    @State private var selectedIndex: Int? = nil
     @GestureState private var isDragging = false
 
     // iOS minimum tap target is 44pt
@@ -32,7 +32,7 @@ struct GroanOMeterView: View {
                 Text(currentRatingName)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                    .animation(.none, value: displayIndex)
+                    .animation(.none, value: displayIndex ?? -1)
             }
 
             // Emoji slider in pill container
@@ -46,17 +46,19 @@ struct GroanOMeterView: View {
                     Capsule()
                         .fill(.quaternary.opacity(0.5))
 
-                    // Circular glass indicator
-                    Circle()
-                        .fill(.ultraThinMaterial)
-                        .frame(width: circleSize, height: circleSize)
-                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
-                        .overlay(
-                            Circle()
-                                .stroke(.white.opacity(0.3), lineWidth: 1)
-                        )
-                        .offset(x: indicatorOffset(itemWidth: itemWidth, circleOffset: circleOffset))
-                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: displayIndex)
+                    // Circular glass indicator - only show when there's a selection
+                    if let index = displayIndex {
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .frame(width: circleSize, height: circleSize)
+                            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+                            .overlay(
+                                Circle()
+                                    .stroke(.white.opacity(0.3), lineWidth: 1)
+                            )
+                            .offset(x: indicatorOffset(itemWidth: itemWidth, circleOffset: circleOffset, index: index))
+                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: displayIndex)
+                    }
 
                     // Emoji row
                     HStack(spacing: 0) {
@@ -64,7 +66,7 @@ struct GroanOMeterView: View {
                             Text(ratingOptions[index].emoji)
                                 .font(.system(size: 24))
                                 .frame(width: itemWidth, height: circleSize)
-                                .opacity(displayIndex == index ? 1.0 : 0.5)
+                                .opacity(displayIndex == index ? 1.0 : (displayIndex == nil ? 0.6 : 0.5))
                                 .scaleEffect(displayIndex == index ? 1.15 : 1.0)
                                 .animation(.spring(response: 0.25, dampingFraction: 0.6), value: displayIndex)
                         }
@@ -95,31 +97,32 @@ struct GroanOMeterView: View {
             .frame(height: circleSize + containerPadding * 2)
         }
         .onAppear {
-            // Convert rating (1-5) to index (0-4), default to middle (Meh) if unrated
-            selectedIndex = (currentRating ?? 3) - 1
+            // Convert rating (1-5) to index (0-4), nil if unrated
+            selectedIndex = currentRating.map { $0 - 1 }
         }
         .onChange(of: currentRating) { _, newValue in
-            // Convert rating (1-5) to index (0-4), default to middle (Meh) if unrated
-            selectedIndex = (newValue ?? 3) - 1
+            // Convert rating (1-5) to index (0-4), nil if unrated
+            selectedIndex = newValue.map { $0 - 1 }
         }
     }
 
-    private var displayIndex: Int {
+    private var displayIndex: Int? {
         if isDragging {
             return selectedIndex
         }
-        // Convert rating (1-5) to index (0-4), default to middle (Meh) if unrated
-        return (currentRating ?? 3) - 1
+        // Convert rating (1-5) to index (0-4), nil if unrated
+        return currentRating.map { $0 - 1 }
     }
 
     private var currentRatingName: String {
-        let index = displayIndex
-        guard index >= 0 && index < ratingOptions.count else { return "" }
+        guard let index = displayIndex, index >= 0, index < ratingOptions.count else {
+            return "Tap to rate"
+        }
         return ratingOptions[index].name
     }
 
-    private func indicatorOffset(itemWidth: CGFloat, circleOffset: CGFloat) -> CGFloat {
-        CGFloat(displayIndex) * itemWidth + circleOffset
+    private func indicatorOffset(itemWidth: CGFloat, circleOffset: CGFloat, index: Int) -> CGFloat {
+        CGFloat(index) * itemWidth + circleOffset
     }
 
     private func indexFromLocation(_ x: CGFloat, itemWidth: CGFloat) -> Int {
