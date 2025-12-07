@@ -39,7 +39,13 @@ struct FirestoreJoke: Codable, Identifiable {
 
     /// Converts Firestore joke to the app's Joke model
     func toJoke() -> Joke {
-        let category = JokeCategory.fromFirestoreType(type)
+        var category = JokeCategory.fromFirestoreType(type)
+
+        // Detect knock-knock jokes by text content, regardless of stored type
+        // This handles cases where jokes are stored with incorrect type values
+        if isKnockKnockJoke(text) {
+            category = .knockKnock
+        }
 
         // Parse the text - some jokes may have setup/punchline format
         let (setup, punchline) = parseJokeText(text, category: category)
@@ -92,6 +98,13 @@ struct FirestoreJoke: Codable, Identifiable {
 
         // If no delimiter found, use the whole text as setup with empty punchline
         return (text, "")
+    }
+
+    /// Checks if the joke text follows the knock-knock joke format
+    /// Returns true if the text starts with "knock" (case insensitive) and contains "who's there"
+    private func isKnockKnockJoke(_ text: String) -> Bool {
+        let lowercased = text.lowercased()
+        return lowercased.hasPrefix("knock") && lowercased.contains("who's there")
     }
 
     /// Parse knock-knock joke into setup and punchline
