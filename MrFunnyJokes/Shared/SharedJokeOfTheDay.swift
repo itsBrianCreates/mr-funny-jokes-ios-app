@@ -7,13 +7,17 @@ struct SharedJokeOfTheDay: Codable {
     let setup: String
     let punchline: String
     let category: String?
+    let firestoreId: String?
+    let character: String?
     let lastUpdated: Date
 
-    init(id: String, setup: String, punchline: String, category: String? = nil, lastUpdated: Date = Date()) {
+    init(id: String, setup: String, punchline: String, category: String? = nil, firestoreId: String? = nil, character: String? = nil, lastUpdated: Date = Date()) {
         self.id = id
         self.setup = setup
         self.punchline = punchline
         self.category = category
+        self.firestoreId = firestoreId
+        self.character = character
         self.lastUpdated = lastUpdated
     }
 
@@ -23,6 +27,8 @@ struct SharedJokeOfTheDay: Codable {
         setup: "Loading jokes...",
         punchline: "Open the app to get today's joke!",
         category: nil,
+        firestoreId: nil,
+        character: nil,
         lastUpdated: Date()
     )
 }
