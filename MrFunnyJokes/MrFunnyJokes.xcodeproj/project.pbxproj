@@ -49,6 +49,7 @@
 		C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9622EE0A55A007A6AFF /* FirebaseCore */; };
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
+		D10000000000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D20000000000000000000001 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +117,7 @@
 		C333E6402EE10888007377F4 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailViewModel.swift; sourceTree = "<group>"; };
 		C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D20000000000000000000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000027 /* Info.plist */,
+				D20000000000000000000001 /* LaunchScreen.storyboard */,
 				A50000000000000000000004 /* App */,
 				A50000000000000000000005 /* Models */,
 				A50000000000000000000006 /* Views */,
@@ -385,6 +388,7 @@
 				A10000000000000000000004 /* Preview Assets.xcassets in Resources */,
 				A10000000000000000000003 /* Assets.xcassets in Resources */,
 				C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */,
+				D10000000000000000000001 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,7 +600,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Mr. Funny Jokes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -628,7 +632,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Mr. Funny Jokes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
