@@ -46,11 +46,11 @@ final class CharacterDetailViewModel: ObservableObject {
         isLoading = true
 
         do {
-            // Use character-specific pagination to avoid conflicts with home tab
-            // The Firestore query already filters by character field, so no client-side filtering needed
+            // Fetch all jokes for this character from Firestore
+            // Note: All jokes are loaded at once (no server-side pagination) to avoid
+            // requiring a Firestore composite index on character + popularity_score
             let characterJokes = try await firestoreService.fetchInitialJokesForCharacter(
-                characterId: character.id,
-                limit: fetchBatchSize
+                characterId: character.id
             )
 
             // Apply user ratings
@@ -62,8 +62,8 @@ final class CharacterDetailViewModel: ObservableObject {
 
             jokes = jokesWithRatings
 
-            // If we got a full batch from Firestore, there might be more
-            hasMoreJokes = characterJokes.count >= fetchBatchSize
+            // All jokes are loaded at once, no more to fetch
+            hasMoreJokes = false
         } catch {
             print("Error loading jokes for \(character.name): \(error)")
         }
