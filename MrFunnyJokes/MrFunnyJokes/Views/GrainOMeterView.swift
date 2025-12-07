@@ -4,9 +4,9 @@ struct GroanOMeterView: View {
     let currentRating: Int?
     let onRate: (Int) -> Void
 
-    // 0 = no rating, 1-4 = actual ratings
+    // 1-5 rating scale (index 0-4 maps to rating 1-5)
     private let ratingOptions: [(emoji: String, name: String)] = [
-        ("🚫", "No Rating"),
+        ("🫠", "Horrible"),
         ("😩", "Groan-worthy"),
         ("😐", "Meh"),
         ("😄", "Funny"),
@@ -87,22 +87,20 @@ struct GroanOMeterView: View {
                         .onEnded { value in
                             let finalIndex = indexFromLocation(value.location.x, itemWidth: itemWidth)
 
-                            // Save the rating (0 means remove rating, 1-4 are actual ratings)
-                            if finalIndex == 0 {
-                                onRate(0)
-                            } else {
-                                onRate(finalIndex)
-                            }
+                            // Save the rating (index 0-4 maps to rating 1-5)
+                            onRate(finalIndex + 1)
                         }
                 )
             }
             .frame(height: circleSize + containerPadding * 2)
         }
         .onAppear {
-            selectedIndex = currentRating ?? 0
+            // Convert rating (1-5) to index (0-4), default to middle (Meh) if unrated
+            selectedIndex = (currentRating ?? 3) - 1
         }
         .onChange(of: currentRating) { _, newValue in
-            selectedIndex = newValue ?? 0
+            // Convert rating (1-5) to index (0-4), default to middle (Meh) if unrated
+            selectedIndex = (newValue ?? 3) - 1
         }
     }
 
@@ -110,7 +108,8 @@ struct GroanOMeterView: View {
         if isDragging {
             return selectedIndex
         }
-        return currentRating ?? 0
+        // Convert rating (1-5) to index (0-4), default to middle (Meh) if unrated
+        return (currentRating ?? 3) - 1
     }
 
     private var currentRatingName: String {
@@ -132,10 +131,10 @@ struct GroanOMeterView: View {
 struct CompactGroanOMeterView: View {
     let rating: Int?
 
-    private let emojis = ["😩", "😐", "😄", "😂"]
+    private let emojis = ["🫠", "😩", "😐", "😄", "😂"]
 
     var body: some View {
-        if let rating = rating, rating >= 1, rating <= 4 {
+        if let rating = rating, rating >= 1, rating <= 5 {
             Text(emojis[rating - 1])
                 .font(.callout)
         }
@@ -144,7 +143,7 @@ struct CompactGroanOMeterView: View {
 
 #Preview {
     VStack(spacing: 30) {
-        GroanOMeterView(currentRating: 2) { rating in
+        GroanOMeterView(currentRating: 3) { rating in
             print("Selected rating: \(rating)")
         }
 
@@ -152,7 +151,7 @@ struct CompactGroanOMeterView: View {
             print("Selected rating: \(rating)")
         }
 
-        GroanOMeterView(currentRating: 4) { rating in
+        GroanOMeterView(currentRating: 5) { rating in
             print("Selected rating: \(rating)")
         }
 
@@ -163,6 +162,7 @@ struct CompactGroanOMeterView: View {
             CompactGroanOMeterView(rating: 2)
             CompactGroanOMeterView(rating: 3)
             CompactGroanOMeterView(rating: 4)
+            CompactGroanOMeterView(rating: 5)
         }
     }
     .padding()

@@ -65,7 +65,7 @@ struct MeView: View {
 
     private var ratedJokesList: some View {
         List {
-            // Hilarious (4)
+            // Hilarious (5)
             if !viewModel.filteredHilariousJokes.isEmpty {
                 ratingSection(
                     title: "Hilarious",
@@ -74,7 +74,7 @@ struct MeView: View {
                 )
             }
 
-            // Funny (3)
+            // Funny (4)
             if !viewModel.filteredFunnyJokes.isEmpty {
                 ratingSection(
                     title: "Funny",
@@ -83,7 +83,7 @@ struct MeView: View {
                 )
             }
 
-            // Meh (2)
+            // Meh (3)
             if !viewModel.filteredMehJokes.isEmpty {
                 ratingSection(
                     title: "Meh",
@@ -92,12 +92,21 @@ struct MeView: View {
                 )
             }
 
-            // Groan-worthy (1)
+            // Groan-worthy (2)
             if !viewModel.filteredGroanJokes.isEmpty {
                 ratingSection(
                     title: "Groan-Worthy",
                     emoji: "😩",
                     jokes: viewModel.filteredGroanJokes
+                )
+            }
+
+            // Horrible (1)
+            if !viewModel.filteredHorribleJokes.isEmpty {
+                ratingSection(
+                    title: "Horrible",
+                    emoji: "🫠",
+                    jokes: viewModel.filteredHorribleJokes
                 )
             }
         }

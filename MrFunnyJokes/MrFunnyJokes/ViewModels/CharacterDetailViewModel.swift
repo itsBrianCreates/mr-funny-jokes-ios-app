@@ -243,7 +243,7 @@ final class CharacterDetailViewModel: ObservableObject {
                 jokes[index].userRating = nil
             }
         } else {
-            let clampedRating = min(max(rating, 1), 4)
+            let clampedRating = min(max(rating, 1), 5)
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
             if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
                 jokes[index].userRating = clampedRating
