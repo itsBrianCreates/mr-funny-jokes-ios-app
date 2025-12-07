@@ -62,31 +62,34 @@ final class JokeViewModel: ObservableObject {
         jokes.filter { $0.userRating == 1 }
     }
 
-    /// The cached joke of the day ID - persisted across app/widget
+    /// The cached joke of the day firestoreId - used to match Firebase jokes
+    /// This is persisted across app/widget via SharedStorageService
     @Published private(set) var jokeOfTheDayId: String?
 
     /// Cached joke data from shared storage (used as fallback if joke not in array)
     private var cachedJokeOfTheDayData: SharedJokeOfTheDay?
 
     /// Joke of the Day - sourced from shared storage to ensure consistency with widget
+    /// Uses firestoreId for lookup to properly match Firebase jokes
     var jokeOfTheDay: Joke? {
         guard let id = jokeOfTheDayId else { return nil }
 
-        // First, try to find the joke in our array
-        if let joke = jokes.first(where: { $0.id.uuidString == id }) {
+        // First, try to find the joke in our array by firestoreId
+        if let joke = jokes.first(where: { $0.firestoreId == id }) {
             return joke
         }
 
         // Fallback: reconstruct from shared storage data
-        // This handles the case where the saved joke ID doesn't match any joke in our array
-        // (e.g., if the joke was saved with a different UUID)
+        // This handles the case where the saved joke isn't in our jokes array yet
         if let sharedJoke = cachedJokeOfTheDayData {
             let category = JokeCategory(rawValue: sharedJoke.category ?? "") ?? .dadJoke
             return Joke(
                 id: UUID(uuidString: sharedJoke.id) ?? UUID(),
                 category: category,
                 setup: sharedJoke.setup,
-                punchline: sharedJoke.punchline
+                punchline: sharedJoke.punchline,
+                firestoreId: sharedJoke.firestoreId,
+                character: sharedJoke.character
             )
         }
 
@@ -143,7 +146,8 @@ final class JokeViewModel: ObservableObject {
     /// Use this for initial load from cache
     private func loadJokeOfTheDayFromStorage() {
         if let savedJoke = sharedStorage.loadJokeOfTheDay() {
-            jokeOfTheDayId = savedJoke.id
+            // Use firestoreId for lookup if available, otherwise fall back to id
+            jokeOfTheDayId = savedJoke.firestoreId ?? savedJoke.id
             cachedJokeOfTheDayData = savedJoke
         }
     }
@@ -153,8 +157,8 @@ final class JokeViewModel: ObservableObject {
     private func initializeJokeOfTheDay() {
         // First, check if we have a valid joke of the day saved from today
         if !sharedStorage.needsUpdate(), let savedJoke = sharedStorage.loadJokeOfTheDay() {
-            // Use the saved joke ID - this ensures consistency with widget
-            jokeOfTheDayId = savedJoke.id
+            // Use firestoreId for lookup - this properly matches Firebase jokes
+            jokeOfTheDayId = savedJoke.firestoreId ?? savedJoke.id
             // Cache the full joke data for fallback reconstruction
             cachedJokeOfTheDayData = savedJoke
             return
@@ -171,8 +175,8 @@ final class JokeViewModel: ObservableObject {
     private func initializeJokeOfTheDayAsync() async {
         // First, check if we have a valid joke of the day saved from today
         if !sharedStorage.needsUpdate(), let savedJoke = sharedStorage.loadJokeOfTheDay() {
-            // Use the saved joke ID - this ensures consistency with widget
-            jokeOfTheDayId = savedJoke.id
+            // Use firestoreId for lookup - this properly matches Firebase jokes
+            jokeOfTheDayId = savedJoke.firestoreId ?? savedJoke.id
             // Cache the full joke data for fallback reconstruction
             cachedJokeOfTheDayData = savedJoke
             return
@@ -186,8 +190,11 @@ final class JokeViewModel: ObservableObject {
     private func fetchAndSaveJokeOfTheDay() async {
         guard let newJoke = await fetchJokeOfTheDayFromFirebase() else { return }
 
+        // Use firestoreId for storage - this is the actual Firebase document ID
+        let jokeIdentifier = newJoke.firestoreId ?? newJoke.id.uuidString
+
         // Save and sync to widget
-        jokeOfTheDayId = newJoke.id.uuidString
+        jokeOfTheDayId = jokeIdentifier
         saveJokeOfTheDayToWidget(newJoke)
 
         // Also cache the data locally for fallback
@@ -195,7 +202,9 @@ final class JokeViewModel: ObservableObject {
             id: newJoke.id.uuidString,
             setup: newJoke.setup,
             punchline: newJoke.punchline,
-            category: newJoke.category.rawValue
+            category: newJoke.category.rawValue,
+            firestoreId: newJoke.firestoreId,
+            character: newJoke.character
         )
     }
 
@@ -205,7 +214,9 @@ final class JokeViewModel: ObservableObject {
             id: joke.id.uuidString,
             setup: joke.setup,
             punchline: joke.punchline,
-            category: joke.category.rawValue
+            category: joke.category.rawValue,
+            firestoreId: joke.firestoreId,
+            character: joke.character
         )
 
         sharedStorage.saveJokeOfTheDay(sharedJoke)
