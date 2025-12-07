@@ -1,5 +1,11 @@
 import SwiftUI
 
+/// Notification posted when a joke rating changes in any ViewModel
+/// Used to sync ratings across CharacterDetailViewModel and JokeViewModel
+extension Notification.Name {
+    static let jokeRatingDidChange = Notification.Name("jokeRatingDidChange")
+}
+
 /// ViewModel for managing character detail view state and data
 @MainActor
 final class CharacterDetailViewModel: ObservableObject {
@@ -200,6 +206,18 @@ final class CharacterDetailViewModel: ObservableObject {
                 }
             }
         }
+
+        // Notify other ViewModels (especially JokeViewModel) about the rating change
+        // This ensures the Me tab updates when ratings are made in character views
+        NotificationCenter.default.post(
+            name: .jokeRatingDidChange,
+            object: nil,
+            userInfo: [
+                "firestoreId": joke.firestoreId as Any,
+                "jokeId": joke.id,
+                "rating": rating
+            ]
+        )
     }
 
     // MARK: - Sharing
