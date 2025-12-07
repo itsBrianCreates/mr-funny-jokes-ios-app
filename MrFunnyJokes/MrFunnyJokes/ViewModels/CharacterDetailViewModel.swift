@@ -17,12 +17,8 @@ final class CharacterDetailViewModel: ObservableObject {
     private var copyTask: Task<Void, Never>?
     private var loadMoreTask: Task<Void, Never>?
 
-    /// Batch size for filtering character jokes from each fetch
-    private let batchSize = 15
-    /// Number of jokes to fetch from Firestore per batch (larger to ensure we find enough character matches)
+    /// Number of jokes to fetch from Firestore per batch
     private let fetchBatchSize = 50
-    /// Maximum consecutive empty batches before giving up
-    private let maxEmptyBatches = 3
 
     /// Filtered jokes based on selected joke type
     var filteredJokes: [Joke] {
@@ -51,15 +47,11 @@ final class CharacterDetailViewModel: ObservableObject {
 
         do {
             // Use character-specific pagination to avoid conflicts with home tab
-            let allJokes = try await firestoreService.fetchInitialJokesForCharacter(
+            // The Firestore query already filters by character field, so no client-side filtering needed
+            let characterJokes = try await firestoreService.fetchInitialJokesForCharacter(
                 characterId: character.id,
                 limit: fetchBatchSize
             )
-
-            // Filter jokes for this character using flexible matching
-            let characterJokes = allJokes.filter { joke in
-                matchesCharacter(joke: joke, character: character)
-            }
 
             // Apply user ratings
             let jokesWithRatings = characterJokes.map { joke -> Joke in
@@ -71,47 +63,12 @@ final class CharacterDetailViewModel: ObservableObject {
             jokes = jokesWithRatings
 
             // If we got a full batch from Firestore, there might be more
-            hasMoreJokes = allJokes.count >= fetchBatchSize
+            hasMoreJokes = characterJokes.count >= fetchBatchSize
         } catch {
             print("Error loading jokes for \(character.name): \(error)")
         }
 
         isLoading = false
-    }
-
-    /// Checks if a joke belongs to the specified character
-    /// Uses flexible matching to handle various character field formats,
-    /// with a fallback to category-based assignment ONLY when character field is not set
-    private func matchesCharacter(joke: Joke, character: JokeCharacter) -> Bool {
-        // First, try to match by the character field if it's set
-        if let jokeCharacter = joke.character?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines),
-           !jokeCharacter.isEmpty {
-            let characterId = character.id.lowercased()
-            let characterName = character.name.lowercased()
-            let characterNameNoPeriod = characterName.replacingOccurrences(of: ".", with: "")
-            let characterIdWithSpaces = characterId.replacingOccurrences(of: "_", with: " ")
-
-            // Match against various possible formats
-            // If the joke has a character field set, we return the result directly
-            // and do NOT fall back to category matching (which would cause cross-character leakage)
-            return jokeCharacter == characterId ||                          // "mr_funny"
-                   jokeCharacter == characterName ||                        // "mr. funny"
-                   jokeCharacter == characterNameNoPeriod ||                // "mr funny"
-                   jokeCharacter == characterIdWithSpaces ||                // "mr funny"
-                   jokeCharacter.replacingOccurrences(of: " ", with: "_") == characterId ||
-                   jokeCharacter.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: " ", with: "_") == characterId
-        }
-
-        // Fallback: assign jokes to characters based on category
-        // This ONLY applies when the character field is nil or empty
-        return matchesByCategory(joke: joke, character: character)
-    }
-
-    /// Maps joke categories to characters as a fallback when character field is not set
-    /// Uses the character's allowedCategories to determine if a joke matches
-    private func matchesByCategory(joke: Joke, character: JokeCharacter) -> Bool {
-        // Check if the joke's category is in the character's allowed categories
-        return character.allowedCategories.contains(joke.category)
     }
 
     /// Loads more jokes (for infinite scroll)
@@ -122,47 +79,25 @@ final class CharacterDetailViewModel: ObservableObject {
 
         do {
             let existingIds = Set(jokes.compactMap { $0.firestoreId })
-            var emptyBatchCount = 0
-            var foundNewJokes = false
 
-            // Keep fetching batches until we find character jokes or exhaust the database
-            while emptyBatchCount < maxEmptyBatches && !foundNewJokes {
-                // Use character-specific pagination
-                let (allJokes, hasMore) = try await firestoreService.fetchMoreJokesForCharacter(
-                    characterId: character.id,
-                    limit: fetchBatchSize
-                )
+            // Use character-specific pagination
+            // The Firestore query already filters by character field
+            let (characterJokes, hasMore) = try await firestoreService.fetchMoreJokesForCharacter(
+                characterId: character.id,
+                limit: fetchBatchSize
+            )
 
-                // If we got no results from Firestore, we've exhausted the database
-                if allJokes.isEmpty {
-                    hasMoreJokes = false
-                    break
-                }
-
-                // Filter jokes for this character using flexible matching
-                let characterJokes = allJokes.filter { joke in
-                    matchesCharacter(joke: joke, character: character)
-                }
-
+            // If we got no results from Firestore, we've exhausted the database
+            if characterJokes.isEmpty {
+                hasMoreJokes = false
+            } else {
                 // Filter out duplicates
                 let uniqueNewJokes = characterJokes.filter { joke in
                     guard let id = joke.firestoreId else { return true }
                     return !existingIds.contains(id)
                 }
 
-                if uniqueNewJokes.isEmpty {
-                    // No matching jokes in this batch, but there might be more in the database
-                    emptyBatchCount += 1
-                    if !hasMore {
-                        // Database is exhausted
-                        hasMoreJokes = false
-                        break
-                    }
-                    // Continue to next batch
-                } else {
-                    // Found new jokes for this character
-                    foundNewJokes = true
-
+                if !uniqueNewJokes.isEmpty {
                     // Apply user ratings
                     let jokesWithRatings = uniqueNewJokes.map { joke -> Joke in
                         var mutableJoke = joke
@@ -171,13 +106,9 @@ final class CharacterDetailViewModel: ObservableObject {
                     }
 
                     jokes.append(contentsOf: jokesWithRatings)
-                    hasMoreJokes = hasMore
                 }
-            }
 
-            // If we hit max empty batches, assume no more character jokes
-            if emptyBatchCount >= maxEmptyBatches {
-                hasMoreJokes = false
+                hasMoreJokes = hasMore
             }
         } catch {
             print("Error loading more jokes for \(character.name): \(error)")
