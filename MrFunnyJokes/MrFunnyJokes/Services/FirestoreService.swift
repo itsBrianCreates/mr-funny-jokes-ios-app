@@ -84,10 +84,10 @@ final class FirestoreService {
     func fetchJokes(category: JokeCategory, limit: Int = 20, forceRefresh: Bool = false) async throws -> [Joke] {
         lastDocumentsByCategory[category] = nil
 
-        // Query using the canonical Firestore type value for this category
-        // Using isEqualTo instead of 'in' to avoid composite index requirements
+        // Query using all known type variants for this category
+        // This handles inconsistent type values in the database (e.g., "pickup_line", "pickup line", "pickup")
         let query = db.collection(jokesCollection)
-            .whereField("type", isEqualTo: category.firestoreType)
+            .whereField("type", in: category.firestoreTypeVariants)
             .order(by: "popularity_score", descending: true)
             .limit(to: limit)
 
@@ -111,9 +111,9 @@ final class FirestoreService {
             return try await fetchJokes(category: category, limit: limit)
         }
 
-        // Query using the canonical Firestore type value for this category
+        // Query using all known type variants for this category
         let query = db.collection(jokesCollection)
-            .whereField("type", isEqualTo: category.firestoreType)
+            .whereField("type", in: category.firestoreTypeVariants)
             .order(by: "popularity_score", descending: true)
             .start(afterDocument: lastDoc)
             .limit(to: limit)
