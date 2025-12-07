@@ -1,119 +1,37 @@
 import SwiftUI
-import Combine
 
 struct SearchView: View {
     @ObservedObject var viewModel: JokeViewModel
     @State private var searchText = ""
     @State private var animateIcon = false
-    @State private var searchResults: [Joke] = []
-    @State private var isSearching = false
-    @State private var searchTask: Task<Void, Never>?
 
-    private let firestoreService = FirestoreService.shared
+    /// Computed property that filters jokes client-side from already-downloaded jokes
+    private var searchResults: [Joke] {
+        guard !searchText.isEmpty else { return [] }
 
-    /// Minimum characters required before searching
-    private let minimumSearchLength = 2
+        let queryLower = searchText.lowercased().trimmingCharacters(in: .whitespaces)
+        guard !queryLower.isEmpty else { return [] }
 
-    /// Custom binding that triggers search on every text change, including X button clear
-    private var searchTextBinding: Binding<String> {
-        Binding(
-            get: { searchText },
-            set: { newValue in
-                searchText = newValue
-                performSearch(query: newValue)
-            }
-        )
+        return viewModel.jokes.filter { joke in
+            joke.setup.lowercased().contains(queryLower) ||
+            joke.punchline.lowercased().contains(queryLower) ||
+            joke.character?.lowercased().contains(queryLower) == true ||
+            (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
+        }
+        .sorted { $0.popularityScore > $1.popularityScore }
     }
 
     var body: some View {
         Group {
             if searchText.isEmpty {
                 emptyState
-            } else if searchText.count < minimumSearchLength {
-                typeMoreState
-            } else if isSearching {
-                searchingState
             } else if searchResults.isEmpty {
                 noResultsState
             } else {
                 resultsList
             }
         }
-        .searchable(text: searchTextBinding, prompt: "Search jokes")
-    }
-
-    /// Performs search with debouncing - queries Firestore directly for comprehensive results
-    private func performSearch(query: String) {
-        // Cancel any pending search
-        searchTask?.cancel()
-
-        guard !query.isEmpty else {
-            searchResults = []
-            isSearching = false
-            return
-        }
-
-        // Don't search if below minimum length
-        guard query.count >= minimumSearchLength else {
-            searchResults = []
-            isSearching = false
-            return
-        }
-
-        isSearching = true
-
-        // Debounce: wait 300ms before searching
-        searchTask = Task {
-            try? await Task.sleep(for: .milliseconds(300))
-
-            // If cancelled during debounce, reset state and exit
-            guard !Task.isCancelled else {
-                await MainActor.run {
-                    isSearching = false
-                }
-                return
-            }
-
-            // Query Firestore directly for comprehensive search results
-            // Firestore's built-in cache provides fast responses for repeated queries
-            do {
-                let results = try await firestoreService.searchJokes(searchText: query, limit: 50)
-
-                // If cancelled during fetch, reset state and exit
-                guard !Task.isCancelled else {
-                    await MainActor.run {
-                        isSearching = false
-                    }
-                    return
-                }
-
-                await MainActor.run {
-                    searchResults = results
-                    isSearching = false
-                }
-            } catch {
-                // If cancelled during error handling, reset state and exit
-                guard !Task.isCancelled else {
-                    await MainActor.run {
-                        isSearching = false
-                    }
-                    return
-                }
-
-                await MainActor.run {
-                    // On error, fall back to local search from cached jokes
-                    let queryLower = query.lowercased()
-                    searchResults = viewModel.jokes.filter { joke in
-                        joke.setup.lowercased().contains(queryLower) ||
-                        joke.punchline.lowercased().contains(queryLower) ||
-                        (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
-                    }.sorted { $0.popularityScore > $1.popularityScore }
-                        .prefix(50)
-                        .map { $0 }
-                    isSearching = false
-                }
-            }
-        }
+        .searchable(text: $searchText, prompt: "Search jokes")
     }
 
     private var emptyState: some View {
@@ -141,36 +59,6 @@ struct SearchView: View {
         .onDisappear {
             animateIcon = false
         }
-    }
-
-    private var typeMoreState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "character.cursor.ibeam")
-                .font(.system(size: 40, weight: .light))
-                .foregroundStyle(.secondary)
-
-            Text("Keep typing...")
-                .font(.title3)
-                .fontWeight(.medium)
-                .foregroundStyle(.primary)
-
-            Text("Enter at least \(minimumSearchLength) characters")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private var searchingState: some View {
-        VStack(spacing: 12) {
-            ProgressView()
-                .scaleEffect(1.2)
-
-            Text("Searching...")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var noResultsState: some View {
