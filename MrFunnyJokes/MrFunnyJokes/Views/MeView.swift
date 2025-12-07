@@ -4,12 +4,14 @@ struct MeView: View {
     @ObservedObject var viewModel: JokeViewModel
 
     var body: some View {
-        if viewModel.ratedJokes.isEmpty {
-            emptyState
-        } else if viewModel.filteredRatedJokes.isEmpty {
-            filteredEmptyState
-        } else {
-            ratedJokesList
+        Group {
+            if viewModel.ratedJokes.isEmpty {
+                emptyState
+            } else if viewModel.filteredRatedJokes.isEmpty {
+                filteredEmptyState
+            } else {
+                ratedJokesList
+            }
         }
     }
 
