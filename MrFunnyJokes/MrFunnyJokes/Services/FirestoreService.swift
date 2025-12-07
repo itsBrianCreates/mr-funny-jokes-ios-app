@@ -298,7 +298,9 @@ final class FirestoreService {
         // Reset character-specific pagination
         lastDocumentsByCharacter[characterId] = nil
 
+        // Filter by character field in Firestore to ensure we get jokes for this specific character
         let query = db.collection(jokesCollection)
+            .whereField("character", isEqualTo: characterId)
             .order(by: "popularity_score", descending: true)
             .limit(to: limit)
 
@@ -321,7 +323,9 @@ final class FirestoreService {
             return (jokes, jokes.count >= limit)
         }
 
+        // Filter by character field in Firestore to ensure we get jokes for this specific character
         let query = db.collection(jokesCollection)
+            .whereField("character", isEqualTo: characterId)
             .order(by: "popularity_score", descending: true)
             .start(afterDocument: lastDoc)
             .limit(to: limit)
