@@ -284,13 +284,8 @@ final class JokeViewModel: ObservableObject {
             firestoreService.resetPagination()
             hasMoreJokes = true
 
-            // Clear local cache to remove old database jokes
-            // This ensures we don't mix old cached jokes with fresh data
-            if let category = selectedCategory {
-                storage.clearCache(for: category)
-            } else {
-                storage.clearCache()
-            }
+            // Note: We don't clear cache here - it's replaced after successful fetch
+            // This preserves fallback data if the network request fails
 
             // Fetch new jokes from Firestore, forcing server fetch to bypass Firestore cache
             let newJokes: [Joke]
