@@ -85,7 +85,7 @@ final class FirestoreService {
         lastDocumentsByCategory[category] = nil
 
         let query = db.collection(jokesCollection)
-            .whereField("type", isEqualTo: category.firestoreType)
+            .whereField("type", in: category.firestoreTypeVariants)
             .order(by: "popularity_score", descending: true)
             .limit(to: limit)
 
@@ -110,7 +110,7 @@ final class FirestoreService {
         }
 
         let query = db.collection(jokesCollection)
-            .whereField("type", isEqualTo: category.firestoreType)
+            .whereField("type", in: category.firestoreTypeVariants)
             .order(by: "popularity_score", descending: true)
             .start(afterDocument: lastDoc)
             .limit(to: limit)

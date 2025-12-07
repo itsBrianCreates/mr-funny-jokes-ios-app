@@ -174,4 +174,17 @@ extension JokeCategory {
             return "pickup_line"
         }
     }
+
+    /// Returns all possible Firestore type strings for this category
+    /// Used for querying to handle inconsistent type values in the database
+    var firestoreTypeVariants: [String] {
+        switch self {
+        case .dadJoke:
+            return ["dad", "dad joke", "dad_joke", "dadjoke", "dad jokes"]
+        case .knockKnock:
+            return ["knock", "knock-knock", "knock_knock", "knockknock", "knock-knock jokes"]
+        case .pickupLine:
+            return ["pickup", "pickup line", "pickup_line", "pickupline", "pick up line", "pick up lines"]
+        }
+    }
 }
