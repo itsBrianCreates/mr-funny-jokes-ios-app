@@ -27,12 +27,18 @@ struct RootView: View {
     /// Minimum time to show splash (reduced for faster perceived startup)
     private let minimumSplashDuration: Double = 1.0
 
+    /// Maximum time to show splash before forcing transition (prevents infinite freeze)
+    private let maximumSplashDuration: Double = 5.0
+
     var body: some View {
         ZStack {
             // Main content - only created after viewModel is initialized
             if let viewModel = viewModel {
-                MainContentView(viewModel: viewModel)
-                    .opacity(showSplash ? 0 : 1)
+                SplashTransitionView(
+                    viewModel: viewModel,
+                    showSplash: $showSplash,
+                    splashMinimumTimePassed: splashMinimumTimePassed
+                )
             }
 
             // Splash screen overlay
@@ -50,10 +56,8 @@ struct RootView: View {
                 await Task.yield()
                 viewModel = JokeViewModel()
                 startSplashTimer()
+                startMaximumSplashTimer()
             }
-        }
-        .onChange(of: viewModel?.isInitialLoading) { _, isLoading in
-            checkTransitionConditions()
         }
     }
 
@@ -61,15 +65,47 @@ struct RootView: View {
         // Ensure splash shows for minimum duration
         DispatchQueue.main.asyncAfter(deadline: .now() + minimumSplashDuration) {
             splashMinimumTimePassed = true
-            checkTransitionConditions()
         }
+    }
+
+    private func startMaximumSplashTimer() {
+        // Fallback: Force transition after maximum duration to prevent infinite freeze
+        DispatchQueue.main.asyncAfter(deadline: .now() + maximumSplashDuration) {
+            guard showSplash else { return }
+            withAnimation(.easeInOut(duration: 0.5)) {
+                showSplash = false
+            }
+        }
+    }
+}
+
+/// Helper view that properly observes the viewModel using @ObservedObject
+/// This ensures SwiftUI receives updates when isInitialLoading changes
+private struct SplashTransitionView: View {
+    @ObservedObject var viewModel: JokeViewModel
+    @Binding var showSplash: Bool
+    let splashMinimumTimePassed: Bool
+
+    var body: some View {
+        MainContentView(viewModel: viewModel)
+            .opacity(showSplash ? 0 : 1)
+            .onChange(of: viewModel.isInitialLoading) { _, isLoading in
+                checkTransitionConditions()
+            }
+            .onChange(of: splashMinimumTimePassed) { _, _ in
+                checkTransitionConditions()
+            }
+            .onAppear {
+                // Check immediately in case loading already finished
+                checkTransitionConditions()
+            }
     }
 
     private func checkTransitionConditions() {
         // Transition when both conditions are met:
         // 1. Minimum splash duration has passed
-        // 2. Initial loading is complete (or viewModel not yet created)
-        guard splashMinimumTimePassed, let vm = viewModel, !vm.isInitialLoading else { return }
+        // 2. Initial loading is complete
+        guard splashMinimumTimePassed, !viewModel.isInitialLoading else { return }
 
         withAnimation(.easeInOut(duration: 0.5)) {
             showSplash = false
