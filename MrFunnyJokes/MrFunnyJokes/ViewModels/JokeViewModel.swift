@@ -51,20 +51,24 @@ final class JokeViewModel: ObservableObject {
         jokes.filter { $0.userRating != nil }
     }
 
-    // Jokes grouped by rating (1-4 scale)
+    // Jokes grouped by rating (1-5 scale)
     var hilariousJokes: [Joke] {
-        jokes.filter { $0.userRating == 4 }
+        jokes.filter { $0.userRating == 5 }
     }
 
     var funnyJokes: [Joke] {
-        jokes.filter { $0.userRating == 3 }
+        jokes.filter { $0.userRating == 4 }
     }
 
     var mehJokes: [Joke] {
-        jokes.filter { $0.userRating == 2 }
+        jokes.filter { $0.userRating == 3 }
     }
 
     var groanJokes: [Joke] {
+        jokes.filter { $0.userRating == 2 }
+    }
+
+    var horribleJokes: [Joke] {
         jokes.filter { $0.userRating == 1 }
     }
 
@@ -108,6 +112,14 @@ final class JokeViewModel: ObservableObject {
             return groanJokes
         }
         return groanJokes.filter { $0.category == category }
+    }
+
+    /// Horrible jokes filtered by the selected Me tab category
+    var filteredHorribleJokes: [Joke] {
+        guard let category = selectedMeCategory else {
+            return horribleJokes
+        }
+        return horribleJokes.filter { $0.category == category }
     }
 
     /// The cached joke of the day firestoreId - used to match Firebase jokes
@@ -488,7 +500,7 @@ final class JokeViewModel: ObservableObject {
                 jokes[index].userRating = nil
             }
         } else {
-            let clampedRating = min(max(rating, 1), 4)
+            let clampedRating = min(max(rating, 1), 5)
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
             if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
                 jokes[index].userRating = clampedRating
