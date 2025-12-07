@@ -218,17 +218,26 @@ final class FirestoreService {
         return try document.data(as: FirestoreJoke.self).toJoke()
     }
 
-    /// Searches jokes by text across the entire database
+    /// Searches jokes by text with optimized fetching
     /// - Parameters:
     ///   - searchText: Text to search for
     ///   - limit: Maximum number of results (default 20)
     /// - Returns: Array of matching Joke objects
+    /// - Note: Since Firestore doesn't support full-text search, this fetches a limited
+    ///         set of popular jokes and filters client-side. For comprehensive search,
+    ///         ensure jokes are loaded locally first (SearchView does this automatically).
     func searchJokes(searchText: String, limit: Int = 20) async throws -> [Joke] {
         // Firestore doesn't support full-text search natively
-        // Fetch all jokes and filter client-side to ensure complete coverage
+        // Fetch a limited set of jokes ordered by popularity and filter client-side
+        // This balances search coverage with performance
         // For production at scale, consider using Algolia or Firebase Extensions
-        let query = db.collection(jokesCollection)
+        let fetchLimit = 300 // Fetch top 300 jokes for searching (cached after first load)
 
+        let query = db.collection(jokesCollection)
+            .order(by: "popularity_score", descending: true)
+            .limit(to: fetchLimit)
+
+        // Use cache when available for faster response
         let snapshot = try await query.getDocuments()
         let searchLower = searchText.lowercased()
 
