@@ -299,7 +299,7 @@ final class JokeViewModel: ObservableObject {
                 // Apply user ratings from local storage
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id)
+                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
                     return mutableJoke
                 }
 
@@ -369,7 +369,7 @@ final class JokeViewModel: ObservableObject {
                 // Apply user ratings
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id)
+                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
                     return mutableJoke
                 }
 
@@ -444,7 +444,7 @@ final class JokeViewModel: ObservableObject {
                 // Apply user ratings
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id)
+                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
                     return mutableJoke
                 }
 
@@ -483,13 +483,13 @@ final class JokeViewModel: ObservableObject {
         HapticManager.shared.selection()
 
         if rating == 0 {
-            storage.removeRating(for: joke.id)
+            storage.removeRating(for: joke.id, firestoreId: joke.firestoreId)
             if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
                 jokes[index].userRating = nil
             }
         } else {
             let clampedRating = min(max(rating, 1), 4)
-            storage.saveRating(for: joke.id, rating: clampedRating)
+            storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
             if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
                 jokes[index].userRating = clampedRating
             }
