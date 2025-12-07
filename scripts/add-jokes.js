@@ -44,9 +44,9 @@ const log = {
 // Jokes to add
 const JOKES_TO_ADD = [
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Canoe. Canoe who? Canoe come out now?",
-    "type": "dad_joke",
+    "character": "mr_love",
+    "text": "Are you a parking ticket? Because you've got fine written all over you, and I still feel weird about it.",
+    "type": "pickup_line",
     "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
@@ -58,9 +58,9 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Iran. Iran who? Iran here, so I'm tired!",
-    "type": "dad_joke",
+    "character": "mr_love",
+    "text": "Are you French? Because Eiffel for you.",
+    "type": "pickup_line",
     "tags": ["travel", "wordplay"],
     "sfw": true,
     "source": "classic",
@@ -72,10 +72,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Amos. Amos who? A mosquito. Look, right there!",
-    "type": "dad_joke",
-    "tags": ["animals", "wordplay"],
+    "character": "mr_love",
+    "text": "Do you have a name, or can I call you mine until HR sends me a warning?",
+    "type": "pickup_line",
+    "tags": ["work"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -86,9 +86,23 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Shirley. Shirley who? Shirley you know who I am!",
-    "type": "dad_joke",
+    "character": "mr_love",
+    "text": "Are you made of copper and tellurium? Because you're CuTe, and I failed chemistry.",
+    "type": "pickup_line",
+    "tags": ["science", "wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0,
+    "dislikes": 0,
+    "rating_sum": 0,
+    "rating_count": 0,
+    "rating_avg": 0,
+    "popularity_score": 0
+  },
+  {
+    "character": "mr_love",
+    "text": "On a scale from 1 to 10, you're a 9, and I'm the 1 you're missing.",
+    "type": "pickup_line",
     "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
@@ -100,10 +114,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Dozen. Dozen who? Dozen anyone want to let me in?",
-    "type": "dad_joke",
-    "tags": ["wordplay"],
+    "character": "mr_love",
+    "text": "Do you believe in love at first sight, or should I refresh the page and walk by again?",
+    "type": "pickup_line",
+    "tags": ["technology"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -114,10 +128,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Wayne. Wayne who? Wayne dwops keep falling on my head.",
-    "type": "dad_joke",
-    "tags": ["weather", "wordplay"],
+    "character": "mr_love",
+    "text": "If you were a triangle, you'd be acute one. I, however, am obtuse. Very obtuse.",
+    "type": "pickup_line",
+    "tags": ["science", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -128,10 +142,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Ira. Ira who? Ira member you!",
-    "type": "dad_joke",
-    "tags": ["wordplay"],
+    "character": "mr_love",
+    "text": "Is your name Wi-Fi? Because I'm feeling a connection.",
+    "type": "pickup_line",
+    "tags": ["technology", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -142,9 +156,9 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Mint. Mint who? Mint to tell you I was stopping by!",
-    "type": "dad_joke",
+    "character": "mr_love",
+    "text": "Do you like raisins? How do you feel about a date?",
+    "type": "pickup_line",
     "tags": ["food", "wordplay"],
     "sfw": true,
     "source": "classic",
@@ -156,10 +170,52 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Knock, knock. Who's there? Lemon. Lemon who? Lemon introduce myself!",
-    "type": "dad_joke",
-    "tags": ["food", "wordplay"],
+    "character": "mr_love",
+    "text": "Are you a loan from a bank? Because you have my interest.",
+    "type": "pickup_line",
+    "tags": ["wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0,
+    "dislikes": 0,
+    "rating_sum": 0,
+    "rating_count": 0,
+    "rating_avg": 0,
+    "popularity_score": 0
+  },
+  {
+    "character": "mr_love",
+    "text": "Are you generative AI? Because I can't tell if you're real, but I'm ready to commit anyway.",
+    "type": "pickup_line",
+    "tags": ["technology"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0,
+    "dislikes": 0,
+    "rating_sum": 0,
+    "rating_count": 0,
+    "rating_avg": 0,
+    "popularity_score": 0
+  },
+  {
+    "character": "mr_love",
+    "text": "If you were words on a page, you'd be fine print. I'd squint for you.",
+    "type": "pickup_line",
+    "tags": ["wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0,
+    "dislikes": 0,
+    "rating_sum": 0,
+    "rating_count": 0,
+    "rating_avg": 0,
+    "popularity_score": 0
+  },
+  {
+    "character": "mr_love",
+    "text": "Are you Google? Because you have everything I'm searching for.",
+    "type": "pickup_line",
+    "tags": ["technology"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
