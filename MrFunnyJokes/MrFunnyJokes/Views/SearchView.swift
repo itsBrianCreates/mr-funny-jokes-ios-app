@@ -34,7 +34,7 @@ struct SearchView: View {
         }
     }
 
-    /// Performs search with debouncing and local-first strategy
+    /// Performs search with debouncing - queries Firestore directly for comprehensive results
     private func performSearch(query: String) {
         // Cancel any pending search
         searchTask?.cancel()
@@ -58,41 +58,50 @@ struct SearchView: View {
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(300))
 
-            guard !Task.isCancelled else { return }
-
-            // First, try local search from already-loaded jokes (instant results)
-            let queryLower = query.lowercased()
-            let localResults = viewModel.jokes.filter { joke in
-                joke.setup.lowercased().contains(queryLower) ||
-                joke.punchline.lowercased().contains(queryLower) ||
-                (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
-            }.sorted { $0.popularityScore > $1.popularityScore }
-
-            // If we have good local results, use them immediately
-            if !localResults.isEmpty {
+            // If cancelled during debounce, reset state and exit
+            guard !Task.isCancelled else {
                 await MainActor.run {
-                    searchResults = Array(localResults.prefix(50))
                     isSearching = false
                 }
                 return
             }
 
-            // Only query Firestore if no local results found
+            // Query Firestore directly for comprehensive search results
+            // Firestore's built-in cache provides fast responses for repeated queries
             do {
                 let results = try await firestoreService.searchJokes(searchText: query, limit: 50)
 
-                guard !Task.isCancelled else { return }
+                // If cancelled during fetch, reset state and exit
+                guard !Task.isCancelled else {
+                    await MainActor.run {
+                        isSearching = false
+                    }
+                    return
+                }
 
                 await MainActor.run {
                     searchResults = results
                     isSearching = false
                 }
             } catch {
-                guard !Task.isCancelled else { return }
+                // If cancelled during error handling, reset state and exit
+                guard !Task.isCancelled else {
+                    await MainActor.run {
+                        isSearching = false
+                    }
+                    return
+                }
 
                 await MainActor.run {
-                    // On error, show empty results (local search already tried above)
-                    searchResults = []
+                    // On error, fall back to local search from cached jokes
+                    let queryLower = query.lowercased()
+                    searchResults = viewModel.jokes.filter { joke in
+                        joke.setup.lowercased().contains(queryLower) ||
+                        joke.punchline.lowercased().contains(queryLower) ||
+                        (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
+                    }.sorted { $0.popularityScore > $1.popularityScore }
+                        .prefix(50)
+                        .map { $0 }
                     isSearching = false
                 }
             }
