@@ -168,15 +168,24 @@ final class CharacterDetailViewModel: ObservableObject {
     func rateJoke(_ joke: Joke, rating: Int) {
         HapticManager.shared.selection()
 
+        // Find joke index using firestoreId (stable) or fallback to UUID
+        // This handles cases where jokes array was refreshed and UUIDs changed
+        let jokeIndex = jokes.firstIndex(where: {
+            if let firestoreId = joke.firestoreId, let otherFirestoreId = $0.firestoreId {
+                return firestoreId == otherFirestoreId
+            }
+            return $0.id == joke.id
+        })
+
         if rating == 0 {
             storage.removeRating(for: joke.id, firestoreId: joke.firestoreId)
-            if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
+            if let index = jokeIndex {
                 jokes[index].userRating = nil
             }
         } else {
             let clampedRating = min(max(rating, 1), 5)
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
-            if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
+            if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
             }
 
