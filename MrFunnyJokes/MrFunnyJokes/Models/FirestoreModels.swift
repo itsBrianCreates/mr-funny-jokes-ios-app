@@ -64,6 +64,11 @@ struct FirestoreJoke: Codable, Identifiable {
 
     /// Parse joke text into setup and punchline
     private func parseJokeText(_ text: String, category: JokeCategory) -> (setup: String, punchline: String) {
+        // Special handling for knock-knock jokes
+        if category == .knockKnock {
+            return parseKnockKnockJoke(text)
+        }
+
         // Try to split on common delimiters
         let delimiters = ["\n\n", "\n", " - ", "? ", "! "]
 
@@ -86,6 +91,23 @@ struct FirestoreJoke: Codable, Identifiable {
         }
 
         // If no delimiter found, use the whole text as setup with empty punchline
+        return (text, "")
+    }
+
+    /// Parse knock-knock joke into setup and punchline
+    /// Input: "Knock, knock. Who's there? Nobel. Nobel who? Nobel … that's why I knocked."
+    /// Output: setup = "Knock, knock. Who's there? Nobel." punchline = "Nobel who? Nobel … that's why I knocked."
+    private func parseKnockKnockJoke(_ text: String) -> (setup: String, punchline: String) {
+        // Find the "[Name] who?" pattern to split setup and punchline
+        // This matches a word followed by " who?" (case insensitive)
+        if let whoRange = text.range(of: #"\b\w+\s+who\?"#, options: [.regularExpression, .caseInsensitive]) {
+            let setup = String(text[..<whoRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+            let punchline = String(text[whoRange.lowerBound...]).trimmingCharacters(in: .whitespaces)
+
+            return (setup, punchline)
+        }
+
+        // Fallback: use the whole text as setup
         return (text, "")
     }
 }
