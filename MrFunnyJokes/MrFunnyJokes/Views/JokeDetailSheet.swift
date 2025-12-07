@@ -75,6 +75,22 @@ struct JokeDetailSheet: View {
                         .tint(.blue)
                     }
 
+                    // Joke ID for Firebase reference
+                    if let jokeId = joke.firestoreId {
+                        VStack(spacing: 4) {
+                            Text("Joke ID")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+
+                            Text(jokeId)
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                                .textSelection(.enabled)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 8)
+                    }
+
                     Spacer(minLength: 20)
                 }
                 .padding(.horizontal, 20)
@@ -191,6 +207,7 @@ struct JokeDetailSheet: View {
                     setup: "Why don't scientists trust atoms?",
                     punchline: "Because they make up everything!",
                     userRating: 4,
+                    firestoreId: "0CDqve8AUmDb0VbXWwdQ",
                     character: "Mr. Funny"
                 ),
                 isCopied: false,
@@ -211,6 +228,7 @@ struct JokeDetailSheet: View {
                     setup: "Knock knock. Who's there? Lettuce.",
                     punchline: "Lettuce who? Lettuce in, it's cold out here!",
                     userRating: 3,
+                    firestoreId: "ABC123XYZ456example",
                     character: "Mr. Potty"
                 ),
                 isCopied: false,
