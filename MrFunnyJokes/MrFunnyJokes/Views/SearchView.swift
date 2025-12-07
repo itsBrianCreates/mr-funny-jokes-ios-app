@@ -14,6 +14,17 @@ struct SearchView: View {
     /// Minimum characters required before searching
     private let minimumSearchLength = 2
 
+    /// Custom binding that triggers search on every text change, including X button clear
+    private var searchTextBinding: Binding<String> {
+        Binding(
+            get: { searchText },
+            set: { newValue in
+                searchText = newValue
+                performSearch(query: newValue)
+            }
+        )
+    }
+
     var body: some View {
         Group {
             if searchText.isEmpty {
@@ -28,10 +39,7 @@ struct SearchView: View {
                 resultsList
             }
         }
-        .searchable(text: $searchText, prompt: "Search jokes")
-        .onChange(of: searchText) { _, newValue in
-            performSearch(query: newValue)
-        }
+        .searchable(text: searchTextBinding, prompt: "Search jokes")
     }
 
     /// Performs search with debouncing - queries Firestore directly for comprehensive results
