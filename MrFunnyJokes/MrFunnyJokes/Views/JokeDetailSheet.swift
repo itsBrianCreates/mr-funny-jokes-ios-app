@@ -8,6 +8,9 @@ struct JokeDetailSheet: View {
     let onCopy: () -> Void
     let onRate: (Int) -> Void
 
+    /// Tracks whether the joke ID was copied to clipboard
+    @State private var isJokeIdCopied = false
+
     /// The character associated with this joke, if any
     private var jokeCharacter: JokeCharacter? {
         guard let characterName = joke.character else { return nil }
@@ -75,19 +78,41 @@ struct JokeDetailSheet: View {
                         .tint(.blue)
                     }
 
-                    // Joke ID for Firebase reference
+                    // Joke ID for Firebase reference - tap to copy
                     if let jokeId = joke.firestoreId {
-                        VStack(spacing: 4) {
-                            Text("Joke ID")
-                                .font(.caption2)
-                                .foregroundStyle(.tertiary)
+                        Button {
+                            UIPasteboard.general.string = jokeId
+                            isJokeIdCopied = true
 
-                            Text(jokeId)
-                                .font(.caption.monospaced())
-                                .foregroundStyle(.secondary)
-                                .textSelection(.enabled)
+                            // Reset after 2 seconds
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                isJokeIdCopied = false
+                            }
+                        } label: {
+                            VStack(spacing: 4) {
+                                HStack(spacing: 4) {
+                                    Text(isJokeIdCopied ? "Copied!" : "Joke ID")
+                                    Image(systemName: isJokeIdCopied ? "checkmark.circle.fill" : "doc.on.doc")
+                                        .font(.caption2)
+                                        .contentTransition(.symbolEffect(.replace))
+                                }
+                                .font(.caption2)
+                                .foregroundStyle(isJokeIdCopied ? .green : .tertiary)
+
+                                Text(jokeId)
+                                    .font(.caption.monospaced())
+                                    .foregroundStyle(isJokeIdCopied ? .green : .secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(isJokeIdCopied ? Color.green.opacity(0.1) : Color.clear)
+                            )
+                            .animation(.easeInOut(duration: 0.2), value: isJokeIdCopied)
                         }
-                        .frame(maxWidth: .infinity)
+                        .buttonStyle(.plain)
                         .padding(.top, 8)
                     }
 
