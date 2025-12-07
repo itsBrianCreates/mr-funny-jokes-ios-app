@@ -100,7 +100,8 @@ struct JokeFeedView: View {
                 .padding(.bottom, 16)
             }
             .refreshable {
-                await viewModel.refresh()
+                // User explicitly pulled to refresh - force server fetch
+                await viewModel.refresh(forceServerFetch: true)
             }
             .onChange(of: viewModel.selectedCategory) {
                 // Scroll to top when filter changes
