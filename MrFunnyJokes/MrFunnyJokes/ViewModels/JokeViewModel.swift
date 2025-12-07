@@ -33,6 +33,7 @@ final class JokeViewModel: ObservableObject {
     private var loadMoreTask: Task<Void, Never>?
     private var initialLoadTask: Task<Void, Never>?
     private var networkCancellable: AnyCancellable?
+    private var ratingNotificationObserver: NSObjectProtocol?
 
     /// Number of jokes to fetch per batch
     private let batchSize = 10
@@ -143,14 +144,18 @@ final class JokeViewModel: ObservableObject {
         // This handles the case where the saved joke isn't in our jokes array yet
         if let sharedJoke = cachedJokeOfTheDayData {
             let category = JokeCategory(rawValue: sharedJoke.category ?? "") ?? .dadJoke
-            return Joke(
-                id: UUID(uuidString: sharedJoke.id) ?? UUID(),
+            let jokeId = UUID(uuidString: sharedJoke.id) ?? UUID()
+            var joke = Joke(
+                id: jokeId,
                 category: category,
                 setup: sharedJoke.setup,
                 punchline: sharedJoke.punchline,
                 firestoreId: sharedJoke.firestoreId,
                 character: sharedJoke.character
             )
+            // Apply any saved user rating from local storage
+            joke.userRating = storage.getRating(for: jokeId, firestoreId: sharedJoke.firestoreId)
+            return joke
         }
 
         return nil
@@ -193,6 +198,50 @@ final class JokeViewModel: ObservableObject {
         // Start async content loading - doesn't block the main thread
         initialLoadTask = Task {
             await loadInitialContentAsync()
+        }
+
+        // Listen for rating changes from other ViewModels (e.g., CharacterDetailViewModel)
+        // This ensures the Me tab updates when ratings are made in character views
+        ratingNotificationObserver = NotificationCenter.default.addObserver(
+            forName: .jokeRatingDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            self?.handleRatingNotification(notification)
+        }
+    }
+
+    deinit {
+        if let observer = ratingNotificationObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    /// Handle rating change notifications from other ViewModels
+    private func handleRatingNotification(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let rating = userInfo["rating"] as? Int else { return }
+
+        let firestoreId = userInfo["firestoreId"] as? String
+        let jokeId = userInfo["jokeId"] as? UUID
+
+        // Find and update the joke in our array
+        let jokeIndex = jokes.firstIndex(where: {
+            if let fid = firestoreId, let otherFid = $0.firestoreId {
+                return fid == otherFid
+            }
+            if let jid = jokeId {
+                return $0.id == jid
+            }
+            return false
+        })
+
+        if let index = jokeIndex {
+            if rating == 0 {
+                jokes[index].userRating = nil
+            } else {
+                jokes[index].userRating = rating
+            }
         }
     }
 
@@ -522,6 +571,12 @@ final class JokeViewModel: ObservableObject {
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
+            } else {
+                // Joke not in array (e.g., Joke of the Day from cache)
+                // Add it to the array so it appears in the Me tab and triggers UI update
+                var mutableJoke = joke
+                mutableJoke.userRating = clampedRating
+                jokes.append(mutableJoke)
             }
 
             // Sync rating to Firestore if we have a Firestore ID
