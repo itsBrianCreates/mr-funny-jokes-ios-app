@@ -168,7 +168,7 @@ struct JokeDetailSheet: View {
             // Punchline (e.g., "Lettuce who? Lettuce in, it's cold out here!")
             ForEach(formatKnockKnockPunchline(), id: \.self) { line in
                 Text(line)
-                    .font(.title3.weight(.semibold))
+                    .font(.title3.weight(.medium))
                     .foregroundStyle(.primary)
             }
         }
