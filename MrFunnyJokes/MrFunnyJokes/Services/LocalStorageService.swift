@@ -5,11 +5,15 @@ final class LocalStorageService: @unchecked Sendable {
 
     private let userDefaults: UserDefaults
     private let ratingsKey = "jokeRatings"
+    private let impressionsKey = "jokeImpressions"
     private let cachedJokesKeyPrefix = "cachedJokes_"
     private let queue = DispatchQueue(label: "com.mrfunnyjokes.storage", qos: .userInitiated)
 
     /// Maximum number of jokes to cache per category
     private let maxCachePerCategory = 50
+
+    /// Maximum number of impressions to track (FIFO when exceeded)
+    private let maxImpressions = 500
 
     private init() {
         self.userDefaults = UserDefaults.standard
@@ -112,6 +116,61 @@ final class LocalStorageService: @unchecked Sendable {
             }
             return updatedJoke
         }
+    }
+
+    // MARK: - Impressions (Feed Freshness Tracking)
+
+    /// Mark a joke as seen/impressed using firestoreId
+    /// Used to prioritize unseen jokes in the feed
+    func markImpression(firestoreId: String?) {
+        guard let firestoreId = firestoreId else { return }
+        queue.sync {
+            var impressions = loadImpressionsSync()
+
+            // Already tracked
+            if impressions.contains(firestoreId) { return }
+
+            // Add new impression
+            impressions.append(firestoreId)
+
+            // FIFO: Remove oldest if over limit
+            if impressions.count > maxImpressions {
+                impressions.removeFirst(impressions.count - maxImpressions)
+            }
+
+            saveImpressionsSync(impressions)
+        }
+    }
+
+    /// Check if a joke has been seen/impressed
+    func hasImpression(firestoreId: String?) -> Bool {
+        guard let firestoreId = firestoreId else { return false }
+        return queue.sync {
+            let impressions = loadImpressionsSync()
+            return impressions.contains(firestoreId)
+        }
+    }
+
+    /// Get all impression IDs (for batch checking)
+    func getImpressionIds() -> Set<String> {
+        return queue.sync {
+            Set(loadImpressionsSync())
+        }
+    }
+
+    /// Get all rated joke IDs (for batch checking)
+    func getRatedJokeIds() -> Set<String> {
+        return queue.sync {
+            Set(loadRatingsSync().keys)
+        }
+    }
+
+    private func loadImpressionsSync() -> [String] {
+        return userDefaults.stringArray(forKey: impressionsKey) ?? []
+    }
+
+    private func saveImpressionsSync(_ impressions: [String]) {
+        userDefaults.set(impressions, forKey: impressionsKey)
     }
 
     // MARK: - Per-Category Cached Jokes

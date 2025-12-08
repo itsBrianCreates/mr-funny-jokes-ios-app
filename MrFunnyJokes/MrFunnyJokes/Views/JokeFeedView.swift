@@ -62,6 +62,9 @@ struct JokeFeedView: View {
                             onCopy: { viewModel.copyJoke(jokeOfTheDay) },
                             onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) }
                         )
+                        .onAppear {
+                            viewModel.markJokeImpression(jokeOfTheDay)
+                        }
                     }
 
                     // Regular joke feed with YouTube promo card inserted
@@ -79,6 +82,8 @@ struct JokeFeedView: View {
                             onRate: { rating in viewModel.rateJoke(joke, rating: rating) }
                         )
                         .onAppear {
+                            // Track impression for feed freshness
+                            viewModel.markJokeImpression(joke)
                             // Trigger load more when this joke appears
                             viewModel.loadMoreIfNeeded(currentItem: joke)
                         }

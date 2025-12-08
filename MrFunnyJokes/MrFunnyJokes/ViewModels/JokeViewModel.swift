@@ -247,6 +247,42 @@ final class JokeViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Feed Algorithm (Freshness Sorting)
+
+    /// Sorts jokes for a fresh feed experience
+    /// Prioritizes: Unseen jokes > Seen but unrated > Already rated
+    /// Shuffles within each tier to maintain category variety
+    private func sortJokesForFreshFeed(_ jokes: [Joke]) -> [Joke] {
+        let impressionIds = storage.getImpressionIds()
+        let ratedIds = storage.getRatedJokeIds()
+
+        var unseenJokes: [Joke] = []
+        var seenUnratedJokes: [Joke] = []
+        var ratedJokes: [Joke] = []
+
+        for joke in jokes {
+            let key = joke.firestoreId ?? joke.id.uuidString
+            let hasImpression = impressionIds.contains(key)
+            let hasRating = ratedIds.contains(key)
+
+            if !hasImpression {
+                unseenJokes.append(joke)
+            } else if !hasRating {
+                seenUnratedJokes.append(joke)
+            } else {
+                ratedJokes.append(joke)
+            }
+        }
+
+        // Shuffle within each tier to maintain category variety
+        return unseenJokes.shuffled() + seenUnratedJokes.shuffled() + ratedJokes.shuffled()
+    }
+
+    /// Marks a joke as seen/impressed for feed freshness tracking
+    func markJokeImpression(_ joke: Joke) {
+        storage.markImpression(firestoreId: joke.firestoreId)
+    }
+
     // MARK: - Initial Load
 
     /// Load content on app start asynchronously - cache first, then API
@@ -255,9 +291,9 @@ final class JokeViewModel: ObservableObject {
         // Load cached jokes asynchronously (off main thread)
         let cached = await storage.loadAllCachedJokesAsync()
 
-        // Update UI with cached jokes
+        // Update UI with cached jokes (sorted for freshness)
         if !cached.isEmpty {
-            jokes = cached.shuffled()
+            jokes = sortJokesForFreshFeed(cached)
         }
 
         // Then fetch fresh content from APIs
@@ -267,7 +303,7 @@ final class JokeViewModel: ObservableObject {
     /// Legacy sync method - kept for refresh scenarios where we're already on main thread
     private func loadLocalJokes() {
         let cached = storage.loadAllCachedJokes()
-        jokes = cached.shuffled()
+        jokes = sortJokesForFreshFeed(cached)
 
         // Initialize joke of the day - check shared storage first for persistence
         initializeJokeOfTheDay()
@@ -377,8 +413,8 @@ final class JokeViewModel: ObservableObject {
                 }
 
                 // Replace local/hardcoded jokes with Firebase jokes
-                // Firebase is now the primary data source
-                jokes = jokesWithRatings.shuffled()
+                // Firebase is now the primary data source (sorted for freshness)
+                jokes = sortJokesForFreshFeed(jokesWithRatings)
 
                 // Re-initialize joke of the day - fetches from Firebase if needed
                 await initializeJokeOfTheDayAsync()
@@ -445,8 +481,8 @@ final class JokeViewModel: ObservableObject {
                     return mutableJoke
                 }
 
-                // Replace with fresh Firebase jokes
-                jokes = jokesWithRatings.shuffled()
+                // Replace with fresh Firebase jokes (sorted for freshness)
+                jokes = sortJokesForFreshFeed(jokesWithRatings)
 
                 // Re-initialize joke of the day - fetches from Firebase if needed
                 await initializeJokeOfTheDayAsync()
