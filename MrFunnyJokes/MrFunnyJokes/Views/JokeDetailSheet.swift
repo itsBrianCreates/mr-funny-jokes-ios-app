@@ -137,7 +137,7 @@ struct JokeDetailSheet: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(.ultraThinMaterial)
-        .presentationCornerRadius(20)
+        .presentationCornerRadius(UIScreen.main.displayCornerRadius)
     }
 
     // MARK: - Standard Joke Content
