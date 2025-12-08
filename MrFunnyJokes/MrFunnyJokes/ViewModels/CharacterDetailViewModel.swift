@@ -262,7 +262,7 @@ final class CharacterDetailViewModel: ObservableObject {
     func copyJoke(_ joke: Joke) {
         HapticManager.shared.success()
 
-        let text = "\(joke.setup)\n\n\(joke.punchline)"
+        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— \(character.name)"
         UIPasteboard.general.string = text
 
         copiedJokeId = joke.id
