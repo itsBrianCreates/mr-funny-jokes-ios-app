@@ -174,6 +174,7 @@ struct CharacterDetailView: View {
                     onRate: { rating in viewModel.rateJoke(joke, rating: rating) }
                 )
                 .onAppear {
+                    viewModel.markJokeImpression(joke)
                     viewModel.loadMoreIfNeeded(currentItem: joke)
                 }
             }
