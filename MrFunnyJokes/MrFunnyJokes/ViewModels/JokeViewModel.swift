@@ -636,7 +636,16 @@ final class JokeViewModel: ObservableObject {
     func copyJoke(_ joke: Joke) {
         HapticManager.shared.success()
 
-        let text = "\(joke.setup)\n\n\(joke.punchline)"
+        // Get character name from joke's character field, fallback to generic app name
+        let characterName: String
+        if let characterId = joke.character,
+           let character = JokeCharacter.find(byId: characterId) {
+            characterName = character.name
+        } else {
+            characterName = "Mr. Funny Jokes"
+        }
+
+        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— \(characterName)"
         UIPasteboard.general.string = text
 
         copiedJokeId = joke.id
