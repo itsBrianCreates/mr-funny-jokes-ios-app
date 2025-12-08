@@ -26,6 +26,42 @@ final class CharacterDetailViewModel: ObservableObject {
     /// Number of jokes to fetch from Firestore per batch
     private let fetchBatchSize = 50
 
+    // MARK: - Feed Algorithm (Freshness Sorting)
+
+    /// Sorts jokes for a fresh feed experience
+    /// Prioritizes: Unseen jokes > Seen but unrated > Already rated
+    /// Shuffles within each tier to maintain category variety
+    private func sortJokesForFreshFeed(_ jokes: [Joke]) -> [Joke] {
+        let impressionIds = storage.getImpressionIds()
+        let ratedIds = storage.getRatedJokeIds()
+
+        var unseenJokes: [Joke] = []
+        var seenUnratedJokes: [Joke] = []
+        var ratedJokes: [Joke] = []
+
+        for joke in jokes {
+            let key = joke.firestoreId ?? joke.id.uuidString
+            let hasImpression = impressionIds.contains(key)
+            let hasRating = ratedIds.contains(key)
+
+            if !hasImpression {
+                unseenJokes.append(joke)
+            } else if !hasRating {
+                seenUnratedJokes.append(joke)
+            } else {
+                ratedJokes.append(joke)
+            }
+        }
+
+        // Shuffle within each tier to maintain category variety
+        return unseenJokes.shuffled() + seenUnratedJokes.shuffled() + ratedJokes.shuffled()
+    }
+
+    /// Marks a joke as seen/impressed for feed freshness tracking
+    func markJokeImpression(_ joke: Joke) {
+        storage.markImpression(firestoreId: joke.firestoreId)
+    }
+
     /// Filtered jokes based on selected joke type
     var filteredJokes: [Joke] {
         guard let category = selectedJokeType else {
@@ -66,7 +102,8 @@ final class CharacterDetailViewModel: ObservableObject {
                 return mutableJoke
             }
 
-            jokes = jokesWithRatings
+            // Sort for fresh feed experience (unseen > seen-unrated > rated)
+            jokes = sortJokesForFreshFeed(jokesWithRatings)
 
             // All jokes are loaded at once, no more to fetch
             hasMoreJokes = false
