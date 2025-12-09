@@ -6,19 +6,14 @@ import SwiftUI
 // while being performant and non-distracting.
 
 struct ShimmerModifier: ViewModifier {
-    @State private var isAnimating = false
-
     func body(content: Content) -> some View {
+        // Use phaseAnimator for reliable continuous animation
+        // This cycles through phases automatically without depending on view lifecycle
         content
-            .opacity(isAnimating ? 0.7 : 0.4)
-            .onAppear {
-                // Continuous pulse animation with smooth easing
-                withAnimation(
-                    .easeInOut(duration: 1.0)
-                    .repeatForever(autoreverses: true)
-                ) {
-                    isAnimating = true
-                }
+            .phaseAnimator([false, true]) { view, phase in
+                view.opacity(phase ? 0.7 : 0.4)
+            } animation: { _ in
+                .easeInOut(duration: 1.0)
             }
     }
 }
