@@ -64,7 +64,7 @@ struct JokeCharacter: Identifiable, Hashable {
         fullName: "Mr. Potty",
         bio: "Farts, butts, and bodily functions. Juvenile? Absolutely. Hilarious? Also yes.",
         imageName: "MrPotty",
-        color: .brown,
+        color: .pottyBrown,
         allowedCategories: [.dadJoke, .knockKnock]
     )
 
