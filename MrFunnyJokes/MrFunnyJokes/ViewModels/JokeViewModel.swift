@@ -641,7 +641,7 @@ final class JokeViewModel: ObservableObject {
             characterName = "Mr. Funny Jokes"
         }
 
-        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— \(characterName)"
+        let text = joke.formattedTextForSharing(characterName: characterName)
 
         let activityVC = UIActivityViewController(
             activityItems: [text],
@@ -687,7 +687,7 @@ final class JokeViewModel: ObservableObject {
             characterName = "Mr. Funny Jokes"
         }
 
-        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— \(characterName)"
+        let text = joke.formattedTextForSharing(characterName: characterName)
         UIPasteboard.general.string = text
 
         copiedJokeId = joke.id

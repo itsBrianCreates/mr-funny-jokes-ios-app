@@ -94,4 +94,60 @@ struct Joke: Identifiable, Codable, Equatable {
     }
 
     static let ratingEmojis = ["🫠", "😩", "😐", "😄", "😂"]
+
+    /// Formats the joke text for sharing, with special handling for knock-knock jokes
+    /// to display each part on its own line.
+    func formattedTextForSharing(characterName: String) -> String {
+        if category == .knockKnock {
+            return formatKnockKnockForSharing(characterName: characterName)
+        } else {
+            return "\(setup)\n\n\(punchline)\n\n— \(characterName)"
+        }
+    }
+
+    private func formatKnockKnockForSharing(characterName: String) -> String {
+        var lines: [String] = []
+
+        // Format setup: "Knock, knock. Who's there? Nobel." -> ["Knock, knock.", "Who's there?", "Nobel."]
+        if let range = setup.range(of: "Who's there?", options: .caseInsensitive) {
+            // Part before "Who's there?" (e.g., "Knock, knock.")
+            let knockPart = String(setup[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+            if !knockPart.isEmpty {
+                lines.append(knockPart)
+            }
+
+            // "Who's there?"
+            lines.append("Who's there?")
+
+            // The answer (e.g., "Nobel.")
+            let answer = String(setup[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+            if !answer.isEmpty {
+                var formattedAnswer = answer.prefix(1).uppercased() + answer.dropFirst()
+                if !formattedAnswer.hasSuffix(".") && !formattedAnswer.hasSuffix("!") && !formattedAnswer.hasSuffix("?") {
+                    formattedAnswer += "."
+                }
+                lines.append(formattedAnswer)
+            }
+        } else {
+            lines.append(setup)
+        }
+
+        // Format punchline: "Nobel who? Nobel … that's why I knocked." -> ["Nobel who?", "Nobel … that's why I knocked."]
+        if let whoRange = punchline.range(of: " who?", options: .caseInsensitive) {
+            let questionPart = String(punchline[...whoRange.upperBound]).trimmingCharacters(in: .whitespaces)
+            let answerPart = String(punchline[whoRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+
+            lines.append(questionPart)
+            if !answerPart.isEmpty {
+                lines.append(answerPart)
+            }
+        } else {
+            lines.append(punchline)
+        }
+
+        lines.append("")
+        lines.append("— \(characterName)")
+
+        return lines.joined(separator: "\n")
+    }
 }

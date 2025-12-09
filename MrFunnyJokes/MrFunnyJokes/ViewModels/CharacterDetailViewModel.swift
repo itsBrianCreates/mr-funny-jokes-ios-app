@@ -262,7 +262,7 @@ final class CharacterDetailViewModel: ObservableObject {
     func shareJoke(_ joke: Joke) {
         HapticManager.shared.success()
 
-        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— \(character.name)"
+        let text = joke.formattedTextForSharing(characterName: character.name)
 
         let activityVC = UIActivityViewController(
             activityItems: [text],
@@ -299,7 +299,7 @@ final class CharacterDetailViewModel: ObservableObject {
     func copyJoke(_ joke: Joke) {
         HapticManager.shared.success()
 
-        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— \(character.name)"
+        let text = joke.formattedTextForSharing(characterName: character.name)
         UIPasteboard.general.string = text
 
         copiedJokeId = joke.id
