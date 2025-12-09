@@ -51,6 +51,8 @@
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
 		D10000000000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D20000000000000000000001 /* LaunchScreen.storyboard */; };
 		E10000000000000000000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* PrivacyInfo.xcprivacy */; };
+		F10000000000000000000001 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* SplashScreenView.swift */; };
+		F10000000000000000000002 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* NetworkMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +122,8 @@
 		C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D20000000000000000000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E20000000000000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F20000000000000000000001 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
+		F20000000000000000000002 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -218,6 +222,7 @@
 				A20000000000000000000020 /* JokeDetailSheet.swift */,
 				A20000000000000000000021 /* JokeOfTheDayView.swift */,
 				A20000000000000000000022 /* YouTubePromoCardView.swift */,
+				F20000000000000000000001 /* SplashScreenView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -236,6 +241,7 @@
 			children = (
 				A20000000000000000000012 /* LocalStorageService.swift */,
 				A20000000000000000000028 /* FirestoreService.swift */,
+				F20000000000000000000002 /* NetworkMonitor.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -439,6 +445,8 @@
 				A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */,
 				B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
+				F10000000000000000000001 /* SplashScreenView.swift in Sources */,
+				F10000000000000000000002 /* NetworkMonitor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -612,7 +620,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bvanaski.mrfunnyjokes;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -644,7 +652,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bvanaski.mrfunnyjokes;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -670,7 +678,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bvanaski.mrfunnyjokes.JokeOfTheDayWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -697,7 +705,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bvanaski.mrfunnyjokes.JokeOfTheDayWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
