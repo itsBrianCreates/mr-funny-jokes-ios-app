@@ -165,6 +165,13 @@ final class LocalStorageService: @unchecked Sendable {
         }
     }
 
+    /// Clear all impressions (used on pull-to-refresh for a fresh feed)
+    func clearImpressions() {
+        queue.sync {
+            userDefaults.removeObject(forKey: impressionsKey)
+        }
+    }
+
     private func loadImpressionsSync() -> [String] {
         return userDefaults.stringArray(forKey: impressionsKey) ?? []
     }

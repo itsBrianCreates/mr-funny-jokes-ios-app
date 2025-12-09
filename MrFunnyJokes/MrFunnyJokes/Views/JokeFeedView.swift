@@ -107,6 +107,11 @@ struct JokeFeedView: View {
             .refreshable {
                 // User explicitly pulled to refresh - force server fetch
                 await viewModel.refresh(forceServerFetch: true)
+                // Scroll to top after refresh completes for consistent UX
+                try? await Task.sleep(for: .milliseconds(100))
+                withAnimation(.easeOut(duration: 0.25)) {
+                    proxy.scrollTo(topAnchorID, anchor: .top)
+                }
             }
             .onChange(of: viewModel.selectedCategory) {
                 // Scroll to top when filter changes
