@@ -436,12 +436,10 @@ final class JokeViewModel: ObservableObject {
         isInitialLoading = false
     }
 
-    // MARK: - Refresh (Pull-to-Refresh)
+    // MARK: - Refresh (Category Change)
 
-    /// Refreshes the joke feed
-    /// - Parameter forceServerFetch: When true, bypasses Firestore cache and fetches from server.
-    ///   Use true for pull-to-refresh, false for category changes (allows graceful cache fallback).
-    func refresh(forceServerFetch: Bool = false) async {
+    /// Refreshes the joke feed when category changes
+    func refresh() async {
         guard !isRefreshing else { return }
         isRefreshing = true
 
@@ -450,22 +448,15 @@ final class JokeViewModel: ObservableObject {
             firestoreService.resetPagination()
             hasMoreJokes = true
 
-            // Clear impressions on explicit pull-to-refresh for a truly fresh feed
-            // This ensures jokes are re-shuffled and appear in a new order
-            if forceServerFetch {
-                storage.clearImpressions()
-            }
-
             // Note: We don't clear cache here - it's replaced after successful fetch
             // This preserves fallback data if the network request fails
 
             // Fetch new jokes from Firestore
-            // Only force server fetch for explicit pull-to-refresh, not for category changes
             let newJokes: [Joke]
             if let category = selectedCategory {
-                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize, forceRefresh: forceServerFetch)
+                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize)
             } else {
-                newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory, forceRefresh: forceServerFetch)
+                newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory)
             }
 
             guard !Task.isCancelled else {
