@@ -15,8 +15,52 @@ final class LocalStorageService: @unchecked Sendable {
     /// Maximum number of impressions to track (FIFO when exceeded)
     private let maxImpressions = 500
 
+    // MARK: - In-Memory Cache (for fast access during startup)
+
+    /// In-memory cache of impression IDs - loaded once, updated on writes
+    private var cachedImpressionIds: Set<String>?
+
+    /// In-memory cache of rated joke IDs - loaded once, updated on writes
+    private var cachedRatedIds: Set<String>?
+
+    /// Flag indicating if in-memory caches are loaded
+    private var memoryCacheLoaded = false
+
     private init() {
         self.userDefaults = UserDefaults.standard
+    }
+
+    // MARK: - Memory Cache Preloading
+
+    /// Preload impression and rating data into memory for fast access
+    /// Call this early during app startup to eliminate disk reads during sorting
+    func preloadMemoryCache() {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            if !self.memoryCacheLoaded {
+                self.cachedImpressionIds = Set(self.loadImpressionsSync())
+                self.cachedRatedIds = Set(self.loadRatingsSync().keys)
+                self.memoryCacheLoaded = true
+            }
+        }
+    }
+
+    /// Async version: Preload and return when ready
+    func preloadMemoryCacheAsync() async {
+        await withCheckedContinuation { continuation in
+            queue.async { [weak self] in
+                guard let self = self else {
+                    continuation.resume()
+                    return
+                }
+                if !self.memoryCacheLoaded {
+                    self.cachedImpressionIds = Set(self.loadImpressionsSync())
+                    self.cachedRatedIds = Set(self.loadRatingsSync().keys)
+                    self.memoryCacheLoaded = true
+                }
+                continuation.resume()
+            }
+        }
     }
 
     // MARK: - Hardcoded Jokes (Removed - Firebase only)
@@ -41,6 +85,9 @@ final class LocalStorageService: @unchecked Sendable {
             var ratings = self.loadRatingsSync()
             ratings[key] = rating
             self.saveRatingsSync(ratings)
+
+            // Update in-memory cache
+            cachedRatedIds?.insert(key)
         }
     }
 
@@ -51,6 +98,9 @@ final class LocalStorageService: @unchecked Sendable {
             var ratings = self.loadRatingsSync()
             ratings.removeValue(forKey: key)
             self.saveRatingsSync(ratings)
+
+            // Update in-memory cache
+            cachedRatedIds?.remove(key)
         }
     }
 
@@ -139,6 +189,9 @@ final class LocalStorageService: @unchecked Sendable {
             }
 
             saveImpressionsSync(impressions)
+
+            // Update in-memory cache
+            cachedImpressionIds?.insert(firestoreId)
         }
     }
 
@@ -152,23 +205,48 @@ final class LocalStorageService: @unchecked Sendable {
     }
 
     /// Get all impression IDs (for batch checking)
+    /// Uses in-memory cache if available for fast access
     func getImpressionIds() -> Set<String> {
         return queue.sync {
-            Set(loadImpressionsSync())
+            if let cached = cachedImpressionIds {
+                return cached
+            }
+            let ids = Set(loadImpressionsSync())
+            cachedImpressionIds = ids
+            return ids
         }
     }
 
     /// Get all rated joke IDs (for batch checking)
+    /// Uses in-memory cache if available for fast access
     func getRatedJokeIds() -> Set<String> {
         return queue.sync {
-            Set(loadRatingsSync().keys)
+            if let cached = cachedRatedIds {
+                return cached
+            }
+            let ids = Set(loadRatingsSync().keys)
+            cachedRatedIds = ids
+            return ids
         }
+    }
+
+    /// Fast, non-blocking access to impression IDs from memory cache
+    /// Returns empty set if cache not yet loaded - use preloadMemoryCacheAsync() first
+    func getImpressionIdsFast() -> Set<String> {
+        return cachedImpressionIds ?? []
+    }
+
+    /// Fast, non-blocking access to rated joke IDs from memory cache
+    /// Returns empty set if cache not yet loaded - use preloadMemoryCacheAsync() first
+    func getRatedJokeIdsFast() -> Set<String> {
+        return cachedRatedIds ?? []
     }
 
     /// Clear all impressions (used on pull-to-refresh for a fresh feed)
     func clearImpressions() {
         queue.sync {
             userDefaults.removeObject(forKey: impressionsKey)
+            cachedImpressionIds = []
         }
     }
 
