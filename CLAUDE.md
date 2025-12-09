@@ -42,7 +42,7 @@ Assign based on structure - **ONLY 3 OPTIONS**:
 Assign 1-3 tags from this list:
 - `animals`, `food`, `work`, `school`, `sports`, `music`
 - `technology`, `science`, `health`, `weather`, `holidays`
-- `family`, `travel`, `wordplay`
+- `family`, `travel`, `wordplay`, `religious`
 
 ### Step 4: Check for Duplicates
 Before inserting, query the `jokes` collection:
@@ -202,7 +202,7 @@ X jokes added, Y duplicates skipped
 `dad_joke`, `knock_knock`, `pickup_line`
 
 ### Valid Tags
-`animals`, `food`, `work`, `school`, `sports`, `music`, `technology`, `science`, `health`, `weather`, `holidays`, `family`, `travel`, `wordplay`
+`animals`, `food`, `work`, `school`, `sports`, `music`, `technology`, `science`, `health`, `weather`, `holidays`, `family`, `travel`, `wordplay`, `religious`
 
 ### Valid Sources
 `classic`, `original`, `submitted`
