@@ -253,8 +253,9 @@ final class JokeViewModel: ObservableObject {
     /// Prioritizes: Unseen jokes > Seen but unrated > Already rated
     /// Shuffles within each tier to maintain category variety
     private func sortJokesForFreshFeed(_ jokes: [Joke]) -> [Joke] {
-        let impressionIds = storage.getImpressionIds()
-        let ratedIds = storage.getRatedJokeIds()
+        // Use fast in-memory cache (non-blocking) - preloaded during startup
+        let impressionIds = storage.getImpressionIdsFast()
+        let ratedIds = storage.getRatedJokeIdsFast()
 
         var unseenJokes: [Joke] = []
         var seenUnratedJokes: [Joke] = []
@@ -288,16 +289,25 @@ final class JokeViewModel: ObservableObject {
     /// Load content on app start asynchronously - cache first, then API
     /// This is fully async to avoid blocking the main thread during startup
     private func loadInitialContentAsync() async {
-        // Load cached jokes asynchronously (off main thread)
+        // PHASE 1: Preload memory cache for fast sorting (critical for performance)
+        await storage.preloadMemoryCacheAsync()
+
+        // PHASE 2: Load cached jokes asynchronously (off main thread)
         let cached = await storage.loadAllCachedJokesAsync()
 
-        // Update UI with cached jokes (sorted for freshness)
         if !cached.isEmpty {
+            // We have cached content - show it immediately and fetch fresh in background
             jokes = sortJokesForFreshFeed(cached)
-        }
+            // Mark initial loading complete so UI can transition from splash
+            await completeInitialLoading()
 
-        // Then fetch fresh content from APIs
-        await fetchInitialAPIContent()
+            // PHASE 3: Fetch fresh content from Firebase in background
+            // This updates the UI when ready but doesn't block the splash transition
+            await fetchInitialAPIContentBackground()
+        } else {
+            // No cache (first launch) - must wait for Firebase fetch
+            await fetchInitialAPIContent()
+        }
     }
 
     /// Legacy sync method - kept for refresh scenarios where we're already on main thread
@@ -390,7 +400,8 @@ final class JokeViewModel: ObservableObject {
         WidgetCenter.shared.reloadTimelines(ofKind: "JokeOfTheDayWidget")
     }
 
-    /// Fetch initial content from Firestore
+    /// Fetch initial content from Firestore (blocking - waits before completing initial load)
+    /// Used when there's no cached content available
     private func fetchInitialAPIContent() async {
         do {
             // Fetch jokes from Firestore using concurrent category loading for faster results
@@ -429,6 +440,48 @@ final class JokeViewModel: ObservableObject {
         }
 
         await completeInitialLoading()
+    }
+
+    /// Fetch initial content from Firestore in background (non-blocking)
+    /// Used after cache is already loaded - updates UI but doesn't block splash transition
+    private func fetchInitialAPIContentBackground() async {
+        do {
+            // Fetch jokes from Firestore using concurrent category loading for faster results
+            let newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory)
+
+            guard !Task.isCancelled else { return }
+
+            if !newJokes.isEmpty {
+                // Cache the new jokes by category
+                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
+                for (category, categoryJokes) in grouped {
+                    storage.saveCachedJokes(categoryJokes, for: category)
+                }
+
+                // Apply user ratings from local storage
+                let jokesWithRatings = newJokes.map { joke -> Joke in
+                    var mutableJoke = joke
+                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                    return mutableJoke
+                }
+
+                // Replace with Firebase jokes (sorted for freshness)
+                // This smoothly updates the UI if user is already viewing the feed
+                jokes = sortJokesForFreshFeed(jokesWithRatings)
+
+                // Re-initialize joke of the day - fetches from Firebase if needed
+                await initializeJokeOfTheDayAsync()
+            }
+        } catch {
+            // Network error - cached content is already loaded, so just log
+            print("Background Firestore fetch error: \(error)")
+        }
+
+        // If initial loading wasn't completed (no cache was available),
+        // complete it now that Firebase fetch is done
+        if isInitialLoading {
+            await completeInitialLoading()
+        }
     }
 
     private func completeInitialLoading() async {
