@@ -635,7 +635,16 @@ final class JokeViewModel: ObservableObject {
     func shareJoke(_ joke: Joke) {
         HapticManager.shared.success()
 
-        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— Mr. Funny Jokes"
+        // Get character name from joke's character field, fallback to generic app name
+        let characterName: String
+        if let characterId = joke.character,
+           let character = JokeCharacter.find(byId: characterId) {
+            characterName = character.name
+        } else {
+            characterName = "Mr. Funny Jokes"
+        }
+
+        let text = "\(joke.setup)\n\n\(joke.punchline)\n\n— \(characterName)"
 
         let activityVC = UIActivityViewController(
             activityItems: [text],
