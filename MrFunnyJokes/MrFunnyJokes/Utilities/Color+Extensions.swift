@@ -16,6 +16,12 @@ extension Color {
         light: Color(red: 1.0, green: 0.95, blue: 0.8),   // Very soft yellow for light mode
         dark: Color(red: 0.25, green: 0.22, blue: 0.1)    // Warm dark background for dark mode
     )
+
+    /// Darker brown for Mr. Potty - more visible than standard brown
+    static let pottyBrown = Color(
+        light: Color(red: 101/255, green: 67/255, blue: 33/255),   // #654321 - darker chocolate brown
+        dark: Color(red: 139/255, green: 90/255, blue: 43/255)     // #8B5A2B - warm saddle brown for dark mode
+    )
 }
 
 extension Color {
@@ -42,4 +48,7 @@ extension ShapeStyle where Self == Color {
 
     /// Softer brand yellow for backgrounds
     static var brandYellowLight: Color { Color.brandYellowLight }
+
+    /// Darker brown for Mr. Potty
+    static var pottyBrown: Color { Color.pottyBrown }
 }
