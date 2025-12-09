@@ -50,6 +50,7 @@
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
 		D10000000000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D20000000000000000000001 /* LaunchScreen.storyboard */; };
+		E10000000000000000000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +119,7 @@
 		C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailViewModel.swift; sourceTree = "<group>"; };
 		C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D20000000000000000000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		E20000000000000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000027 /* Info.plist */,
+				E20000000000000000000001 /* PrivacyInfo.xcprivacy */,
 				D20000000000000000000001 /* LaunchScreen.storyboard */,
 				A50000000000000000000004 /* App */,
 				A50000000000000000000005 /* Models */,
@@ -389,6 +392,7 @@
 				A10000000000000000000003 /* Assets.xcassets in Resources */,
 				C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */,
 				D10000000000000000000001 /* LaunchScreen.storyboard in Resources */,
+				E10000000000000000000001 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
