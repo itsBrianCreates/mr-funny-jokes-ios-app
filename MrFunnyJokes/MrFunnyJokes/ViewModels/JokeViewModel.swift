@@ -450,6 +450,12 @@ final class JokeViewModel: ObservableObject {
             firestoreService.resetPagination()
             hasMoreJokes = true
 
+            // Clear impressions on explicit pull-to-refresh for a truly fresh feed
+            // This ensures jokes are re-shuffled and appear in a new order
+            if forceServerFetch {
+                storage.clearImpressions()
+            }
+
             // Note: We don't clear cache here - it's replaced after successful fetch
             // This preserves fallback data if the network request fails
 
