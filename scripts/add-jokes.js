@@ -41,13 +41,13 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Christmas jokes
+// Jokes to add - Mr. Bad jokes
 const JOKES_TO_ADD = [
   {
-    "character": "mr_funny",
-    "text": "What did the bald man say when he got a comb for Christmas? \"I'll never part with it!\"",
+    "character": "mr_bad",
+    "text": "My grief counselor died. He was so good I don't even care.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["health", "work"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -58,10 +58,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What is a vegan's favorite Christmas song? Soy to the World!",
+    "character": "mr_bad",
+    "text": "Today I asked my phone why I'm still single and it turned on the front camera.",
     "type": "dad_joke",
-    "tags": ["holidays", "food", "wordplay"],
+    "tags": ["technology"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -72,10 +72,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Elves use what kind of money? Jingle bills.",
+    "character": "mr_bad",
+    "text": "As I get older, I remember all the people I lost along the way. Maybe being a tour guide wasn't for me.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["work", "travel"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -86,10 +86,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What do you get when you cross a snowman with a vampire? Frostbite.",
+    "character": "mr_bad",
+    "text": "Don't challenge Death to a pillow fight unless you're prepared for the reaper cushions.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -100,10 +100,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What does Santa suffer from if he gets stuck in a chimney? Claus-trophobia!",
+    "character": "mr_bad",
+    "text": "Even people who are good for nothing can bring a smile to your face—like when you push them down the stairs.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -114,10 +114,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What do you call Santa when he stops moving? Santa Pause.",
+    "character": "mr_bad",
+    "text": "My mom died because we couldn't remember her blood type. She kept telling us to \"be positive,\" but it's hard without her.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["family", "health", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -128,10 +128,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What do snowmen eat for breakfast? Ice crispies.",
+    "character": "mr_bad",
+    "text": "What does my dad have in common with Nemo? They both can't be found.",
     "type": "dad_joke",
-    "tags": ["holidays", "food"],
+    "tags": ["family"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -142,10 +142,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "How do you help someone who has lost their Christmas spirit? Nurse them back to elf.",
+    "character": "mr_bad",
+    "text": "One man's trash is another man's treasure is a terrible way to find out you're adopted.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["family"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -156,10 +156,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What do you call an elf that runs away from Santa's workshop? A rebel without a Claus!",
+    "character": "mr_bad",
+    "text": "Why did the man miss the funeral? He wasn't a mourning person.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -170,10 +170,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What do you call a reindeer ghost? Cari-boo!",
+    "character": "mr_bad",
+    "text": "If I'd known the difference between \"antidote\" and \"anecdote,\" my friend would still be alive.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["wordplay", "health"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -184,10 +184,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What is it called when a snowman has a temper tantrum? A meltdown.",
+    "character": "mr_bad",
+    "text": "My wife says I'm the cheapest person she knows. I'm not buying it.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "tags": ["family", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -198,24 +198,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Why are elves such great motivational speakers? They have plenty of elf-confidence.",
+    "character": "mr_bad",
+    "text": "When does a joke become a dad joke? When it leaves you and never comes back.",
     "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "Why do reindeer like Beyonce so much? She sleighs.",
-    "type": "dad_joke",
-    "tags": ["holidays", "music", "wordplay"],
+    "tags": ["family", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
