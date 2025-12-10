@@ -41,12 +41,12 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Mr. Bad jokes
+// Jokes to add - Mr. Potty jokes
 // NOTE: Use \n between setup and punchline so the card preview works correctly
 const JOKES_TO_ADD = [
   {
-    "character": "mr_bad",
-    "text": "Give a man a match and he'll be warm for a few hours.\nSet him on fire and he'll be warm for the rest of his life.",
+    "character": "mr_potty",
+    "text": "What's big and brown and behind the wall?\nHumpty's dump.",
     "type": "dad_joke",
     "tags": ["wordplay"],
     "sfw": true,
@@ -59,8 +59,8 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_bad",
-    "text": "When I see lovers' names carved into a tree, I don't think it's cute.\nI think it's weird how many people bring knives on dates.",
+    "character": "mr_potty",
+    "text": "What do you get when you poop in your overalls?\nDung-arees.",
     "type": "dad_joke",
     "tags": ["wordplay"],
     "sfw": true,
@@ -73,10 +73,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_bad",
-    "text": "You know you're not liked…\nwhen you get handed the camera every time there's a group photo.",
+    "character": "mr_potty",
+    "text": "Did you know that diarrhea is hereditary?\nIt's in your jeans.",
     "type": "dad_joke",
-    "tags": ["family"],
+    "tags": ["wordplay", "family"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -87,10 +87,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_bad",
-    "text": "My parents raised me as an only child.\nMade my sister really mad.",
+    "character": "mr_potty",
+    "text": "Poop jokes aren't my favorite jokes, but they're a solid No. 2.",
     "type": "dad_joke",
-    "tags": ["family"],
+    "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -101,10 +101,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_bad",
-    "text": "Why did Mozart kill all his chickens?\nThey kept saying, \"Bach, Bach, Bach.\"",
+    "character": "mr_potty",
+    "text": "Have you seen that new movie, \"Constipated\"?\nMe neither, it hasn't come out yet.",
     "type": "dad_joke",
-    "tags": ["music", "animals", "wordplay"],
+    "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -115,10 +115,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_bad",
-    "text": "I have a stepladder…\nbecause my real ladder left when I was 5.",
+    "character": "mr_potty",
+    "text": "Have you seen the new movie \"Diarrhea\"?\nIt got leaked, so they just had to let it go.",
     "type": "dad_joke",
-    "tags": ["family", "wordplay"],
+    "tags": ["wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -129,10 +129,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_bad",
-    "text": "They laughed at my crayon drawing.\nI laughed at their chalk outline.",
+    "character": "mr_potty",
+    "text": "What do you call a vegetarian with diarrhea?\nA salad shooter.",
     "type": "dad_joke",
-    "tags": ["school"],
+    "tags": ["food", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -143,24 +143,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_bad",
-    "text": "I have many jokes about unemployed people,\nbut none of them work.",
+    "character": "mr_potty",
+    "text": "Do you wanna hear a poop joke?\nNever mind, it's probably too corny.",
     "type": "dad_joke",
-    "tags": ["work", "wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
-  },
-  {
-    "character": "mr_bad",
-    "text": "Teamwork is important.\nIt helps you put the blame on someone else.",
-    "type": "dad_joke",
-    "tags": ["work"],
+    "tags": ["wordplay", "food"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
