@@ -11,8 +11,15 @@ When the user provides jokes (via text, images, or URLs), follow this workflow:
 
 ### Step 1: Extract and Parse Jokes
 - Parse all jokes from the provided input
-- Separate setup and punchline into a single `text` field
+- Combine setup and punchline into a single `text` field **with `\n` (newline) between them**
 - Handle various formats: Q&A, knock-knock, one-liners, pickup lines
+
+**IMPORTANT - Card Preview Formatting:**
+The iOS app splits the `text` field to show a preview (setup) on the card, revealing the punchline when tapped. The parser looks for these delimiters in order: `\n\n`, `\n`, ` - `, `? `, `! `
+
+- **Always use `\n`** between setup and punchline for reliable splitting
+- Q&A jokes with `?` work automatically, but `\n` is still preferred for consistency
+- Statement-style jokes (no `?`) **require `\n`** or they won't have a reveal
 
 ### Step 2: Categorize Each Joke
 
@@ -67,7 +74,7 @@ Use Firebase Admin SDK with batch writes (max 500 per batch):
 ```javascript
 {
   character: string,        // "mr_funny" | "mr_potty" | "mr_bad" | "mr_love" | "mr_sad"
-  text: string,             // Full joke text (setup + punchline combined)
+  text: string,             // Setup + \n + punchline (e.g., "Setup here.\nPunchline here.")
   type: string,             // "dad_joke" | "knock_knock" | "pickup_line"
   tags: string[],           // 1-3 tags from allowed list
   sfw: boolean,             // Always true
@@ -124,13 +131,30 @@ node add-jokes.js --force      # Skip duplicate check
 2. Format each joke object following the schema
 3. Run the script
 
-### Example Joke Object
+### Example Joke Objects
 ```javascript
+// Q&A format - use \n after the question for consistent parsing
 {
   "character": "mr_funny",
-  "text": "Why don't scientists trust atoms? Because they make up everything!",
+  "text": "Why don't scientists trust atoms?\nBecause they make up everything!",
   "type": "dad_joke",
   "tags": ["science", "wordplay"],
+  "sfw": true,
+  "source": "classic",
+  "likes": 0,
+  "dislikes": 0,
+  "rating_sum": 0,
+  "rating_count": 0,
+  "rating_avg": 0,
+  "popularity_score": 0
+}
+
+// Statement format - \n is REQUIRED for card preview to work
+{
+  "character": "mr_bad",
+  "text": "My parents raised me as an only child.\nMade my sister really mad.",
+  "type": "dad_joke",
+  "tags": ["family"],
   "sfw": true,
   "source": "classic",
   "likes": 0,
@@ -171,17 +195,24 @@ Add these jokes:
 1. Why did the scarecrow win an award? Because he was outstanding in his field!
 2. Knock knock. Who's there? Boo. Boo who? Don't cry, it's just a joke!
 3. Are you a magician? Because whenever I look at you, everyone else disappears.
+4. I have a stepladder. Because my real ladder left when I was 5.
 ```
 
 **Processing:**
-1. Parse 3 jokes from input
-2. Categorize:
+1. Parse 4 jokes from input
+2. Format text with `\n` between setup and punchline:
+   - `"Why did the scarecrow win an award?\nBecause he was outstanding in his field!"`
+   - `"Knock knock. Who's there? Boo. Boo who?\nDon't cry, it's just a joke!"`
+   - `"Are you a magician?\nBecause whenever I look at you, everyone else disappears."`
+   - `"I have a stepladder.\nBecause my real ladder left when I was 5."` ← statement joke, `\n` required!
+3. Categorize:
    - Joke 1: `character: "mr_funny"`, `type: "dad_joke"`, `tags: ["work", "wordplay"]`
    - Joke 2: `character: "mr_funny"`, `type: "knock_knock"`, `tags: ["wordplay"]`
    - Joke 3: `character: "mr_love"`, `type: "pickup_line"`, `tags: ["wordplay"]`
-3. Run duplicate check against Firestore
-4. Update `JOKES_TO_ADD` array in `scripts/add-jokes.js`
-5. Run script: `node add-jokes.js`
+   - Joke 4: `character: "mr_bad"`, `type: "dad_joke"`, `tags: ["family", "wordplay"]`
+4. Run duplicate check against Firestore
+5. Update `JOKES_TO_ADD` array in `scripts/add-jokes.js`
+6. Run script: `node add-jokes.js`
 
 **Report:**
 ```
@@ -189,6 +220,7 @@ X jokes added, Y duplicates skipped
 - Added: "Why did the scarecrow..."
 - Added: "Knock knock. Who's there? Boo..."
 - Skipped (duplicate): "Are you a magician..."
+- Added: "I have a stepladder..."
 ```
 
 ---
