@@ -32,8 +32,7 @@ final class JokeViewModel: ObservableObject {
     private var copyTask: Task<Void, Never>?
     private var loadMoreTask: Task<Void, Never>?
     private var initialLoadTask: Task<Void, Never>?
-    private var networkCancellable: AnyCancellable?
-    private var ratingNotificationObserver: NSObjectProtocol?
+    private var cancellables = Set<AnyCancellable>()
 
     /// Number of jokes to fetch per batch
     private let batchSize = 10
@@ -183,11 +182,21 @@ final class JokeViewModel: ObservableObject {
 
     init() {
         // Subscribe to network connectivity changes
-        networkCancellable = networkMonitor.$isConnected
+        networkMonitor.$isConnected
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isConnected in
                 self?.isOffline = !isConnected
             }
+            .store(in: &cancellables)
+
+        // Listen for rating changes from other ViewModels (e.g., CharacterDetailViewModel)
+        // This ensures the Me tab updates when ratings are made in character views
+        NotificationCenter.default.publisher(for: .jokeRatingDidChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.handleRatingNotification(notification)
+            }
+            .store(in: &cancellables)
 
         // Set initial offline state
         isOffline = networkMonitor.isOffline
@@ -198,24 +207,6 @@ final class JokeViewModel: ObservableObject {
         // Start async content loading - doesn't block the main thread
         initialLoadTask = Task {
             await loadInitialContentAsync()
-        }
-
-        // Listen for rating changes from other ViewModels (e.g., CharacterDetailViewModel)
-        // This ensures the Me tab updates when ratings are made in character views
-        ratingNotificationObserver = NotificationCenter.default.addObserver(
-            forName: .jokeRatingDidChange,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            Task { @MainActor in
-                self?.handleRatingNotification(notification)
-            }
-        }
-    }
-
-    deinit {
-        if let observer = ratingNotificationObserver {
-            NotificationCenter.default.removeObserver(observer)
         }
     }
 
@@ -249,13 +240,37 @@ final class JokeViewModel: ObservableObject {
 
     // MARK: - Feed Algorithm (Freshness Sorting)
 
+    /// Cached impression and rated IDs to avoid repeated lookups during sorting
+    private var cachedImpressionIds: Set<String>?
+    private var cachedRatedIds: Set<String>?
+
+    /// Invalidates the cached impression/rated IDs (call when new impressions or ratings are added)
+    private func invalidateSortCache() {
+        cachedImpressionIds = nil
+        cachedRatedIds = nil
+    }
+
     /// Sorts jokes for a fresh feed experience
     /// Prioritizes: Unseen jokes > Seen but unrated > Already rated
     /// Shuffles within each tier to maintain category variety
     private func sortJokesForFreshFeed(_ jokes: [Joke]) -> [Joke] {
-        // Use fast in-memory cache (non-blocking) - preloaded during startup
-        let impressionIds = storage.getImpressionIdsFast()
-        let ratedIds = storage.getRatedJokeIdsFast()
+        // Use cached IDs if available, otherwise fetch and cache
+        let impressionIds: Set<String>
+        let ratedIds: Set<String>
+
+        if let cached = cachedImpressionIds {
+            impressionIds = cached
+        } else {
+            impressionIds = storage.getImpressionIdsFast()
+            cachedImpressionIds = impressionIds
+        }
+
+        if let cached = cachedRatedIds {
+            ratedIds = cached
+        } else {
+            ratedIds = storage.getRatedJokeIdsFast()
+            cachedRatedIds = ratedIds
+        }
 
         var unseenJokes: [Joke] = []
         var seenUnratedJokes: [Joke] = []
@@ -282,6 +297,8 @@ final class JokeViewModel: ObservableObject {
     /// Marks a joke as seen/impressed for feed freshness tracking
     func markJokeImpression(_ joke: Joke) {
         storage.markImpression(firestoreId: joke.firestoreId)
+        // Invalidate cache since impressions changed
+        invalidateSortCache()
     }
 
     // MARK: - Initial Load
@@ -642,6 +659,9 @@ final class JokeViewModel: ObservableObject {
 
     func rateJoke(_ joke: Joke, rating: Int) {
         HapticManager.shared.selection()
+
+        // Invalidate sort cache since ratings are changing
+        invalidateSortCache()
 
         // Find joke index using firestoreId (stable) or fallback to UUID
         // This handles cases where jokes array was refreshed and UUIDs changed
