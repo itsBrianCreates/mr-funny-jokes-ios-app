@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		A10000000000000000000001 /* MrFunnyJokesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* MrFunnyJokesApp.swift */; };
-		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ContentView.swift */; };
 		A10000000000000000000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* Assets.xcassets */; };
 		A10000000000000000000004 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* Preview Assets.xcassets */; };
 		A10000000000000000000005 /* Joke.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* Joke.swift */; };
@@ -88,7 +87,6 @@
 
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* MrFunnyJokesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrFunnyJokesApp.swift; sourceTree = "<group>"; };
-		A20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A20000000000000000000003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000004 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A20000000000000000000005 /* Joke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joke.swift; sourceTree = "<group>"; };
@@ -229,7 +227,6 @@
 				C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */,
 				C333E63C2EE10888007377F4 /* CharacterDetailView.swift */,
 				A50000000000000000000012 /* Skeleton */,
-				A20000000000000000000002 /* ContentView.swift */,
 				A20000000000000000000007 /* JokeCardView.swift */,
 				A20000000000000000000008 /* JokeFeedView.swift */,
 				A20000000000000000000016 /* GrainOMeterView.swift */,
@@ -438,7 +435,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A10000000000000000000002 /* ContentView.swift in Sources */,
 				A10000000000000000000001 /* MrFunnyJokesApp.swift in Sources */,
 				A10000000000000000000005 /* Joke.swift in Sources */,
 				A10000000000000000000006 /* JokeCategory.swift in Sources */,
