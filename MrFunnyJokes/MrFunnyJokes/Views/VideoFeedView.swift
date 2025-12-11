@@ -56,27 +56,33 @@ struct VideoFeedView: View {
                     }
                 }
             } else {
-                // Video feed - vertical paging TabView
-                TabView(selection: $viewModel.currentIndex) {
-                    ForEach(Array(viewModel.videos.enumerated()), id: \.element.id) { index, video in
-                        VideoPlayerView(
-                            video: video,
-                            isActive: viewModel.currentIndex == index,
-                            onLike: {
-                                viewModel.toggleLike(video)
-                            },
-                            onShare: {
-                                viewModel.shareVideo(video)
-                            }
-                        )
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .tag(index)
+                // Video feed - vertical paging ScrollView
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(viewModel.videos.enumerated()), id: \.element.id) { index, video in
+                            VideoPlayerView(
+                                video: video,
+                                isActive: viewModel.currentIndex == index,
+                                onLike: {
+                                    viewModel.toggleLike(video)
+                                },
+                                onShare: {
+                                    viewModel.shareVideo(video)
+                                }
+                            )
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .id(index)
+                        }
                     }
+                    .scrollTargetLayout()
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+                .scrollTargetBehavior(.paging)
+                .scrollPosition(id: $viewModel.scrolledIndex)
                 .ignoresSafeArea()
-                .onChange(of: viewModel.currentIndex) { _, newIndex in
-                    viewModel.videoDidAppear(at: newIndex)
+                .onChange(of: viewModel.scrolledIndex) { _, newIndex in
+                    if let newIndex = newIndex {
+                        viewModel.videoDidAppear(at: newIndex)
+                    }
                 }
 
                 // Loading more indicator at bottom
