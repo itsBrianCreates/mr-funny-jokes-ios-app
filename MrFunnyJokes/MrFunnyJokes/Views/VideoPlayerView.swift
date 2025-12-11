@@ -33,6 +33,23 @@ struct VideoPlayerView: View {
                         }
                 }
 
+                // Bottom gradient overlay for text/icon accessibility
+                VStack {
+                    Spacer()
+                    LinearGradient(
+                        colors: [
+                            Color.black.opacity(0),
+                            Color.black.opacity(0.1),
+                            Color.black.opacity(0.4),
+                            Color.black.opacity(0.7)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 280)
+                }
+                .ignoresSafeArea()
+
                 // Overlay Controls
                 VStack {
                     Spacer()
