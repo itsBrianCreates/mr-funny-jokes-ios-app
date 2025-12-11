@@ -398,6 +398,9 @@ final class JokeViewModel: ObservableObject {
 
         sharedStorage.saveJokeOfTheDay(sharedJoke)
         WidgetCenter.shared.reloadTimelines(ofKind: "JokeOfTheDayWidget")
+
+        // Update the daily notification with the new joke content
+        NotificationManager.shared.scheduleJokeOfTheDayNotification()
     }
 
     /// Fetch initial content from Firestore (blocking - waits before completing initial load)

@@ -1,8 +1,11 @@
 import SwiftUI
 import FirebaseCore
+import UserNotifications
 
 @main
 struct MrFunnyJokesApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     init() {
         FirebaseApp.configure()
     }
@@ -11,6 +14,28 @@ struct MrFunnyJokesApp: App {
         WindowGroup {
             RootView()
         }
+    }
+}
+
+// MARK: - App Delegate
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        // Set up notification delegate
+        UNUserNotificationCenter.current().delegate = NotificationManager.shared
+
+        // Check current authorization status
+        NotificationManager.shared.checkAuthorizationStatus()
+
+        // Re-schedule notifications if enabled (in case app was updated)
+        if NotificationManager.shared.notificationsEnabled {
+            NotificationManager.shared.scheduleJokeOfTheDayNotification()
+        }
+
+        return true
     }
 }
 
@@ -121,6 +146,8 @@ struct MainContentView: View {
     @ObservedObject var viewModel: JokeViewModel
     @State private var selectedTab: AppTab = .home
     @State private var navigationPath = NavigationPath()
+    @State private var showingSettings = false
+    @State private var scrollToJokeOfTheDay = false
 
     enum AppTab: Hashable {
         case home
@@ -152,6 +179,15 @@ struct MainContentView: View {
             // can preserve navigationPath, so we reset it to ensure users
             // always start at the home screen.
             navigationPath = NavigationPath()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didTapJokeOfTheDayNotification)) { _ in
+            // Navigate to home tab when notification is tapped
+            selectedTab = .home
+            navigationPath = NavigationPath()
+            scrollToJokeOfTheDay = true
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
         }
     }
 
@@ -235,6 +271,17 @@ struct MainContentView: View {
             MeView(viewModel: viewModel)
                 .navigationTitle("My Jokes")
                 .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showingSettings = true
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .font(.title3)
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                }
         }
     }
 
