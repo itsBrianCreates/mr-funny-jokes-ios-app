@@ -57,6 +57,8 @@ struct VideoFeedView: View {
                 }
             } else {
                 // Video feed - vertical paging ScrollView
+                // Use full screen bounds for true fullscreen video experience
+                let screenBounds = UIScreen.main.bounds
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 0) {
                         ForEach(Array(viewModel.videos.enumerated()), id: \.element.id) { index, video in
@@ -70,7 +72,7 @@ struct VideoFeedView: View {
                                     viewModel.shareVideo(video)
                                 }
                             )
-                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .frame(width: screenBounds.width, height: screenBounds.height)
                             .id(index)
                         }
                     }
@@ -118,8 +120,9 @@ struct VideosTabView: View {
     var body: some View {
         ZStack(alignment: .top) {
             VideoFeedView(viewModel: viewModel)
+                .ignoresSafeArea()
 
-            // Top bar overlay
+            // Top bar overlay - respects safe area for status bar
             VStack {
                 HStack {
                     // Character filter button
@@ -212,5 +215,6 @@ struct VideosTabView: View {
                 }
             }
         }
+        .ignoresSafeArea(edges: .bottom)
     }
 }
