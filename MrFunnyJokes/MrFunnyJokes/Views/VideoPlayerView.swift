@@ -229,13 +229,12 @@ struct VideoPlayerView: View {
 
         // Time observer for progress
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        timeObserver = newPlayer.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            guard let self = self,
-                  let duration = newPlayer.currentItem?.duration,
-                  duration.isValid,
-                  !duration.isIndefinite else { return }
+        timeObserver = newPlayer.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
+            guard let itemDuration = newPlayer.currentItem?.duration,
+                  itemDuration.isValid,
+                  !itemDuration.isIndefinite else { return }
 
-            let durationSeconds = CMTimeGetSeconds(duration)
+            let durationSeconds = CMTimeGetSeconds(itemDuration)
             let currentSeconds = CMTimeGetSeconds(time)
             let newProgress = durationSeconds > 0 ? currentSeconds / durationSeconds : 0
 
