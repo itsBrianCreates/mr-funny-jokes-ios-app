@@ -20,10 +20,15 @@ final class VideoViewModel: ObservableObject {
     /// Indicates if we're currently offline
     @Published private(set) var isOffline = false
 
+    /// Preloaded AVPlayer for the first video (for instant playback when tab opens)
+    @Published private(set) var preloadedPlayer: AVPlayer?
+    @Published private(set) var preloadedVideoId: String?
+
     private let videoService = VideoService.shared
     private let storage = LocalStorageService.shared
     private var networkCancellable: AnyCancellable?
     private var loadMoreTask: Task<Void, Never>?
+    private var preloadStatusObserver: NSKeyValueObservation?
 
     /// Number of videos to fetch per batch
     private let batchSize = 10
@@ -63,6 +68,9 @@ final class VideoViewModel: ObservableObject {
             if !newVideos.isEmpty {
                 // Apply local state (watched, liked)
                 videos = applyLocalState(to: newVideos)
+
+                // Preload the first video's AVPlayer for instant playback
+                preloadFirstVideo()
             }
 
             hasMoreVideos = newVideos.count >= batchSize
@@ -73,11 +81,72 @@ final class VideoViewModel: ObservableObject {
         isInitialLoading = false
     }
 
+    /// Preload the first video's AVPlayer so it's ready when user opens Videos tab
+    private func preloadFirstVideo() {
+        guard let firstVideo = videos.first,
+              let url = firstVideo.playbackURL,
+              preloadedVideoId != firstVideo.firestoreId else { return }
+
+        // Clean up any existing preloaded player
+        cleanupPreloadedPlayer()
+
+        // Configure audio session
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to configure audio session for preload: \(error)")
+        }
+
+        let playerItem = AVPlayerItem(url: url)
+        let player = AVPlayer(playerItem: playerItem)
+        player.isMuted = false
+
+        // Observe when the player is ready to play
+        preloadStatusObserver = playerItem.observe(\.status, options: [.new]) { [weak self, weak playerItem] _, _ in
+            guard let playerItem = playerItem else { return }
+            DispatchQueue.main.async {
+                if playerItem.status == .readyToPlay {
+                    self?.isFirstVideoReady = true
+                    self?.preloadStatusObserver?.invalidate()
+                    self?.preloadStatusObserver = nil
+                }
+            }
+        }
+
+        preloadedPlayer = player
+        preloadedVideoId = firstVideo.firestoreId
+    }
+
+    /// Clean up preloaded player resources
+    private func cleanupPreloadedPlayer() {
+        preloadStatusObserver?.invalidate()
+        preloadStatusObserver = nil
+        preloadedPlayer?.pause()
+        preloadedPlayer = nil
+        preloadedVideoId = nil
+    }
+
+    /// Consume the preloaded player (transfers ownership to VideoPlayerView)
+    func consumePreloadedPlayer(for videoId: String?) -> AVPlayer? {
+        guard let videoId = videoId, videoId == preloadedVideoId else { return nil }
+        let player = preloadedPlayer
+        // Clear references but don't clean up - ownership transfers to caller
+        preloadedPlayer = nil
+        preloadedVideoId = nil
+        preloadStatusObserver?.invalidate()
+        preloadStatusObserver = nil
+        return player
+    }
+
     /// Refresh the video feed
     func refresh() async {
         guard !isLoading else { return }
         isLoading = true
         isFirstVideoReady = false
+
+        // Clean up existing preloaded player
+        cleanupPreloadedPlayer()
 
         videoService.resetPagination()
         hasMoreVideos = true
@@ -94,6 +163,11 @@ final class VideoViewModel: ObservableObject {
 
             videos = applyLocalState(to: newVideos)
             hasMoreVideos = newVideos.count >= batchSize
+
+            // Preload the new first video
+            if !newVideos.isEmpty {
+                preloadFirstVideo()
+            }
         } catch {
             print("Failed to refresh videos: \(error)")
         }

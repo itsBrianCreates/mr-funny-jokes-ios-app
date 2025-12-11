@@ -6,6 +6,8 @@ import AVFoundation
 struct VideoPlayerView: View {
     let video: Video
     let isActive: Bool
+    /// Preloaded player passed from VideoViewModel for instant playback (first video only)
+    let preloadedPlayer: AVPlayer?
     let onLike: () -> Void
     let onShare: () -> Void
     var onPlayerReady: (() -> Void)?
@@ -17,6 +19,7 @@ struct VideoPlayerView: View {
     @State private var duration: Double = 0
     @State private var timeObserver: Any?
     @State private var statusObserver: NSKeyValueObservation?
+    @State private var didUsePreloadedPlayer = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -173,6 +176,15 @@ struct VideoPlayerView: View {
     // MARK: - Player Setup
 
     private func setupPlayer() {
+        // Use preloaded player if available (for instant first video playback)
+        if let preloadedPlayer = preloadedPlayer, !didUsePreloadedPlayer {
+            didUsePreloadedPlayer = true
+            setupWithExistingPlayer(preloadedPlayer)
+            // Preloaded player is already ready, notify immediately
+            onPlayerReady?()
+            return
+        }
+
         guard let url = video.playbackURL else { return }
 
         // Configure audio session for video playback (enables audio even in silent mode)
@@ -199,6 +211,20 @@ struct VideoPlayerView: View {
             }
         }
 
+        setupLoopingAndProgress(for: newPlayer, playerItem: playerItem)
+        player = newPlayer
+    }
+
+    /// Set up an existing (preloaded) player with looping and progress tracking
+    private func setupWithExistingPlayer(_ existingPlayer: AVPlayer) {
+        guard let playerItem = existingPlayer.currentItem else { return }
+
+        setupLoopingAndProgress(for: existingPlayer, playerItem: playerItem)
+        player = existingPlayer
+    }
+
+    /// Configure looping and progress observer for a player
+    private func setupLoopingAndProgress(for newPlayer: AVPlayer, playerItem: AVPlayerItem) {
         // Loop video
         NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
@@ -222,8 +248,6 @@ struct VideoPlayerView: View {
             self.duration = durationSeconds
             self.progress = durationSeconds > 0 ? currentSeconds / durationSeconds : 0
         }
-
-        player = newPlayer
     }
 
     private func play() {

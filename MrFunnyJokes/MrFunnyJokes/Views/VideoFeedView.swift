@@ -141,6 +141,7 @@ struct VideoFeedView: View {
                             VideoPlayerView(
                                 video: video,
                                 isActive: viewModel.currentIndex == index,
+                                preloadedPlayer: index == 0 ? viewModel.consumePreloadedPlayer(for: video.firestoreId) : nil,
                                 onLike: {
                                     viewModel.toggleLike(video)
                                 },
@@ -193,7 +194,7 @@ struct VideoFeedView: View {
 
 /// Container view for the Videos tab with navigation
 struct VideosTabView: View {
-    @StateObject private var viewModel = VideoViewModel()
+    @ObservedObject var viewModel: VideoViewModel
     @State private var showingCharacterFilter = false
 
     var body: some View {

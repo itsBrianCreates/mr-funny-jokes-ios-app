@@ -45,7 +45,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 /// Coordinates background loading during splash for a snappier experience
 struct RootView: View {
     /// ViewModel is created lazily AFTER splash screen renders to avoid blocking the main thread
-    @State private var viewModel: JokeViewModel?
+    @State private var jokeViewModel: JokeViewModel?
+    /// VideoViewModel created early to preload video data while user is on home tab
+    @State private var videoViewModel: VideoViewModel?
     @State private var showSplash = true
     @State private var splashMinimumTimePassed = false
 
@@ -57,10 +59,11 @@ struct RootView: View {
 
     var body: some View {
         ZStack {
-            // Main content - only created after viewModel is initialized
-            if let viewModel = viewModel {
+            // Main content - only created after viewModels are initialized
+            if let jokeViewModel = jokeViewModel, let videoViewModel = videoViewModel {
                 SplashTransitionView(
-                    viewModel: viewModel,
+                    jokeViewModel: jokeViewModel,
+                    videoViewModel: videoViewModel,
                     showSplash: $showSplash,
                     splashMinimumTimePassed: splashMinimumTimePassed
                 )
@@ -79,7 +82,9 @@ struct RootView: View {
             Task { @MainActor in
                 // Small yield to ensure splash is visible before heavy init
                 await Task.yield()
-                viewModel = JokeViewModel()
+                jokeViewModel = JokeViewModel()
+                // Create VideoViewModel early so it starts fetching/preloading
+                videoViewModel = VideoViewModel()
                 startSplashTimer()
                 startMaximumSplashTimer()
             }
@@ -107,14 +112,15 @@ struct RootView: View {
 /// Helper view that properly observes the viewModel using @ObservedObject
 /// This ensures SwiftUI receives updates when isInitialLoading changes
 private struct SplashTransitionView: View {
-    @ObservedObject var viewModel: JokeViewModel
+    @ObservedObject var jokeViewModel: JokeViewModel
+    @ObservedObject var videoViewModel: VideoViewModel
     @Binding var showSplash: Bool
     let splashMinimumTimePassed: Bool
 
     var body: some View {
-        MainContentView(viewModel: viewModel)
+        MainContentView(jokeViewModel: jokeViewModel, videoViewModel: videoViewModel)
             .opacity(showSplash ? 0 : 1)
-            .onChange(of: viewModel.isInitialLoading) { _, isLoading in
+            .onChange(of: jokeViewModel.isInitialLoading) { _, isLoading in
                 checkTransitionConditions()
             }
             .onChange(of: splashMinimumTimePassed) { _, _ in
@@ -130,7 +136,7 @@ private struct SplashTransitionView: View {
         // Transition when both conditions are met:
         // 1. Minimum splash duration has passed
         // 2. Initial loading is complete
-        guard splashMinimumTimePassed, !viewModel.isInitialLoading else { return }
+        guard splashMinimumTimePassed, !jokeViewModel.isInitialLoading else { return }
 
         withAnimation(.easeInOut(duration: 0.5)) {
             showSplash = false
@@ -143,7 +149,8 @@ private struct SplashTransitionView: View {
 /// The main app content with tab navigation
 /// Separated from ContentView to allow viewModel injection from RootView
 struct MainContentView: View {
-    @ObservedObject var viewModel: JokeViewModel
+    @ObservedObject var jokeViewModel: JokeViewModel
+    @ObservedObject var videoViewModel: VideoViewModel
     @State private var selectedTab: AppTab = .home
     @State private var navigationPath = NavigationPath()
     @State private var showingSettings = false
@@ -218,7 +225,7 @@ struct MainContentView: View {
     // MARK: - Home Tab
 
     private var headerTitle: String {
-        if let category = viewModel.selectedCategory {
+        if let category = jokeViewModel.selectedCategory {
             return category.rawValue
         }
         return "All Jokes"
@@ -227,7 +234,7 @@ struct MainContentView: View {
     private var homeTab: some View {
         NavigationStack(path: $navigationPath) {
             JokeFeedView(
-                viewModel: viewModel,
+                viewModel: jokeViewModel,
                 onCharacterTap: { character in
                     navigationPath.append(character)
                 }
@@ -248,13 +255,13 @@ struct MainContentView: View {
     // MARK: - Videos Tab
 
     private var videosTab: some View {
-        VideosTabView()
+        VideosTabView(viewModel: videoViewModel)
     }
 
     private var filterMenu: some View {
         Menu {
             Button {
-                viewModel.selectCategory(nil)
+                jokeViewModel.selectCategory(nil)
             } label: {
                 Label("All Jokes", systemImage: "sparkles")
             }
@@ -263,13 +270,13 @@ struct MainContentView: View {
 
             ForEach(JokeCategory.allCases) { category in
                 Button {
-                    viewModel.selectCategory(category)
+                    jokeViewModel.selectCategory(category)
                 } label: {
                     Label(category.rawValue, systemImage: category.icon)
                 }
             }
         } label: {
-            Image(systemName: viewModel.selectedCategory == nil
+            Image(systemName: jokeViewModel.selectedCategory == nil
                   ? "line.3.horizontal.decrease.circle"
                   : "line.3.horizontal.decrease.circle.fill")
                 .font(.title3)
@@ -281,7 +288,7 @@ struct MainContentView: View {
 
     private var meTab: some View {
         NavigationStack {
-            MeView(viewModel: viewModel)
+            MeView(viewModel: jokeViewModel)
                 .navigationTitle("My Jokes")
                 .navigationBarTitleDisplayMode(.large)
                 .toolbar {
@@ -302,7 +309,7 @@ struct MainContentView: View {
 
     private var searchTab: some View {
         NavigationStack {
-            SearchView(viewModel: viewModel)
+            SearchView(viewModel: jokeViewModel)
                 .navigationTitle("Search")
                 .navigationBarTitleDisplayMode(.large)
         }
