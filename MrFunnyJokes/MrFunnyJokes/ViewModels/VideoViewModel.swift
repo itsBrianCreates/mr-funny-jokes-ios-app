@@ -6,6 +6,7 @@ import AVKit
 final class VideoViewModel: ObservableObject {
     @Published var videos: [Video] = []
     @Published var currentIndex: Int = 0
+    @Published var scrolledIndex: Int? = 0
     @Published var isLoading = false
     @Published var isInitialLoading = true
     @Published var isLoadingMore = false
@@ -79,6 +80,7 @@ final class VideoViewModel: ObservableObject {
         videoService.resetPagination()
         hasMoreVideos = true
         currentIndex = 0
+        scrolledIndex = 0
 
         do {
             let newVideos: [Video]
@@ -169,6 +171,7 @@ final class VideoViewModel: ObservableObject {
         hasMoreVideos = true
         videoService.resetPagination()
         currentIndex = 0
+        scrolledIndex = 0
 
         Task {
             await refresh()
