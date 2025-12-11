@@ -1,0 +1,327 @@
+import SwiftUI
+import Combine
+import AVKit
+
+@MainActor
+final class VideoViewModel: ObservableObject {
+    @Published var videos: [Video] = []
+    @Published var currentIndex: Int = 0
+    @Published var isLoading = false
+    @Published var isInitialLoading = true
+    @Published var isLoadingMore = false
+    @Published var hasMoreVideos = true
+    @Published var selectedCharacter: String? = nil
+
+    /// Network monitor for detecting connectivity status
+    private let networkMonitor = NetworkMonitor.shared
+
+    /// Indicates if we're currently offline
+    @Published private(set) var isOffline = false
+
+    private let videoService = VideoService.shared
+    private let storage = LocalStorageService.shared
+    private var networkCancellable: AnyCancellable?
+    private var loadMoreTask: Task<Void, Never>?
+
+    /// Number of videos to fetch per batch
+    private let batchSize = 10
+
+    /// Currently playing video
+    var currentVideo: Video? {
+        guard currentIndex >= 0 && currentIndex < videos.count else { return nil }
+        return videos[currentIndex]
+    }
+
+    init() {
+        // Subscribe to network connectivity changes
+        networkCancellable = networkMonitor.$isConnected
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isConnected in
+                self?.isOffline = !isConnected
+            }
+
+        // Set initial offline state
+        isOffline = networkMonitor.isOffline
+
+        // Start loading videos
+        Task {
+            await loadInitialVideos()
+        }
+    }
+
+    // MARK: - Load Videos
+
+    /// Load initial videos from Firestore
+    private func loadInitialVideos() async {
+        isInitialLoading = true
+
+        do {
+            let newVideos = try await videoService.fetchInitialVideos(limit: batchSize)
+
+            if !newVideos.isEmpty {
+                // Apply local state (watched, liked)
+                videos = applyLocalState(to: newVideos)
+            }
+
+            hasMoreVideos = newVideos.count >= batchSize
+        } catch {
+            print("Failed to load videos: \(error)")
+        }
+
+        isInitialLoading = false
+    }
+
+    /// Refresh the video feed
+    func refresh() async {
+        guard !isLoading else { return }
+        isLoading = true
+
+        videoService.resetPagination()
+        hasMoreVideos = true
+        currentIndex = 0
+
+        do {
+            let newVideos: [Video]
+            if let character = selectedCharacter {
+                newVideos = try await videoService.fetchVideos(byCharacter: character, limit: batchSize)
+            } else {
+                newVideos = try await videoService.fetchInitialVideos(limit: batchSize)
+            }
+
+            videos = applyLocalState(to: newVideos)
+            hasMoreVideos = newVideos.count >= batchSize
+        } catch {
+            print("Failed to refresh videos: \(error)")
+        }
+
+        isLoading = false
+    }
+
+    // MARK: - Infinite Scroll
+
+    /// Called when user swipes to a new video
+    func videoDidAppear(at index: Int) {
+        currentIndex = index
+
+        // Mark video as watched
+        if index < videos.count {
+            markVideoWatched(videos[index])
+        }
+
+        // Check if we need to load more
+        if index >= videos.count - 3 {
+            loadMore()
+        }
+    }
+
+    /// Load more videos for infinite scroll
+    func loadMore() {
+        guard !isLoadingMore && !isLoading && hasMoreVideos else { return }
+
+        loadMoreTask?.cancel()
+        loadMoreTask = Task {
+            await performLoadMore()
+        }
+    }
+
+    private func performLoadMore() async {
+        isLoadingMore = true
+
+        do {
+            let newVideos: [Video]
+            if let character = selectedCharacter {
+                newVideos = try await videoService.fetchMoreVideos(byCharacter: character, limit: batchSize)
+            } else {
+                newVideos = try await videoService.fetchMoreVideos(limit: batchSize)
+            }
+
+            guard !Task.isCancelled else {
+                isLoadingMore = false
+                return
+            }
+
+            if newVideos.isEmpty {
+                hasMoreVideos = false
+            } else {
+                // Add to end of list, avoiding duplicates
+                let newVideosWithState = applyLocalState(to: newVideos)
+                var updatedVideos = videos
+                for video in newVideosWithState {
+                    if !updatedVideos.contains(where: { $0.firestoreId == video.firestoreId }) {
+                        updatedVideos.append(video)
+                    }
+                }
+                videos = updatedVideos
+            }
+        } catch {
+            print("Failed to load more videos: \(error)")
+        }
+
+        isLoadingMore = false
+    }
+
+    // MARK: - Character Filter
+
+    /// Filter videos by character
+    func selectCharacter(_ characterId: String?) {
+        HapticManager.shared.lightTap()
+        selectedCharacter = characterId
+        hasMoreVideos = true
+        videoService.resetPagination()
+        currentIndex = 0
+
+        Task {
+            await refresh()
+        }
+    }
+
+    // MARK: - Video Interactions
+
+    /// Mark a video as watched
+    func markVideoWatched(_ video: Video) {
+        guard let firestoreId = video.firestoreId else { return }
+
+        // Update local state
+        if let index = videos.firstIndex(where: { $0.firestoreId == firestoreId }) {
+            videos[index].isWatched = true
+        }
+
+        // Save to local storage
+        storage.markVideoWatched(firestoreId: firestoreId)
+
+        // Increment view count in Firestore (fire and forget)
+        Task {
+            do {
+                try await videoService.incrementViewCount(videoId: firestoreId)
+            } catch {
+                print("Failed to increment view count: \(error)")
+            }
+        }
+    }
+
+    /// Toggle like on a video
+    func toggleLike(_ video: Video) {
+        guard let firestoreId = video.firestoreId else { return }
+
+        HapticManager.shared.selection()
+
+        // Find and update local state
+        guard let index = videos.firstIndex(where: { $0.firestoreId == firestoreId }) else { return }
+
+        let wasLiked = videos[index].isLiked
+        videos[index].isLiked = !wasLiked
+
+        // Update like count locally for immediate feedback
+        if wasLiked {
+            videos[index] = Video(
+                id: videos[index].id,
+                firestoreId: videos[index].firestoreId,
+                title: videos[index].title,
+                description: videos[index].description,
+                character: videos[index].character,
+                videoUrl: videos[index].videoUrl,
+                thumbnailUrl: videos[index].thumbnailUrl,
+                duration: videos[index].duration,
+                tags: videos[index].tags,
+                likes: max(0, videos[index].likes - 1),
+                views: videos[index].views,
+                createdAt: videos[index].createdAt,
+                isWatched: videos[index].isWatched,
+                isLiked: false
+            )
+        } else {
+            videos[index] = Video(
+                id: videos[index].id,
+                firestoreId: videos[index].firestoreId,
+                title: videos[index].title,
+                description: videos[index].description,
+                character: videos[index].character,
+                videoUrl: videos[index].videoUrl,
+                thumbnailUrl: videos[index].thumbnailUrl,
+                duration: videos[index].duration,
+                tags: videos[index].tags,
+                likes: videos[index].likes + 1,
+                views: videos[index].views,
+                createdAt: videos[index].createdAt,
+                isWatched: videos[index].isWatched,
+                isLiked: true
+            )
+        }
+
+        // Save to local storage
+        storage.setVideoLiked(firestoreId: firestoreId, liked: !wasLiked)
+
+        // Sync to Firestore
+        Task {
+            do {
+                if wasLiked {
+                    try await videoService.decrementLikeCount(videoId: firestoreId)
+                } else {
+                    try await videoService.incrementLikeCount(videoId: firestoreId)
+                }
+            } catch {
+                print("Failed to update like count: \(error)")
+            }
+        }
+    }
+
+    /// Share a video
+    func shareVideo(_ video: Video) {
+        HapticManager.shared.success()
+
+        // Get character name
+        let characterName: String
+        if let character = JokeCharacter.find(byId: video.character) {
+            characterName = character.name
+        } else {
+            characterName = "Mr. Funny Jokes"
+        }
+
+        let text = "\(video.title)\n\nWatch more from \(characterName) on the Mr. Funny Jokes app!"
+
+        let activityVC = UIActivityViewController(
+            activityItems: [text],
+            applicationActivities: nil
+        )
+
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }),
+              let window = windowScene.windows.first(where: { $0.isKeyWindow }),
+              let rootVC = window.rootViewController else {
+            return
+        }
+
+        var topVC = rootVC
+        while let presented = topVC.presentedViewController {
+            topVC = presented
+        }
+
+        if let popover = activityVC.popoverPresentationController {
+            popover.sourceView = topVC.view
+            popover.sourceRect = CGRect(
+                x: topVC.view.bounds.midX,
+                y: topVC.view.bounds.midY,
+                width: 0,
+                height: 0
+            )
+            popover.permittedArrowDirections = []
+        }
+
+        topVC.present(activityVC, animated: true)
+    }
+
+    // MARK: - Helpers
+
+    /// Apply local state (watched, liked) to videos
+    private func applyLocalState(to videos: [Video]) -> [Video] {
+        videos.map { video -> Video in
+            var mutableVideo = video
+            if let firestoreId = video.firestoreId {
+                mutableVideo.isWatched = storage.isVideoWatched(firestoreId: firestoreId)
+                mutableVideo.isLiked = storage.isVideoLiked(firestoreId: firestoreId)
+            }
+            return mutableVideo
+        }
+    }
+}
