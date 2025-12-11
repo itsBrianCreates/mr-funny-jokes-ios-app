@@ -63,15 +63,13 @@ const log = {
  * 3. Create a Firestore document with all metadata
  */
 const VIDEOS_TO_ADD = [
-  // Example video entry - uncomment and modify:
-  // {
-  //   localPath: "./videos/mr-funny-intro.mp4",
-  //   character: "mr_funny",
-  //   title: "Meet Mr. Funny!",
-  //   description: "Get to know Mr. Funny and his best dad jokes",
-  //   tags: ["wordplay"],
-  //   duration: 45.5  // Optional: video duration in seconds
-  // },
+  {
+    localPath: "./videos/Dad Joke Goes Overboard.mp4",
+    character: "mr_funny",
+    title: "Dad Joke Goes Overboard",
+    description: "",
+    tags: ["wordplay"]
+  },
 ];
 
 /**
