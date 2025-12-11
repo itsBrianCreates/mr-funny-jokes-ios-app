@@ -40,20 +40,8 @@ struct VideoPlayerView: View {
                     HStack(alignment: .bottom) {
                         // Left side - Video info
                         VStack(alignment: .leading, spacing: 8) {
-                            // Character badge
-                            if let character = JokeCharacter.find(byId: video.character) {
-                                HStack(spacing: 6) {
-                                    Image(character.imageName)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 32, height: 32)
-                                        .clipShape(Circle())
-
-                                    Text(character.name)
-                                        .font(.subheadline.weight(.semibold))
-                                        .foregroundStyle(.white)
-                                }
-                            }
+                            // Character badge(s)
+                            CharacterBadgesView(characterIds: video.allCharacters)
 
                             // Title
                             Text(video.title)
@@ -243,6 +231,71 @@ struct VideoPlayerView: View {
             return String(format: "%.1fK", Double(count) / 1_000)
         }
         return "\(count)"
+    }
+}
+
+// MARK: - Character Badges View
+
+/// Displays one or more character avatars with their names
+/// For multi-character videos, avatars overlap slightly
+struct CharacterBadgesView: View {
+    let characterIds: [String]
+
+    private var characters: [JokeCharacter] {
+        characterIds.compactMap { JokeCharacter.find(byId: $0) }
+    }
+
+    var body: some View {
+        if characters.isEmpty {
+            EmptyView()
+        } else if characters.count == 1, let character = characters.first {
+            // Single character - original layout
+            HStack(spacing: 6) {
+                Image(character.imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 32, height: 32)
+                    .clipShape(Circle())
+
+                Text(character.name)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+            }
+        } else {
+            // Multiple characters - overlapping avatars with combined names
+            HStack(spacing: 8) {
+                // Overlapping avatars
+                HStack(spacing: -10) {
+                    ForEach(Array(characters.enumerated()), id: \.element.id) { index, character in
+                        Image(character.imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 32, height: 32)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.black, lineWidth: 2)
+                            )
+                            .zIndex(Double(characters.count - index))
+                    }
+                }
+
+                // Character names (e.g., "Mr. Funny & Mr. Bad")
+                Text(characterNames)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+            }
+        }
+    }
+
+    private var characterNames: String {
+        let names = characters.map { $0.name }
+        if names.count == 2 {
+            return names.joined(separator: " & ")
+        } else {
+            return names.joined(separator: ", ")
+        }
     }
 }
 

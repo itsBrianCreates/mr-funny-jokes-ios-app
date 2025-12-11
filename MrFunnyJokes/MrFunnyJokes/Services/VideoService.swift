@@ -70,11 +70,12 @@ final class VideoService {
     ///   - characterId: The character ID to filter by (e.g., "mr_funny")
     ///   - limit: Number of videos to fetch (default 10)
     /// - Returns: Array of Video objects
+    /// - Note: Searches the `characters` array field to find videos featuring the character
     func fetchVideos(byCharacter characterId: String, limit: Int = 10) async throws -> [Video] {
         lastDocumentsByCharacter[characterId] = nil
 
         let query = db.collection(videosCollection)
-            .whereField("character", isEqualTo: characterId)
+            .whereField("characters", arrayContains: characterId)
             .order(by: "created_at", descending: true)
             .limit(to: limit)
 
@@ -91,13 +92,14 @@ final class VideoService {
     ///   - characterId: The character ID to filter by
     ///   - limit: Number of videos to fetch (default 10)
     /// - Returns: Array of Video objects
+    /// - Note: Searches the `characters` array field to find videos featuring the character
     func fetchMoreVideos(byCharacter characterId: String, limit: Int = 10) async throws -> [Video] {
         guard let lastDoc = lastDocumentsByCharacter[characterId] else {
             return try await fetchVideos(byCharacter: characterId, limit: limit)
         }
 
         let query = db.collection(videosCollection)
-            .whereField("character", isEqualTo: characterId)
+            .whereField("characters", arrayContains: characterId)
             .order(by: "created_at", descending: true)
             .start(afterDocument: lastDoc)
             .limit(to: limit)
