@@ -1,5 +1,6 @@
 import Foundation
 import UserNotifications
+import UIKit
 
 /// Manages local push notifications for the Joke of the Day feature
 final class NotificationManager: NSObject, ObservableObject {
@@ -22,7 +23,7 @@ final class NotificationManager: NSObject, ObservableObject {
     @Published var notificationHour: Int {
         didSet {
             UserDefaults.standard.set(notificationHour, forKey: Keys.notificationHour)
-            if notificationsEnabled {
+            if notificationsEnabled && !isSyncing {
                 scheduleJokeOfTheDayNotification()
             }
         }
@@ -31,7 +32,7 @@ final class NotificationManager: NSObject, ObservableObject {
     @Published var notificationMinute: Int {
         didSet {
             UserDefaults.standard.set(notificationMinute, forKey: Keys.notificationMinute)
-            if notificationsEnabled {
+            if notificationsEnabled && !isSyncing {
                 scheduleJokeOfTheDayNotification()
             }
         }
@@ -59,7 +60,52 @@ final class NotificationManager: NSObject, ObservableObject {
         super.init()
 
         checkAuthorizationStatus()
+
+        // Listen for app becoming active to sync authorization status
+        // This handles the case where user changes notification permissions in iOS Settings
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
+
+    @objc private func appDidBecomeActive() {
+        checkAuthorizationStatus()
+        syncWithScheduledNotification()
+    }
+
+    /// Sync stored preferences with the actual scheduled notification
+    /// This handles cases where the notification might have been modified externally
+    private func syncWithScheduledNotification() {
+        let notificationId = jokeOfTheDayNotificationId
+
+        UNUserNotificationCenter.current().getPendingNotificationRequests { [weak self] requests in
+            guard let self = self else { return }
+
+            // Find our joke of the day notification
+            if let jokeNotification = requests.first(where: { $0.identifier == notificationId }),
+               let trigger = jokeNotification.trigger as? UNCalendarNotificationTrigger,
+               let hour = trigger.dateComponents.hour,
+               let minute = trigger.dateComponents.minute {
+
+                DispatchQueue.main.async {
+                    // Only update if different to avoid triggering didSet observers unnecessarily
+                    if self.notificationHour != hour || self.notificationMinute != minute {
+                        // Update without triggering reschedule by setting flag
+                        self.isSyncing = true
+                        self.notificationHour = hour
+                        self.notificationMinute = minute
+                        self.isSyncing = false
+                    }
+                }
+            }
+        }
+    }
+
+    /// Flag to prevent reschedule loop during sync
+    private var isSyncing = false
 
     // MARK: - Authorization
 

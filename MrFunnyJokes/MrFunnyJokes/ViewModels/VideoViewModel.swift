@@ -21,8 +21,10 @@ final class VideoViewModel: ObservableObject {
     @Published private(set) var isOffline = false
 
     /// Preloaded AVPlayer for the first video (for instant playback when tab opens)
-    @Published private(set) var preloadedPlayer: AVPlayer?
-    @Published private(set) var preloadedVideoId: String?
+    /// Note: These are intentionally not @Published to avoid "Publishing changes from within view updates"
+    /// warning when consumePreloadedPlayer is called during view body evaluation
+    private(set) var preloadedPlayer: AVPlayer?
+    private(set) var preloadedVideoId: String?
 
     private let videoService = VideoService.shared
     private let storage = LocalStorageService.shared
@@ -131,11 +133,14 @@ final class VideoViewModel: ObservableObject {
     func consumePreloadedPlayer(for videoId: String?) -> AVPlayer? {
         guard let videoId = videoId, videoId == preloadedVideoId else { return nil }
         let player = preloadedPlayer
-        // Clear references but don't clean up - ownership transfers to caller
+
+        // Clear references - ownership transfers to caller
+        // Safe to do synchronously since these properties are not @Published
         preloadedPlayer = nil
         preloadedVideoId = nil
         preloadStatusObserver?.invalidate()
         preloadStatusObserver = nil
+
         return player
     }
 

@@ -195,70 +195,11 @@ struct VideoFeedView: View {
 /// Container view for the Videos tab with navigation
 struct VideosTabView: View {
     @ObservedObject var viewModel: VideoViewModel
-    @State private var showingCharacterFilter = false
 
     var body: some View {
         ZStack(alignment: .top) {
             VideoFeedView(viewModel: viewModel)
                 .ignoresSafeArea()
-
-            // Top bar overlay - respects safe area for status bar
-            VStack {
-                HStack {
-                    Spacer()
-
-                    // Character filter button (right side)
-                    Menu {
-                        Button {
-                            viewModel.selectCharacter(nil)
-                        } label: {
-                            Label("All Characters", systemImage: "sparkles")
-                        }
-
-                        Divider()
-
-                        ForEach(JokeCharacter.allCharacters) { character in
-                            Button {
-                                viewModel.selectCharacter(character.id)
-                            } label: {
-                                Label(character.name, systemImage: "person.fill")
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 6) {
-                            if let characterId = viewModel.selectedCharacter,
-                               let character = JokeCharacter.find(byId: characterId) {
-                                Image(character.imageName)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 28, height: 28)
-                                    .clipShape(Circle())
-
-                                Text(character.name)
-                                    .font(.subheadline.weight(.medium))
-                            } else {
-                                Image(systemName: "line.3.horizontal.decrease.circle")
-                                    .font(.title3)
-
-                                Text("All")
-                                    .font(.subheadline.weight(.medium))
-                            }
-
-                            Image(systemName: "chevron.down")
-                                .font(.caption.weight(.semibold))
-                        }
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Capsule())
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.top, 8)
-
-                Spacer()
-            }
 
             // Offline banner
             if viewModel.isOffline {
