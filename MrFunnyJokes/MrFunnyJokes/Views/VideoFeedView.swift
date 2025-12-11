@@ -125,7 +125,25 @@ struct VideosTabView: View {
             // Top bar overlay - respects safe area for status bar
             VStack {
                 HStack {
-                    // Character filter button
+                    // Refresh button (left side)
+                    Button {
+                        Task {
+                            await viewModel.refresh()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.title3)
+                            .foregroundStyle(.white)
+                            .padding(10)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    .disabled(viewModel.isLoading)
+                    .opacity(viewModel.isLoading ? 0.5 : 1)
+
+                    Spacer()
+
+                    // Character filter button (right side)
                     Menu {
                         Button {
                             viewModel.selectCharacter(nil)
@@ -171,24 +189,6 @@ struct VideosTabView: View {
                         .background(Color.black.opacity(0.5))
                         .clipShape(Capsule())
                     }
-
-                    Spacer()
-
-                    // Refresh button
-                    Button {
-                        Task {
-                            await viewModel.refresh()
-                        }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.title3)
-                            .foregroundStyle(.white)
-                            .padding(10)
-                            .background(Color.black.opacity(0.5))
-                            .clipShape(Circle())
-                    }
-                    .disabled(viewModel.isLoading)
-                    .opacity(viewModel.isLoading ? 0.5 : 1)
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
