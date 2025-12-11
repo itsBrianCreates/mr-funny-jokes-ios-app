@@ -70,7 +70,7 @@ struct VideoPlayerView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 100) // Above tab bar
 
                         Spacer()
 
@@ -114,7 +114,7 @@ struct VideoPlayerView: View {
                             }
                         }
                         .padding(.trailing)
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 100) // Above tab bar
                     }
 
                     // Progress bar
