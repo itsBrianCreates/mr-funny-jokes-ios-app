@@ -151,6 +151,7 @@ struct MainContentView: View {
 
     enum AppTab: Hashable {
         case home
+        case videos
         case me
         case search
     }
@@ -159,6 +160,10 @@ struct MainContentView: View {
         TabView(selection: $selectedTab) {
             Tab("Home", systemImage: "house.fill", value: .home) {
                 homeTab
+            }
+
+            Tab("Videos", systemImage: "play.rectangle.fill", value: .videos) {
+                videosTab
             }
 
             Tab("Me", systemImage: "person.fill", value: .me) {
@@ -199,6 +204,8 @@ struct MainContentView: View {
         switch url.host {
         case "home":
             selectedTab = .home
+        case "videos":
+            selectedTab = .videos
         case "me":
             selectedTab = .me
         case "search":
@@ -236,6 +243,12 @@ struct MainContentView: View {
                 CharacterDetailView(character: character)
             }
         }
+    }
+
+    // MARK: - Videos Tab
+
+    private var videosTab: some View {
+        VideosTabView()
     }
 
     private var filterMenu: some View {
