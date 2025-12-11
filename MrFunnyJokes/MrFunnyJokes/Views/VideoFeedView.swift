@@ -1,26 +1,102 @@
 import SwiftUI
 
+// MARK: - Video Loading View
+
+/// Loading view with animated character wave for the video feed
+struct VideoLoadingView: View {
+    let characters = JokeCharacter.allCharacters
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                // Animated character circles with wave effect
+                TimelineView(.animation(minimumInterval: 0.05)) { timeline in
+                    HStack(spacing: 10) {
+                        ForEach(Array(characters.enumerated()), id: \.element.id) { index, character in
+                            VideoLoadingCharacterCircle(
+                                character: character,
+                                index: index,
+                                date: timeline.date
+                            )
+                        }
+                    }
+                }
+
+                Text("Loading videos...")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.7))
+            }
+        }
+    }
+}
+
+/// A smaller character circle for video loading that bounces in a wave pattern
+private struct VideoLoadingCharacterCircle: View {
+    let character: JokeCharacter
+    let index: Int
+    let date: Date
+
+    private let circleSize: CGFloat = 44
+
+    /// Calculate bounce offset based on time and index for wave effect
+    private var bounceOffset: CGFloat {
+        let timeInterval = date.timeIntervalSinceReferenceDate
+        let phase = timeInterval * 4 + Double(index) * 0.8
+        return sin(phase) * 6
+    }
+
+    /// Scale pulse synchronized with bounce
+    private var pulseScale: CGFloat {
+        let timeInterval = date.timeIntervalSinceReferenceDate
+        let phase = timeInterval * 4 + Double(index) * 0.8
+        return 1.0 + sin(phase) * 0.04
+    }
+
+    var body: some View {
+        ZStack {
+            // Outer glow effect
+            Circle()
+                .fill(character.color.opacity(0.3))
+                .frame(width: circleSize + 6, height: circleSize + 6)
+                .blur(radius: 3)
+                .scaleEffect(pulseScale)
+
+            // Character image
+            Image(character.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: circleSize, height: circleSize)
+                .clipShape(Circle())
+        }
+        .overlay(
+            Circle()
+                .strokeBorder(character.color.opacity(0.5), lineWidth: 2)
+                .frame(width: circleSize, height: circleSize)
+        )
+        .shadow(color: character.color.opacity(0.4), radius: 6, y: 3)
+        .offset(y: bounceOffset)
+        .scaleEffect(pulseScale)
+    }
+}
+
+// MARK: - Video Feed View
+
 /// TikTok-style vertical video feed with swipe navigation
 struct VideoFeedView: View {
     @ObservedObject var viewModel: VideoViewModel
 
+    /// Show loading screen until videos are fetched AND first video is ready to play
+    private var shouldShowLoading: Bool {
+        viewModel.isInitialLoading || (!viewModel.videos.isEmpty && !viewModel.isFirstVideoReady)
+    }
+
     var body: some View {
         GeometryReader { geometry in
-            if viewModel.isInitialLoading {
-                // Loading state
-                ZStack {
-                    Color.black.ignoresSafeArea()
-
-                    VStack(spacing: 16) {
-                        ProgressView()
-                            .tint(.white)
-                            .scaleEffect(1.5)
-
-                        Text("Loading videos...")
-                            .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.7))
-                    }
-                }
+            if shouldShowLoading {
+                // Loading state with character animation
+                VideoLoadingView()
             } else if viewModel.videos.isEmpty {
                 // Empty state
                 ZStack {
@@ -70,7 +146,10 @@ struct VideoFeedView: View {
                                 },
                                 onShare: {
                                     viewModel.shareVideo(video)
-                                }
+                                },
+                                onPlayerReady: index == 0 ? {
+                                    viewModel.firstVideoDidBecomeReady()
+                                } : nil
                             )
                             .frame(width: screenBounds.width, height: screenBounds.height)
                             .id(index)
