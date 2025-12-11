@@ -19,7 +19,9 @@ struct VideoPlayerView: View {
     @State private var duration: Double = 0
     @State private var timeObserver: Any?
     @State private var statusObserver: NSKeyValueObservation?
+    @State private var loopObserver: NSObjectProtocol?
     @State private var didUsePreloadedPlayer = false
+    @State private var isCleanedUp = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -217,19 +219,22 @@ struct VideoPlayerView: View {
 
     /// Configure looping and progress observer for a player
     private func setupLoopingAndProgress(for newPlayer: AVPlayer, playerItem: AVPlayerItem) {
-        // Loop video
-        NotificationCenter.default.addObserver(
+        // Loop video - store observer reference for cleanup
+        loopObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: playerItem,
             queue: .main
-        ) { _ in
-            newPlayer.seek(to: .zero)
-            newPlayer.play()
+        ) { [weak newPlayer] _ in
+            newPlayer?.seek(to: .zero)
+            newPlayer?.play()
         }
 
         // Time observer for progress
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserver = newPlayer.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
+            // Skip updates if view has been cleaned up
+            guard !self.isCleanedUp else { return }
+
             guard let itemDuration = newPlayer.currentItem?.duration,
                   itemDuration.isValid,
                   !itemDuration.isIndefinite else { return }
@@ -238,11 +243,8 @@ struct VideoPlayerView: View {
             let currentSeconds = CMTimeGetSeconds(time)
             let newProgress = durationSeconds > 0 ? currentSeconds / durationSeconds : 0
 
-            // Defer state updates to avoid "Publishing changes from within view updates" warning
-            DispatchQueue.main.async {
-                self.duration = durationSeconds
-                self.progress = newProgress
-            }
+            self.duration = durationSeconds
+            self.progress = newProgress
         }
     }
 
@@ -267,10 +269,18 @@ struct VideoPlayerView: View {
     }
 
     private func cleanup() {
+        isCleanedUp = true
+
         if let observer = timeObserver {
             player?.removeTimeObserver(observer)
             timeObserver = nil
         }
+
+        if let observer = loopObserver {
+            NotificationCenter.default.removeObserver(observer)
+            loopObserver = nil
+        }
+
         statusObserver?.invalidate()
         statusObserver = nil
         player?.pause()
