@@ -1,5 +1,6 @@
 import SwiftUI
 import AVKit
+import AVFoundation
 
 /// A full-screen video player view for TikTok-style vertical video playback
 struct VideoPlayerView: View {
@@ -166,6 +167,14 @@ struct VideoPlayerView: View {
 
     private func setupPlayer() {
         guard let url = video.playbackURL else { return }
+
+        // Configure audio session for video playback (enables audio even in silent mode)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to configure audio session: \(error)")
+        }
 
         let playerItem = AVPlayerItem(url: url)
         let newPlayer = AVPlayer(playerItem: playerItem)
