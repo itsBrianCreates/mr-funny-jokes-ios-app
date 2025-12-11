@@ -52,7 +52,10 @@ const log = {
  *
  * Each video object should have:
  * - localPath: Path to the MP4 file (relative to scripts/ or absolute)
- * - character: "mr_funny" | "mr_potty" | "mr_bad" | "mr_love" | "mr_sad"
+ * - characters: Array of character IDs featured in the video
+ *               Valid values: "mr_funny" | "mr_potty" | "mr_bad" | "mr_love" | "mr_sad"
+ *               For single character videos, use an array with one element: ["mr_funny"]
+ *               For multi-character videos, list all: ["mr_funny", "mr_bad"]
  * - title: Short title for the video
  * - description: Optional description
  * - tags: Array of 1-3 tags
@@ -61,16 +64,29 @@ const log = {
  * 1. Upload the video to Firebase Storage
  * 2. Generate the public URL
  * 3. Create a Firestore document with all metadata
+ *
+ * Note: The first character in the array is used as the primary character
+ * for storage path organization.
  */
 const VIDEOS_TO_ADD = [
-  // Example video entry - uncomment and modify:
+  // Example single character video:
   // {
   //   localPath: "./videos/mr-funny-intro.mp4",
-  //   character: "mr_funny",
+  //   characters: ["mr_funny"],
   //   title: "Meet Mr. Funny!",
   //   description: "Get to know Mr. Funny and his best dad jokes",
   //   tags: ["wordplay"],
   //   duration: 45.5  // Optional: video duration in seconds
+  // },
+  //
+  // Example multi-character video:
+  // {
+  //   localPath: "./videos/mr-funny-mr-bad-collab.mp4",
+  //   characters: ["mr_funny", "mr_bad"],
+  //   title: "Mr. Funny meets Mr. Bad",
+  //   description: "What happens when wholesome meets dark humor?",
+  //   tags: ["wordplay", "edgy"],
+  //   duration: 60
   // },
 ];
 
@@ -129,11 +145,14 @@ function initializeFirebase() {
 
 /**
  * Upload video file to Firebase Storage
+ * @param {object} bucket - Firebase Storage bucket
+ * @param {string} localPath - Path to local video file
+ * @param {string} primaryCharacter - Primary character ID for storage path organization
  * @returns {Promise<string>} Public URL of the uploaded video
  */
-async function uploadVideoToStorage(bucket, localPath, character) {
+async function uploadVideoToStorage(bucket, localPath, primaryCharacter) {
   const fileName = basename(localPath);
-  const storagePath = `${STORAGE_PATH}/${character}/${fileName}`;
+  const storagePath = `${STORAGE_PATH}/${primaryCharacter}/${fileName}`;
 
   log.info(`  Uploading: ${fileName} -> ${storagePath}`);
 
@@ -238,12 +257,21 @@ async function addVideos(db, bucket, videos) {
     const batch = db.batch();
 
     for (const video of batchVideos) {
+      // Support both old 'character' and new 'characters' format
+      const characters = video.characters || (video.character ? [video.character] : []);
+      const primaryCharacter = characters[0];
+
+      if (!primaryCharacter) {
+        log.error(`No character(s) specified for: ${video.title} - skipping`);
+        continue;
+      }
+
       // Upload video to Storage (unless metadata-only mode)
       let videoUrl = video.video_url; // Use pre-existing URL if provided
 
       if (!METADATA_ONLY && video.localPath && !videoUrl) {
         try {
-          videoUrl = await uploadVideoToStorage(bucket, video.localPath, video.character);
+          videoUrl = await uploadVideoToStorage(bucket, video.localPath, primaryCharacter);
         } catch (uploadError) {
           log.error(`Failed to upload ${video.localPath}: ${uploadError.message}`);
           continue;
@@ -259,10 +287,12 @@ async function addVideos(db, bucket, videos) {
       const newDocRef = db.collection(COLLECTION_NAME).doc();
 
       // Prepare the document data with server timestamps
+      // Both 'character' (primary) and 'characters' (array) are stored for compatibility
       const videoData = {
         title: video.title,
         description: video.description || '',
-        character: video.character,
+        character: primaryCharacter,           // Primary character (backward compatibility)
+        characters: characters,                // All featured characters (array)
         video_url: videoUrl,
         thumbnail_url: video.thumbnail_url || null, // Optional
         duration: video.duration || 0,

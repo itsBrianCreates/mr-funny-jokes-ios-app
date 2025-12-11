@@ -9,7 +9,8 @@ struct Video: Identifiable, Codable, Equatable {
     let firestoreId: String?
     let title: String
     let description: String
-    let character: String
+    let character: String              // Primary character (backward compatibility)
+    let characters: [String]?          // All featured characters (for multi-character videos)
     let videoUrl: String
     let thumbnailUrl: String?
     let duration: Double
@@ -22,8 +23,14 @@ struct Video: Identifiable, Codable, Equatable {
     var isWatched: Bool
     var isLiked: Bool
 
+    /// Returns all characters featured in the video
+    /// Falls back to primary character if characters array is not set
+    var allCharacters: [String] {
+        characters ?? [character]
+    }
+
     enum CodingKeys: String, CodingKey {
-        case id, firestoreId, title, description, character
+        case id, firestoreId, title, description, character, characters
         case videoUrl, thumbnailUrl, duration, tags
         case likes, views, createdAt, isWatched, isLiked
     }
@@ -34,6 +41,7 @@ struct Video: Identifiable, Codable, Equatable {
         title: String,
         description: String = "",
         character: String,
+        characters: [String]? = nil,
         videoUrl: String,
         thumbnailUrl: String? = nil,
         duration: Double = 0,
@@ -49,6 +57,7 @@ struct Video: Identifiable, Codable, Equatable {
         self.title = title
         self.description = description
         self.character = character
+        self.characters = characters
         self.videoUrl = videoUrl
         self.thumbnailUrl = thumbnailUrl
         self.duration = duration
@@ -68,6 +77,7 @@ struct Video: Identifiable, Codable, Equatable {
         title = try container.decode(String.self, forKey: .title)
         description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
         character = try container.decode(String.self, forKey: .character)
+        characters = try container.decodeIfPresent([String].self, forKey: .characters)
         videoUrl = try container.decode(String.self, forKey: .videoUrl)
         thumbnailUrl = try container.decodeIfPresent(String.self, forKey: .thumbnailUrl)
         duration = try container.decodeIfPresent(Double.self, forKey: .duration) ?? 0
@@ -99,7 +109,8 @@ struct FirestoreVideo: Codable, Identifiable {
     @DocumentID var id: String?
     let title: String
     let description: String?
-    let character: String
+    let character: String              // Primary character (backward compatibility)
+    let characters: [String]?          // All featured characters (for multi-character videos)
     let videoUrl: String
     let thumbnailUrl: String?
     let duration: Double?
@@ -113,6 +124,7 @@ struct FirestoreVideo: Codable, Identifiable {
         case title
         case description
         case character
+        case characters
         case videoUrl = "video_url"
         case thumbnailUrl = "thumbnail_url"
         case duration
@@ -130,6 +142,7 @@ struct FirestoreVideo: Codable, Identifiable {
             title: title,
             description: description ?? "",
             character: character,
+            characters: characters,
             videoUrl: videoUrl,
             thumbnailUrl: thumbnailUrl,
             duration: duration ?? 0,
