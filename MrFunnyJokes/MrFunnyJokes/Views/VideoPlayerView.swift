@@ -70,14 +70,6 @@ struct VideoPlayerView: View {
                                 .font(.body.weight(.medium))
                                 .foregroundStyle(.white)
                                 .lineLimit(2)
-
-                            // Description (if present)
-                            if !video.description.isEmpty {
-                                Text(video.description)
-                                    .font(.caption)
-                                    .foregroundStyle(.white.opacity(0.8))
-                                    .lineLimit(2)
-                            }
                         }
                         .padding(.horizontal)
                         .padding(.bottom, 100) // Above tab bar
@@ -130,7 +122,7 @@ struct VideoPlayerView: View {
                     // Progress bar
                     GeometryReader { progressGeometry in
                         Rectangle()
-                            .fill(Color.white.opacity(0.3))
+                            .fill(Color.white.opacity(0.5))
                             .frame(height: 3)
                             .overlay(alignment: .leading) {
                                 Rectangle()
@@ -237,16 +229,21 @@ struct VideoPlayerView: View {
 
         // Time observer for progress
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        timeObserver = newPlayer.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
-            guard let duration = newPlayer.currentItem?.duration,
+        timeObserver = newPlayer.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+            guard let self = self,
+                  let duration = newPlayer.currentItem?.duration,
                   duration.isValid,
                   !duration.isIndefinite else { return }
 
             let durationSeconds = CMTimeGetSeconds(duration)
             let currentSeconds = CMTimeGetSeconds(time)
+            let newProgress = durationSeconds > 0 ? currentSeconds / durationSeconds : 0
 
-            self.duration = durationSeconds
-            self.progress = durationSeconds > 0 ? currentSeconds / durationSeconds : 0
+            // Defer state updates to avoid "Publishing changes from within view updates" warning
+            DispatchQueue.main.async {
+                self.duration = durationSeconds
+                self.progress = newProgress
+            }
         }
     }
 
