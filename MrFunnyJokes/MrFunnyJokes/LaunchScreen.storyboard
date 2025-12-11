@@ -16,15 +16,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <!-- Background view with brand yellow -->
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bgView">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                                <color key="backgroundColor" red="1" green="0.88235294117647056" blue="0.20784313725490197" alpha="0.3" colorSpace="custom" customColorSpace="sRGB"/>
-                            </view>
-                            <!-- App title label -->
+                            <!-- App title label - centered and styled to match SplashScreenView -->
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mr. Funny Jokes" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="titleLabel">
-                                <rect key="frame" x="46.666666666666664" y="350" width="300" height="50"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1" weight="bold"/>
+                                <rect key="frame" x="46.666666666666664" y="346" width="300" height="50"/>
+                                <fontDescription key="fontDescription" type="system" weight="bold" pointSize="42"/>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -32,12 +27,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <!-- Background view constraints (fill entire view) -->
-                            <constraint firstItem="bgView" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="bg-top"/>
-                            <constraint firstItem="bgView" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bg-leading"/>
-                            <constraint firstItem="bgView" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="bg-trailing"/>
-                            <constraint firstItem="bgView" firstAttribute="bottom" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="bg-bottom"/>
-                            <!-- Title label constraints (centered, above center) -->
+                            <!-- Title label constraints - centered to match SplashScreenView positioning -->
                             <constraint firstItem="titleLabel" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="title-centerX"/>
                             <constraint firstItem="titleLabel" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-80" id="title-centerY"/>
                             <constraint firstItem="titleLabel" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="title-leading"/>
