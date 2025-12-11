@@ -49,6 +49,13 @@
 		C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9622EE0A55A007A6AFF /* FirebaseCore */; };
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
+		C3DE8C042EEA7625009729AF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C032EEA7625009729AF /* NotificationManager.swift */; };
+		C3DE8C062EEA763F009729AF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C052EEA763F009729AF /* SettingsView.swift */; };
+		C3DE8C082EEA7740009729AF /* VideoFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C072EEA7740009729AF /* VideoFeedView.swift */; };
+		C3DE8C0A2EEA7765009729AF /* VideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C092EEA7765009729AF /* VideoViewModel.swift */; };
+		C3DE8C0C2EEA778F009729AF /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C0B2EEA778F009729AF /* VideoPlayerView.swift */; };
+		C3DE8C0E2EEA7B51009729AF /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C0D2EEA7B51009729AF /* Video.swift */; };
+		C3DE8C102EEA7B97009729AF /* VideoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C0F2EEA7B97009729AF /* VideoService.swift */; };
 		D10000000000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D20000000000000000000001 /* LaunchScreen.storyboard */; };
 		E10000000000000000000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* PrivacyInfo.xcprivacy */; };
 		F10000000000000000000001 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* SplashScreenView.swift */; };
@@ -120,6 +127,13 @@
 		C333E6402EE10888007377F4 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailViewModel.swift; sourceTree = "<group>"; };
 		C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C3DE8C032EEA7625009729AF /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		C3DE8C052EEA763F009729AF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C3DE8C072EEA7740009729AF /* VideoFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFeedView.swift; sourceTree = "<group>"; };
+		C3DE8C092EEA7765009729AF /* VideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoViewModel.swift; sourceTree = "<group>"; };
+		C3DE8C0B2EEA778F009729AF /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		C3DE8C0D2EEA7B51009729AF /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
+		C3DE8C0F2EEA7B97009729AF /* VideoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoService.swift; sourceTree = "<group>"; };
 		D20000000000000000000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E20000000000000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F20000000000000000000001 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
@@ -199,6 +213,7 @@
 		A50000000000000000000005 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C3DE8C0D2EEA7B51009729AF /* Video.swift */,
 				C333E6402EE10888007377F4 /* Character.swift */,
 				A20000000000000000000005 /* Joke.swift */,
 				A20000000000000000000006 /* JokeCategory.swift */,
@@ -210,6 +225,9 @@
 		A50000000000000000000006 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C3DE8C0B2EEA778F009729AF /* VideoPlayerView.swift */,
+				C3DE8C072EEA7740009729AF /* VideoFeedView.swift */,
+				C3DE8C052EEA763F009729AF /* SettingsView.swift */,
 				C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */,
 				C333E63C2EE10888007377F4 /* CharacterDetailView.swift */,
 				A50000000000000000000012 /* Skeleton */,
@@ -230,6 +248,7 @@
 		A50000000000000000000007 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				C3DE8C092EEA7765009729AF /* VideoViewModel.swift */,
 				C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */,
 				A20000000000000000000010 /* JokeViewModel.swift */,
 			);
@@ -239,6 +258,8 @@
 		A50000000000000000000008 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				C3DE8C0F2EEA7B97009729AF /* VideoService.swift */,
+				C3DE8C032EEA7625009729AF /* NotificationManager.swift */,
 				A20000000000000000000012 /* LocalStorageService.swift */,
 				A20000000000000000000028 /* FirestoreService.swift */,
 				F20000000000000000000002 /* NetworkMonitor.swift */,
@@ -430,23 +451,30 @@
 				C333E6412EE10888007377F4 /* CharacterDetailViewModel.swift in Sources */,
 				A10000000000000000000012 /* LocalStorageService.swift in Sources */,
 				A10000000000000000000028 /* FirestoreService.swift in Sources */,
+				C3DE8C0E2EEA7B51009729AF /* Video.swift in Sources */,
 				A10000000000000000000029 /* FirestoreModels.swift in Sources */,
 				A10000000000000000000013 /* Color+Extensions.swift in Sources */,
 				A10000000000000000000014 /* HapticManager.swift in Sources */,
 				A10000000000000000000016 /* GrainOMeterView.swift in Sources */,
+				C3DE8C102EEA7B97009729AF /* VideoService.swift in Sources */,
 				A10000000000000000000017 /* MeView.swift in Sources */,
 				A10000000000000000000019 /* SearchView.swift in Sources */,
 				A10000000000000000000020 /* JokeDetailSheet.swift in Sources */,
 				A10000000000000000000021 /* JokeOfTheDayView.swift in Sources */,
 				A10000000000000000000022 /* YouTubePromoCardView.swift in Sources */,
+				C3DE8C0A2EEA7765009729AF /* VideoViewModel.swift in Sources */,
+				C3DE8C042EEA7625009729AF /* NotificationManager.swift in Sources */,
 				A10000000000000000000023 /* ShimmerModifier.swift in Sources */,
 				A10000000000000000000024 /* SkeletonCardView.swift in Sources */,
+				C3DE8C062EEA763F009729AF /* SettingsView.swift in Sources */,
 				A10000000000000000000025 /* SkeletonFeedView.swift in Sources */,
 				A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */,
 				B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
 				F10000000000000000000001 /* SplashScreenView.swift in Sources */,
+				C3DE8C082EEA7740009729AF /* VideoFeedView.swift in Sources */,
 				F10000000000000000000002 /* NetworkMonitor.swift in Sources */,
+				C3DE8C0C2EEA778F009729AF /* VideoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
