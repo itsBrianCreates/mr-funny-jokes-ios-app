@@ -8,6 +8,7 @@ struct VideoPlayerView: View {
     let isActive: Bool
     let onLike: () -> Void
     let onShare: () -> Void
+    var onPlayerReady: (() -> Void)?
 
     @State private var player: AVPlayer?
     @State private var isPlaying = false
@@ -15,6 +16,7 @@ struct VideoPlayerView: View {
     @State private var progress: Double = 0
     @State private var duration: Double = 0
     @State private var timeObserver: Any?
+    @State private var statusObserver: NSKeyValueObservation?
 
     var body: some View {
         GeometryReader { geometry in
@@ -185,6 +187,18 @@ struct VideoPlayerView: View {
         let newPlayer = AVPlayer(playerItem: playerItem)
         newPlayer.isMuted = false
 
+        // Observe player item status to know when video is ready to play
+        statusObserver = playerItem.observe(\.status, options: [.new]) { [weak playerItem] item, _ in
+            guard let playerItem = playerItem else { return }
+            DispatchQueue.main.async {
+                if playerItem.status == .readyToPlay {
+                    self.onPlayerReady?()
+                    self.statusObserver?.invalidate()
+                    self.statusObserver = nil
+                }
+            }
+        }
+
         // Loop video
         NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
@@ -237,6 +251,8 @@ struct VideoPlayerView: View {
             player?.removeTimeObserver(observer)
             timeObserver = nil
         }
+        statusObserver?.invalidate()
+        statusObserver = nil
         player?.pause()
         player = nil
     }

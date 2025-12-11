@@ -9,6 +9,7 @@ final class VideoViewModel: ObservableObject {
     @Published var scrolledIndex: Int? = 0
     @Published var isLoading = false
     @Published var isInitialLoading = true
+    @Published var isFirstVideoReady = false
     @Published var isLoadingMore = false
     @Published var hasMoreVideos = true
     @Published var selectedCharacter: String? = nil
@@ -76,6 +77,7 @@ final class VideoViewModel: ObservableObject {
     func refresh() async {
         guard !isLoading else { return }
         isLoading = true
+        isFirstVideoReady = false
 
         videoService.resetPagination()
         hasMoreVideos = true
@@ -312,6 +314,14 @@ final class VideoViewModel: ObservableObject {
         }
 
         topVC.present(activityVC, animated: true)
+    }
+
+    // MARK: - Loading State
+
+    /// Called when the first video player is ready to play
+    func firstVideoDidBecomeReady() {
+        guard !isFirstVideoReady else { return }
+        isFirstVideoReady = true
     }
 
     // MARK: - Helpers
