@@ -9,7 +9,6 @@ struct VideoPlayerView: View {
     /// Preloaded player passed from VideoViewModel for instant playback (first video only)
     let preloadedPlayer: AVPlayer?
     let onLike: () -> Void
-    let onShare: () -> Void
     var onPlayerReady: (() -> Void)?
 
     @State private var player: AVPlayer?
@@ -88,19 +87,6 @@ struct VideoPlayerView: View {
                                         .foregroundStyle(video.isLiked ? .red : .white)
 
                                     Text(formatCount(video.likes))
-                                        .font(.caption2)
-                                        .foregroundStyle(.white)
-                                }
-                            }
-
-                            // Share button
-                            Button(action: onShare) {
-                                VStack(spacing: 4) {
-                                    Image(systemName: "arrowshape.turn.up.right.fill")
-                                        .font(.title)
-                                        .foregroundStyle(.white)
-
-                                    Text("Share")
                                         .font(.caption2)
                                         .foregroundStyle(.white)
                                 }

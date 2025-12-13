@@ -349,52 +349,6 @@ final class VideoViewModel: ObservableObject {
         }
     }
 
-    /// Share a video
-    func shareVideo(_ video: Video) {
-        HapticManager.shared.success()
-
-        // Get character name
-        let characterName: String
-        if let character = JokeCharacter.find(byId: video.character) {
-            characterName = character.name
-        } else {
-            characterName = "Mr. Funny Jokes"
-        }
-
-        let text = "\(video.title)\n\nWatch more from \(characterName) on the Mr. Funny Jokes app!"
-
-        let activityVC = UIActivityViewController(
-            activityItems: [text],
-            applicationActivities: nil
-        )
-
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }),
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }),
-              let rootVC = window.rootViewController else {
-            return
-        }
-
-        var topVC = rootVC
-        while let presented = topVC.presentedViewController {
-            topVC = presented
-        }
-
-        if let popover = activityVC.popoverPresentationController {
-            popover.sourceView = topVC.view
-            popover.sourceRect = CGRect(
-                x: topVC.view.bounds.midX,
-                y: topVC.view.bounds.midY,
-                width: 0,
-                height: 0
-            )
-            popover.permittedArrowDirections = []
-        }
-
-        topVC.present(activityVC, animated: true)
-    }
-
     // MARK: - Loading State
 
     /// Called when the first video player is ready to play

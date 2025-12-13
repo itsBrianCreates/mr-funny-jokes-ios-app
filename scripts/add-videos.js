@@ -91,9 +91,9 @@ const VIDEOS_TO_ADD = [
 
   // Actual video entries:
   {
-    localPath: "./videos/Dad Joke Goes Overboard.mp4",
-    characters: ["mr_funny"],
-    title: "Dad Joke Goes Overboard",
+    localPath: "./videos/Dad Jokes Ranked.mp4",
+    characters: ["mr_funny", "mr_bad"],
+    title: "3 WORST Dad Jokes That Actually Hurt",
     description: "",
     tags: ["wordplay"]
   },

@@ -145,9 +145,6 @@ struct VideoFeedView: View {
                                 onLike: {
                                     viewModel.toggleLike(video)
                                 },
-                                onShare: {
-                                    viewModel.shareVideo(video)
-                                },
                                 onPlayerReady: index == 0 ? {
                                     viewModel.firstVideoDidBecomeReady()
                                 } : nil

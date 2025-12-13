@@ -41,14 +41,14 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Mr. Potty jokes
+// Jokes to add - Christmas jokes
 // NOTE: Use \n between setup and punchline so the card preview works correctly
 const JOKES_TO_ADD = [
   {
-    "character": "mr_potty",
-    "text": "My love for you is like diarrhea.\nI can't hold it in.",
-    "type": "pickup_line",
-    "tags": ["wordplay"],
+    "character": "mr_bad",
+    "text": "Why did Santa have to go to the hospital?\nBecause of his poor elf!",
+    "type": "dad_joke",
+    "tags": ["holidays", "health", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -59,10 +59,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "Did you know that when you say the word \"poop,\" your mouth does the same motion as your bum?",
+    "character": "mr_bad",
+    "text": "What did the soccer announcer who made the naughty list get from Santa Claus?\nCOOOOOOAAAALLLLLLL!",
     "type": "dad_joke",
-    "tags": ["wordplay"],
+    "tags": ["holidays", "sports", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -73,10 +73,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "Everyone criticizes the Star Wars prequel trilogy. Do you know which one is the worst?\nThe turd one.",
+    "character": "mr_funny",
+    "text": "Where does Santa stay on vacation?\nAt a ho-ho-ho-tel!",
     "type": "dad_joke",
-    "tags": ["wordplay"],
+    "tags": ["holidays", "travel", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -87,10 +87,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "I ate four cans of alphabet soup yesterday.\nThen I had the biggest vowel movement ever.",
+    "character": "mr_funny",
+    "text": "What do you call Santa when he's on a break?\nA Santa pause!",
     "type": "dad_joke",
-    "tags": ["food", "wordplay"],
+    "tags": ["holidays", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -101,10 +101,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "What do you call a magical poop?\nPoodini.",
+    "character": "mr_funny",
+    "text": "Which of Santa's reindeer has the best moves?\nDancer!",
     "type": "dad_joke",
-    "tags": ["wordplay"],
+    "tags": ["holidays", "animals", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -115,10 +115,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "Where do cavemen poop?\nIn a neander-stall.",
+    "character": "mr_funny",
+    "text": "Where does Santa store his suit?\nIn his Claus-et!",
     "type": "dad_joke",
-    "tags": ["wordplay"],
+    "tags": ["holidays", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -129,10 +129,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "Did you hear about the constipated mathematician?\nHe worked it out with a pencil.",
+    "character": "mr_funny",
+    "text": "What did the ocean say when Santa flew over?\nNothing. It just waved.",
     "type": "dad_joke",
-    "tags": ["science", "wordplay"],
+    "tags": ["holidays", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -143,10 +143,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "Where do astronauts poop in space?\nUranus.",
+    "character": "mr_funny",
+    "text": "Where do Santa's elves go swimming?\nThe North pool!",
     "type": "dad_joke",
-    "tags": ["science", "wordplay"],
+    "tags": ["holidays", "sports", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -157,10 +157,10 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "If bears poop in the woods...\nIs the smell unbearable?",
+    "character": "mr_funny",
+    "text": "What kind of motorcycle does Santa drive?\nA Holly Davidson!",
     "type": "dad_joke",
-    "tags": ["animals", "wordplay"],
+    "tags": ["holidays", "travel", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
@@ -171,10 +171,24 @@ const JOKES_TO_ADD = [
     "popularity_score": 0
   },
   {
-    "character": "mr_potty",
-    "text": "What do you call it when King Charles farts?\nA noble gas.",
+    "character": "mr_funny",
+    "text": "Why does Santa have three gardens?\nSo he can \"ho ho ho\"!",
     "type": "dad_joke",
-    "tags": ["science", "wordplay"],
+    "tags": ["holidays", "wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0,
+    "dislikes": 0,
+    "rating_sum": 0,
+    "rating_count": 0,
+    "rating_avg": 0,
+    "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "How do elves respond when Santa takes attendance?\n\"Present!\"",
+    "type": "dad_joke",
+    "tags": ["holidays", "school", "wordplay"],
     "sfw": true,
     "source": "classic",
     "likes": 0,
