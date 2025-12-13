@@ -48,6 +48,10 @@
 		C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9622EE0A55A007A6AFF /* FirebaseCore */; };
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
+		C353057B2EEDF96100C81E13 /* WeeklyTopTenDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305792EEDF96100C81E13 /* WeeklyTopTenDetailView.swift */; };
+		C353057C2EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305782EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift */; };
+		C353057D2EEDF96100C81E13 /* RankedJokeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305772EEDF96100C81E13 /* RankedJokeCard.swift */; };
+		C353057F2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C353057E2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift */; };
 		C3DE8C122EEA7FE7009729AF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C112EEA7FE7009729AF /* SettingsView.swift */; };
 		C3DE8C142EEA805B009729AF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C132EEA805B009729AF /* NotificationManager.swift */; };
 		D10000000000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D20000000000000000000001 /* LaunchScreen.storyboard */; };
@@ -125,6 +129,10 @@
 		C333E6402EE10888007377F4 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailViewModel.swift; sourceTree = "<group>"; };
 		C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C35305772EEDF96100C81E13 /* RankedJokeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankedJokeCard.swift; sourceTree = "<group>"; };
+		C35305782EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTopTenCarouselView.swift; sourceTree = "<group>"; };
+		C35305792EEDF96100C81E13 /* WeeklyTopTenDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTopTenDetailView.swift; sourceTree = "<group>"; };
+		C353057E2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyRankingsViewModel.swift; sourceTree = "<group>"; };
 		C3DE8C112EEA7FE7009729AF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C3DE8C132EEA805B009729AF /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		D20000000000000000000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -223,6 +231,7 @@
 		A50000000000000000000006 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C353057A2EEDF96100C81E13 /* WeeklyTopTen */,
 				C3DE8C112EEA7FE7009729AF /* SettingsView.swift */,
 				C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */,
 				C333E63C2EE10888007377F4 /* CharacterDetailView.swift */,
@@ -245,6 +254,7 @@
 		A50000000000000000000007 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				C353057E2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift */,
 				C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */,
 				A20000000000000000000010 /* JokeViewModel.swift */,
 				V20000000000000000000003 /* VideoViewModel.swift */,
@@ -328,6 +338,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C353057A2EEDF96100C81E13 /* WeeklyTopTen */ = {
+			isa = PBXGroup;
+			children = (
+				C35305772EEDF96100C81E13 /* RankedJokeCard.swift */,
+				C35305782EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift */,
+				C35305792EEDF96100C81E13 /* WeeklyTopTenDetailView.swift */,
+			);
+			path = WeeklyTopTen;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -375,7 +395,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 2610;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					A60000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
@@ -439,6 +459,9 @@
 				A10000000000000000000005 /* Joke.swift in Sources */,
 				A10000000000000000000006 /* JokeCategory.swift in Sources */,
 				A10000000000000000000007 /* JokeCardView.swift in Sources */,
+				C353057B2EEDF96100C81E13 /* WeeklyTopTenDetailView.swift in Sources */,
+				C353057C2EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift in Sources */,
+				C353057D2EEDF96100C81E13 /* RankedJokeCard.swift in Sources */,
 				A10000000000000000000008 /* JokeFeedView.swift in Sources */,
 				A10000000000000000000010 /* JokeViewModel.swift in Sources */,
 				C333E63D2EE10888007377F4 /* CharacterCarouselView.swift in Sources */,
@@ -450,6 +473,7 @@
 				A10000000000000000000028 /* FirestoreService.swift in Sources */,
 				A10000000000000000000029 /* FirestoreModels.swift in Sources */,
 				A10000000000000000000013 /* Color+Extensions.swift in Sources */,
+				C353057F2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift in Sources */,
 				A10000000000000000000014 /* HapticManager.swift in Sources */,
 				A10000000000000000000016 /* GrainOMeterView.swift in Sources */,
 				A10000000000000000000017 /* MeView.swift in Sources */,
@@ -623,12 +647,11 @@
 		AD0000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -637,8 +660,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -648,19 +670,18 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		AD0000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -669,8 +690,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -680,7 +700,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -707,7 +727,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -734,7 +754,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

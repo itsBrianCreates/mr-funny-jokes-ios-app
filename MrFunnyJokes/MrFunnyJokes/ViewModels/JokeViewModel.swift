@@ -695,6 +695,16 @@ final class JokeViewModel: ObservableObject {
                 Task {
                     do {
                         try await firestoreService.updateJokeRating(jokeId: firestoreId, rating: clampedRating)
+
+                        // Log rating event for weekly rankings (only for hilarious=5 or horrible=1)
+                        if clampedRating == 1 || clampedRating == 5 {
+                            let deviceId = storage.getDeviceId()
+                            try await firestoreService.logRatingEvent(
+                                jokeId: firestoreId,
+                                rating: clampedRating,
+                                deviceId: deviceId
+                            )
+                        }
                     } catch {
                         print("Failed to sync rating to Firestore: \(error)")
                     }

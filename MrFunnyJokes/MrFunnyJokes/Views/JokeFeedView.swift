@@ -2,7 +2,11 @@ import SwiftUI
 
 struct JokeFeedView: View {
     @ObservedObject var viewModel: JokeViewModel
+    @StateObject private var rankingsViewModel = WeeklyRankingsViewModel()
     let onCharacterTap: (JokeCharacter) -> Void
+
+    /// State for navigating to Weekly Top 10 detail view
+    @State private var weeklyTopTenDestination: RankingType?
 
     /// Unique identifier for the top anchor - used for reliable scroll-to-top
     private let topAnchorID = "feed-top-anchor"
@@ -19,6 +23,11 @@ struct JokeFeedView: View {
 
     /// Show YouTube promo card only when viewing "All" jokes
     private var showYouTubePromo: Bool {
+        viewModel.selectedCategory == nil
+    }
+
+    /// Show Weekly Top 10 carousel only when viewing "All" jokes
+    private var showWeeklyTopTen: Bool {
         viewModel.selectedCategory == nil
     }
 
@@ -65,6 +74,16 @@ struct JokeFeedView: View {
                         .onAppear {
                             viewModel.markJokeImpression(jokeOfTheDay)
                         }
+                    }
+
+                    // Weekly Top 10 carousel (only when "All" is selected)
+                    if showWeeklyTopTen {
+                        WeeklyTopTenCarouselView(
+                            viewModel: rankingsViewModel,
+                            onCardTap: { type in
+                                weeklyTopTenDestination = type
+                            }
+                        )
                     }
 
                     // Regular joke feed with YouTube promo card inserted
@@ -115,6 +134,13 @@ struct JokeFeedView: View {
             }
             .animation(.easeInOut(duration: 0.3), value: viewModel.isOffline)
             .animation(.easeInOut(duration: 0.3), value: viewModel.isLoadingMore)
+            .navigationDestination(item: $weeklyTopTenDestination) { type in
+                WeeklyTopTenDetailView(
+                    viewModel: rankingsViewModel,
+                    jokeViewModel: viewModel,
+                    selectedType: type
+                )
+            }
         }
     }
 }

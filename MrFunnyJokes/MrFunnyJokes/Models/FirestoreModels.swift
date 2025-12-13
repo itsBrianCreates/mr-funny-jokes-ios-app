@@ -142,6 +142,85 @@ struct FirestoreCharacter: Codable, Identifiable {
     }
 }
 
+// MARK: - Weekly Rankings Models
+
+/// Represents a ranked joke entry in the weekly top 10
+struct RankedJokeEntry: Codable, Identifiable {
+    let jokeId: String
+    let count: Int
+    let rank: Int
+
+    var id: String { jokeId }
+
+    enum CodingKeys: String, CodingKey {
+        case jokeId = "joke_id"
+        case count
+        case rank
+    }
+}
+
+/// Represents a week's rankings from the Firestore "weekly_rankings" collection
+/// Document ID format: "2024-W03" (ISO week format)
+struct WeeklyRankings: Codable {
+    let weekId: String
+    let weekStart: Date
+    let weekEnd: Date
+    let hilarious: [RankedJokeEntry]
+    let horrible: [RankedJokeEntry]
+    let totalHilariousRatings: Int
+    let totalHorribleRatings: Int
+    let computedAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case weekId = "week_id"
+        case weekStart = "week_start"
+        case weekEnd = "week_end"
+        case hilarious
+        case horrible
+        case totalHilariousRatings = "total_hilarious_ratings"
+        case totalHorribleRatings = "total_horrible_ratings"
+        case computedAt = "computed_at"
+    }
+}
+
+/// A ranked joke with its full joke data loaded
+struct RankedJoke: Identifiable {
+    let rank: Int
+    let count: Int
+    let joke: Joke
+
+    var id: String { joke.firestoreId ?? joke.id.uuidString }
+}
+
+/// Type of ranking list
+enum RankingType: String, CaseIterable, Identifiable {
+    case hilarious = "Hilarious"
+    case horrible = "Horrible"
+
+    var id: String { rawValue }
+
+    var emoji: String {
+        switch self {
+        case .hilarious: return "😂"
+        case .horrible: return "🫠"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .hilarious: return "Most Hilarious"
+        case .horrible: return "Most Horrible"
+        }
+    }
+
+    var ratingLabel: String {
+        switch self {
+        case .hilarious: return "hilarious"
+        case .horrible: return "horrible"
+        }
+    }
+}
+
 // MARK: - JokeCategory Extension for Firestore
 
 extension JokeCategory {

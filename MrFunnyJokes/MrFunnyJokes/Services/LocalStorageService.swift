@@ -7,6 +7,7 @@ final class LocalStorageService: @unchecked Sendable {
     private let ratingsKey = "jokeRatings"
     private let impressionsKey = "jokeImpressions"
     private let cachedJokesKeyPrefix = "cachedJokes_"
+    private let deviceIdKey = "anonymousDeviceId"
     private let queue = DispatchQueue(label: "com.mrfunnyjokes.storage", qos: .userInitiated)
 
     /// Maximum number of jokes to cache per category
@@ -61,6 +62,21 @@ final class LocalStorageService: @unchecked Sendable {
                 continuation.resume()
             }
         }
+    }
+
+    // MARK: - Anonymous Device ID
+
+    /// Get or create an anonymous device ID for rating event tracking
+    /// This ID is used to deduplicate ratings per device per week
+    /// It is NOT linked to any personal information
+    func getDeviceId() -> String {
+        if let existingId = userDefaults.string(forKey: deviceIdKey) {
+            return existingId
+        }
+
+        let newId = UUID().uuidString
+        userDefaults.set(newId, forKey: deviceIdKey)
+        return newId
     }
 
     // MARK: - Hardcoded Jokes (Removed - Firebase only)

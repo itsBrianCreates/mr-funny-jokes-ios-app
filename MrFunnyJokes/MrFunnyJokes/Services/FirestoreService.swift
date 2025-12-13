@@ -8,6 +8,8 @@ final class FirestoreService {
     private let db: Firestore
     private let jokesCollection = "jokes"
     private let charactersCollection = "characters"
+    private let ratingEventsCollection = "rating_events"
+    private let weeklyRankingsCollection = "weekly_rankings"
 
     // Pagination
     private var lastDocument: DocumentSnapshot?
@@ -410,6 +412,97 @@ final class FirestoreService {
         ])
     }
 
+    // MARK: - Rating Events (for Weekly Top 10)
+
+    /// Logs a rating event for weekly rankings aggregation
+    /// - Parameters:
+    ///   - jokeId: The Firestore document ID of the joke
+    ///   - rating: The rating value (1-5)
+    ///   - deviceId: Anonymous device identifier for deduplication
+    func logRatingEvent(jokeId: String, rating: Int, deviceId: String) async throws {
+        // Calculate week ID in Eastern Time (e.g., "2024-W03")
+        let weekId = getCurrentWeekId()
+
+        // Create composite key for deduplication: deviceId_jokeId_weekId
+        let documentId = "\(deviceId)_\(jokeId)_\(weekId)"
+
+        let eventData: [String: Any] = [
+            "joke_id": jokeId,
+            "rating": rating,
+            "device_id": deviceId,
+            "week_id": weekId,
+            "timestamp": FieldValue.serverTimestamp()
+        ]
+
+        // Use setData with merge to allow updating if user re-rates same joke same week
+        try await db.collection(ratingEventsCollection).document(documentId).setData(eventData, merge: true)
+    }
+
+    /// Fetches the current week's rankings
+    /// - Returns: WeeklyRankings object if available, nil otherwise
+    func fetchWeeklyRankings() async throws -> WeeklyRankings? {
+        let weekId = getCurrentWeekId()
+
+        let document = try await db.collection(weeklyRankingsCollection).document(weekId).getDocument()
+
+        guard document.exists else { return nil }
+
+        return try document.data(as: WeeklyRankings.self)
+    }
+
+    /// Fetches jokes by their Firestore IDs (for loading ranked jokes)
+    /// - Parameter ids: Array of Firestore document IDs
+    /// - Returns: Dictionary mapping joke IDs to Joke objects
+    func fetchJokes(byIds ids: [String]) async throws -> [String: Joke] {
+        guard !ids.isEmpty else { return [:] }
+
+        // Firestore 'in' queries are limited to 30 items
+        // Split into batches if needed
+        var result: [String: Joke] = [:]
+
+        for batch in ids.chunked(into: 30) {
+            let snapshot = try await db.collection(jokesCollection)
+                .whereField(FieldPath.documentID(), in: batch)
+                .getDocuments()
+
+            for document in snapshot.documents {
+                if let joke = try? document.data(as: FirestoreJoke.self).toJoke() {
+                    result[document.documentID] = joke
+                }
+            }
+        }
+
+        return result
+    }
+
+    /// Returns the current ISO week ID in Eastern Time (e.g., "2024-W03")
+    private func getCurrentWeekId() -> String {
+        let calendar = Calendar(identifier: .iso8601)
+        var easternCalendar = calendar
+        easternCalendar.timeZone = TimeZone(identifier: "America/New_York")!
+
+        let now = Date()
+        let year = easternCalendar.component(.yearForWeekOfYear, from: now)
+        let week = easternCalendar.component(.weekOfYear, from: now)
+
+        return String(format: "%d-W%02d", year, week)
+    }
+
+    /// Returns the date range for the current week in Eastern Time
+    func getCurrentWeekDateRange() -> (start: Date, end: Date)? {
+        let calendar = Calendar(identifier: .iso8601)
+        var easternCalendar = calendar
+        easternCalendar.timeZone = TimeZone(identifier: "America/New_York")!
+
+        let now = Date()
+
+        guard let weekInterval = easternCalendar.dateInterval(of: .weekOfYear, for: now) else {
+            return nil
+        }
+
+        return (weekInterval.start, weekInterval.end.addingTimeInterval(-1))
+    }
+
     // MARK: - Reset Pagination
 
     /// Resets pagination state for fetching fresh data
@@ -417,6 +510,16 @@ final class FirestoreService {
         lastDocument = nil
         lastDocumentsByCategory.removeAll()
         lastDocumentsByCharacter.removeAll()
+    }
+}
+
+// MARK: - Array Chunking Helper
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
     }
 }
 
