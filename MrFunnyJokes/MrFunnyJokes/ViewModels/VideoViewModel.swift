@@ -68,8 +68,9 @@ final class VideoViewModel: ObservableObject {
             let newVideos = try await videoService.fetchInitialVideos(limit: batchSize)
 
             if !newVideos.isEmpty {
-                // Apply local state (watched, liked)
-                videos = applyLocalState(to: newVideos)
+                // Apply local state (watched, liked) and sort unwatched first
+                let videosWithState = applyLocalState(to: newVideos)
+                videos = sortByWatchedStatus(videosWithState)
 
                 // Preload the first video's AVPlayer for instant playback
                 preloadFirstVideo()
@@ -166,7 +167,9 @@ final class VideoViewModel: ObservableObject {
                 newVideos = try await videoService.fetchInitialVideos(limit: batchSize)
             }
 
-            videos = applyLocalState(to: newVideos)
+            // Apply local state and sort unwatched first
+            let videosWithState = applyLocalState(to: newVideos)
+            videos = sortByWatchedStatus(videosWithState)
             hasMoreVideos = newVideos.count >= batchSize
 
             // Preload the new first video
@@ -226,7 +229,7 @@ final class VideoViewModel: ObservableObject {
             if newVideos.isEmpty {
                 hasMoreVideos = false
             } else {
-                // Add to end of list, avoiding duplicates
+                // Add to list, avoiding duplicates, and re-sort to show unwatched first
                 let newVideosWithState = applyLocalState(to: newVideos)
                 var updatedVideos = videos
                 for video in newVideosWithState {
@@ -234,7 +237,7 @@ final class VideoViewModel: ObservableObject {
                         updatedVideos.append(video)
                     }
                 }
-                videos = updatedVideos
+                videos = sortByWatchedStatus(updatedVideos)
             }
         } catch {
             print("Failed to load more videos: \(error)")
@@ -369,5 +372,12 @@ final class VideoViewModel: ObservableObject {
             }
             return mutableVideo
         }
+    }
+
+    /// Sort videos to show unwatched first, then watched, maintaining created_at order within each group
+    private func sortByWatchedStatus(_ videos: [Video]) -> [Video] {
+        let unwatched = videos.filter { !$0.isWatched }
+        let watched = videos.filter { $0.isWatched }
+        return unwatched + watched
     }
 }
