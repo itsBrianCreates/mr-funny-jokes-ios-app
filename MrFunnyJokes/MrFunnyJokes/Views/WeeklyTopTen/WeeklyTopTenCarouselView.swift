@@ -110,45 +110,27 @@ struct WeeklyTopTenHeader: View {
 
 // MARK: - Weekly Top Ten Card
 
-/// A compact card for Hilarious or Horrible category
+/// A compact card for Hilarious or Horrible category - Apple Music editorial style
 struct WeeklyTopTenCard: View {
     let type: RankingType
     let totalRatings: Int
     let hasData: Bool
 
-    /// Background gradient colors based on type
+    /// Gradient colors based on type (Apple Music editorial style - lighter top, darker bottom)
     private var gradientColors: [Color] {
         switch type {
         case .hilarious:
             return [
-                Color(red: 1.0, green: 0.9, blue: 0.4),  // Warm yellow
-                Color(red: 1.0, green: 0.8, blue: 0.2)   // Deeper yellow
+                Color(red: 1.0, green: 0.65, blue: 0.2),   // Bright orange/gold top
+                Color(red: 0.75, green: 0.35, blue: 0.05) // Deep burnt orange bottom
             ]
         case .horrible:
             return [
-                Color(red: 0.95, green: 0.7, blue: 0.75),  // Soft pink/red
-                Color(red: 0.85, green: 0.5, blue: 0.6)    // Deeper rose
+                Color(red: 0.85, green: 0.25, blue: 0.4),  // Bright rose/magenta top
+                Color(red: 0.55, green: 0.1, blue: 0.2)   // Deep burgundy bottom
             ]
         }
     }
-
-    /// Dark mode gradient colors
-    private var darkGradientColors: [Color] {
-        switch type {
-        case .hilarious:
-            return [
-                Color(red: 0.35, green: 0.30, blue: 0.1),
-                Color(red: 0.25, green: 0.20, blue: 0.05)
-            ]
-        case .horrible:
-            return [
-                Color(red: 0.35, green: 0.2, blue: 0.25),
-                Color(red: 0.25, green: 0.12, blue: 0.18)
-            ]
-        }
-    }
-
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -161,17 +143,17 @@ struct WeeklyTopTenCard: View {
             // Title
             Text(type.title)
                 .font(.headline.weight(.bold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(.white)
 
             // Subtitle - rating count or status
             if hasData && totalRatings > 0 {
                 Text("\(totalRatings) ratings")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.8))
             } else {
                 Text("Coming soon")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.8))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -179,9 +161,9 @@ struct WeeklyTopTenCard: View {
         .frame(height: 120)
         .background(
             LinearGradient(
-                colors: colorScheme == .dark ? darkGradientColors : gradientColors,
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+                colors: gradientColors,
+                startPoint: .top,
+                endPoint: .bottom
             ),
             in: RoundedRectangle(cornerRadius: 16)
         )

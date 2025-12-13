@@ -41,20 +41,16 @@ struct RankedJokeCard: View {
     private var badgeColor: Color {
         switch rankedJoke.rank {
         case 1:
-            return Color(red: 1.0, green: 0.84, blue: 0.0) // Gold
-        case 2:
-            return Color(red: 0.75, green: 0.75, blue: 0.75) // Silver
-        case 3:
-            return Color(red: 0.80, green: 0.50, blue: 0.20) // Bronze
+            return Color(red: 1.0, green: 0.84, blue: 0.0) // Gold for #1
         default:
-            return Color.secondary.opacity(0.3)
+            return Color.secondary.opacity(0.3) // Subtle gray for all others
         }
     }
 
     /// Badge text color for contrast
     private var badgeTextColor: Color {
         switch rankedJoke.rank {
-        case 1, 2, 3:
+        case 1:
             return .black
         default:
             return .primary
