@@ -354,10 +354,14 @@ struct CharacterBadgesView: View {
 
     private var characterNames: String {
         let names = characters.map { $0.name }
-        if names.count == 2 {
+        if names.count == 1 {
+            return names[0]
+        } else if names.count == 2 {
             return names.joined(separator: " & ")
         } else {
-            return names.joined(separator: ", ")
+            // For 3+ names: "A, B & C"
+            let allButLast = names.dropLast().joined(separator: ", ")
+            return "\(allButLast) & \(names.last!)"
         }
     }
 }

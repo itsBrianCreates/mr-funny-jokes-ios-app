@@ -17,13 +17,23 @@ struct JokeCharacter: Identifiable, Hashable {
         allowedCategories.count > 1
     }
 
-    /// All available characters in the app
+    /// All available characters in the app (for jokes UI - excludes Brian)
     static let allCharacters: [JokeCharacter] = [
         .mrFunny,
         .mrBad,
         .mrLove,
         .mrPotty,
         .mrSad
+    ]
+
+    /// All characters including video-only characters like Brian
+    static let allCharactersIncludingVideoOnly: [JokeCharacter] = [
+        .mrFunny,
+        .mrBad,
+        .mrLove,
+        .mrPotty,
+        .mrSad,
+        .brian
     ]
 
     // MARK: - Character Definitions
@@ -78,9 +88,20 @@ struct JokeCharacter: Identifiable, Hashable {
         allowedCategories: [.pickupLine]
     )
 
-    /// Find a character by its ID
+    /// Brian - the creator, appears in videos only
+    static let brian = JokeCharacter(
+        id: "brian",
+        name: "Brian",
+        fullName: "Brian",
+        bio: "The guy behind the characters. Sometimes I show up in videos too.",
+        imageName: "Brian",
+        color: .accessibleYellow,
+        allowedCategories: [] // Videos only, no jokes
+    )
+
+    /// Find a character by its ID (searches all characters including video-only)
     static func find(byId id: String) -> JokeCharacter? {
-        allCharacters.first { $0.id == id }
+        allCharactersIncludingVideoOnly.first { $0.id == id }
     }
 
     /// Find a character by name (case-insensitive)
