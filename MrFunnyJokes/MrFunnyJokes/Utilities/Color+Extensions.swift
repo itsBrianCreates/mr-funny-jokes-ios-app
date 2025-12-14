@@ -22,6 +22,12 @@ extension Color {
         light: Color(red: 101/255, green: 67/255, blue: 33/255),   // #654321 - darker chocolate brown
         dark: Color(red: 139/255, green: 90/255, blue: 43/255)     // #8B5A2B - warm saddle brown for dark mode
     )
+
+    /// Standard card background - subtle gray for cards throughout the app
+    static let cardBackground = Color(
+        light: Color(red: 0.96, green: 0.96, blue: 0.97),  // Light gray
+        dark: Color(red: 0.15, green: 0.15, blue: 0.16)    // Dark gray
+    )
 }
 
 extension Color {
@@ -51,4 +57,7 @@ extension ShapeStyle where Self == Color {
 
     /// Darker brown for Mr. Potty
     static var pottyBrown: Color { Color.pottyBrown }
+
+    /// Standard card background - subtle gray
+    static var cardBackground: Color { Color.cardBackground }
 }

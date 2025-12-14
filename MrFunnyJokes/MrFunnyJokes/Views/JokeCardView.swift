@@ -74,8 +74,7 @@ struct JokeCardView: View {
                 }
             }
             .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showingSheet) {

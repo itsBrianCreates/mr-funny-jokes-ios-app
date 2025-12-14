@@ -41,64 +41,43 @@ struct WeeklyTopTenDetailView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Date range subtitle
-            Text(dateRange)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-                .padding(.top, 4)
-
-            // Segmented control
-            Picker("Category", selection: $selectedType) {
-                ForEach(RankingType.allCases) { type in
-                    Text("\(type.emoji) \(type.rawValue)").tag(type)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
-
-            // Content
-            if viewModel.isLoading {
-                LoadingView()
-            } else if viewModel.hasDataFor(type: selectedType) {
-                CountdownList(
-                    rankedJokes: viewModel.getJokesForCountdown(type: selectedType),
-                    rankingType: selectedType,
-                    jokeViewModel: jokeViewModel
-                )
-            } else {
-                EmptyStateView(type: selectedType)
-            }
-        }
-        .navigationTitle("Weekly Top 10")
-        .navigationBarTitleDisplayMode(.large)
-    }
-}
-
-// MARK: - Countdown List
-
-/// The scrollable list of ranked jokes, displayed from #10 to #1
-struct CountdownList: View {
-    let rankedJokes: [RankedJoke]
-    let rankingType: RankingType
-    @ObservedObject var jokeViewModel: JokeViewModel
-
-    var body: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
-                ForEach(rankedJokes) { rankedJoke in
-                    RankedJokeCard(
-                        rankedJoke: rankedJoke,
-                        rankingType: rankingType,
-                        isCopied: jokeViewModel.copiedJokeId == rankedJoke.joke.id,
-                        onShare: { jokeViewModel.shareJoke(rankedJoke.joke) },
-                        onCopy: { jokeViewModel.copyJoke(rankedJoke.joke) },
-                        onRate: { rating in jokeViewModel.rateJoke(rankedJoke.joke, rating: rating) }
-                    )
+                // Date range subtitle
+                Text(dateRange)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 4)
+
+                // Segmented control
+                Picker("Category", selection: $selectedType) {
+                    ForEach(RankingType.allCases) { type in
+                        Text("\(type.emoji) \(type.rawValue)").tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.top, 4)
+                .padding(.bottom, 8)
+
+                // Content
+                if viewModel.isLoading {
+                    LoadingView()
+                        .frame(minHeight: 300)
+                } else if viewModel.hasDataFor(type: selectedType) {
+                    ForEach(viewModel.getJokesForCountdown(type: selectedType)) { rankedJoke in
+                        RankedJokeCard(
+                            rankedJoke: rankedJoke,
+                            rankingType: selectedType,
+                            isCopied: jokeViewModel.copiedJokeId == rankedJoke.joke.id,
+                            onShare: { jokeViewModel.shareJoke(rankedJoke.joke) },
+                            onCopy: { jokeViewModel.copyJoke(rankedJoke.joke) },
+                            onRate: { rating in jokeViewModel.rateJoke(rankedJoke.joke, rating: rating) }
+                        )
+                    }
+                } else {
+                    EmptyStateView(type: selectedType)
+                        .frame(minHeight: 300)
                 }
 
                 // Bottom padding for scroll
@@ -106,6 +85,8 @@ struct CountdownList: View {
             }
             .padding(.horizontal)
         }
+        .navigationTitle("Weekly Top 10")
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 

@@ -16,57 +16,100 @@ struct JokeOfTheDayView: View {
         return JokeCharacter.find(byName: characterName)
     }
 
+    /// Today's date formatted
+    private var todayString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d"
+        return formatter.string(from: Date())
+    }
+
+    /// Border/accent color - uses character color if available, otherwise brand yellow
+    private var accentColor: Color {
+        jokeCharacter?.color ?? .accessibleYellow
+    }
+
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
             showingSheet = true
         } label: {
-            VStack(alignment: .leading, spacing: 16) {
-                // Header badge
-                Text("Joke of the Day")
+            VStack(alignment: .leading, spacing: 12) {
+                // Badge inside the card
+                Text("JOKE OF THE DAY")
                     .font(.caption.weight(.bold))
-                    .textCase(.uppercase)
                     .tracking(0.5)
-                    .foregroundStyle(.accessibleYellow)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(accentColor, in: RoundedRectangle(cornerRadius: 6))
 
-                // Setup text - larger for hero card
+                // Main joke text
                 Text(joke.setup)
-                    .font(.title2.weight(.semibold))
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .lineLimit(4)
 
-                // Character, category and rating row
-                HStack(spacing: 8) {
-                    // Character indicator (if available)
+                // Bottom section with character info
+                HStack(spacing: 12) {
+                    // Character avatar (larger)
                     if let character = jokeCharacter {
-                        CharacterIndicatorView(character: character)
-                    }
+                        Image(character.imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 44, height: 44)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .strokeBorder(accentColor, lineWidth: 2)
+                            )
 
-                    // Category
-                    HStack(spacing: 4) {
-                        Image(systemName: joke.category.icon)
-                        Text(joke.category.rawValue)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(character.name)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.primary)
+
+                            Text(todayString)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        // Fallback if no character
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(joke.category.rawValue)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.primary)
+
+                            Text(todayString)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
 
                     Spacer()
 
+                    // Rating indicator or "Tap to rate"
                     if let rating = joke.userRating {
                         CompactGroanOMeterView(rating: rating)
+                    } else {
+                        Text("Tap to rate")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
-            .padding(20)
-            .background(.brandYellowLight, in: RoundedRectangle(cornerRadius: 20))
+            .padding(16)
+            .background(cardBackground, in: RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(accentColor, lineWidth: 2)
+            )
         }
         .buttonStyle(.plain)
-        .scaleEffect(isAppearing ? 1 : 0.9)
+        .scaleEffect(isAppearing ? 1 : 0.95)
         .opacity(isAppearing ? 1 : 0)
         .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 isAppearing = true
             }
         }
@@ -80,6 +123,14 @@ struct JokeOfTheDayView: View {
                 onRate: onRate
             )
         }
+    }
+
+    /// Subtle background color that works in both light and dark mode
+    private var cardBackground: Color {
+        Color(
+            light: Color(red: 1.0, green: 0.98, blue: 0.94),  // Warm cream/off-white
+            dark: Color(red: 0.15, green: 0.14, blue: 0.12)   // Warm dark gray
+        )
     }
 }
 

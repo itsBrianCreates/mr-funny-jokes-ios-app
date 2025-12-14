@@ -103,8 +103,6 @@ struct JokeFeedView: View {
                         .onAppear {
                             // Track impression for feed freshness
                             viewModel.markJokeImpression(joke)
-                            // Trigger load more when this joke appears
-                            viewModel.loadMoreIfNeeded(currentItem: joke)
                         }
                     }
 
@@ -117,6 +115,18 @@ struct JokeFeedView: View {
                     if viewModel.isLoadingMore {
                         LoadingMoreView()
                             .transition(.opacity)
+                    }
+
+                    // Load More button (when not loading and more jokes available)
+                    if !viewModel.isLoadingMore && viewModel.hasMoreJokes && !feedJokes.isEmpty {
+                        LoadMoreButton {
+                            viewModel.loadMore()
+                        }
+                    }
+
+                    // End of feed message (when no more jokes)
+                    if !viewModel.hasMoreJokes && !feedJokes.isEmpty {
+                        EndOfFeedView()
                     }
                 }
                 .padding(.horizontal)
@@ -178,6 +188,52 @@ struct LoadingMoreView: View {
             SkeletonCardView(lineCount: 2, lastLineWidth: 0.6)
             SkeletonCardView(lineCount: 1, lastLineWidth: 0.8)
         }
+    }
+}
+
+// MARK: - Load More Button
+
+struct LoadMoreButton: View {
+    let action: () -> Void
+
+    /// Primary yellow color matching app branding
+    private let primaryYellow = Color(red: 1.0, green: 0.84, blue: 0.0)
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Text("Load More Jokes")
+                    .font(.headline.weight(.semibold))
+                Image(systemName: "arrow.down.circle.fill")
+                    .font(.title3)
+            }
+            .foregroundStyle(.black)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(primaryYellow)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 8)
+    }
+}
+
+// MARK: - End of Feed View
+
+struct EndOfFeedView: View {
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("🎉")
+                .font(.largeTitle)
+            Text("You've seen all the jokes!")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+            Text("Check back later for more laughs")
+                .font(.subheadline)
+                .foregroundStyle(.tertiary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 24)
     }
 }
 
