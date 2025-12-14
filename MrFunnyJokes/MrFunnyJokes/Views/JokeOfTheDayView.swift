@@ -28,6 +28,19 @@ struct JokeOfTheDayView: View {
         jokeCharacter?.color ?? .accessibleYellow
     }
 
+    /// Background color - uses character's themed background if available
+    private var cardBackground: Color {
+        jokeCharacter?.backgroundColor ?? defaultBackground
+    }
+
+    /// Default background when no character is assigned
+    private var defaultBackground: Color {
+        Color(
+            light: Color(red: 1.0, green: 0.98, blue: 0.94),  // Warm cream
+            dark: Color(red: 0.18, green: 0.16, blue: 0.10)   // Warm dark
+        )
+    }
+
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
@@ -124,19 +137,12 @@ struct JokeOfTheDayView: View {
             )
         }
     }
-
-    /// Subtle background color that works in both light and dark mode
-    private var cardBackground: Color {
-        Color(
-            light: Color(red: 1.0, green: 0.98, blue: 0.94),  // Warm cream/off-white
-            dark: Color(red: 0.15, green: 0.14, blue: 0.12)   // Warm dark gray
-        )
-    }
 }
 
-#Preview {
+#Preview("All Characters") {
     ScrollView {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
+            // Mr. Funny - Yellow theme
             JokeOfTheDayView(
                 joke: Joke(
                     category: .dadJoke,
@@ -150,13 +156,55 @@ struct JokeOfTheDayView: View {
                 onRate: { _ in }
             )
 
+            // Mr. Bad - Red theme
             JokeOfTheDayView(
                 joke: Joke(
-                    category: .knockKnock,
-                    setup: "Knock knock. Who's there? Lettuce.",
-                    punchline: "Lettuce who? Lettuce in, it's cold out here!",
-                    userRating: 4,
+                    category: .dadJoke,
+                    setup: "I have a joke about trickle-down economics.",
+                    punchline: "But 99% of you won't get it.",
+                    character: "Mr. Bad"
+                ),
+                isCopied: false,
+                onShare: {},
+                onCopy: {},
+                onRate: { _ in }
+            )
+
+            // Mr. Sad - Blue theme
+            JokeOfTheDayView(
+                joke: Joke(
+                    category: .dadJoke,
+                    setup: "I told my wife she was drawing her eyebrows too high.",
+                    punchline: "She looked surprised.",
+                    character: "Mr. Sad"
+                ),
+                isCopied: false,
+                onShare: {},
+                onCopy: {},
+                onRate: { _ in }
+            )
+
+            // Mr. Potty - Brown theme
+            JokeOfTheDayView(
+                joke: Joke(
+                    category: .dadJoke,
+                    setup: "Why did the toilet paper roll down the hill?",
+                    punchline: "To get to the bottom!",
                     character: "Mr. Potty"
+                ),
+                isCopied: false,
+                onShare: {},
+                onCopy: {},
+                onRate: { _ in }
+            )
+
+            // Mr. Love - Pink theme
+            JokeOfTheDayView(
+                joke: Joke(
+                    category: .pickupLine,
+                    setup: "Are you a magician?",
+                    punchline: "Because whenever I look at you, everyone else disappears!",
+                    character: "Mr. Love"
                 ),
                 isCopied: false,
                 onShare: {},

@@ -14,7 +14,10 @@ struct JokeOfTheDayWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: JokeOfTheDayProvider()) { entry in
             JokeOfTheDayWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) {
+                    // Use system background - white in light mode, dark in dark mode
+                    Color(UIColor.systemBackground)
+                }
         }
         .configurationDisplayName("Joke of the Day")
         .description("Start your day with a smile! Get a fresh joke every day.")

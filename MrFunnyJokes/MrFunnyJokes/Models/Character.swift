@@ -9,6 +9,8 @@ struct JokeCharacter: Identifiable, Hashable {
     let bio: String
     let imageName: String
     let color: Color
+    /// Soft background color for featured cards (Joke of the Day, widgets)
+    let backgroundColor: Color
     /// The joke categories this character can tell
     let allowedCategories: [JokeCategory]
 
@@ -45,6 +47,10 @@ struct JokeCharacter: Identifiable, Hashable {
         bio: "Dad jokes so good, they're bad. So bad, they're good. Your kids will hate you. You're welcome.",
         imageName: "MrFunny",
         color: .accessibleYellow,
+        backgroundColor: Color(
+            light: Color(red: 1.0, green: 0.98, blue: 0.94),   // Warm cream
+            dark: Color(red: 0.18, green: 0.16, blue: 0.10)    // Warm dark
+        ),
         allowedCategories: [.dadJoke, .knockKnock]
     )
 
@@ -55,6 +61,10 @@ struct JokeCharacter: Identifiable, Hashable {
         bio: "Dark humor for twisted minds. If you laughed at that funeral scene, you're in the right place.",
         imageName: "MrBad",
         color: .red,
+        backgroundColor: Color(
+            light: Color(red: 1.0, green: 0.95, blue: 0.95),   // Soft red/pink tint
+            dark: Color(red: 0.18, green: 0.12, blue: 0.12)    // Dark red tint
+        ),
         allowedCategories: [.dadJoke, .knockKnock]
     )
 
@@ -65,6 +75,10 @@ struct JokeCharacter: Identifiable, Hashable {
         bio: "Jokes so bleak they circle back to funny. Laugh now, cry later. Or both at once.",
         imageName: "MrSad",
         color: .blue,
+        backgroundColor: Color(
+            light: Color(red: 0.94, green: 0.96, blue: 1.0),   // Soft blue tint
+            dark: Color(red: 0.10, green: 0.12, blue: 0.18)    // Dark blue tint
+        ),
         allowedCategories: [.dadJoke, .knockKnock]
     )
 
@@ -75,6 +89,10 @@ struct JokeCharacter: Identifiable, Hashable {
         bio: "Farts, butts, and bodily functions. Juvenile? Absolutely. Hilarious? Also yes.",
         imageName: "MrPotty",
         color: .pottyBrown,
+        backgroundColor: Color(
+            light: Color(red: 0.98, green: 0.96, blue: 0.93),  // Soft tan/beige
+            dark: Color(red: 0.16, green: 0.14, blue: 0.10)    // Dark brown tint
+        ),
         allowedCategories: [.dadJoke, .knockKnock]
     )
 
@@ -85,6 +103,10 @@ struct JokeCharacter: Identifiable, Hashable {
         bio: "Pickup lines so smooth, they actually work. Trust me. I've never been rejected. Not once.",
         imageName: "MrLove",
         color: .pink,
+        backgroundColor: Color(
+            light: Color(red: 1.0, green: 0.95, blue: 0.97),   // Soft pink tint
+            dark: Color(red: 0.18, green: 0.12, blue: 0.14)    // Dark pink tint
+        ),
         allowedCategories: [.pickupLine]
     )
 
@@ -96,6 +118,10 @@ struct JokeCharacter: Identifiable, Hashable {
         bio: "The guy behind the characters. Sometimes I show up in videos too.",
         imageName: "Brian",
         color: .accessibleYellow,
+        backgroundColor: Color(
+            light: Color(red: 1.0, green: 0.98, blue: 0.94),   // Warm cream (same as Mr. Funny)
+            dark: Color(red: 0.18, green: 0.16, blue: 0.10)
+        ),
         allowedCategories: [] // Videos only, no jokes
     )
 
