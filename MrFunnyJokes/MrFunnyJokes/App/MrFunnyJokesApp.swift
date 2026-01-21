@@ -46,8 +46,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct RootView: View {
     /// ViewModel is created lazily AFTER splash screen renders to avoid blocking the main thread
     @State private var jokeViewModel: JokeViewModel?
-    /// VideoViewModel created early to preload video data while user is on home tab
-    @State private var videoViewModel: VideoViewModel?
     @State private var showSplash = true
     @State private var splashMinimumTimePassed = false
 
@@ -59,11 +57,10 @@ struct RootView: View {
 
     var body: some View {
         ZStack {
-            // Main content - only created after viewModels are initialized
-            if let jokeViewModel = jokeViewModel, let videoViewModel = videoViewModel {
+            // Main content - only created after viewModel is initialized
+            if let jokeViewModel = jokeViewModel {
                 SplashTransitionView(
                     jokeViewModel: jokeViewModel,
-                    videoViewModel: videoViewModel,
                     showSplash: $showSplash,
                     splashMinimumTimePassed: splashMinimumTimePassed
                 )
@@ -83,8 +80,6 @@ struct RootView: View {
                 // Small yield to ensure splash is visible before heavy init
                 await Task.yield()
                 jokeViewModel = JokeViewModel()
-                // Create VideoViewModel early so it starts fetching/preloading
-                videoViewModel = VideoViewModel()
                 startSplashTimer()
                 startMaximumSplashTimer()
             }
@@ -113,12 +108,11 @@ struct RootView: View {
 /// This ensures SwiftUI receives updates when isInitialLoading changes
 private struct SplashTransitionView: View {
     @ObservedObject var jokeViewModel: JokeViewModel
-    @ObservedObject var videoViewModel: VideoViewModel
     @Binding var showSplash: Bool
     let splashMinimumTimePassed: Bool
 
     var body: some View {
-        MainContentView(jokeViewModel: jokeViewModel, videoViewModel: videoViewModel)
+        MainContentView(jokeViewModel: jokeViewModel)
             .opacity(showSplash ? 0 : 1)
             .onChange(of: jokeViewModel.isInitialLoading) { _, isLoading in
                 checkTransitionConditions()
@@ -150,7 +144,6 @@ private struct SplashTransitionView: View {
 /// Separated from ContentView to allow viewModel injection from RootView
 struct MainContentView: View {
     @ObservedObject var jokeViewModel: JokeViewModel
-    @ObservedObject var videoViewModel: VideoViewModel
     @State private var selectedTab: AppTab = .home
     @State private var navigationPath = NavigationPath()
     @State private var showingSettings = false
@@ -158,7 +151,6 @@ struct MainContentView: View {
 
     enum AppTab: Hashable {
         case home
-        case videos
         case me
         case search
     }
@@ -167,10 +159,6 @@ struct MainContentView: View {
         TabView(selection: $selectedTab) {
             Tab("Home", systemImage: "house.fill", value: .home) {
                 homeTab
-            }
-
-            Tab("Videos", systemImage: "play.rectangle.fill", value: .videos) {
-                videosTab
             }
 
             Tab("Me", systemImage: "person.fill", value: .me) {
@@ -211,8 +199,6 @@ struct MainContentView: View {
         switch url.host {
         case "home":
             selectedTab = .home
-        case "videos":
-            selectedTab = .videos
         case "me":
             selectedTab = .me
         case "search":
@@ -250,12 +236,6 @@ struct MainContentView: View {
                 CharacterDetailView(character: character)
             }
         }
-    }
-
-    // MARK: - Videos Tab
-
-    private var videosTab: some View {
-        VideosTabView(viewModel: videoViewModel)
     }
 
     private var filterMenu: some View {
