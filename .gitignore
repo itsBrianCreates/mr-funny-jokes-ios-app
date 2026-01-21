@@ -67,6 +67,3 @@ scripts/*.json
 !scripts/package.json
 scripts/jokes-backup-*.json
 scripts/migration-log-*.json
-
-# Social media drafts (CodeStory)
-.social-draft-*.md
