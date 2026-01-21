@@ -67,3 +67,8 @@ scripts/*.json
 !scripts/package.json
 scripts/jokes-backup-*.json
 scripts/migration-log-*.json
+
+# CodeStory
+.social-draft-*.md
+.codestory-backup-*/
+.codestory-version
