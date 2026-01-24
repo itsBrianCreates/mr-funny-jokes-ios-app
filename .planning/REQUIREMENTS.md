@@ -84,30 +84,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SIRI-01 | TBD | Pending |
-| SIRI-02 | TBD | Pending |
-| SIRI-03 | TBD | Pending |
-| SIRI-04 | TBD | Pending |
-| WIDGET-01 | TBD | Pending |
-| WIDGET-02 | TBD | Pending |
-| WIDGET-03 | TBD | Pending |
-| WIDGET-04 | TBD | Pending |
-| WIDGET-05 | TBD | Pending |
-| WIDGET-06 | TBD | Pending |
-| WIDGET-07 | TBD | Pending |
-| RANK-01 | TBD | Pending |
-| RANK-02 | TBD | Pending |
-| NOTIF-01 | TBD | Pending |
-| NOTIF-02 | TBD | Pending |
-| CONT-01 | TBD | Pending |
-| PLAT-01 | TBD | Pending |
-| PLAT-02 | TBD | Pending |
+| PLAT-01 | Phase 1: Foundation & Cleanup | Pending |
+| PLAT-02 | Phase 1: Foundation & Cleanup | Pending |
+| RANK-01 | Phase 1: Foundation & Cleanup | Pending |
+| RANK-02 | Phase 1: Foundation & Cleanup | Pending |
+| NOTIF-01 | Phase 1: Foundation & Cleanup | Pending |
+| NOTIF-02 | Phase 1: Foundation & Cleanup | Pending |
+| WIDGET-01 | Phase 2: Lock Screen Widgets | Pending |
+| WIDGET-02 | Phase 2: Lock Screen Widgets | Pending |
+| WIDGET-03 | Phase 2: Lock Screen Widgets | Pending |
+| WIDGET-04 | Phase 2: Lock Screen Widgets | Pending |
+| SIRI-01 | Phase 3: Siri Integration | Pending |
+| SIRI-02 | Phase 3: Siri Integration | Pending |
+| SIRI-03 | Phase 3: Siri Integration | Pending |
+| SIRI-04 | Phase 3: Siri Integration | Pending |
+| WIDGET-05 | Phase 4: Widget Polish | Pending |
+| WIDGET-06 | Phase 4: Widget Polish | Pending |
+| WIDGET-07 | Phase 4: Widget Polish | Pending |
+| CONT-01 | Phase 6: Content & Submission | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 (will be mapped during roadmap creation)
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2025-01-24*
-*Last updated: 2025-01-24 after initial definition*
+*Last updated: 2026-01-24 after roadmap creation*
