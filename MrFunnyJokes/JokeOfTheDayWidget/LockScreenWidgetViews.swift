@@ -11,17 +11,9 @@ struct AccessoryCircularView: View {
     var body: some View {
         ZStack {
             AccessoryWidgetBackground()
-            if let imageName = characterImageName(for: joke.character) {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFill()
-                    .padding(6)
-                    .clipShape(Circle())
-            } else {
-                // Fallback if no character image
-                Image(systemName: "face.smiling")
-                    .font(.title)
-            }
+            Image(systemName: "face.smiling")
+                .font(.system(size: 24, weight: .medium))
+                .imageScale(.large)
         }
         .widgetURL(URL(string: "mrfunnyjokes://home"))
     }
