@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var notificationManager = NotificationManager.shared
     @Environment(\.dismiss) private var dismiss
-    @State private var showingTimePicker = false
 
     var body: some View {
         NavigationStack {
@@ -43,43 +42,27 @@ struct SettingsView: View {
                 }
             }
 
-            // Time picker (only show when enabled)
+            // Manage Notifications button (only show when enabled)
             if notificationManager.notificationsEnabled {
                 Button {
-                    showingTimePicker.toggle()
+                    if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
                 } label: {
                     HStack {
                         Label {
-                            Text("Notification Time")
+                            Text("Manage Notifications")
                         } icon: {
-                            Image(systemName: "clock.fill")
+                            Image(systemName: "gear")
                                 .foregroundStyle(.blue)
                         }
-
                         Spacer()
-
-                        Text(notificationManager.formattedTime)
-                            .foregroundStyle(.secondary)
-
-                        Image(systemName: "chevron.right")
+                        Image(systemName: "arrow.up.right")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
                 }
                 .foregroundStyle(.primary)
-
-                if showingTimePicker {
-                    DatePicker(
-                        "Select Time",
-                        selection: Binding(
-                            get: { notificationManager.notificationTime },
-                            set: { notificationManager.notificationTime = $0 }
-                        ),
-                        displayedComponents: .hourAndMinute
-                    )
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-                }
             }
 
             // Permission status warning
@@ -109,7 +92,7 @@ struct SettingsView: View {
         } header: {
             Text("Notifications")
         } footer: {
-            Text("Get a daily notification with a fresh joke to brighten your day.")
+            Text("Want to adjust when you get jokes? Tap above to manage your notification preferences in Settings.")
         }
     }
 
@@ -149,7 +132,7 @@ struct SettingsView: View {
     }
 
     private func openSystemSettings() {
-        if let url = URL(string: UIApplication.openSettingsURLString) {
+        if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
             UIApplication.shared.open(url)
         }
     }
