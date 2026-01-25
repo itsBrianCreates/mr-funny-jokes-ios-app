@@ -3,18 +3,18 @@
 ## Current Position
 
 **Milestone:** v1.0
-**Phase:** 4 of 6 (Widget Polish)
-**Plan:** 1 of 1 in phase complete
-**Status:** Phase 4 complete, ready for Phase 5
+**Phase:** 5 of 6 (Testing & Bug Fixes)
+**Plan:** 1 of 2 in phase complete
+**Status:** In progress - test checklist ready, awaiting user testing
 
-Progress: [########--] 4/6 phases complete
+Progress: [########=-] ~4.5/6 phases complete
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2025-01-24)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Phase 5 - Testing & Bug Fixes (next)
+**Current focus:** Phase 5 - User manual testing with TEST-CHECKLIST.md
 
 ## v1.0 Overview
 
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
 | 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Complete |
 | 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Complete |
-| 5 | Testing & Bug Fixes | - | Pending |
+| 5 | Testing & Bug Fixes | - | In Progress |
 | 6 | Content & Submission | CONT-01 | Pending |
 
 **Total requirements:** 18
@@ -48,6 +48,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 - 2026-01-25: Phase 3 complete (Siri Shortcuts works; voice command deferred to backlog)
 - 2026-01-25: Completed 04-01-PLAN.md (Widget Polish - padding and verification)
 - 2026-01-25: Phase 4 complete (all home screen widgets polished and verified on device)
+- 2026-01-25: Completed 05-01-PLAN.md (Test Checklist Generation)
 
 ## Accumulated Decisions
 
@@ -67,6 +68,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | Siri Shortcuts approved, voice command deferred | 03-02 | Shortcuts app works reliably; voice recognition iOS-dependent |
 | Small widget padding: 8pt, Medium/Large: 11pt | 04-01 | Match native iOS widget spacing (Weather, Calendar) |
 | Medium widget shows 2 lines of text | 04-01 | lineLimit(2) provides more content visibility than small widget |
+| Siri testing Priority 1 for App Review 4.2.2 | 05-01 | Critical feature for demonstrating native iOS integration |
 
 ## Session Continuity
 
@@ -74,10 +76,10 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 
 ### Last Session
 - **Date:** 2026-01-25
-- **Phase:** 4 - Widget Polish (COMPLETE)
-- **Completed:** 04-01-PLAN.md (Widget Polish - padding and verification)
-- **In Progress:** --
-- **Next Steps:** Begin Phase 5 (Testing & Bug Fixes)
+- **Phase:** 5 - Testing & Bug Fixes (In Progress)
+- **Completed:** 05-01-PLAN.md (Test Checklist Generation)
+- **In Progress:** User manual testing with TEST-CHECKLIST.md
+- **Next Steps:** User works through checklist, reports bugs; execute 05-02-PLAN.md for bug fixes
 
 ### Blockers
 None
@@ -87,8 +89,9 @@ None
 - v1.0 focuses on demonstrating native iOS integration
 - Backup plan: Character Chat feature if v1.0 still fails review
 - Content (500 jokes) will be manually provided by user after all technical work and testing complete
+- TEST-CHECKLIST.md ready at: .planning/phases/05-testing-bug-fixes/TEST-CHECKLIST.md
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-25 after Phase 4 completion*
+*Last updated: 2026-01-25 after 05-01-PLAN.md completion*
