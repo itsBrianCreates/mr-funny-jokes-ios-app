@@ -61,6 +61,8 @@
 		E10000000000000000000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* PrivacyInfo.xcprivacy */; };
 		F10000000000000000000001 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* SplashScreenView.swift */; };
 		F10000000000000000000002 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* NetworkMonitor.swift */; };
+		I10000000000000000000001 /* TellJokeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000001 /* TellJokeIntent.swift */; };
+		I10000000000000000000002 /* JokeSnippetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000002 /* JokeSnippetView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +141,8 @@
 		E20000000000000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F20000000000000000000001 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		F20000000000000000000002 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		I20000000000000000000001 /* TellJokeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TellJokeIntent.swift; sourceTree = "<group>"; };
+		I20000000000000000000002 /* JokeSnippetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeSnippetView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +186,7 @@
 				E20000000000000000000001 /* PrivacyInfo.xcprivacy */,
 				D20000000000000000000001 /* LaunchScreen.storyboard */,
 				A50000000000000000000004 /* App */,
+				I30000000000000000000001 /* Intents */,
 				A50000000000000000000005 /* Models */,
 				A50000000000000000000006 /* Views */,
 				A50000000000000000000007 /* ViewModels */,
@@ -340,6 +345,15 @@
 			path = MonthlyTopTen;
 			sourceTree = "<group>";
 		};
+		I30000000000000000000001 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				I20000000000000000000001 /* TellJokeIntent.swift */,
+				I20000000000000000000002 /* JokeSnippetView.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -481,6 +495,8 @@
 				B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
 				B10000000000000000000013 /* SharedJoke.swift in Sources */,
+				I10000000000000000000001 /* TellJokeIntent.swift in Sources */,
+				I10000000000000000000002 /* JokeSnippetView.swift in Sources */,
 				F10000000000000000000001 /* SplashScreenView.swift in Sources */,
 				F10000000000000000000002 /* NetworkMonitor.swift in Sources */,
 			);
