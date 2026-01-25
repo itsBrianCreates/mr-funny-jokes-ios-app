@@ -627,6 +627,10 @@ final class JokeViewModel: ObservableObject {
         }
     }
 
+    /// Tracks consecutive empty fetches to detect end of data
+    private var consecutiveEmptyFetches = 0
+    private let maxEmptyFetches = 3
+
     private func performLoadMore() async {
         isLoadingMore = true
         let startTime = Date()
@@ -646,9 +650,17 @@ final class JokeViewModel: ObservableObject {
             }
 
             if newJokes.isEmpty {
-                // No more jokes available
-                hasMoreJokes = false
+                // Track consecutive empty fetches
+                // For category filtering, we may need multiple fetches to find matching jokes
+                consecutiveEmptyFetches += 1
+                if consecutiveEmptyFetches >= maxEmptyFetches {
+                    // After 3 consecutive empty fetches, assume no more jokes
+                    hasMoreJokes = false
+                }
             } else {
+                // Reset empty fetch counter on successful fetch
+                consecutiveEmptyFetches = 0
+
                 // Cache them
                 let grouped = Dictionary(grouping: newJokes, by: { $0.category })
                 for (category, categoryJokes) in grouped {
@@ -834,6 +846,7 @@ final class JokeViewModel: ObservableObject {
         HapticManager.shared.lightTap()
         selectedCategory = category
         hasMoreJokes = true // Reset when changing categories
+        consecutiveEmptyFetches = 0 // Reset empty fetch counter
         firestoreService.resetPagination() // Reset Firestore pagination
 
         // Fetch jokes for the selected category

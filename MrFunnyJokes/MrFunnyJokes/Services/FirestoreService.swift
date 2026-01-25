@@ -84,24 +84,42 @@ final class FirestoreService {
     ///   - limit: Number of jokes to fetch (default 20)
     ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
     /// - Returns: Array of Joke objects
+    /// - Note: Fetches all jokes and filters client-side to ensure jokes with
+    ///         non-standard type values are still categorized correctly by toJoke()
     func fetchJokes(category: JokeCategory, limit: Int = 20, forceRefresh: Bool = false) async throws -> [Joke] {
         lastDocumentsByCategory[category] = nil
 
-        // Query using all known type variants for this category
-        // This handles inconsistent type values in the database (e.g., "pickup_line", "pickup line", "pickup")
+        // Fetch more than needed since we filter client-side
+        // This ensures we get enough jokes of the desired category
+        let fetchMultiplier = 5
+        let fetchLimit = limit * fetchMultiplier
+
         let query = db.collection(jokesCollection)
-            .whereField("type", in: category.firestoreTypeVariants)
             .order(by: "popularity_score", descending: true)
-            .limit(to: limit)
+            .limit(to: fetchLimit)
 
         let snapshot = forceRefresh
             ? try await query.getDocuments(source: .server)
             : try await query.getDocuments()
-        lastDocumentsByCategory[category] = snapshot.documents.last
 
-        return snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
+        // Convert all jokes (toJoke handles categorization based on content)
+        let allJokes = snapshot.documents.compactMap { document -> (joke: Joke, doc: DocumentSnapshot)? in
+            guard let joke = try? document.data(as: FirestoreJoke.self).toJoke() else {
+                return nil
+            }
+            return (joke, document)
         }
+
+        // Filter to only the requested category
+        let filteredJokes = allJokes.filter { $0.joke.category == category }
+
+        // Store the last document of the filtered results for pagination
+        if let lastFiltered = filteredJokes.last {
+            lastDocumentsByCategory[category] = lastFiltered.doc
+        }
+
+        // Return up to the requested limit
+        return Array(filteredJokes.prefix(limit).map { $0.joke })
     }
 
     /// Fetches more jokes for a specific category (pagination)
@@ -114,22 +132,35 @@ final class FirestoreService {
             return try await fetchJokes(category: category, limit: limit)
         }
 
-        // Query using all known type variants for this category
+        // Fetch more than needed since we filter client-side
+        let fetchMultiplier = 5
+        let fetchLimit = limit * fetchMultiplier
+
         let query = db.collection(jokesCollection)
-            .whereField("type", in: category.firestoreTypeVariants)
             .order(by: "popularity_score", descending: true)
             .start(afterDocument: lastDoc)
-            .limit(to: limit)
+            .limit(to: fetchLimit)
 
         let snapshot = try await query.getDocuments()
 
+        // Convert all jokes (toJoke handles categorization based on content)
+        let allJokes = snapshot.documents.compactMap { document -> (joke: Joke, doc: DocumentSnapshot)? in
+            guard let joke = try? document.data(as: FirestoreJoke.self).toJoke() else {
+                return nil
+            }
+            return (joke, document)
+        }
+
+        // Filter to only the requested category
+        let filteredJokes = allJokes.filter { $0.joke.category == category }
+
+        // Update pagination cursor to the last document we processed
+        // (even if it wasn't the desired category, to continue pagination)
         if let newLastDoc = snapshot.documents.last {
             lastDocumentsByCategory[category] = newLastDoc
         }
 
-        return snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
+        return Array(filteredJokes.prefix(limit).map { $0.joke })
     }
 
     /// Fetches initial jokes for "All Jokes" feed (no category filtering)
