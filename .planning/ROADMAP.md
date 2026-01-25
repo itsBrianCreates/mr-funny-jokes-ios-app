@@ -77,7 +77,11 @@ Plans:
 
 **Requirements:** SIRI-01, SIRI-02, SIRI-03, SIRI-04
 
-**Plans:** (created by /gsd:plan-phase)
+**Plans:** 2 plans (Wave 1 infrastructure, Wave 2 integration + verification)
+
+Plans:
+- [ ] 03-01-PLAN.md — Create Siri intent infrastructure (TellJokeIntent, snippets, shortcuts provider)
+- [ ] 03-02-PLAN.md — Wire caching into app and verify on physical device
 
 **Success Criteria:**
 1. Saying "Hey Siri, tell me a joke from Mr. Funny Jokes" triggers the app intent
