@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class WeeklyRankingsViewModel: ObservableObject {
+final class MonthlyRankingsViewModel: ObservableObject {
     // MARK: - Published Properties
 
     @Published var hilariousJokes: [RankedJoke] = []
@@ -11,7 +11,7 @@ final class WeeklyRankingsViewModel: ObservableObject {
     @Published var hasData = false
     @Published var totalHilariousRatings = 0
     @Published var totalHorribleRatings = 0
-    @Published var weekDateRange: String = ""
+    @Published var monthDateRange: String = ""
 
     // MARK: - Private Properties
 
@@ -43,7 +43,7 @@ final class WeeklyRankingsViewModel: ObservableObject {
         isLoading = true
 
         do {
-            // Fetch weekly rankings from Firestore
+            // Fetch monthly rankings from Firestore (backend collection name unchanged)
             guard let rankings = try await firestoreService.fetchWeeklyRankings() else {
                 // No rankings data yet
                 isLoading = false
@@ -76,19 +76,19 @@ final class WeeklyRankingsViewModel: ObservableObject {
             totalHorribleRatings = rankings.totalHorribleRatings
 
             // Format date range
-            weekDateRange = formatDateRange(start: rankings.weekStart, end: rankings.weekEnd)
+            monthDateRange = formatDateRange(start: rankings.weekStart, end: rankings.weekEnd)
 
             hasData = !hilariousJokes.isEmpty || !horribleJokes.isEmpty
 
         } catch {
-            print("Failed to load weekly rankings: \(error)")
+            print("Failed to load monthly rankings: \(error)")
             hasData = false
         }
 
         isLoading = false
     }
 
-    /// Format the week date range for display (e.g., "Dec 9 - 15")
+    /// Format the month date range for display (e.g., "Dec 1 - 31")
     private func formatDateRange(start: Date, end: Date) -> String {
         let calendar = Calendar.current
         let startMonth = calendar.component(.month, from: start)
@@ -105,7 +105,7 @@ final class WeeklyRankingsViewModel: ObservableObject {
         let endDayStr = dayFormatter.string(from: end)
 
         if startMonth == endMonth {
-            // Same month: "Dec 9 - 15"
+            // Same month: "Dec 1 - 31"
             return "\(startMonthStr) \(startDayStr) - \(endDayStr)"
         } else {
             // Different months: "Dec 30 - Jan 5"
