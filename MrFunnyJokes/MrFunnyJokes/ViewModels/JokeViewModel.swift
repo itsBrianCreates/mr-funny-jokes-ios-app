@@ -436,6 +436,18 @@ final class JokeViewModel: ObservableObject {
                     storage.saveCachedJokes(categoryJokes, for: category)
                 }
 
+                // Cache jokes for Siri access (offline support)
+                let sharedJokesForSiri = newJokes.map { joke in
+                    SharedJoke(
+                        id: joke.firestoreId ?? joke.id.uuidString,
+                        setup: joke.setup,
+                        punchline: joke.punchline,
+                        character: joke.character,
+                        type: joke.category.rawValue
+                    )
+                }
+                sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
+
                 // Apply user ratings from local storage
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
@@ -477,6 +489,18 @@ final class JokeViewModel: ObservableObject {
                 for (category, categoryJokes) in grouped {
                     storage.saveCachedJokes(categoryJokes, for: category)
                 }
+
+                // Cache jokes for Siri access (offline support)
+                let sharedJokesForSiri = newJokes.map { joke in
+                    SharedJoke(
+                        id: joke.firestoreId ?? joke.id.uuidString,
+                        setup: joke.setup,
+                        punchline: joke.punchline,
+                        character: joke.character,
+                        type: joke.category.rawValue
+                    )
+                }
+                sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
 
                 // Apply user ratings from local storage
                 let jokesWithRatings = newJokes.map { joke -> Joke in
@@ -543,6 +567,18 @@ final class JokeViewModel: ObservableObject {
                 for (category, categoryJokes) in grouped {
                     storage.replaceCachedJokes(categoryJokes, for: category)
                 }
+
+                // Update Siri cache with fresh jokes
+                let sharedJokesForSiri = newJokes.map { joke in
+                    SharedJoke(
+                        id: joke.firestoreId ?? joke.id.uuidString,
+                        setup: joke.setup,
+                        punchline: joke.punchline,
+                        character: joke.character,
+                        type: joke.category.rawValue
+                    )
+                }
+                sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
 
                 // Apply user ratings
                 let jokesWithRatings = newJokes.map { joke -> Joke in
