@@ -2,11 +2,11 @@ import SwiftUI
 
 struct JokeFeedView: View {
     @ObservedObject var viewModel: JokeViewModel
-    @StateObject private var rankingsViewModel = WeeklyRankingsViewModel()
+    @StateObject private var rankingsViewModel = MonthlyRankingsViewModel()
     let onCharacterTap: (JokeCharacter) -> Void
 
-    /// State for navigating to Weekly Top 10 detail view
-    @State private var weeklyTopTenDestination: RankingType?
+    /// State for navigating to Monthly Top 10 detail view
+    @State private var monthlyTopTenDestination: RankingType?
 
     /// Unique identifier for the top anchor - used for reliable scroll-to-top
     private let topAnchorID = "feed-top-anchor"
@@ -26,8 +26,8 @@ struct JokeFeedView: View {
         viewModel.selectedCategory == nil
     }
 
-    /// Show Weekly Top 10 carousel only when viewing "All" jokes
-    private var showWeeklyTopTen: Bool {
+    /// Show Monthly Top 10 carousel only when viewing "All" jokes
+    private var showMonthlyTopTen: Bool {
         viewModel.selectedCategory == nil
     }
 
@@ -76,12 +76,12 @@ struct JokeFeedView: View {
                         }
                     }
 
-                    // Weekly Top 10 carousel (only when "All" is selected)
-                    if showWeeklyTopTen {
-                        WeeklyTopTenCarouselView(
+                    // Monthly Top 10 carousel (only when "All" is selected)
+                    if showMonthlyTopTen {
+                        MonthlyTopTenCarouselView(
                             viewModel: rankingsViewModel,
                             onCardTap: { type in
-                                weeklyTopTenDestination = type
+                                monthlyTopTenDestination = type
                             }
                         )
                     }
@@ -144,8 +144,8 @@ struct JokeFeedView: View {
             }
             .animation(.easeInOut(duration: 0.3), value: viewModel.isOffline)
             .animation(.easeInOut(duration: 0.3), value: viewModel.isLoadingMore)
-            .navigationDestination(item: $weeklyTopTenDestination) { type in
-                WeeklyTopTenDetailView(
+            .navigationDestination(item: $monthlyTopTenDestination) { type in
+                MonthlyTopTenDetailView(
                     viewModel: rankingsViewModel,
                     jokeViewModel: viewModel,
                     selectedType: type
