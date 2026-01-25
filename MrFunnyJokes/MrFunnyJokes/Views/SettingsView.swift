@@ -1,4 +1,5 @@
 import SwiftUI
+import AppIntents
 
 struct SettingsView: View {
     @ObservedObject var notificationManager = NotificationManager.shared
@@ -8,6 +9,7 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 notificationSection
+                siriSection
                 aboutSection
             }
             .navigationTitle("Settings")
@@ -93,6 +95,19 @@ struct SettingsView: View {
             Text("Notifications")
         } footer: {
             Text("Want to adjust when you get jokes? Tap above to manage your notification preferences in Settings.")
+        }
+    }
+
+    // MARK: - Siri Section
+
+    private var siriSection: some View {
+        Section {
+            SiriTipView(intent: TellJokeIntent())
+                .siriTipViewStyle(.automatic)
+        } header: {
+            Text("Siri")
+        } footer: {
+            Text("Say this to get a random joke without opening the app.")
         }
     }
 
