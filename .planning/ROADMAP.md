@@ -10,7 +10,7 @@
 |---|-------|------|--------------|--------|
 | 1 | Foundation & Cleanup | Platform changes and UI cleanup to prepare for native features | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
 | 2 | Lock Screen Widgets | Add lock screen widgets for Joke of the Day display | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
-| 3 | Siri Integration | Voice-activated joke delivery via App Intents | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Pending |
+| 3 | Siri Integration | Voice-activated joke delivery via App Intents | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Complete |
 | 4 | Widget Polish | Verify and polish all home screen widget sizes | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
 | 5 | Testing & Bug Fixes | Comprehensive testing and bug resolution | — | Pending |
 | 6 | Content & Submission | User-provided jokes + App Store submission | CONT-01 | Pending |
@@ -80,8 +80,8 @@ Plans:
 **Plans:** 2 plans (Wave 1 infrastructure, Wave 2 integration + verification)
 
 Plans:
-- [ ] 03-01-PLAN.md — Create Siri intent infrastructure (TellJokeIntent, snippets, shortcuts provider)
-- [ ] 03-02-PLAN.md — Wire caching into app and verify on physical device
+- [x] 03-01-PLAN.md — Create Siri intent infrastructure (TellJokeIntent, snippets, shortcuts provider)
+- [x] 03-02-PLAN.md — Wire caching into app and verify on physical device
 
 **Success Criteria:**
 1. Saying "Hey Siri, tell me a joke from Mr. Funny Jokes" triggers the app intent

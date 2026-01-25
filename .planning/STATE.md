@@ -3,18 +3,18 @@
 ## Current Position
 
 **Milestone:** v1.0
-**Phase:** 3 of 6 (Siri Integration) - IN PROGRESS
-**Plan:** 1 of 2 in phase complete
-**Status:** Siri infrastructure complete, verification pending
+**Phase:** 3 of 6 (Siri Integration) - COMPLETE
+**Plan:** 2 of 2 in phase complete
+**Status:** Phase complete, ready for Phase 4
 
-Progress: [#####-----] ~40% complete (5 plans of ~12 total)
+Progress: [######----] 3/6 phases complete
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2025-01-24)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Phase 3 - Siri Integration (in progress)
+**Current focus:** Phase 4 - Widget Polish (next)
 
 ## v1.0 Overview
 
@@ -22,7 +22,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 |-------|------|--------------|--------|
 | 1 | Foundation & Cleanup | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
 | 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
-| 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | In Progress |
+| 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Complete |
 | 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
 | 5 | Testing & Bug Fixes | - | Pending |
 | 6 | Content & Submission | CONT-01 | Pending |
@@ -44,6 +44,8 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 - 2026-01-25: Completed 02-02-PLAN.md (Lock Screen Widget Verification)
 - 2026-01-25: Phase 2 complete (all lock screen widgets verified on physical device)
 - 2026-01-25: Completed 03-01-PLAN.md (Siri Integration Infrastructure)
+- 2026-01-25: Completed 03-02-PLAN.md (Siri Integration Verification)
+- 2026-01-25: Phase 3 complete (Siri Shortcuts works; voice command deferred to backlog)
 
 ## Accumulated Decisions
 
@@ -60,6 +62,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | openAppWhenRun=false for TellJokeIntent | 03-01 | Hands-free Siri experience - speak joke without opening app |
 | All Siri phrases include .applicationName | 03-01 | Required for Siri to recognize app and register shortcuts |
 | Recently-told tracking (FIFO, max 10) | 03-01 | Avoid immediate joke repeats in Siri responses |
+| Siri Shortcuts approved, voice command deferred | 03-02 | Shortcuts app works reliably; voice recognition iOS-dependent |
 
 ## Session Continuity
 
@@ -67,10 +70,10 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 
 ### Last Session
 - **Date:** 2026-01-25
-- **Phase:** 3 - Siri Integration (IN PROGRESS)
-- **Completed:** 03-01-PLAN.md (Siri Integration Infrastructure)
+- **Phase:** 3 - Siri Integration (COMPLETE)
+- **Completed:** 03-02-PLAN.md (Siri Integration Verification)
 - **In Progress:** --
-- **Next Steps:** Execute 03-02-PLAN.md (Siri Integration Verification)
+- **Next Steps:** Begin Phase 4 (Widget Polish)
 
 ### Blockers
 None
@@ -85,4 +88,4 @@ None
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-25 after 03-01-PLAN.md completion*
+*Last updated: 2026-01-25 after Phase 3 completion*

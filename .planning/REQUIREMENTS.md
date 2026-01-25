@@ -9,10 +9,10 @@ Requirements for v1.0 release. Each maps to roadmap phases.
 
 ### Siri Integration
 
-- [ ] **SIRI-01**: User can say "Hey Siri, tell me a joke" to trigger the app
-- [ ] **SIRI-02**: Siri speaks both setup and punchline aloud
-- [ ] **SIRI-03**: Siri intent works offline using cached jokes
-- [ ] **SIRI-04**: App Shortcut auto-registers in Shortcuts app
+- [x] **SIRI-01**: User can say "Hey Siri, tell me a joke" to trigger the app (via Shortcuts app; voice command deferred to backlog)
+- [x] **SIRI-02**: Siri speaks both setup and punchline aloud
+- [x] **SIRI-03**: Siri intent works offline using cached jokes
+- [x] **SIRI-04**: App Shortcut auto-registers in Shortcuts app
 
 ### Lock Screen Widgets
 
@@ -94,10 +94,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WIDGET-02 | Phase 2: Lock Screen Widgets | Complete |
 | WIDGET-03 | Phase 2: Lock Screen Widgets | Complete |
 | WIDGET-04 | Phase 2: Lock Screen Widgets | Complete |
-| SIRI-01 | Phase 3: Siri Integration | Pending |
-| SIRI-02 | Phase 3: Siri Integration | Pending |
-| SIRI-03 | Phase 3: Siri Integration | Pending |
-| SIRI-04 | Phase 3: Siri Integration | Pending |
+| SIRI-01 | Phase 3: Siri Integration | Complete |
+| SIRI-02 | Phase 3: Siri Integration | Complete |
+| SIRI-03 | Phase 3: Siri Integration | Complete |
+| SIRI-04 | Phase 3: Siri Integration | Complete |
 | WIDGET-05 | Phase 4: Widget Polish | Pending |
 | WIDGET-06 | Phase 4: Widget Polish | Pending |
 | WIDGET-07 | Phase 4: Widget Polish | Pending |
