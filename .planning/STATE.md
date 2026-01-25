@@ -3,18 +3,18 @@
 ## Current Position
 
 **Milestone:** v1.0
-**Phase:** 2 of 6 (Lock Screen Widgets) - COMPLETE
-**Plan:** 2 of 2 in phase complete
-**Status:** Phase complete, ready for Phase 3
+**Phase:** 3 of 6 (Siri Integration) - IN PROGRESS
+**Plan:** 1 of 2 in phase complete
+**Status:** Siri infrastructure complete, verification pending
 
-Progress: [####------] 2/6 phases complete
+Progress: [#####-----] ~40% complete (5 plans of ~12 total)
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2025-01-24)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Phase 3 - Siri Integration (next)
+**Current focus:** Phase 3 - Siri Integration (in progress)
 
 ## v1.0 Overview
 
@@ -22,7 +22,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 |-------|------|--------------|--------|
 | 1 | Foundation & Cleanup | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
 | 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
-| 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Pending |
+| 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | In Progress |
 | 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
 | 5 | Testing & Bug Fixes | - | Pending |
 | 6 | Content & Submission | CONT-01 | Pending |
@@ -43,6 +43,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 - 2026-01-25: Completed 02-01-PLAN.md (Lock Screen Widget Views)
 - 2026-01-25: Completed 02-02-PLAN.md (Lock Screen Widget Verification)
 - 2026-01-25: Phase 2 complete (all lock screen widgets verified on physical device)
+- 2026-01-25: Completed 03-01-PLAN.md (Siri Integration Infrastructure)
 
 ## Accumulated Decisions
 
@@ -56,6 +57,9 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | Rectangular widget: character name + truncated joke setup | 02-01 | Prioritize character name (headline) over joke text (caption) |
 | ViewThatFits for inline widget text | 02-01 | Adaptive text layout for constrained space |
 | Use SF Symbol for circular lock screen widget | 02-02 | Custom character images don't render in vibrant mode; SF Symbols work natively |
+| openAppWhenRun=false for TellJokeIntent | 03-01 | Hands-free Siri experience - speak joke without opening app |
+| All Siri phrases include .applicationName | 03-01 | Required for Siri to recognize app and register shortcuts |
+| Recently-told tracking (FIFO, max 10) | 03-01 | Avoid immediate joke repeats in Siri responses |
 
 ## Session Continuity
 
@@ -63,10 +67,10 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 
 ### Last Session
 - **Date:** 2026-01-25
-- **Phase:** 2 - Lock Screen Widgets (COMPLETE)
-- **Completed:** 02-02-PLAN.md (Lock Screen Widget Verification)
+- **Phase:** 3 - Siri Integration (IN PROGRESS)
+- **Completed:** 03-01-PLAN.md (Siri Integration Infrastructure)
 - **In Progress:** --
-- **Next Steps:** Begin Phase 3 (Siri Integration)
+- **Next Steps:** Execute 03-02-PLAN.md (Siri Integration Verification)
 
 ### Blockers
 None
@@ -81,4 +85,4 @@ None
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-25 after 02-02-PLAN.md completion*
+*Last updated: 2026-01-25 after 03-01-PLAN.md completion*
