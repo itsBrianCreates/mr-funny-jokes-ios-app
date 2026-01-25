@@ -131,7 +131,11 @@ Plans:
 
 **Requirements:** —
 
-**Plans:** (created by /gsd:plan-phase)
+**Plans:** 2 plans (Wave 1 checklist generation, Wave 2 user testing + bug fixes)
+
+Plans:
+- [ ] 05-01-PLAN.md — Generate comprehensive test checklist for v1.0 features
+- [ ] 05-02-PLAN.md — User executes tests and reports bugs for immediate resolution
 
 **Success Criteria:**
 1. All Siri commands tested on real device (not just simulator)
