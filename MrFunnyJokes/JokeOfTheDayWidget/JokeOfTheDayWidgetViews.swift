@@ -79,7 +79,7 @@ struct SmallWidgetView: View {
                 }
             }
         }
-        .padding(12)
+        .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .widgetURL(URL(string: "mrfunnyjokes://home"))
     }
@@ -138,7 +138,7 @@ struct MediumWidgetView: View {
                 Spacer()
             }
         }
-        .padding(16)
+        .padding(11)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .widgetURL(URL(string: "mrfunnyjokes://home"))
     }
@@ -210,7 +210,7 @@ struct LargeWidgetView: View {
                 }
             }
         }
-        .padding(16)
+        .padding(11)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .widgetURL(URL(string: "mrfunnyjokes://home"))
     }
