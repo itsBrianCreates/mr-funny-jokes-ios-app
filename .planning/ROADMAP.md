@@ -105,7 +105,10 @@ Plans:
 
 **Requirements:** WIDGET-05, WIDGET-06, WIDGET-07
 
-**Plans:** (created by /gsd:plan-phase)
+**Plans:** 1 plan (Wave 1 - polish + verification)
+
+Plans:
+- [ ] 04-01-PLAN.md — Polish widget padding and verify on physical device
 
 **Success Criteria:**
 1. Small widget displays joke of the day with readable text and proper character branding
