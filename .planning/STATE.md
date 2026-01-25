@@ -3,10 +3,11 @@
 ## Current Position
 
 **Milestone:** v1.0
-**Phase:** 1 complete, ready for Phase 2
-**Status:** Phase 1 executed and verified
+**Phase:** 2 of 6 (Lock Screen Widgets)
+**Plan:** 1 of 1 in phase complete
+**Status:** In progress
 
-Progress: [##--------] 1/6 phases complete
+Progress: [###-------] 2/6 phases (Phase 2 plan 1 complete)
 
 ## Project Reference
 
@@ -20,7 +21,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 1 | Foundation & Cleanup | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
-| 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Pending |
+| 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | In Progress |
 | 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Pending |
 | 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
 | 5 | Testing & Bug Fixes | - | Pending |
@@ -39,6 +40,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 - 2026-01-24: Completed 01-01-PLAN.md (Verify iPhone-only deployment)
 - 2026-01-24: Completed 01-02-PLAN.md (Rename Weekly to Monthly rankings)
 - 2026-01-24: Phase 1 verified (11/11 must-haves passed)
+- 2026-01-25: Completed 02-01-PLAN.md (Lock Screen Widget Views)
 
 ## Accumulated Decisions
 
@@ -48,17 +50,20 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | Keep NotificationManager time properties, remove only UI picker | 01-03 | Scheduling still needs stored time values |
 | iPhone-only deployment verified (TARGETED_DEVICE_FAMILY = 1) | 01-01 | All 4 build configs already correct, no changes needed |
 | Keep backend collection name as weekly_rankings | 01-02 | UI displays "Monthly" but Firestore collection stays unchanged to avoid migration |
+| Circular widget displays character avatar only | 02-01 | Instantly recognizable, no text needed |
+| Rectangular widget: character name + truncated joke setup | 02-01 | Prioritize character name (headline) over joke text (caption) |
+| ViewThatFits for inline widget text | 02-01 | Adaptive text layout for constrained space |
 
 ## Session Continuity
 
 (Updated by /gsd:pause-work and /gsd:resume-work)
 
 ### Last Session
-- **Date:** 2026-01-24
-- **Phase:** 1 - Foundation & Cleanup
-- **Completed:** All 3 plans (01-01, 01-02, 01-03) + verification
+- **Date:** 2026-01-25
+- **Phase:** 2 - Lock Screen Widgets
+- **Completed:** 02-01-PLAN.md (Lock Screen Widget Views)
 - **In Progress:** --
-- **Next Steps:** Plan and execute Phase 2 (Lock Screen Widgets)
+- **Next Steps:** Verify lock screen widgets on physical device (Phase 02-02 if planned, or complete Phase 2)
 
 ### Blockers
 None
@@ -72,4 +77,4 @@ None
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-24 after Phase 1 completion*
+*Last updated: 2026-01-25 after 02-01-PLAN.md completion*
