@@ -34,6 +34,8 @@
 		B10000000000000000000002 /* SharedStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* SharedStorageService.swift */; };
 		B10000000000000000000003 /* SharedJokeOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* SharedJokeOfTheDay.swift */; };
 		B10000000000000000000004 /* SharedStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* SharedStorageService.swift */; };
+		B10000000000000000000013 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
+		B10000000000000000000014 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
 		B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* JokeOfTheDayWidget.swift */; };
 		B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000004 /* JokeOfTheDayProvider.swift */; };
 		B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */; };
@@ -113,6 +115,7 @@
 		A30000000000000000000001 /* MrFunnyJokes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MrFunnyJokes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20000000000000000000001 /* SharedJokeOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJokeOfTheDay.swift; sourceTree = "<group>"; };
 		B20000000000000000000002 /* SharedStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStorageService.swift; sourceTree = "<group>"; };
+		B20000000000000000000010 /* SharedJoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJoke.swift; sourceTree = "<group>"; };
 		B20000000000000000000003 /* JokeOfTheDayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayWidget.swift; sourceTree = "<group>"; };
 		B20000000000000000000004 /* JokeOfTheDayProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayProvider.swift; sourceTree = "<group>"; };
 		B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayWidgetViews.swift; sourceTree = "<group>"; };
@@ -299,6 +302,7 @@
 		B50000000000000000000002 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				B20000000000000000000010 /* SharedJoke.swift */,
 				B20000000000000000000001 /* SharedJokeOfTheDay.swift */,
 				B20000000000000000000002 /* SharedStorageService.swift */,
 			);
@@ -476,6 +480,7 @@
 				A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */,
 				B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
+				B10000000000000000000013 /* SharedJoke.swift in Sources */,
 				F10000000000000000000001 /* SplashScreenView.swift in Sources */,
 				F10000000000000000000002 /* NetworkMonitor.swift in Sources */,
 			);
@@ -487,6 +492,7 @@
 			files = (
 				B10000000000000000000003 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000004 /* SharedStorageService.swift in Sources */,
+				B10000000000000000000014 /* SharedJoke.swift in Sources */,
 				B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */,
 				B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */,
 				B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */,
