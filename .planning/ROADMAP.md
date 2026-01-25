@@ -155,11 +155,14 @@ Plans:
 
 ### Phase 6: Content & Submission
 
-**Goal:** User manually provides and reviews 500 jokes, then prepare App Store submission materials.
+**Goal:** Prepare App Store submission materials to address Guideline 4.2.2 rejection by demonstrating native iOS integration.
 
 **Requirements:** CONT-01
 
-**Plans:** (created by /gsd:plan-phase)
+**Plans:** 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md — Create App Store submission materials (App Review Notes, Description, Screenshot Guide)
 
 **Success Criteria:**
 1. Firebase contains 500 jokes distributed across all 5 characters
@@ -170,8 +173,8 @@ Plans:
 - **User provides jokes manually** - not automated content generation
 - Use existing `scripts/add-jokes.js` for batch insertion after user review
 - Follow CLAUDE.md joke processing workflow for categorization
-- App Review Notes template provided in research summary - customize for submission
-- Include demo video showing Siri integration and widget functionality
+- App Review Notes lead with summary of ALL native features (Siri, widgets, notifications)
+- Written testing steps only - no demo video per user decision
 - This phase starts AFTER all technical phases and testing are complete
 
 ---
