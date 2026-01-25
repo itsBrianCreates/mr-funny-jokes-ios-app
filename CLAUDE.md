@@ -7,17 +7,9 @@ Mr. Funny Jokes is an iOS app featuring joke content delivered by different char
 
 ## SwiftUI Development Guidelines
 
-### Use Native iOS Components
-Always prefer native SwiftUI/UIKit components over custom implementations:
+**Target: iOS 17+**
 
-- **Segmented controls**: Use `Picker` with `.pickerStyle(.segmented)` instead of custom tab selectors
-- **Navigation**: Use `NavigationStack`, `NavigationLink`, and `.navigationDestination`
-- **Lists**: Use `List` for standard scrollable content with selection
-- **Buttons**: Use `Button` with standard button styles (`.bordered`, `.borderedProminent`, etc.)
-- **Text fields**: Use `TextField` and `SecureField`
-- **Toggles**: Use `Toggle` instead of custom switches
-- **Alerts/Sheets**: Use `.alert()` and `.sheet()` modifiers
-- **Menus**: Use `Menu` for contextual actions
+Always use native SwiftUI components. Do not invent or create custom implementations when a native component exists. Use what SwiftUI provides out of the box.
 
 ### Why Native Components?
 - Consistent iOS look and feel
