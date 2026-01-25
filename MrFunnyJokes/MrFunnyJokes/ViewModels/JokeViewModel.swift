@@ -217,6 +217,7 @@ final class JokeViewModel: ObservableObject {
 
         let firestoreId = userInfo["firestoreId"] as? String
         let jokeId = userInfo["jokeId"] as? UUID
+        let jokeData = userInfo["jokeData"] as? Data
 
         // Find and update the joke in our array
         let jokeIndex = jokes.firstIndex(where: {
@@ -230,12 +231,24 @@ final class JokeViewModel: ObservableObject {
         })
 
         if let index = jokeIndex {
+            // Joke exists in array - update its rating
             if rating == 0 {
                 jokes[index].userRating = nil
             } else {
                 jokes[index].userRating = rating
             }
+        } else if rating != 0, let data = jokeData {
+            // Joke not in array and rating is being set (not cleared)
+            // Decode the joke from notification data and add it to the array
+            // This ensures jokes rated in character views appear in the Me tab
+            if var joke = try? JSONDecoder().decode(Joke.self, from: data) {
+                joke.userRating = rating
+                jokes.append(joke)
+            }
         }
+
+        // Invalidate sort cache since ratings changed
+        invalidateSortCache()
     }
 
     // MARK: - Feed Algorithm (Freshness Sorting)

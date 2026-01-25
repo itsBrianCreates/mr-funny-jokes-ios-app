@@ -256,13 +256,20 @@ final class CharacterDetailViewModel: ObservableObject {
 
         // Notify other ViewModels (especially JokeViewModel) about the rating change
         // This ensures the Me tab updates when ratings are made in character views
+        // Include the full joke data so JokeViewModel can add it if not already present
+        var jokeForNotification = joke
+        let effectiveRating = rating == 0 ? nil : min(max(rating, 1), 5)
+        jokeForNotification.userRating = effectiveRating
+        let jokeData = try? JSONEncoder().encode(jokeForNotification)
+
         NotificationCenter.default.post(
             name: .jokeRatingDidChange,
             object: nil,
             userInfo: [
                 "firestoreId": joke.firestoreId as Any,
                 "jokeId": joke.id,
-                "rating": rating
+                "rating": rating,
+                "jokeData": jokeData as Any
             ]
         )
     }
