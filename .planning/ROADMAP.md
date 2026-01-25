@@ -12,7 +12,7 @@
 | 2 | Lock Screen Widgets | Add lock screen widgets for Joke of the Day display | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
 | 3 | Siri Integration | Voice-activated joke delivery via App Intents | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Complete |
 | 4 | Widget Polish | Verify and polish all home screen widget sizes | WIDGET-05, WIDGET-06, WIDGET-07 | Complete |
-| 5 | Testing & Bug Fixes | Comprehensive testing and bug resolution | — | Pending |
+| 5 | Testing & Bug Fixes | Comprehensive testing and bug resolution | — | Complete |
 | 6 | Content & Submission | User-provided jokes + App Store submission | CONT-01 | Pending |
 
 ## Phase Details
@@ -134,8 +134,8 @@ Plans:
 **Plans:** 2 plans (Wave 1 checklist generation, Wave 2 user testing + bug fixes)
 
 Plans:
-- [ ] 05-01-PLAN.md — Generate comprehensive test checklist for v1.0 features
-- [ ] 05-02-PLAN.md — User executes tests and reports bugs for immediate resolution
+- [x] 05-01-PLAN.md — Generate comprehensive test checklist for v1.0 features
+- [x] 05-02-PLAN.md — User executes tests and reports bugs for immediate resolution
 
 **Success Criteria:**
 1. All Siri commands tested on real device (not just simulator)
