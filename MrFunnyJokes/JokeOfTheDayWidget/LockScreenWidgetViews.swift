@@ -14,8 +14,9 @@ struct AccessoryCircularView: View {
             if let imageName = characterImageName(for: joke.character) {
                 Image(imageName)
                     .resizable()
-                    .scaledToFit()
-                    .padding(4)
+                    .scaledToFill()
+                    .padding(6)
+                    .clipShape(Circle())
             } else {
                 // Fallback if no character image
                 Image(systemName: "face.smiling")
