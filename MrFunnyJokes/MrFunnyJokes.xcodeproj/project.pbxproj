@@ -48,21 +48,16 @@
 		C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9622EE0A55A007A6AFF /* FirebaseCore */; };
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
-		C353057B2EEDF96100C81E13 /* WeeklyTopTenDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305792EEDF96100C81E13 /* WeeklyTopTenDetailView.swift */; };
-		C353057C2EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305782EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift */; };
+		C353057B2EEDF96100C81E13 /* MonthlyTopTenDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305792EEDF96100C81E13 /* MonthlyTopTenDetailView.swift */; };
+		C353057C2EEDF96100C81E13 /* MonthlyTopTenCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305782EEDF96100C81E13 /* MonthlyTopTenCarouselView.swift */; };
 		C353057D2EEDF96100C81E13 /* RankedJokeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35305772EEDF96100C81E13 /* RankedJokeCard.swift */; };
-		C353057F2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C353057E2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift */; };
+		C353057F2EEDF9A300C81E13 /* MonthlyRankingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C353057E2EEDF9A300C81E13 /* MonthlyRankingsViewModel.swift */; };
 		C3DE8C122EEA7FE7009729AF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C112EEA7FE7009729AF /* SettingsView.swift */; };
 		C3DE8C142EEA805B009729AF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3DE8C132EEA805B009729AF /* NotificationManager.swift */; };
 		D10000000000000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D20000000000000000000001 /* LaunchScreen.storyboard */; };
 		E10000000000000000000001 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000001 /* PrivacyInfo.xcprivacy */; };
 		F10000000000000000000001 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000001 /* SplashScreenView.swift */; };
 		F10000000000000000000002 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* NetworkMonitor.swift */; };
-		V10000000000000000000001 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = V20000000000000000000001 /* Video.swift */; };
-		V10000000000000000000002 /* VideoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = V20000000000000000000002 /* VideoService.swift */; };
-		V10000000000000000000003 /* VideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = V20000000000000000000003 /* VideoViewModel.swift */; };
-		V10000000000000000000004 /* VideoFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V20000000000000000000004 /* VideoFeedView.swift */; };
-		V10000000000000000000005 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V20000000000000000000005 /* VideoPlayerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,20 +125,15 @@
 		C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailViewModel.swift; sourceTree = "<group>"; };
 		C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C35305772EEDF96100C81E13 /* RankedJokeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankedJokeCard.swift; sourceTree = "<group>"; };
-		C35305782EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTopTenCarouselView.swift; sourceTree = "<group>"; };
-		C35305792EEDF96100C81E13 /* WeeklyTopTenDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTopTenDetailView.swift; sourceTree = "<group>"; };
-		C353057E2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyRankingsViewModel.swift; sourceTree = "<group>"; };
+		C35305782EEDF96100C81E13 /* MonthlyTopTenCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyTopTenCarouselView.swift; sourceTree = "<group>"; };
+		C35305792EEDF96100C81E13 /* MonthlyTopTenDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyTopTenDetailView.swift; sourceTree = "<group>"; };
+		C353057E2EEDF9A300C81E13 /* MonthlyRankingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyRankingsViewModel.swift; sourceTree = "<group>"; };
 		C3DE8C112EEA7FE7009729AF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C3DE8C132EEA805B009729AF /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		D20000000000000000000001 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E20000000000000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F20000000000000000000001 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		F20000000000000000000002 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
-		V20000000000000000000001 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
-		V20000000000000000000002 /* VideoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoService.swift; sourceTree = "<group>"; };
-		V20000000000000000000003 /* VideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoViewModel.swift; sourceTree = "<group>"; };
-		V20000000000000000000004 /* VideoFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFeedView.swift; sourceTree = "<group>"; };
-		V20000000000000000000005 /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,7 +213,6 @@
 				A20000000000000000000005 /* Joke.swift */,
 				A20000000000000000000006 /* JokeCategory.swift */,
 				A20000000000000000000029 /* FirestoreModels.swift */,
-				V20000000000000000000001 /* Video.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -231,7 +220,7 @@
 		A50000000000000000000006 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C353057A2EEDF96100C81E13 /* WeeklyTopTen */,
+				C353057A2EEDF96100C81E13 /* MonthlyTopTen */,
 				C3DE8C112EEA7FE7009729AF /* SettingsView.swift */,
 				C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */,
 				C333E63C2EE10888007377F4 /* CharacterDetailView.swift */,
@@ -245,8 +234,6 @@
 				A20000000000000000000021 /* JokeOfTheDayView.swift */,
 				A20000000000000000000022 /* YouTubePromoCardView.swift */,
 				F20000000000000000000001 /* SplashScreenView.swift */,
-				V20000000000000000000004 /* VideoFeedView.swift */,
-				V20000000000000000000005 /* VideoPlayerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,7 +244,6 @@
 				C353057E2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift */,
 				C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */,
 				A20000000000000000000010 /* JokeViewModel.swift */,
-				V20000000000000000000003 /* VideoViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -269,7 +255,6 @@
 				A20000000000000000000012 /* LocalStorageService.swift */,
 				A20000000000000000000028 /* FirestoreService.swift */,
 				F20000000000000000000002 /* NetworkMonitor.swift */,
-				V20000000000000000000002 /* VideoService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -338,14 +323,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		C353057A2EEDF96100C81E13 /* WeeklyTopTen */ = {
+		C353057A2EEDF96100C81E13 /* MonthlyTopTen */ = {
 			isa = PBXGroup;
 			children = (
 				C35305772EEDF96100C81E13 /* RankedJokeCard.swift */,
-				C35305782EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift */,
-				C35305792EEDF96100C81E13 /* WeeklyTopTenDetailView.swift */,
+				C35305782EEDF96100C81E13 /* MonthlyTopTenCarouselView.swift */,
+				C35305792EEDF96100C81E13 /* MonthlyTopTenDetailView.swift */,
 			);
-			path = WeeklyTopTen;
+			path = MonthlyTopTen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -459,8 +444,8 @@
 				A10000000000000000000005 /* Joke.swift in Sources */,
 				A10000000000000000000006 /* JokeCategory.swift in Sources */,
 				A10000000000000000000007 /* JokeCardView.swift in Sources */,
-				C353057B2EEDF96100C81E13 /* WeeklyTopTenDetailView.swift in Sources */,
-				C353057C2EEDF96100C81E13 /* WeeklyTopTenCarouselView.swift in Sources */,
+				C353057B2EEDF96100C81E13 /* MonthlyTopTenDetailView.swift in Sources */,
+				C353057C2EEDF96100C81E13 /* MonthlyTopTenCarouselView.swift in Sources */,
 				C353057D2EEDF96100C81E13 /* RankedJokeCard.swift in Sources */,
 				A10000000000000000000008 /* JokeFeedView.swift in Sources */,
 				A10000000000000000000010 /* JokeViewModel.swift in Sources */,
@@ -473,7 +458,7 @@
 				A10000000000000000000028 /* FirestoreService.swift in Sources */,
 				A10000000000000000000029 /* FirestoreModels.swift in Sources */,
 				A10000000000000000000013 /* Color+Extensions.swift in Sources */,
-				C353057F2EEDF9A300C81E13 /* WeeklyRankingsViewModel.swift in Sources */,
+				C353057F2EEDF9A300C81E13 /* MonthlyRankingsViewModel.swift in Sources */,
 				A10000000000000000000014 /* HapticManager.swift in Sources */,
 				A10000000000000000000016 /* GrainOMeterView.swift in Sources */,
 				A10000000000000000000017 /* MeView.swift in Sources */,
@@ -490,11 +475,6 @@
 				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
 				F10000000000000000000001 /* SplashScreenView.swift in Sources */,
 				F10000000000000000000002 /* NetworkMonitor.swift in Sources */,
-				V10000000000000000000001 /* Video.swift in Sources */,
-				V10000000000000000000002 /* VideoService.swift in Sources */,
-				V10000000000000000000003 /* VideoViewModel.swift in Sources */,
-				V10000000000000000000004 /* VideoFeedView.swift in Sources */,
-				V10000000000000000000005 /* VideoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
