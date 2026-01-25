@@ -50,7 +50,11 @@ Plans:
 
 **Requirements:** WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04
 
-**Plans:** (created by /gsd:plan-phase)
+**Plans:** 2 plans (Wave 1 implementation, Wave 2 verification)
+
+Plans:
+- [ ] 02-01-PLAN.md — Implement lock screen widget views and configuration
+- [ ] 02-02-PLAN.md — Verify widgets on physical device
 
 **Success Criteria:**
 1. Users can add a circular lock screen widget showing character avatar or abbreviated joke
