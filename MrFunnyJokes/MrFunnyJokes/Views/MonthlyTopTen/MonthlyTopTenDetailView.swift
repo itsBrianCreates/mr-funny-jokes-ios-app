@@ -1,24 +1,24 @@
 import SwiftUI
 
-/// Detail view showing the Weekly Top 10 countdown with pill tabs for switching between Hilarious and Horrible
-struct WeeklyTopTenDetailView: View {
-    @ObservedObject var viewModel: WeeklyRankingsViewModel
+/// Detail view showing the Monthly Top 10 countdown with pill tabs for switching between Hilarious and Horrible
+struct MonthlyTopTenDetailView: View {
+    @ObservedObject var viewModel: MonthlyRankingsViewModel
     @ObservedObject var jokeViewModel: JokeViewModel
     @State var selectedType: RankingType
 
     /// Computed date range that uses viewModel data or fallback
     private var dateRange: String {
-        if !viewModel.weekDateRange.isEmpty {
-            return viewModel.weekDateRange
+        if !viewModel.monthDateRange.isEmpty {
+            return viewModel.monthDateRange
         }
-        // Fallback to current week
+        // Fallback to current month
         let calendar = Calendar(identifier: .iso8601)
         var easternCalendar = calendar
         easternCalendar.timeZone = TimeZone(identifier: "America/New_York")!
 
         let now = Date()
-        guard let weekInterval = easternCalendar.dateInterval(of: .weekOfYear, for: now) else {
-            return "This Week"
+        guard let monthInterval = easternCalendar.dateInterval(of: .month, for: now) else {
+            return "This Month"
         }
 
         let monthFormatter = DateFormatter()
@@ -26,16 +26,16 @@ struct WeeklyTopTenDetailView: View {
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "d"
 
-        let startMonth = easternCalendar.component(.month, from: weekInterval.start)
-        let endMonth = easternCalendar.component(.month, from: weekInterval.end)
-        let startMonthStr = monthFormatter.string(from: weekInterval.start)
-        let startDayStr = dayFormatter.string(from: weekInterval.start)
-        let endDayStr = dayFormatter.string(from: weekInterval.end.addingTimeInterval(-1))
+        let startMonth = easternCalendar.component(.month, from: monthInterval.start)
+        let endMonth = easternCalendar.component(.month, from: monthInterval.end)
+        let startMonthStr = monthFormatter.string(from: monthInterval.start)
+        let startDayStr = dayFormatter.string(from: monthInterval.start)
+        let endDayStr = dayFormatter.string(from: monthInterval.end.addingTimeInterval(-1))
 
         if startMonth == endMonth {
             return "\(startMonthStr) \(startDayStr) - \(endDayStr)"
         } else {
-            let endMonthStr = monthFormatter.string(from: weekInterval.end)
+            let endMonthStr = monthFormatter.string(from: monthInterval.end)
             return "\(startMonthStr) \(startDayStr) - \(endMonthStr) \(endDayStr)"
         }
     }
@@ -85,7 +85,7 @@ struct WeeklyTopTenDetailView: View {
             }
             .padding(.horizontal)
         }
-        .navigationTitle("Weekly Top 10")
+        .navigationTitle("Monthly Top 10")
         .navigationBarTitleDisplayMode(.large)
     }
 }
@@ -124,7 +124,7 @@ struct EmptyStateView: View {
                 .font(.title2.weight(.semibold))
 
             // Description
-            Text("Be one of the first to rate jokes this week!\nJokes rated \(type == .hilarious ? "5 stars" : "1 star") will appear here.")
+            Text("Be one of the first to rate jokes this month!\nJokes rated \(type == .hilarious ? "5 stars" : "1 star") will appear here.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -139,8 +139,8 @@ struct EmptyStateView: View {
 
 #Preview("With Data") {
     NavigationStack {
-        WeeklyTopTenDetailView(
-            viewModel: WeeklyRankingsViewModel(),
+        MonthlyTopTenDetailView(
+            viewModel: MonthlyRankingsViewModel(),
             jokeViewModel: JokeViewModel(),
             selectedType: .hilarious
         )

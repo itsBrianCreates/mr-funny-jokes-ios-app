@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// A section showing "Weekly Top 10" header with chevron and two category cards below
-struct WeeklyTopTenCarouselView: View {
-    @ObservedObject var viewModel: WeeklyRankingsViewModel
+/// A section showing "Monthly Top 10" header with chevron and two category cards below
+struct MonthlyTopTenCarouselView: View {
+    @ObservedObject var viewModel: MonthlyRankingsViewModel
     let onCardTap: (RankingType) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Header row with title and chevron
-            WeeklyTop10Header {
+            MonthlyTop10Header {
                 HapticManager.shared.mediumImpact()
                 onCardTap(.hilarious) // Default to hilarious when tapping header
             }
@@ -16,10 +16,10 @@ struct WeeklyTopTenCarouselView: View {
             // Two cards side by side
             HStack(spacing: 12) {
                 if viewModel.isLoading {
-                    WeeklyTopTenCardSkeleton()
-                    WeeklyTopTenCardSkeleton()
+                    MonthlyTopTenCardSkeleton()
+                    MonthlyTopTenCardSkeleton()
                 } else {
-                    WeeklyTopTenCard(
+                    MonthlyTopTenCard(
                         type: .hilarious,
                         totalRatings: viewModel.totalHilariousRatings,
                         hasData: viewModel.hasDataFor(type: .hilarious)
@@ -29,7 +29,7 @@ struct WeeklyTopTenCarouselView: View {
                         onCardTap(.hilarious)
                     }
 
-                    WeeklyTopTenCard(
+                    MonthlyTopTenCard(
                         type: .horrible,
                         totalRatings: viewModel.totalHorribleRatings,
                         hasData: viewModel.hasDataFor(type: .horrible)
@@ -46,13 +46,13 @@ struct WeeklyTopTenCarouselView: View {
 
 // MARK: - Header with Chevron
 
-struct WeeklyTop10Header: View {
+struct MonthlyTop10Header: View {
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 6) {
-                Text("Weekly Top 10")
+                Text("Monthly Top 10")
                     .font(.title2.weight(.bold))
                     .foregroundStyle(.primary)
 
@@ -68,10 +68,10 @@ struct WeeklyTop10Header: View {
     }
 }
 
-// MARK: - Weekly Top Ten Card
+// MARK: - Monthly Top Ten Card
 
 /// A compact card for Hilarious or Horrible category - soft background style
-struct WeeklyTopTenCard: View {
+struct MonthlyTopTenCard: View {
     let type: RankingType
     let totalRatings: Int
     let hasData: Bool
@@ -107,7 +107,7 @@ struct WeeklyTopTenCard: View {
 
 // MARK: - Skeleton Loader
 
-struct WeeklyTopTenCardSkeleton: View {
+struct MonthlyTopTenCardSkeleton: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             // Emoji skeleton
@@ -131,9 +131,9 @@ struct WeeklyTopTenCardSkeleton: View {
 #Preview {
     VStack(spacing: 24) {
         // Full carousel view
-        WeeklyTopTenCarouselView(
+        MonthlyTopTenCarouselView(
             viewModel: {
-                let vm = WeeklyRankingsViewModel()
+                let vm = MonthlyRankingsViewModel()
                 return vm
             }(),
             onCardTap: { type in
@@ -146,11 +146,11 @@ struct WeeklyTopTenCardSkeleton: View {
 
         // Skeleton state
         VStack(alignment: .leading, spacing: 12) {
-            WeeklyTop10Header {}
+            MonthlyTop10Header {}
 
             HStack(spacing: 12) {
-                WeeklyTopTenCardSkeleton()
-                WeeklyTopTenCardSkeleton()
+                MonthlyTopTenCardSkeleton()
+                MonthlyTopTenCardSkeleton()
             }
         }
         .padding(.horizontal)
@@ -159,16 +159,16 @@ struct WeeklyTopTenCardSkeleton: View {
 
         // Individual cards with data
         VStack(alignment: .leading, spacing: 12) {
-            WeeklyTop10Header {}
+            MonthlyTop10Header {}
 
             HStack(spacing: 12) {
-                WeeklyTopTenCard(
+                MonthlyTopTenCard(
                     type: .hilarious,
                     totalRatings: 2847,
                     hasData: true
                 )
 
-                WeeklyTopTenCard(
+                MonthlyTopTenCard(
                     type: .horrible,
                     totalRatings: 1523,
                     hasData: true
