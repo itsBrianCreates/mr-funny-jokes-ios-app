@@ -63,6 +63,7 @@
 		F10000000000000000000002 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000002 /* NetworkMonitor.swift */; };
 		I10000000000000000000001 /* TellJokeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000001 /* TellJokeIntent.swift */; };
 		I10000000000000000000002 /* JokeSnippetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000002 /* JokeSnippetView.swift */; };
+		I10000000000000000000003 /* MrFunnyShortcutsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000003 /* MrFunnyShortcutsProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,6 +144,7 @@
 		F20000000000000000000002 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		I20000000000000000000001 /* TellJokeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TellJokeIntent.swift; sourceTree = "<group>"; };
 		I20000000000000000000002 /* JokeSnippetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeSnippetView.swift; sourceTree = "<group>"; };
+		I20000000000000000000003 /* MrFunnyShortcutsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrFunnyShortcutsProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,6 +352,7 @@
 			children = (
 				I20000000000000000000001 /* TellJokeIntent.swift */,
 				I20000000000000000000002 /* JokeSnippetView.swift */,
+				I20000000000000000000003 /* MrFunnyShortcutsProvider.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -497,6 +500,7 @@
 				B10000000000000000000013 /* SharedJoke.swift in Sources */,
 				I10000000000000000000001 /* TellJokeIntent.swift in Sources */,
 				I10000000000000000000002 /* JokeSnippetView.swift in Sources */,
+				I10000000000000000000003 /* MrFunnyShortcutsProvider.swift in Sources */,
 				F10000000000000000000001 /* SplashScreenView.swift in Sources */,
 				F10000000000000000000002 /* NetworkMonitor.swift in Sources */,
 			);
