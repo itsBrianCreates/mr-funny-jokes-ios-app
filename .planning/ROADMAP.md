@@ -9,7 +9,7 @@
 | # | Phase | Goal | Requirements | Status |
 |---|-------|------|--------------|--------|
 | 1 | Foundation & Cleanup | Platform changes and UI cleanup to prepare for native features | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
-| 2 | Lock Screen Widgets | Add lock screen widgets for Joke of the Day display | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Pending |
+| 2 | Lock Screen Widgets | Add lock screen widgets for Joke of the Day display | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
 | 3 | Siri Integration | Voice-activated joke delivery via App Intents | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Pending |
 | 4 | Widget Polish | Verify and polish all home screen widget sizes | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
 | 5 | Testing & Bug Fixes | Comprehensive testing and bug resolution | — | Pending |
@@ -53,8 +53,8 @@ Plans:
 **Plans:** 2 plans (Wave 1 implementation, Wave 2 verification)
 
 Plans:
-- [ ] 02-01-PLAN.md — Implement lock screen widget views and configuration
-- [ ] 02-02-PLAN.md — Verify widgets on physical device
+- [x] 02-01-PLAN.md — Implement lock screen widget views and configuration
+- [x] 02-02-PLAN.md — Verify widgets on physical device
 
 **Success Criteria:**
 1. Users can add a circular lock screen widget showing character avatar or abbreviated joke

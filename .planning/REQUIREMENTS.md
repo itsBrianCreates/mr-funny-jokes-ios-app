@@ -16,10 +16,10 @@ Requirements for v1.0 release. Each maps to roadmap phases.
 
 ### Lock Screen Widgets
 
-- [ ] **WIDGET-01**: Accessory Circular widget displays joke of the day
-- [ ] **WIDGET-02**: Accessory Rectangular widget displays joke of the day
-- [ ] **WIDGET-03**: Accessory Inline widget displays joke text
-- [ ] **WIDGET-04**: All lock screen widgets handle vibrant rendering mode correctly
+- [x] **WIDGET-01**: Accessory Circular widget displays joke of the day
+- [x] **WIDGET-02**: Accessory Rectangular widget displays joke of the day
+- [x] **WIDGET-03**: Accessory Inline widget displays joke text
+- [x] **WIDGET-04**: All lock screen widgets handle vibrant rendering mode correctly
 
 ### Home Screen Widget Polish
 
@@ -90,10 +90,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RANK-02 | Phase 1: Foundation & Cleanup | Complete |
 | NOTIF-01 | Phase 1: Foundation & Cleanup | Complete |
 | NOTIF-02 | Phase 1: Foundation & Cleanup | Complete |
-| WIDGET-01 | Phase 2: Lock Screen Widgets | Pending |
-| WIDGET-02 | Phase 2: Lock Screen Widgets | Pending |
-| WIDGET-03 | Phase 2: Lock Screen Widgets | Pending |
-| WIDGET-04 | Phase 2: Lock Screen Widgets | Pending |
+| WIDGET-01 | Phase 2: Lock Screen Widgets | Complete |
+| WIDGET-02 | Phase 2: Lock Screen Widgets | Complete |
+| WIDGET-03 | Phase 2: Lock Screen Widgets | Complete |
+| WIDGET-04 | Phase 2: Lock Screen Widgets | Complete |
 | SIRI-01 | Phase 3: Siri Integration | Pending |
 | SIRI-02 | Phase 3: Siri Integration | Pending |
 | SIRI-03 | Phase 3: Siri Integration | Pending |
