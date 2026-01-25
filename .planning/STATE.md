@@ -3,11 +3,11 @@
 ## Current Position
 
 **Milestone:** v1.0
-**Phase:** 3 of 6 (Siri Integration) - COMPLETE
-**Plan:** 2 of 2 in phase complete
-**Status:** Phase complete, ready for Phase 4
+**Phase:** 4 of 6 (Widget Polish)
+**Plan:** 1 of 1 in phase complete
+**Status:** Phase 4 complete, ready for Phase 5
 
-Progress: [######----] 3/6 phases complete
+Progress: [########--] 4/6 phases complete
 
 ## Project Reference
 
@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | 1 | Foundation & Cleanup | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
 | 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
 | 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Complete |
-| 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
+| 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Complete |
 | 5 | Testing & Bug Fixes | - | Pending |
 | 6 | Content & Submission | CONT-01 | Pending |
 
@@ -46,6 +46,8 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 - 2026-01-25: Completed 03-01-PLAN.md (Siri Integration Infrastructure)
 - 2026-01-25: Completed 03-02-PLAN.md (Siri Integration Verification)
 - 2026-01-25: Phase 3 complete (Siri Shortcuts works; voice command deferred to backlog)
+- 2026-01-25: Completed 04-01-PLAN.md (Widget Polish - padding and verification)
+- 2026-01-25: Phase 4 complete (all home screen widgets polished and verified on device)
 
 ## Accumulated Decisions
 
@@ -63,6 +65,8 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | All Siri phrases include .applicationName | 03-01 | Required for Siri to recognize app and register shortcuts |
 | Recently-told tracking (FIFO, max 10) | 03-01 | Avoid immediate joke repeats in Siri responses |
 | Siri Shortcuts approved, voice command deferred | 03-02 | Shortcuts app works reliably; voice recognition iOS-dependent |
+| Small widget padding: 8pt, Medium/Large: 11pt | 04-01 | Match native iOS widget spacing (Weather, Calendar) |
+| Medium widget shows 2 lines of text | 04-01 | lineLimit(2) provides more content visibility than small widget |
 
 ## Session Continuity
 
@@ -70,10 +74,10 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 
 ### Last Session
 - **Date:** 2026-01-25
-- **Phase:** 3 - Siri Integration (COMPLETE)
-- **Completed:** 03-02-PLAN.md (Siri Integration Verification)
+- **Phase:** 4 - Widget Polish (COMPLETE)
+- **Completed:** 04-01-PLAN.md (Widget Polish - padding and verification)
 - **In Progress:** --
-- **Next Steps:** Begin Phase 4 (Widget Polish)
+- **Next Steps:** Begin Phase 5 (Testing & Bug Fixes)
 
 ### Blockers
 None
@@ -88,4 +92,4 @@ None
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-25 after Phase 3 completion*
+*Last updated: 2026-01-25 after Phase 4 completion*
