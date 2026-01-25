@@ -7,12 +7,20 @@ struct JokeOfTheDayWidgetEntryView: View {
 
     var body: some View {
         switch widgetFamily {
+        // Home screen widgets (existing)
         case .systemSmall:
             SmallWidgetView(joke: entry.joke)
         case .systemMedium:
             MediumWidgetView(joke: entry.joke)
         case .systemLarge:
             LargeWidgetView(joke: entry.joke)
+        // Lock screen widgets (new)
+        case .accessoryCircular:
+            AccessoryCircularView(joke: entry.joke)
+        case .accessoryRectangular:
+            AccessoryRectangularView(joke: entry.joke)
+        case .accessoryInline:
+            AccessoryInlineView(joke: entry.joke)
         default:
             SmallWidgetView(joke: entry.joke)
         }
@@ -446,6 +454,53 @@ func characterDisplayName(for character: String?) -> String? {
             punchline: "She looked surprised.",
             category: "Dad Jokes",
             character: "mr_funny"
+        )
+    )
+}
+
+// MARK: - Lock Screen Widget Previews
+
+#Preview("Circular - Mr. Funny", as: .accessoryCircular) {
+    JokeOfTheDayWidget()
+} timeline: {
+    JokeOfTheDayEntry(
+        date: .now,
+        joke: SharedJokeOfTheDay(
+            id: "7",
+            setup: "What do you call a fake noodle?",
+            punchline: "An impasta!",
+            category: "Dad Jokes",
+            character: "mr_funny"
+        )
+    )
+}
+
+#Preview("Rectangular - Mr. Love", as: .accessoryRectangular) {
+    JokeOfTheDayWidget()
+} timeline: {
+    JokeOfTheDayEntry(
+        date: .now,
+        joke: SharedJokeOfTheDay(
+            id: "8",
+            setup: "Are you a magician? Because whenever I look at you, everyone else disappears.",
+            punchline: "That's the magic of love!",
+            category: "Pickup Lines",
+            character: "mr_love"
+        )
+    )
+}
+
+#Preview("Inline - Mr. Bad", as: .accessoryInline) {
+    JokeOfTheDayWidget()
+} timeline: {
+    JokeOfTheDayEntry(
+        date: .now,
+        joke: SharedJokeOfTheDay(
+            id: "9",
+            setup: "I have a joke about trickle-down economics.",
+            punchline: "But 99% of you won't get it.",
+            category: "Dad Jokes",
+            character: "mr_bad"
         )
     )
 }

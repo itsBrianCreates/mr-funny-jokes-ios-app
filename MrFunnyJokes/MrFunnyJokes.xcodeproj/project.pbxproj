@@ -37,6 +37,7 @@
 		B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* JokeOfTheDayWidget.swift */; };
 		B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000004 /* JokeOfTheDayProvider.swift */; };
 		B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */; };
+		B10000000000000000000012 /* LockScreenWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000009 /* LockScreenWidgetViews.swift */; };
 		B10000000000000000000008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000006 /* Assets.xcassets */; };
 		B10000000000000000000009 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B20000000000000000000007 /* WidgetKit.framework */; };
 		B10000000000000000000010 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B20000000000000000000008 /* SwiftUI.framework */; };
@@ -115,6 +116,7 @@
 		B20000000000000000000003 /* JokeOfTheDayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayWidget.swift; sourceTree = "<group>"; };
 		B20000000000000000000004 /* JokeOfTheDayProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayProvider.swift; sourceTree = "<group>"; };
 		B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayWidgetViews.swift; sourceTree = "<group>"; };
+		B20000000000000000000009 /* LockScreenWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidgetViews.swift; sourceTree = "<group>"; };
 		B20000000000000000000006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B20000000000000000000007 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B20000000000000000000008 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -309,6 +311,7 @@
 				B20000000000000000000003 /* JokeOfTheDayWidget.swift */,
 				B20000000000000000000004 /* JokeOfTheDayProvider.swift */,
 				B20000000000000000000005 /* JokeOfTheDayWidgetViews.swift */,
+				B20000000000000000000009 /* LockScreenWidgetViews.swift */,
 				B20000000000000000000006 /* Assets.xcassets */,
 			);
 			path = JokeOfTheDayWidget;
@@ -487,6 +490,7 @@
 				B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */,
 				B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */,
 				B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */,
+				B10000000000000000000012 /* LockScreenWidgetViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

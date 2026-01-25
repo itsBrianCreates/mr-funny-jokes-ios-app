@@ -21,6 +21,11 @@ struct JokeOfTheDayWidget: Widget {
         }
         .configurationDisplayName("Joke of the Day")
         .description("Start your day with a smile! Get a fresh joke every day.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([
+            // Home screen (existing)
+            .systemSmall, .systemMedium, .systemLarge,
+            // Lock screen (new)
+            .accessoryCircular, .accessoryRectangular, .accessoryInline
+        ])
     }
 }
