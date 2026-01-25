@@ -6,37 +6,54 @@ struct SearchView: View {
     @State private var searchText = ""
     @State private var debouncedSearchText = ""
     @State private var animateIcon = false
-    @State private var cachedResults: [Joke] = []
     @State private var lastJokesHash: Int = 0
+
+    /// Cached firestoreIds of matching jokes (stable across refreshes)
+    @State private var cachedResultIds: [String] = []
 
     /// Publisher for debouncing search input
     private let searchTextPublisher = PassthroughSubject<String, Never>()
 
-    /// Computed property that returns cached search results
+    /// Returns fresh jokes from viewModel.jokes matching the cached IDs
+    /// This ensures ratings and other updates are reflected immediately
     private var searchResults: [Joke] {
-        cachedResults
+        guard !cachedResultIds.isEmpty else { return [] }
+
+        // Create a lookup dictionary for O(1) access
+        let jokesById = Dictionary(
+            viewModel.jokes.compactMap { joke -> (String, Joke)? in
+                guard let id = joke.firestoreId else { return nil }
+                return (id, joke)
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
+
+        // Return jokes in the original search order, with fresh data
+        return cachedResultIds.compactMap { jokesById[$0] }
     }
 
-    /// Performs the actual search and caches results
+    /// Performs the actual search and caches matching joke IDs
     private func performSearch(query: String) {
         guard !query.isEmpty else {
-            cachedResults = []
+            cachedResultIds = []
             return
         }
 
         let queryLower = query.lowercased().trimmingCharacters(in: .whitespaces)
         guard !queryLower.isEmpty else {
-            cachedResults = []
+            cachedResultIds = []
             return
         }
 
-        cachedResults = viewModel.jokes.filter { joke in
+        // Filter and sort jokes, then extract their firestoreIds
+        cachedResultIds = viewModel.jokes.filter { joke in
             joke.setup.lowercased().contains(queryLower) ||
             joke.punchline.lowercased().contains(queryLower) ||
             joke.character?.lowercased().contains(queryLower) == true ||
             (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
         }
         .sorted { $0.popularityScore > $1.popularityScore }
+        .compactMap { $0.firestoreId }
     }
 
     var body: some View {
@@ -67,6 +84,13 @@ struct SearchView: View {
         ) { debouncedValue in
             debouncedSearchText = debouncedValue
             performSearch(query: debouncedValue)
+        }
+        // Listen for rating changes from other ViewModels (e.g., CharacterDetailViewModel)
+        // This ensures search results refresh when ratings are made elsewhere
+        .onReceive(NotificationCenter.default.publisher(for: .jokeRatingDidChange)) { _ in
+            if !debouncedSearchText.isEmpty {
+                performSearch(query: debouncedSearchText)
+            }
         }
     }
 
