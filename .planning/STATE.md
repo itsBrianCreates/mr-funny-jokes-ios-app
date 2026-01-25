@@ -14,7 +14,7 @@ Progress: [########--] 4/6 phases complete
 See: .planning/PROJECT.md (updated 2025-01-24)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Phase 4 - Widget Polish (next)
+**Current focus:** Phase 5 - Testing & Bug Fixes (next)
 
 ## v1.0 Overview
 
@@ -87,7 +87,6 @@ None
 - v1.0 focuses on demonstrating native iOS integration
 - Backup plan: Character Chat feature if v1.0 still fails review
 - Content (500 jokes) will be manually provided by user after all technical work and testing complete
-- Phase 4 consideration: May want to revisit circular widget to use character-specific SF Symbols or find alternative to generic face.smiling
 
 ---
 

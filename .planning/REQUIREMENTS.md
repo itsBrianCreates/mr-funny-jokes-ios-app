@@ -23,9 +23,9 @@ Requirements for v1.0 release. Each maps to roadmap phases.
 
 ### Home Screen Widget Polish
 
-- [ ] **WIDGET-05**: Small widget displays joke of the day correctly
-- [ ] **WIDGET-06**: Medium widget displays joke of the day correctly
-- [ ] **WIDGET-07**: Large widget displays joke of the day correctly
+- [x] **WIDGET-05**: Small widget displays joke of the day correctly
+- [x] **WIDGET-06**: Medium widget displays joke of the day correctly
+- [x] **WIDGET-07**: Large widget displays joke of the day correctly
 
 ### Rankings
 
@@ -98,9 +98,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SIRI-02 | Phase 3: Siri Integration | Complete |
 | SIRI-03 | Phase 3: Siri Integration | Complete |
 | SIRI-04 | Phase 3: Siri Integration | Complete |
-| WIDGET-05 | Phase 4: Widget Polish | Pending |
-| WIDGET-06 | Phase 4: Widget Polish | Pending |
-| WIDGET-07 | Phase 4: Widget Polish | Pending |
+| WIDGET-05 | Phase 4: Widget Polish | Complete |
+| WIDGET-06 | Phase 4: Widget Polish | Complete |
+| WIDGET-07 | Phase 4: Widget Polish | Complete |
 | CONT-01 | Phase 6: Content & Submission | Pending |
 
 **Coverage:**
@@ -110,4 +110,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-01-24*
-*Last updated: 2026-01-24 after roadmap creation*
+*Last updated: 2026-01-25 after Phase 4 completion*
