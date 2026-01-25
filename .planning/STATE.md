@@ -4,10 +4,10 @@
 
 **Milestone:** v1.0
 **Phase:** 1 of 6 (Foundation & Cleanup)
-**Plan:** 01, 03 completed
+**Plan:** 01, 02, 03 completed
 **Status:** In progress
 
-Progress: [####------] ~40% (Phase 1)
+Progress: [######----] ~60% (Phase 1)
 
 ## Project Reference
 
@@ -38,6 +38,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 - 2026-01-24: Roadmap created (6 phases)
 - 2026-01-24: Completed 01-03-PLAN.md (Notification Settings Simplification)
 - 2026-01-24: Completed 01-01-PLAN.md (Verify iPhone-only deployment)
+- 2026-01-24: Completed 01-02-PLAN.md (Rename Weekly to Monthly rankings)
 
 ## Accumulated Decisions
 
@@ -46,6 +47,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | Use openNotificationSettingsURLString for iOS Settings deep link | 01-03 | Direct navigation to notification settings (iOS 16+, app targets iOS 17+) |
 | Keep NotificationManager time properties, remove only UI picker | 01-03 | Scheduling still needs stored time values |
 | iPhone-only deployment verified (TARGETED_DEVICE_FAMILY = 1) | 01-01 | All 4 build configs already correct, no changes needed |
+| Keep backend collection name as weekly_rankings | 01-02 | UI displays "Monthly" but Firestore collection stays unchanged to avoid migration |
 
 ## Session Continuity
 
@@ -54,12 +56,12 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 ### Last Session
 - **Date:** 2026-01-24
 - **Phase:** 01-foundation-cleanup
-- **Completed:** 01-01-PLAN.md (verification only, no changes needed)
+- **Completed:** 01-02-PLAN.md (Weekly to Monthly rankings rename)
 - **In Progress:** --
-- **Next Steps:** Execute 01-02-PLAN.md (Weekly to Monthly rankings rename)
+- **Next Steps:** Continue Phase 1 remaining plans
 
 ### Blockers
-- Pre-existing build issue: Missing files in Xcode project (WeeklyRankingsViewModel.swift, WeeklyTopTen views)
+None
 
 ### Notes
 - App Store rejected for Guideline 4.2.2 (Minimum Functionality)
@@ -70,4 +72,4 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-25*
+*Last updated: 2026-01-24*
