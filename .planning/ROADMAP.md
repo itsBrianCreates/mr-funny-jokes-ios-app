@@ -8,7 +8,7 @@
 
 | # | Phase | Goal | Requirements | Status |
 |---|-------|------|--------------|--------|
-| 1 | Foundation & Cleanup | Platform changes and UI cleanup to prepare for native features | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Planned |
+| 1 | Foundation & Cleanup | Platform changes and UI cleanup to prepare for native features | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
 | 2 | Lock Screen Widgets | Add lock screen widgets for Joke of the Day display | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Pending |
 | 3 | Siri Integration | Voice-activated joke delivery via App Intents | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Pending |
 | 4 | Widget Polish | Verify and polish all home screen widget sizes | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
@@ -26,9 +26,9 @@
 **Plans:** 3 plans (Wave 1 - all parallel)
 
 Plans:
-- [ ] 01-01-PLAN.md — Verify iPhone-only deployment and clean up iPad remnants
-- [ ] 01-02-PLAN.md — Rename Weekly rankings to Monthly throughout codebase
-- [ ] 01-03-PLAN.md — Simplify notification settings (remove time picker, add Settings deep link)
+- [x] 01-01-PLAN.md — Verify iPhone-only deployment and clean up iPad remnants
+- [x] 01-02-PLAN.md — Rename Weekly rankings to Monthly throughout codebase
+- [x] 01-03-PLAN.md — Simplify notification settings (remove time picker, add Settings deep link)
 
 **Success Criteria:**
 1. App runs only on iPhone - iPad deployment target removed from Xcode project

@@ -29,13 +29,13 @@ Requirements for v1.0 release. Each maps to roadmap phases.
 
 ### Rankings
 
-- [ ] **RANK-01**: Rankings use monthly period instead of weekly
-- [ ] **RANK-02**: UI labels updated to "Monthly Top 10"
+- [x] **RANK-01**: Rankings use monthly period instead of weekly
+- [x] **RANK-02**: UI labels updated to "Monthly Top 10"
 
 ### Notifications
 
-- [ ] **NOTIF-01**: In-app notification time picker removed
-- [ ] **NOTIF-02**: Settings shows helper text for iOS Settings notification management
+- [x] **NOTIF-01**: In-app notification time picker removed
+- [x] **NOTIF-02**: Settings shows helper text for iOS Settings notification management
 
 ### Content
 
@@ -43,8 +43,8 @@ Requirements for v1.0 release. Each maps to roadmap phases.
 
 ### Platform
 
-- [ ] **PLAT-01**: Remove iPad support (iPhone only)
-- [ ] **PLAT-02**: All new UI uses native SwiftUI components
+- [x] **PLAT-01**: Remove iPad support (iPhone only)
+- [x] **PLAT-02**: All new UI uses native SwiftUI components
 
 ## v2 Requirements
 
@@ -84,12 +84,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | Phase 1: Foundation & Cleanup | Pending |
-| PLAT-02 | Phase 1: Foundation & Cleanup | Pending |
-| RANK-01 | Phase 1: Foundation & Cleanup | Pending |
-| RANK-02 | Phase 1: Foundation & Cleanup | Pending |
-| NOTIF-01 | Phase 1: Foundation & Cleanup | Pending |
-| NOTIF-02 | Phase 1: Foundation & Cleanup | Pending |
+| PLAT-01 | Phase 1: Foundation & Cleanup | Complete |
+| PLAT-02 | Phase 1: Foundation & Cleanup | Complete |
+| RANK-01 | Phase 1: Foundation & Cleanup | Complete |
+| RANK-02 | Phase 1: Foundation & Cleanup | Complete |
+| NOTIF-01 | Phase 1: Foundation & Cleanup | Complete |
+| NOTIF-02 | Phase 1: Foundation & Cleanup | Complete |
 | WIDGET-01 | Phase 2: Lock Screen Widgets | Pending |
 | WIDGET-02 | Phase 2: Lock Screen Widgets | Pending |
 | WIDGET-03 | Phase 2: Lock Screen Widgets | Pending |
