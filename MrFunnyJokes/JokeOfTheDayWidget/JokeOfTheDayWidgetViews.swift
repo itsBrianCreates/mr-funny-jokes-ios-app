@@ -95,7 +95,7 @@ struct MediumWidgetView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             // Badge with character accent color
             Text("JOKE OF THE DAY")
                 .font(.system(size: 10, weight: .bold))
@@ -105,16 +105,13 @@ struct MediumWidgetView: View {
                 .padding(.vertical, 4)
                 .background(accentColor, in: RoundedRectangle(cornerRadius: 4))
 
-            Spacer()
-
             // Joke setup only (no punchline to encourage tap)
             Text(joke.setup)
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .lineLimit(3)
+                .lineLimit(2)
                 .multilineTextAlignment(.leading)
-
-            Spacer()
+                .frame(maxHeight: .infinity, alignment: .top)
 
             // Character avatar with name
             HStack(spacing: 6) {
