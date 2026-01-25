@@ -8,7 +8,7 @@
 
 | # | Phase | Goal | Requirements | Status |
 |---|-------|------|--------------|--------|
-| 1 | Foundation & Cleanup | Platform changes and UI cleanup to prepare for native features | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Pending |
+| 1 | Foundation & Cleanup | Platform changes and UI cleanup to prepare for native features | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Planned |
 | 2 | Lock Screen Widgets | Add lock screen widgets for Joke of the Day display | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Pending |
 | 3 | Siri Integration | Voice-activated joke delivery via App Intents | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Pending |
 | 4 | Widget Polish | Verify and polish all home screen widget sizes | WIDGET-05, WIDGET-06, WIDGET-07 | Pending |
@@ -22,6 +22,13 @@
 **Goal:** Remove iPad support, update rankings from weekly to monthly, simplify notification UI, and establish native SwiftUI patterns for all new development.
 
 **Requirements:** PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02
+
+**Plans:** 3 plans (Wave 1 - all parallel)
+
+Plans:
+- [ ] 01-01-PLAN.md — Verify iPhone-only deployment and clean up iPad remnants
+- [ ] 01-02-PLAN.md — Rename Weekly rankings to Monthly throughout codebase
+- [ ] 01-03-PLAN.md — Simplify notification settings (remove time picker, add Settings deep link)
 
 **Success Criteria:**
 1. App runs only on iPhone - iPad deployment target removed from Xcode project
@@ -43,6 +50,8 @@
 
 **Requirements:** WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04
 
+**Plans:** (created by /gsd:plan-phase)
+
 **Success Criteria:**
 1. Users can add a circular lock screen widget showing character avatar or abbreviated joke
 2. Users can add a rectangular lock screen widget showing joke setup text
@@ -63,6 +72,8 @@
 **Goal:** Enable users to request jokes via Siri voice commands, with spoken responses that work offline.
 
 **Requirements:** SIRI-01, SIRI-02, SIRI-03, SIRI-04
+
+**Plans:** (created by /gsd:plan-phase)
 
 **Success Criteria:**
 1. Saying "Hey Siri, tell me a joke from Mr. Funny Jokes" triggers the app intent
@@ -86,6 +97,8 @@
 
 **Requirements:** WIDGET-05, WIDGET-06, WIDGET-07
 
+**Plans:** (created by /gsd:plan-phase)
+
 **Success Criteria:**
 1. Small widget displays joke of the day with readable text and proper character branding
 2. Medium widget displays joke of the day with full setup/punchline visible
@@ -106,6 +119,8 @@
 **Goal:** Comprehensive testing of all new features, bug identification and resolution before content and submission.
 
 **Requirements:** —
+
+**Plans:** (created by /gsd:plan-phase)
 
 **Success Criteria:**
 1. All Siri commands tested on real device (not just simulator)
@@ -128,6 +143,8 @@
 **Goal:** User manually provides and reviews 500 jokes, then prepare App Store submission materials.
 
 **Requirements:** CONT-01
+
+**Plans:** (created by /gsd:plan-phase)
 
 **Success Criteria:**
 1. Firebase contains 500 jokes distributed across all 5 characters
