@@ -4,10 +4,10 @@
 
 **Milestone:** v1.0
 **Phase:** 5 of 6 (Testing & Bug Fixes)
-**Plan:** 1 of 2 in phase complete
-**Status:** In progress - test checklist ready, awaiting user testing
+**Plan:** 2 of 2 in phase complete
+**Status:** Phase complete - all v1.0 features tested and verified
 
-Progress: [########=-] ~4.5/6 phases complete
+Progress: [#########-] ~5/6 phases complete
 
 ## Project Reference
 
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
 | 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Complete |
 | 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Complete |
-| 5 | Testing & Bug Fixes | - | In Progress |
+| 5 | Testing & Bug Fixes | - | Complete |
 | 6 | Content & Submission | CONT-01 | Pending |
 
 **Total requirements:** 18
@@ -49,6 +49,8 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 - 2026-01-25: Completed 04-01-PLAN.md (Widget Polish - padding and verification)
 - 2026-01-25: Phase 4 complete (all home screen widgets polished and verified on device)
 - 2026-01-25: Completed 05-01-PLAN.md (Test Checklist Generation)
+- 2026-01-25: Completed 05-02-PLAN.md (User Testing and Bug Fixing)
+- 2026-01-25: Phase 5 complete (47 test cases passed, 1 bug fixed)
 
 ## Accumulated Decisions
 
@@ -69,6 +71,8 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | Small widget padding: 8pt, Medium/Large: 11pt | 04-01 | Match native iOS widget spacing (Weather, Calendar) |
 | Medium widget shows 2 lines of text | 04-01 | lineLimit(2) provides more content visibility than small widget |
 | Siri testing Priority 1 for App Review 4.2.2 | 05-01 | Critical feature for demonstrating native iOS integration |
+| Client-side filtering for joke categories | 05-02 | Firestore type filter missed non-standard values; client-side ensures correct categorization |
+| Consecutive empty fetch tracking (max 3) | 05-02 | Improves pagination reliability when filtering categories |
 
 ## Session Continuity
 
@@ -76,10 +80,10 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 
 ### Last Session
 - **Date:** 2026-01-25
-- **Phase:** 5 - Testing & Bug Fixes (In Progress)
-- **Completed:** 05-01-PLAN.md (Test Checklist Generation)
-- **In Progress:** User manual testing with TEST-CHECKLIST.md
-- **Next Steps:** User works through checklist, reports bugs; execute 05-02-PLAN.md for bug fixes
+- **Phase:** 5 - Testing & Bug Fixes (Complete)
+- **Completed:** 05-02-PLAN.md (User Testing and Bug Fixing)
+- **In Progress:** None
+- **Next Steps:** Begin Phase 6 (Content & Submission) - load 500 jokes and submit to App Store
 
 ### Blockers
 None
@@ -88,10 +92,11 @@ None
 - App Store rejected for Guideline 4.2.2 (Minimum Functionality)
 - v1.0 focuses on demonstrating native iOS integration
 - Backup plan: Character Chat feature if v1.0 still fails review
-- Content (500 jokes) will be manually provided by user after all technical work and testing complete
-- TEST-CHECKLIST.md ready at: .planning/phases/05-testing-bug-fixes/TEST-CHECKLIST.md
+- All v1.0 features tested and working (47 test cases passed)
+- One blocking bug found and fixed during testing (category filtering)
+- App ready for content loading and submission
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-25 after 05-01-PLAN.md completion*
+*Last updated: 2026-01-25 after 05-02-PLAN.md completion*
