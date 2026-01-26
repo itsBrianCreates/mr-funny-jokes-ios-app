@@ -39,7 +39,7 @@ Requirements for v1.0 release. Each maps to roadmap phases.
 
 ### Content
 
-- [ ] **CONT-01**: 500 jokes in Firebase across all 5 characters
+- [x] **CONT-01**: App Store submission materials ready (App Review Notes, Description, Screenshot Guide); joke loading is user-driven
 
 ### Platform
 
@@ -101,7 +101,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WIDGET-05 | Phase 4: Widget Polish | Complete |
 | WIDGET-06 | Phase 4: Widget Polish | Complete |
 | WIDGET-07 | Phase 4: Widget Polish | Complete |
-| CONT-01 | Phase 6: Content & Submission | Pending |
+| CONT-01 | Phase 6: Content & Submission | Complete |
 
 **Coverage:**
 - v1 requirements: 18 total
@@ -110,4 +110,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-01-24*
-*Last updated: 2026-01-25 after Phase 4 completion*
+*Last updated: 2026-01-25 after Phase 6 completion*
