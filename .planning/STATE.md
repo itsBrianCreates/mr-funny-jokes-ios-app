@@ -2,21 +2,21 @@
 
 ## Current Position
 
-**Milestone:** v1.0
-**Phase:** 6 of 6 (Content & Submission)
-**Plan:** 1 of 1 in phase complete
-**Status:** Milestone complete - all phases executed, App Store submission materials ready
+**Milestone:** v1.0 SHIPPED
+**Phase:** Milestone complete
+**Plan:** —
+**Status:** Ready for next milestone
 
-Progress: [##########] 6/6 phases complete
+Progress: [##########] v1.0 complete
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2025-01-24)
+See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Milestone complete - ready for App Store submission
+**Current focus:** App Store submission, awaiting review
 
-## v1.0 Overview
+## v1.0 Summary
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
@@ -27,57 +27,15 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 | 5 | Testing & Bug Fixes | - | Complete |
 | 6 | Content & Submission | CONT-01 | Complete |
 
-**Total requirements:** 18
-**Mapped:** 18/18 (100%)
+**Total requirements:** 18/18 shipped
+**Archive:** .planning/milestones/v1.0-ROADMAP.md
 
 ## Recent Activity
 
-- 2025-01-24: Project initialized
-- 2025-01-24: Research completed (Siri + Lock Screen Widgets)
-- 2025-01-24: Requirements defined (18 total)
-- 2026-01-24: Roadmap created (6 phases)
-- 2026-01-24: Completed 01-03-PLAN.md (Notification Settings Simplification)
-- 2026-01-24: Completed 01-01-PLAN.md (Verify iPhone-only deployment)
-- 2026-01-24: Completed 01-02-PLAN.md (Rename Weekly to Monthly rankings)
-- 2026-01-24: Phase 1 verified (11/11 must-haves passed)
-- 2026-01-25: Completed 02-01-PLAN.md (Lock Screen Widget Views)
-- 2026-01-25: Completed 02-02-PLAN.md (Lock Screen Widget Verification)
-- 2026-01-25: Phase 2 complete (all lock screen widgets verified on physical device)
-- 2026-01-25: Completed 03-01-PLAN.md (Siri Integration Infrastructure)
-- 2026-01-25: Completed 03-02-PLAN.md (Siri Integration Verification)
-- 2026-01-25: Phase 3 complete (Siri Shortcuts works; voice command deferred to backlog)
-- 2026-01-25: Completed 04-01-PLAN.md (Widget Polish - padding and verification)
-- 2026-01-25: Phase 4 complete (all home screen widgets polished and verified on device)
-- 2026-01-25: Completed 05-01-PLAN.md (Test Checklist Generation)
-- 2026-01-25: Completed 05-02-PLAN.md (User Testing and Bug Fixing)
-- 2026-01-25: Phase 5 complete (47 test cases passed, 1 bug fixed)
-- 2026-01-25: Completed 06-01-PLAN.md (App Store Submission Materials)
-- 2026-01-25: Phase 6 complete - App Review Notes, Description, Screenshot Guide ready
-- 2026-01-25: v1.0 milestone complete
-
-## Accumulated Decisions
-
-| Decision | Phase | Rationale |
-|----------|-------|-----------|
-| Use openNotificationSettingsURLString for iOS Settings deep link | 01-03 | Direct navigation to notification settings (iOS 16+, app targets iOS 17+) |
-| Keep NotificationManager time properties, remove only UI picker | 01-03 | Scheduling still needs stored time values |
-| iPhone-only deployment verified (TARGETED_DEVICE_FAMILY = 1) | 01-01 | All 4 build configs already correct, no changes needed |
-| Keep backend collection name as weekly_rankings | 01-02 | UI displays "Monthly" but Firestore collection stays unchanged to avoid migration |
-| Circular widget displays character avatar only | 02-01 | Instantly recognizable, no text needed |
-| Rectangular widget: character name + truncated joke setup | 02-01 | Prioritize character name (headline) over joke text (caption) |
-| ViewThatFits for inline widget text | 02-01 | Adaptive text layout for constrained space |
-| Use SF Symbol for circular lock screen widget | 02-02 | Custom character images don't render in vibrant mode; SF Symbols work natively |
-| openAppWhenRun=false for TellJokeIntent | 03-01 | Hands-free Siri experience - speak joke without opening app |
-| All Siri phrases include .applicationName | 03-01 | Required for Siri to recognize app and register shortcuts |
-| Recently-told tracking (FIFO, max 10) | 03-01 | Avoid immediate joke repeats in Siri responses |
-| Siri Shortcuts approved, voice command deferred | 03-02 | Shortcuts app works reliably; voice recognition iOS-dependent |
-| Small widget padding: 8pt, Medium/Large: 11pt | 04-01 | Match native iOS widget spacing (Weather, Calendar) |
-| Medium widget shows 2 lines of text | 04-01 | lineLimit(2) provides more content visibility than small widget |
-| Siri testing Priority 1 for App Review 4.2.2 | 05-01 | Critical feature for demonstrating native iOS integration |
-| Client-side filtering for joke categories | 05-02 | Firestore type filter missed non-standard values; client-side ensures correct categorization |
-| Consecutive empty fetch tracking (max 3) | 05-02 | Improves pagination reliability when filtering categories |
-| Monthly Top 10 featured in App Review Notes | 06-01 | Elevated from Additional Notes to standalone section per user request |
-| Character descriptions in user's casual voice | 06-01 | Updated to match user's preferred wording for App Store description |
+- 2026-01-25: v1.0 milestone completed and archived
+- 2026-01-25: All 6 phases executed (11 plans total)
+- 2026-01-25: 47 test cases passed, 1 bug fixed
+- 2026-01-25: App Store submission materials ready
 
 ## Session Continuity
 
@@ -85,22 +43,18 @@ See: .planning/PROJECT.md (updated 2025-01-24)
 
 ### Last Session
 - **Date:** 2026-01-25
-- **Phase:** 6 - Content & Submission (Complete)
-- **Completed:** 06-01-PLAN.md (App Store Submission Materials)
+- **Milestone:** v1.0 (Complete)
+- **Completed:** All phases, milestone archived
 - **In Progress:** None
-- **Next Steps:** Load jokes via scripts/add-jokes.js, capture screenshots, submit to App Store
+- **Next Steps:** Submit to App Store, then /gsd:new-milestone for v1.1
 
 ### Blockers
 None
 
 ### Notes
-- App Store rejected for Guideline 4.2.2 (Minimum Functionality)
-- v1.0 focuses on demonstrating native iOS integration
+- v1.0 addresses App Store Guideline 4.2.2 rejection
 - Backup plan: Character Chat feature if v1.0 still fails review
-- All v1.0 features tested and working (47 test cases passed)
-- One blocking bug found and fixed during testing (category filtering)
-- App Store submission materials ready (App Review Notes, Description, Screenshot Guide)
-- Remaining user tasks: Load jokes, capture screenshots, submit to App Store Connect
+- User tasks remaining: Load jokes, capture screenshots, submit via App Store Connect
 
 ---
 
