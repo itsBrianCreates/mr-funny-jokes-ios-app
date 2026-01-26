@@ -4,7 +4,7 @@
 
 ---
 
-Mr. Funny Jokes delivers native iOS integration through Siri Shortcuts, Home Screen and Lock Screen Widgets, and Local Notifications. Here's how to test each feature:
+Mr. Funny Jokes delivers native iOS integration through Siri Shortcuts, Home Screen and Lock Screen Widgets, Local Notifications, and a Monthly Top 10 Leaderboard. Here's how to test each feature:
 
 SIRI SHORTCUTS
 1. Open the Shortcuts app on your device
@@ -33,10 +33,15 @@ NOTIFICATIONS
 4. Expected result: Daily notification at 9:00 AM with a joke preview
 5. Tap the notification to open the app and view the full joke
 
+MONTHLY TOP 10 LEADERBOARD
+1. Open the app and navigate to the Home tab
+2. Scroll down to the "Monthly Top 10" section
+3. Expected result: Displays the 10 highest-rated jokes from the past 30 days, ranked by community ratings
+4. Tap any joke to view it in detail and see its rating breakdown
+
 ADDITIONAL NOTES
 - All features work offline using cached jokes after the initial app launch
 - The app includes 5 unique character personas (Mr. Funny, Mr. Potty, Mr. Bad, Mr. Love, Mr. Sad), each with distinct humor styles
-- Users can rate jokes with emoji reactions, browse by category, and share jokes with friends
-- The Monthly Top 10 leaderboard shows the community's highest-rated jokes
+- Users can rate jokes with emoji reactions (1-5 scale), browse by category, and share jokes with friends
 
 Thank you for reviewing Mr. Funny Jokes!

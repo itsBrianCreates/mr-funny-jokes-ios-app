@@ -23,15 +23,15 @@ Never miss your daily dose of humor. Get a joke delivered to your lock screen ev
 
 MEET THE CHARACTERS
 
-Mr. Funny - The classic dad joke master. Puns so bad they're good. Eye rolls guaranteed.
+Mr. Funny — Classic dad jokes that'll make your kids groan and your coworkers question your humor.
 
-Mr. Potty - For the kid in all of us. Bathroom humor that'll have you flushing with laughter.
+Mr. Bad — Dark humor for those who laugh at things they probably shouldn't.
 
-Mr. Bad - Dark humor for those with an edge. Not for the faint of heart.
+Mr. Potty — Bathroom humor. You know who you are.
 
-Mr. Love - Pickup lines and romantic quips. Use at your own risk (we're not responsible for any eye rolls from your crush).
+Mr. Love — Pickup lines so cheesy they just might work.
 
-Mr. Sad - Melancholy humor for when you need to laugh through the pain. Surprisingly relatable.
+Mr. Sad — When you need to laugh to keep from crying.
 
 FEATURES YOU'LL LOVE
 - Swipe through endless jokes with satisfying card animations
