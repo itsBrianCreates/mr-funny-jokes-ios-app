@@ -37,7 +37,12 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ### Active
 
-(Defined with next milestone via /gsd:new-milestone)
+**Current Milestone: v1.0.1 — Content Freshness**
+
+- [ ] Widgets update daily in background without app launch
+- [ ] Joke feed prioritizes unrated jokes over already-rated ones
+- [ ] Full joke catalog loads automatically in background (no manual "Load More")
+- [ ] Monthly rankings aggregation runs in cloud (Firebase Cloud Functions)
 
 ### Out of Scope
 
@@ -53,16 +58,15 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.0 shipped 2026-01-25 with 7,816 LOC Swift.
-
-**App Store Status:** Submitted for review addressing Guideline 4.2.2 (Minimum Functionality). v1.0 demonstrates deep native iOS integration through:
-- 6 widget types (3 home screen + 3 lock screen)
-- Siri integration with offline caching
-- Native iOS Settings integration for notifications
+**Current State:** v1.0 approved and live on App Store. Working on v1.0.1 content freshness fixes.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, WidgetKit, App Intents, UserNotifications
 
-**Known Issues:**
+**Known Issues (v1.0.1 targets):**
+- Widgets only update when app is launched — stale jokes for days if user doesn't open app
+- Joke feed shows already-rated jokes first — users see repetitive content
+- Full joke catalog requires manual "Load More" taps — users miss content
+- Rankings aggregation runs via local cron job — needs cloud automation
 - Backend collection still named "weekly_rankings" while UI shows "Monthly" (cosmetic debt)
 - Direct "Hey Siri" voice command triggers iOS built-in jokes (Shortcuts app works reliably)
 
@@ -86,4 +90,4 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Shortcuts app for Siri (not voice) | Direct voice triggers iOS built-in jokes; Shortcuts reliable | ✓ Good |
 
 ---
-*Last updated: 2026-01-25 after v1.0 milestone*
+*Last updated: 2026-01-30 after v1.0.1 milestone started*

@@ -2,61 +2,55 @@
 
 ## Current Position
 
-**Milestone:** v1.0 SHIPPED
-**Phase:** Milestone complete
+**Milestone:** v1.0.1 Content Freshness
+**Phase:** Not started (defining requirements)
 **Plan:** —
-**Status:** Ready for next milestone
+**Status:** Defining requirements
 
-Progress: [##########] v1.0 complete
+Progress: ░░░░░░░░░░ 0%
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-25)
+See: .planning/PROJECT.md (updated 2026-01-30)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** App Store submission, awaiting review
+**Current focus:** Content freshness — widgets, feed, background loading, cloud rankings
 
-## v1.0 Summary
+## v1.0.1 Goals
 
-| Phase | Name | Requirements | Status |
-|-------|------|--------------|--------|
-| 1 | Foundation & Cleanup | PLAT-01, PLAT-02, RANK-01, RANK-02, NOTIF-01, NOTIF-02 | Complete |
-| 2 | Lock Screen Widgets | WIDGET-01, WIDGET-02, WIDGET-03, WIDGET-04 | Complete |
-| 3 | Siri Integration | SIRI-01, SIRI-02, SIRI-03, SIRI-04 | Complete |
-| 4 | Widget Polish | WIDGET-05, WIDGET-06, WIDGET-07 | Complete |
-| 5 | Testing & Bug Fixes | - | Complete |
-| 6 | Content & Submission | CONT-01 | Complete |
-
-**Total requirements:** 18/18 shipped
-**Archive:** .planning/milestones/v1.0-ROADMAP.md
+| # | Issue | Description |
+|---|-------|-------------|
+| 1 | Widget Background Refresh | All 6 widgets update daily without app launch |
+| 2 | Prioritize Unrated Jokes | Feed shows jokes user hasn't rated first |
+| 3 | Background Joke Loading | Full catalog loads automatically, no manual "Load More" |
+| 4 | Cloud Rankings | Move aggregation from local cron to Firebase Cloud Functions |
 
 ## Recent Activity
 
+- 2026-01-30: v1.0.1 milestone started
+- 2026-01-25: v1.0 approved and live on App Store
 - 2026-01-25: v1.0 milestone completed and archived
-- 2026-01-25: All 6 phases executed (11 plans total)
-- 2026-01-25: 47 test cases passed, 1 bug fixed
-- 2026-01-25: App Store submission materials ready
 
 ## Session Continuity
 
 (Updated by /gsd:pause-work and /gsd:resume-work)
 
 ### Last Session
-- **Date:** 2026-01-25
-- **Milestone:** v1.0 (Complete)
-- **Completed:** All phases, milestone archived
-- **In Progress:** None
-- **Next Steps:** Submit to App Store, then /gsd:new-milestone for v1.1
+- **Date:** 2026-01-30
+- **Milestone:** v1.0.1 (Starting)
+- **Completed:** v1.0 shipped and approved
+- **In Progress:** Defining requirements
+- **Next Steps:** Research → Requirements → Roadmap
 
 ### Blockers
 None
 
 ### Notes
-- v1.0 addresses App Store Guideline 4.2.2 rejection
-- Backup plan: Character Chat feature if v1.0 still fails review
-- User tasks remaining: Load jokes, capture screenshots, submit via App Store Connect
+- v1.0 passed App Store review (4.2.2 compliance achieved)
+- v1.0.1 focuses on content freshness issues discovered post-launch
+- May need Firebase Cloud Functions for rankings automation
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-25 after v1.0 milestone completion*
+*Last updated: 2026-01-30 after v1.0.1 milestone started*
