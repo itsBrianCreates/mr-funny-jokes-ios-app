@@ -1,502 +1,252 @@
-# iOS Native Integration Research Summary
+# Project Research Summary
 
-**Project:** Mr. Funny Jokes - iOS 18.0+
-**Milestone:** Siri Integration & Lock Screen Widgets
-**Research Date:** 2026-01-24
-**Overall Confidence:** HIGH
-
----
+**Project:** Mr. Funny Jokes - v1.0.1 Content Freshness
+**Domain:** iOS content app with widgets and cloud infrastructure
+**Researched:** 2026-01-30
+**Confidence:** HIGH
 
 ## Executive Summary
 
-The Mr. Funny Jokes app needs deep native iOS integration to overcome App Store guideline 4.2.2 rejection. Research reveals a straightforward technical path: use **App Intents framework** for Siri voice commands and **WidgetKit accessory families** for lock screen widgets. The app already has the necessary foundation (App Groups, SharedStorageService) to support both features with minimal new infrastructure.
+The v1.0.1 Content Freshness milestone addresses staleness issues in the existing iOS joke app by implementing four key features: widget background refresh, feed prioritization, background joke loading, and cloud-based rankings aggregation. This milestone is achievable with iOS native APIs and Firebase Cloud Functions, requiring no third-party dependencies beyond the existing Firebase SDK.
 
-The critical insight is that these features must provide **genuine utility** rather than feeling "bolted on." A working Siri integration that speaks jokes aloud without opening the app, combined with glanceable lock screen widgets showing dynamic content, demonstrates the native iOS experience Apple requires.
+The recommended approach leverages existing infrastructure intelligently. The app already has SharedStorageService with App Groups, proper widget TimelineProvider architecture, and Firestore pagination. All four features integrate cleanly without breaking changes. The key insight: iOS background refresh is "best effort" and cannot be relied upon exclusively—combine timeline-based widget refresh, BGAppRefreshTask opportunistic fetching, and graceful degradation for stale data.
 
-Estimated effort for v1.0: **12-21 hours** of implementation with **low technical risk** given the mature APIs and existing codebase foundation.
+Critical risks center on repeating past mistakes: the app previously removed background fetch due to battery drain concerns. This time, constrain background operations to widget data only (not full catalog loading), profile battery impact with Instruments before release, and avoid Firebase Firestore direct access in widget extensions (known deadlock issue). Total estimated effort: 10-18 hours across all features, with medium implementation risk for background tasks and low risk for feed prioritization.
 
----
+## Key Findings
 
-## Stack Recommendations
+### Recommended Stack
 
-### Core Technology Choices
+The v1.0.1 milestone requires minimal stack additions—all features use iOS native APIs and existing Firebase infrastructure.
 
-| Framework | Purpose | Why This Choice |
-|-----------|---------|-----------------|
-| **App Intents (iOS 16+)** | Siri voice commands, Shortcuts | Swift-native, auto-registered, replaces deprecated SiriKit Intents |
-| **WidgetKit Accessory Families (iOS 16+)** | Lock screen widgets | Only option for lock screen; shares infrastructure with existing home screen widgets |
-| **SwiftUI** | Widget and intent UI | Already used throughout app; required for modern WidgetKit |
-| **App Groups** | Data sharing between app/widget/intents | Already configured; enables offline functionality |
+**Core technologies:**
+- **BGTaskScheduler (iOS 13+)**: Background app refresh for widget data updates — provides 30-second execution windows for lightweight fetches, system-scheduled based on user behavior
+- **Firebase Cloud Functions v2 with onSchedule**: Replaces local cron job for rankings aggregation — active development track with better cold start performance than v1, requires Blaze plan but costs negligible ($0.10/month for scheduler + free tier invocations)
+- **WidgetKit Timeline with network fetch**: Widgets fetch directly as fallback when app hasn't run — allows URLSession calls in TimelineProvider, 40-70 refresh opportunities per day budget
+- **Existing infrastructure (no changes)**: SharedStorageService, LocalStorageService, FirestoreService pagination — already supports all required operations
 
-### What NOT to Use
+**Critical decision:** Use hybrid approach for widget freshness—BGAppRefreshTask as primary mechanism when app runs regularly, widget direct fetch as fallback for inactive users, graceful degradation when data exceeds 3 days old.
 
-- **SiriKit Intent Definition Files (.intentdefinition)** - Deprecated; replaced by App Intents
-- **Custom notification scheduling UI** - Remove in-app time picker; use iOS Settings
-- **Firebase SDK in widget extension** - Too heavy; use cached data from App Groups
-- **Live Activities** - Overkill for v1.0; defer to future milestone
+### Expected Features
 
-### Implementation Pattern
+**Must have (table stakes):**
+- **Widget background refresh** — Users expect widgets to show current content without app launch; currently broken (shows stale jokes for days)
+- **Automatic feed loading** — Manual "Load More" button is friction; infinite scroll is standard for content apps
+- **Offline access** — Already implemented with Firestore cache + LocalStorageService
+- **Feed prioritization** — Already implemented with 3-tier sorting (unseen > seen unrated > rated)
 
-```swift
-Main App (Firestore sync)
-    ↓
-SharedStorageService (App Groups)
-    ↓
-├─→ App Intents (read cached jokes for Siri)
-└─→ Widgets (read cached jokes for display)
-```
+**Should have (competitive):**
+- **Cloud rankings aggregation** — Professionalize backend by moving from local cron to Firebase Cloud Functions; enables scaling and reliability
 
-This architecture ensures fast, offline-capable Siri responses and widgets without network dependencies.
+**Defer (v2+):**
+- **Widget push refresh via silent notifications** — High complexity, requires APNs infrastructure, iOS may throttle; timeline-based refresh sufficient for daily jokes
+- **Real-time widget updates** — iOS doesn't support frequent updates; budget exhausted quickly
+- **Background app refresh every 15 minutes** — Battery drain risk, iOS deprioritizes aggressive apps
 
----
+**Anti-features explicitly avoided:**
+- Force-refresh on every app open (battery waste)
+- Complex ML feed algorithms (overkill for joke content)
+- Aggressive background fetch schedules (repeat of removed feature)
+- Firebase Firestore direct access in widget extensions (known deadlock issue)
 
-## Feature Priorities
+### Architecture Approach
 
-### Table Stakes (Must Have for v1.0)
+All four features integrate with the existing MVVM architecture without breaking changes. New components are minimal: BackgroundRefreshService orchestrates BGTask logic, BackgroundCatalogLoader handles incremental fetch in background Task. Existing components need only behavioral enhancements.
 
-| Feature | Why Expected | Complexity | Effort |
-|---------|--------------|------------|--------|
-| **Siri "tell me a joke" intent** | Users expect voice activation to work | Low | 2-4 hours |
-| **Siri speaks joke aloud** | Without spoken response, integration is pointless | Low | Included above |
-| **Lock screen widgets (3 families)** | Modern iOS expectation for content apps | Low | 4-6 hours |
-| **Works offline** | Siri/widgets must function without network | Medium | 2-3 hours |
-| **App Shortcuts auto-registration** | Siri phrases should work immediately on install | Low | 1-2 hours |
+**Major components:**
+1. **BackgroundRefreshService (NEW)** — Orchestrates BGAppRefreshTask execution, fetches Joke of the Day from Firestore, updates SharedStorageService, triggers WidgetCenter reload
+2. **BackgroundCatalogLoader (NEW)** — Runs low-priority Task.detached after initial load, fetches remaining catalog in 50-joke batches, respects network conditions and battery state
+3. **Firebase Cloud Functions project (NEW)** — Scheduled function with onSchedule trigger runs daily at midnight ET, aggregates rating_events into weekly_rankings, uses preferRest: true for faster cold starts
+4. **JokeViewModel (ENHANCED)** — Add resortFeedOnReturn() method called from JokeFeedView.onAppear, triggers existing sortJokesForFreshFeed() when returning to feed tab
 
-**Total table stakes effort:** 9-15 hours
+**Implementation pattern:** SwiftUI .backgroundTask modifier provides clean integration point for BGAppRefreshTask. Cloud Functions v2 onSchedule handles cron syntax with explicit timezone. Widget TimelineProvider already supports network fetch; add stale data detection and direct Firestore call as fallback.
 
-### Differentiators (Should Have - Pick 1)
+### Critical Pitfalls
 
-| Feature | Value Proposition | Complexity | Effort |
-|---------|-------------------|------------|--------|
-| **Character-specific Siri parameter** | "Tell me a Mr. Potty joke" | Medium | 2-4 hours |
-| **Interactive widget button** | Reveal punchline without opening app | Medium | 3-4 hours |
-| **Control Center widget** | Quick joke button in Control Center | Medium | 2-3 hours |
+1. **Widget Extension Firestore Deadlocks** — Firebase Firestore SDK causes thread deadlocks in widget extensions (GitHub issue #13070); works in development but crashes in production. **Prevention:** Use App Groups data sharing only; existing SharedStorageService pattern is correct—maintain it. Widget should NEVER import Firebase directly.
 
-**Recommendation:** Implement **character-specific parameter** for v1.0. Shows thoughtful integration beyond minimum with relatively low complexity.
+2. **BGTaskScheduler Identifier Mismatch** — Background tasks silently fail when identifier doesn't exactly match between Info.plist, registration code, and task request. No error thrown. **Prevention:** Define identifier as constant used in all three locations; test with Xcode simulation commands before TestFlight.
 
-### Defer to Post-v1.0
+3. **Background Fetch Battery Drain (Repeat Issue)** — App previously removed background fetch; re-introducing without constraints risks same performance complaints. **Prevention:** Constrain background fetch to widget data only (not full catalog), profile with Instruments Energy Log, set strict 30-second operation limit.
 
-- View snippets in Siri responses
-- Apple Intelligence / AssistantIntent integration
-- Live Activities for joke reveal
-- Spotlight search integration
-- watchOS complications
+4. **Firebase Cloud Functions Billing Surprise** — Setting minInstances: 1 in test environments costs $6-8/month per idle function. **Prevention:** Environment-based minInstances (0 for test, conditional for production), set billing alerts in GCP Console, use preferRest: true for Firestore to reduce cold start costs.
 
----
+5. **System Deprioritization for Unused Apps** — iOS learns user patterns; infrequently opened apps get deprioritized or halted from background execution. **Prevention:** Don't rely solely on BGTask for freshness; combine timeline refresh + background fetch + graceful degradation showing "Tap to get today's joke!" when data exceeds 3 days.
 
-## Architecture Approach
+**Additional moderate risks:** Widget timeline budget exhaustion (40-70 refreshes/day—mitigated by existing .after(tomorrow) policy), App Groups data race conditions (mitigate with atomic writes via defaults.synchronize()), Cloud Functions cold start latency (10-15 seconds—use 2nd gen + preferRest: true).
 
-### Component Boundaries
+## Implications for Roadmap
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     MAIN APP TARGET                          │
-│  ┌──────────────┐      ┌──────────────────┐                 │
-│  │ ViewModels   │─────▶│ FirestoreService │◀──Firestore DB  │
-│  └──────────────┘      └──────────────────┘                 │
-│         │                                                    │
-│         ▼                                                    │
-│  ┌──────────────────────────────────────────┐               │
-│  │ SharedStorageService (App Groups)        │               │
-│  └──────────────────────────────────────────┘               │
-│         ▲                      ▲                             │
-│  ┌──────┴────────┐      ┌──────┴─────────┐                  │
-│  │ App Intents   │      │                │                  │
-│  │ (Siri)        │      │                │                  │
-│  └───────────────┘      │                │                  │
-└─────────────────────────┼────────────────┼──────────────────┘
-                          │                │
-┌─────────────────────────┼────────────────┼──────────────────┐
-│            WIDGET EXTENSION TARGET       │                  │
-│                         │                │                  │
-│  ┌──────────────────────▼────────────────▼───────┐          │
-│  │ JokeOfTheDayProvider (Timeline Provider)      │          │
-│  └───────────────────────────────────────────────┘          │
-│         │                        │                          │
-│         ▼                        ▼                          │
-│  ┌─────────────────┐      ┌──────────────────┐             │
-│  │ Home Screen     │      │ Lock Screen      │             │
-│  │ .systemSmall    │      │ .accessoryCircular│            │
-│  │ .systemMedium   │      │ .accessoryRectangular│         │
-│  │ .systemLarge    │      │ .accessoryInline │             │
-│  └─────────────────┘      └──────────────────┘             │
-└─────────────────────────────────────────────────────────────┘
-```
+Based on research, suggested phase structure optimizes for risk mitigation and incremental delivery:
 
-### Data Flow Patterns
+### Phase 1: Cloud Functions Migration
+**Rationale:** Backend-first approach eliminates dependency on local cron without touching iOS code. Independent deployment enables testing in isolation. Lowest risk (no app changes), highest immediate value (reliability).
 
-**Pattern 1: Siri Intent Execution (Fast Path)**
-```
-User: "Hey Siri, tell me a joke"
-  ↓
-TellJokeIntent.perform()
-  ↓
-SharedStorageService.loadJokeOfTheDay()  // Cached, no network
-  ↓
-Return .result(dialog: "Setup... Punchline")  // Siri speaks
-```
+**Delivers:** Automated rankings aggregation running reliably regardless of developer machine state.
 
-**Pattern 2: Widget Timeline Refresh**
-```
-System triggers widget refresh (budget-limited, ~40-70/day)
-  ↓
-JokeOfTheDayProvider.timeline()
-  ↓
-SharedStorageService.loadJokeOfTheDay()  // Cached
-  ↓
-Return timeline entries for all widget families
-```
+**Addresses:** Cloud rankings aggregation feature from FEATURES.md; removes operational friction.
 
-**Pattern 3: Main App Sync (Background)**
-```
-App launches or refreshes
-  ↓
-FirestoreService.fetchJokeOfTheDay()
-  ↓
-SharedStorageService.saveJokeOfTheDay()  // Updates cache
-  ↓
-WidgetCenter.shared.reloadAllTimelines()  // Notifies widgets
-```
+**Avoids:** Billing surprise pitfall (#4) by setting environment-based minInstances and GCP budget alerts from start.
 
-### File Organization
+**Stack:** Firebase Cloud Functions v2, onSchedule, preferRest: true for Firestore.
 
-```
-MrFunnyJokes/
-├── MrFunnyJokes/              # Main app target
-│   ├── Intents/               # NEW: App Intents for Siri
-│   │   ├── TellJokeIntent.swift
-│   │   ├── JokeCharacterEnum.swift
-│   │   └── MrFunnyShortcutsProvider.swift
-│   └── [existing folders]
-├── JokeOfTheDayWidget/        # Widget extension
-│   ├── JokeOfTheDayWidget.swift
-│   ├── JokeOfTheDayProvider.swift
-│   └── LockScreenViews/       # NEW: Accessory views
-│       ├── AccessoryCircularView.swift
-│       ├── AccessoryRectangularView.swift
-│       └── AccessoryInlineView.swift
-└── Shared/                    # Shared between targets
-    ├── SharedStorageService.swift    # Already exists
-    └── SharedJokeOfTheDay.swift      # Already exists
-```
+**Effort:** 4-6 hours (function implementation, testing, deployment).
 
----
+**Research flag:** Standard pattern—Cloud Functions scheduling is well-documented. No additional research needed.
 
-## Critical Pitfalls to Avoid
+### Phase 2: Feed Content Prioritization
+**Rationale:** Small behavioral change using existing infrastructure. Immediate UX improvement with minimal risk. Builds confidence before tackling complex background tasks.
 
-### Top 5 Mistakes That Cause Rejection or Major Rework
+**Delivers:** Feed automatically shows unrated jokes first when returning to feed tab.
 
-#### 1. Treating Native Features as Checkboxes (CRITICAL)
-**Problem:** Adding Siri/widgets that feel "bolted on" rather than providing genuine value.
+**Addresses:** Feed prioritization feature (technically already implemented via sortJokesForFreshFeed; this phase makes it automatic on tab return).
 
-**Prevention:**
-- Design features that provide real utility (e.g., Siri speaks joke without opening app)
-- Make features discoverable within 30 seconds of app launch
-- Test with unfamiliar users - can they find native features quickly?
+**Implements:** JokeViewModel.resortFeedOnReturn() called from JokeFeedView.onAppear; uses existing LocalStorageService memory cache.
 
-**When to address:** Phase 1 (Design) - Define value proposition before implementation.
+**Stack:** No additions—pure client-side logic with existing services.
 
----
+**Effort:** 2-4 hours (method addition, view integration, testing).
 
-#### 2. App Review Notes Don't Highlight Features (CRITICAL)
-**Problem:** Reviewers don't discover native functionality during their ~5-minute review.
+**Research flag:** No research needed—leveraging existing implementation.
 
-**Prevention:**
-- Write detailed App Review Notes: "To test Siri: Say 'Hey Siri, tell me a joke from Mr. Funny Jokes'. To test widgets: Add lock screen widget from widget gallery."
-- Include video/screenshots showing native features
-- Add onboarding screen highlighting native integrations
+### Phase 3: Background Joke Loading
+**Rationale:** Enables full catalog availability before implementing widget refresh. Background catalog loading validates that background operations don't drain battery before applying pattern to widget refresh.
 
-**When to address:** Phase 4 (Submission) - Create comprehensive notes as a deliverable.
+**Delivers:** Full joke catalog loads automatically in background after initial display; removes manual "Load More" friction.
 
----
+**Addresses:** Automatic content loading from FEATURES.md.
 
-#### 3. Siri Phrases Don't Include App Name
-**Problem:** Siri doesn't recognize voice commands despite correct App Intent implementation.
+**Avoids:** Battery drain pitfall (#9) by using low-priority Task.detached, respecting network conditions, pausing when backgrounded, and profiling with Instruments before release.
 
-**Prevention:**
-```swift
-// WRONG
-phrases: ["Tell me a joke"]
+**Implements:** BackgroundCatalogLoader component running after JokeViewModel.loadInitialContentAsync() completes.
 
-// CORRECT
-phrases: [
-    "Tell me a joke from \(.applicationName)",
-    "Get a joke from \(.applicationName)"
-]
-```
+**Stack:** Task.detached(priority: .utility), existing FirestoreService.fetchMoreJokes() pagination.
 
-**When to address:** Phase 2 (Siri) - Include phrase validation in testing checklist.
+**Effort:** 4-6 hours (background task implementation, network condition handling, battery profiling).
 
----
+**Research flag:** Standard pattern for background loading—no additional research needed unless battery profiling reveals issues.
 
-#### 4. Widget Refresh Budget Exhaustion
-**Problem:** Widgets stop updating in production while working perfectly during development.
+### Phase 4: Widget Background Refresh
+**Rationale:** Most complex iOS integration saved for last. Dependencies on established background operation patterns from Phase 3. Highest user-facing value (solves main complaint: stale widgets).
 
-**Prevention:**
-- Design widget content that remains relevant for 15-60 minutes
-- Keep timeline entries at least 5 minutes apart
-- Budget is ~40-70 refreshes per day (enforced in production, not debug)
-- Test on device without debugger attached
+**Delivers:** Widgets update daily with fresh Joke of the Day without requiring user to open main app. Graceful degradation for stale data.
 
-**When to address:** Phase 3 (Widgets) - Design for budget constraints from the start.
+**Addresses:** Widget background refresh (table stakes) from FEATURES.md.
 
----
+**Avoids:** Multiple critical pitfalls—Firestore deadlock (#1) by maintaining App Groups pattern, identifier mismatch (#2) via constants, registration timing (#3) via AppDelegate-only registration, system deprioritization (#8) via hybrid approach with widget direct fetch fallback.
 
-#### 5. Lock Screen Rendering Mode Mismatch
-**Problem:** Widgets look broken or invisible due to incorrect handling of vibrant mode.
+**Implements:** BackgroundRefreshService component, BGAppRefreshTask registration in AppDelegate, Info.plist configuration, widget TimelineProvider fallback fetch.
 
-**Prevention:**
-```swift
-@Environment(\.widgetRenderingMode) var renderingMode
+**Stack:** BGTaskScheduler, .backgroundTask(.appRefresh) SwiftUI modifier, WidgetCenter.shared.reloadAllTimelines().
 
-var body: some View {
-    switch renderingMode {
-    case .vibrant:      // Lock screen - desaturated
-        VibrantModeView()
-    case .fullColor:    // Home screen - colors
-        FullColorView()
-    case .accented:     // watchOS
-        AccentedModeView()
-    @unknown default:
-        FullColorView()
-    }
-}
-```
+**Effort:** 6-8 hours (background task setup, widget fallback fetch, testing with simulation commands, TestFlight validation).
 
-**When to address:** Phase 3 (Widgets) - Test all three rendering modes.
+**Research flag:** Standard pattern but testing complexity high—budget extra time for physical device testing since background tasks don't work reliably in Simulator.
+
+### Phase Ordering Rationale
+
+- **Backend before iOS:** Cloud Functions (Phase 1) can deploy and test independently; no risk to existing app.
+- **Simple before complex:** Feed prioritization (Phase 2) builds confidence with existing infrastructure before tackling background tasks.
+- **Validation before application:** Background catalog loading (Phase 3) validates battery-friendly background operations before applying pattern to widget refresh.
+- **Highest risk last:** Widget background refresh (Phase 4) has most integration complexity, unpredictable iOS timing behavior, and testing challenges—defer until other patterns proven.
+
+**Dependency chain:** Phases 1 and 2 are independent and could run in parallel. Phase 3 should complete before Phase 4 to validate background operation patterns. Total sequential completion: 16-24 hours; could reduce to 10-18 hours with parallel execution of Phases 1-2.
+
+### Research Flags
+
+**Phases with standard patterns (skip research-phase):**
+- **Phase 1 (Cloud Functions):** Well-documented Firebase pattern; existing aggregation script provides logic reference
+- **Phase 2 (Feed Prioritization):** Pure client-side logic using existing sortJokesForFreshFeed implementation
+- **Phase 3 (Background Loading):** Standard Task.detached pattern; existing pagination infrastructure supports it
+
+**Phases likely needing validation during planning:**
+- **Phase 4 (Widget Refresh):** Standard pattern but unpredictable iOS timing requires extensive real-device testing; budget extra time for TestFlight validation cycles; consider adding analytics to track background refresh success rate in production
+
+**Overall assessment:** No additional research-phase invocations needed. All patterns well-documented. Main risk is execution and testing discipline, not knowledge gaps.
+
+## Confidence Assessment
+
+| Area | Confidence | Notes |
+|------|------------|-------|
+| Stack | HIGH | iOS native APIs verified against Apple Developer Documentation; Firebase Cloud Functions v2 official docs; no third-party dependencies |
+| Features | HIGH | Clear requirements based on existing user complaints (stale widgets) and standard content app patterns (infinite scroll, offline access) |
+| Architecture | HIGH | Integration points clearly defined; existing codebase already structured correctly with SharedStorageService, App Groups, widget TimelineProvider; new components minimal |
+| Pitfalls | HIGH | Critical issues verified via GitHub issues (Firestore deadlock), Apple documentation (BGTask limitations), Firebase docs (billing), and existing app context (battery drain history) |
+
+**Overall confidence:** HIGH
+
+### Gaps to Address
+
+**Testing unpredictability:** Background tasks and widget refresh timing are system-controlled and vary based on user behavior, battery state, network conditions. Cannot guarantee exact refresh times in production.
+
+- **How to handle:** Implement comprehensive logging with timestamps sent to Firebase Analytics; track background refresh success rate as metric; design graceful degradation (show "Tap to get today's joke!" when data exceeds 3 days); test on multiple physical devices in TestFlight before release; accept that some users (inactive app users) will see stale content occasionally.
+
+**Battery impact validation:** Previous background fetch implementation was removed due to performance concerns. Must validate that new implementation doesn't repeat issue.
+
+- **How to handle:** Profile with Instruments Energy Log before Phase 3 and Phase 4 TestFlight releases; set acceptance criteria (background activity <5% in Battery settings); constrain background operations (widget data only, not full catalog); use strict time limits (30 seconds max); cancel operations in expirationHandler; monitor TestFlight feedback for battery complaints.
+
+**Firebase billing monitoring:** Blaze plan required for Cloud Functions; costs should be negligible but need safeguards.
+
+- **How to handle:** Set up GCP budget alerts at $10, $25, $50 thresholds during Phase 1 deployment; use environment-based minInstances configuration (0 for test, conditional for production); monitor Cloud Functions dashboard weekly during first month; document expected monthly cost (~$0.10 for scheduler + free tier invocations).
+
+**iOS version fragmentation:** BGTaskScheduler requires iOS 13+; app currently targets iOS 17+ so no issue, but worth noting for future reference.
+
+- **How to handle:** Verify deployment target in Xcode project settings; no compatibility issues expected since existing app is iOS 17+ only.
+
+## Sources
+
+### Primary (HIGH confidence)
+
+**Apple Official Documentation:**
+- [Using background tasks to update your app](https://developer.apple.com/documentation/uikit/using-background-tasks-to-update-your-app) — BGTaskScheduler API, limitations, best practices
+- [Refreshing and Maintaining Your App Using Background Tasks](https://developer.apple.com/documentation/BackgroundTasks/refreshing-and-maintaining-your-app-using-background-tasks) — Background task lifecycle, testing
+- [Keeping a widget up to date](https://developer.apple.com/documentation/widgetkit/keeping-a-widget-up-to-date) — Widget timeline policies, refresh budget (40-70/day)
+- [Making network requests in a widget extension](https://developer.apple.com/documentation/widgetkit/making-network-requests-in-a-widget-extension) — URLSession usage in widgets
+- [WidgetCenter](https://developer.apple.com/documentation/widgetkit/widgetcenter) — Programmatic timeline reload API
+
+**WWDC Sessions:**
+- [Efficiency awaits: Background tasks in SwiftUI - WWDC22](https://developer.apple.com/videos/play/wwdc2022/10142/) — SwiftUI .backgroundTask modifier integration
+
+**Firebase Official Documentation:**
+- [Schedule functions | Cloud Functions for Firebase](https://firebase.google.com/docs/functions/schedule-functions) — onSchedule trigger, cron syntax, timezone configuration
+- [scheduler namespace | Cloud Functions v2](https://firebase.google.com/docs/reference/functions/2nd-gen/node/firebase-functions.scheduler) — ScheduleOptions API reference
+- [Manage functions](https://firebase.google.com/docs/functions/manage-functions) — minInstances, cold start optimization
+- [Tips & tricks | Cloud Functions](https://firebase.google.com/docs/functions/tips) — Best practices, performance optimization
+- [Firebase Pricing](https://firebase.google.com/pricing) — Blaze plan costs, free tier limits
+
+**Known Issues:**
+- [GitHub Issue #13070 - Firestore deadlock in widget extension](https://github.com/firebase/firebase-ios-sdk/issues/13070) — Verified reproduction steps, workaround (App Groups)
+
+### Secondary (MEDIUM confidence)
+
+**Technical Articles (verified against official docs):**
+- [Background tasks in SwiftUI | Swift with Majid](https://swiftwithmajid.com/2022/07/06/background-tasks-in-swiftui/) — SwiftUI integration patterns
+- [How to Update or Refresh a Widget? - Swift Senpai](https://swiftsenpai.com/development/refreshing-widget/) — Widget refresh patterns
+- [How to Fetch and Show Remote Data on a Widget - Swift Senpai](https://swiftsenpai.com/development/widget-load-remote-data/) — URLSession in widgets
+- [Don't rely on BGAppRefreshTask for your app's business logic](https://mertbulan.com/programming/dont-rely-on-bgapprefreshtask-for-your-apps-business-logic/) — System limitations, user behavior dependency
+- [iOS App Extensions: Data Sharing](https://dmtopolog.com/ios-app-extensions-data-sharing/) — App Groups, NSFileCoordinator patterns
+- [Firebase Cloud Functions 2nd generation](https://firebase.blog/posts/2022/12/cloud-functions-firebase-v2/) — v2 improvements over v1
+- [Reducing Firestore Cold Start times](https://cjroeser.com/2022/12/28/reducing-firestore-cold-start-times-in-firebase-google-cloud-functions/) — preferRest: true optimization
+- [Understanding Widget Runtime Limitations](https://medium.com/@telawittig/understanding-the-limitations-of-widgets-runtime-in-ios-app-development-and-strategies-for-managing-a3bb018b9f5a) — 30MB memory limit, runtime constraints
+- [Swift iOS BackgroundTasks framework](https://itnext.io/swift-ios-13-backgroundtasks-framework-background-app-refresh-in-4-steps-3da32e65bc3d) — Testing with simulation commands
+
+**UX Best Practices:**
+- [NN/g - Infinite Scrolling: When to Use It](https://www.nngroup.com/articles/infinite-scrolling-tips/) — Pagination vs. infinite scroll patterns
+
+### Existing Codebase Context
+
+**Current architecture strengths (verified via code review):**
+- SharedStorageService + App Groups correctly implemented
+- Widget TimelineProvider uses .after(tomorrow) policy (correct)
+- AppDelegate exists for BGTaskScheduler registration
+- Firestore persistent cache (50MB) configured
+- JokeViewModel already implements sortJokesForFreshFeed with 3-tier prioritization
+
+**Historical context:**
+- Background fetch previously removed due to battery concerns
+- Local cron job (`scripts/aggregate-weekly-rankings.js`) currently runs manually
 
 ---
 
-## Phase Suggestions
-
-### Recommended Build Order
-
-```
-Phase 1: Foundation Setup (2-3 hours)
-├─ Verify App Groups configuration
-├─ Audit SharedStorageService for multi-joke caching
-├─ Create Intents/ folder structure in main app
-└─ Design which jokes to cache (current daily + recent 5-10)
-
-Phase 2: Siri Integration (4-6 hours)
-├─ Implement TellJokeIntent with dialog response
-├─ Create JokeCharacter AppEnum (mr_funny, mr_bad, etc.)
-├─ Add character parameter to intent
-├─ Create MrFunnyShortcutsProvider with phrases
-├─ Test all phrases with Siri on real device
-└─ Verify offline functionality
-
-Phase 3: Lock Screen Widgets (4-6 hours)
-├─ Add accessory families to widget configuration
-├─ Create AccessoryCircularView (character avatar)
-├─ Create AccessoryRectangularView (joke setup text)
-├─ Create AccessoryInlineView (simple text)
-├─ Implement rendering mode handling
-└─ Test on lock screen (vibrant mode)
-
-Phase 4: Polish & Submission (2-4 hours)
-├─ Add SiriTipView to main app for discoverability
-├─ Verify all widget sizes on both light/dark mode
-├─ Test offline scenarios
-├─ Write comprehensive App Review Notes
-├─ Create demo video showing Siri + widgets
-└─ Submit for review
-```
-
-### Dependencies Between Phases
-
-```
-Phase 1 (Foundation)
-    ├─→ Phase 2 (Siri) - Needs shared data layer
-    └─→ Phase 3 (Widgets) - Needs shared data layer
-
-Phase 2 ║ Can be done in parallel
-Phase 3 ║
-
-Phase 4 (Polish) - Requires Phase 2 & 3 complete
-```
-
-### Phase-Specific Risks
-
-| Phase | Risk Area | Mitigation |
-|-------|-----------|------------|
-| Phase 1 | App Groups misconfiguration | Verify entitlements in Distribution-signed IPA |
-| Phase 2 | Siri phrase not recognized | Test with `.applicationName` placeholder on real device |
-| Phase 3 | Rendering mode issues | Test vibrant/accented/fullColor modes |
-| Phase 4 | Features not discoverable | Add onboarding, write detailed review notes |
-
----
-
-## 4.2.2 Compliance Strategy
-
-### Required Evidence of Native Integration
-
-Apple states that "Including iOS features such as push notifications, Core Location, and sharing do not provide a robust enough experience." You need features that go **beyond basic iOS APIs**.
-
-#### Strong Evidence (Implement 2-3)
-- ✅ Siri responds with jokes inline (dialog) without opening app
-- ✅ Lock screen widget shows dynamic joke content
-- ✅ Widget taps deep-link to specific joke in app
-- ✅ Offline joke caching with meaningful offline experience
-
-#### Supporting Evidence (Implement 1-2)
-- ✅ Home screen widgets at multiple sizes
-- ✅ Character-specific Siri parameters
-- ✅ Native SwiftUI navigation throughout
-- ⏸️ Favorites/history synced across devices (defer if complex)
-
-#### Not Sufficient Alone
-- ❌ Push notifications
-- ❌ Share sheet
-- ❌ Core Location
-- ❌ Basic app icon widgets
-
-### Resubmission Checklist
-
-**Before resubmitting:**
-- [ ] Siri "Tell me a joke" works offline on real device
-- [ ] Lock screen widget shows current joke (all 3 families)
-- [ ] Features are discoverable within 30 seconds of app launch
-- [ ] App Review Notes include step-by-step testing instructions
-- [ ] Demo video shows Siri + widget functionality
-- [ ] Onboarding screen highlights native features (optional but recommended)
-
-**App Review Notes Template:**
-```
-TESTING NATIVE INTEGRATIONS:
-
-Siri Integration:
-1. Say "Hey Siri, tell me a joke from Mr. Funny Jokes"
-2. Siri will speak a joke without opening the app
-3. Say "Hey Siri, tell me a Mr. Potty joke from Mr. Funny Jokes"
-4. Siri will speak a character-specific joke
-
-Lock Screen Widgets:
-1. Long-press on lock screen and tap "Customize"
-2. Add "Mr. Funny Jokes" widget from widget gallery
-3. Widget displays today's joke on lock screen
-4. Available in circular, rectangular, and inline formats
-
-Offline Functionality:
-- Both Siri and widgets work without internet connection
-- Jokes are cached locally for offline access
-
-All features are also highlighted in the app's onboarding flow.
-```
-
----
-
-## Implementation Effort Summary
-
-| Phase | Features | Estimated Hours | Risk Level |
-|-------|----------|-----------------|------------|
-| Phase 1: Foundation | App Groups audit, folder structure | 2-3 | Low |
-| Phase 2: Siri | Basic intent + character parameter | 4-6 | Low |
-| Phase 3: Widgets | 3 accessory families + rendering modes | 4-6 | Low |
-| Phase 4: Polish | Testing, review notes, video | 2-4 | Low |
-| **TOTAL** | **v1.0 Native Integration** | **12-19 hours** | **Low** |
-
-### Why Low Risk?
-
-1. **Mature APIs** - App Intents and WidgetKit accessory families have been in production since iOS 16 (3+ years)
-2. **Existing foundation** - App Groups and SharedStorageService already working
-3. **No new dependencies** - No third-party libraries needed
-4. **Clear documentation** - Apple provides extensive WWDC sessions and official guides
-5. **Low complexity** - No complex state management or networking in extensions
-
----
-
-## Sources Quality Assessment
-
-### HIGH Confidence Sources
-- Apple Developer Documentation (App Intents, WidgetKit)
-- WWDC 2022-2025 Sessions (Complications, App Intents)
-- Existing codebase analysis (SharedStorageService, widgets)
-
-### MEDIUM Confidence Sources
-- Community tutorials (Superwall, Swift with Majid, Swift Senpai)
-- iOS Submission Guide (4.2.2 strategies)
-- Apple Developer Forums (verified patterns)
-
-### Assumptions & Unknowns
-- **Apple Review criteria subjectivity** - "Deep native integration" is intentionally vague; we're implementing best-practice patterns but cannot guarantee acceptance
-- **Widget refresh budget** - Apple doesn't publish exact limits; community consensus is 40-70/day
-- **iOS 18 Apple Intelligence features** - AssistantIntent patterns are emerging but not widely documented yet (defer to post-v1.0)
-
----
-
-## Next Steps
-
-1. **Review this summary** with stakeholders
-2. **Validate approach** matches project goals
-3. **Begin Phase 1** if approved (foundation setup)
-4. **Create task breakdown** for each phase
-5. **Set milestone deadline** for v1.0 submission
-
-**Estimated calendar time for solo developer:** 2-3 weeks (assuming 6-8 hours/week)
-
----
-
-## Appendix: Quick Reference
-
-### Valid App Intent Phrase Patterns
-```swift
-// ✅ GOOD - Includes app name
-"Tell me a joke from \(.applicationName)"
-"Get a \(\.$character) joke from \(.applicationName)"
-
-// ❌ BAD - Missing app name
-"Tell me a joke"
-"Random joke"
-```
-
-### Widget Family Sizes
-| Family | Dimensions | Use Case |
-|--------|------------|----------|
-| `.systemSmall` | ~150x150pt | Home screen small |
-| `.systemMedium` | ~300x150pt | Home screen medium |
-| `.systemLarge` | ~300x300pt | Home screen large |
-| `.accessoryCircular` | ~50pt diameter | Lock screen circular |
-| `.accessoryRectangular` | ~150x50pt | Lock screen rectangular |
-| `.accessoryInline` | Single line | Lock screen inline |
-
-### App Groups Configuration
-```swift
-// Main app and widget extension entitlements
-let appGroupID = "group.com.yourcompany.mrfunnyjokes"
-let shared = UserDefaults(suiteName: appGroupID)!
-
-// Save from main app
-shared.set(encodedJoke, forKey: "jokeOfTheDay")
-
-// Read from widget/intent
-let joke = shared.object(forKey: "jokeOfTheDay")
-```
-
-### Character Enum for Parameters
-```swift
-enum JokeCharacter: String, AppEnum {
-    case mrFunny = "mr_funny"
-    case mrBad = "mr_bad"
-    case mrSad = "mr_sad"
-    case mrPotty = "mr_potty"
-    case mrLove = "mr_love"
-
-    static var typeDisplayRepresentation: TypeDisplayRepresentation =
-        .init(name: "Character")
-
-    static var caseDisplayRepresentations: [JokeCharacter: DisplayRepresentation] = [
-        .mrFunny: "Mr. Funny",
-        .mrBad: "Mr. Bad",
-        .mrSad: "Mr. Sad",
-        .mrPotty: "Mr. Potty",
-        .mrLove: "Mr. Love"
-    ]
-}
-```
-
----
-
-**Research Complete:** 2026-01-24
-**Ready for Implementation:** Yes
-**Confidence Level:** HIGH
+*Research completed: 2026-01-30*
+*Ready for roadmap: yes*
