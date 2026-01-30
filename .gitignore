@@ -72,3 +72,7 @@ scripts/migration-log-*.json
 .social-draft-*.md
 .codestory-backup-*/
 .codestory-version
+
+# Cloud Functions
+functions/node_modules/
+functions/.npm-cache/
