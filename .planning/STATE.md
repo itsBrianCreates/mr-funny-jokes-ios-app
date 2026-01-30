@@ -4,10 +4,10 @@
 
 **Milestone:** v1.0.1 Content Freshness
 **Phase:** 7 of 9 (Cloud Functions Migration)
-**Plan:** 0 of ? (phase not yet planned)
-**Status:** Ready to plan
+**Plan:** 1 of 2 complete
+**Status:** In progress
 
-Progress: [██████████░░░░░░░░░░] 55% (11/20 plans, pending v1.0.1 plan counts)
+Progress: [███████████░░░░░░░░░] 60% (12/20 plans)
 
 ## Project Reference
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 
 | Phase | Plans | Status |
 |-------|-------|--------|
-| 7. Cloud Functions Migration | TBD | Ready to plan |
+| 7. Cloud Functions Migration | 1/2 | In progress |
 | 8. Feed Content Loading | TBD | Not started |
 | 9. Widget Background Refresh | TBD | Not started |
 
@@ -40,26 +40,30 @@ Recent decisions affecting current work (full log in PROJECT.md):
 - [v1.0]: Shortcuts app for Siri (not voice) — Direct voice triggers iOS built-in jokes
 - [v1.0]: SF Symbol for circular lock screen widget — Character images don't render in vibrant mode
 - [v1.0.1]: Hybrid widget refresh approach — BGAppRefreshTask + widget direct fetch + graceful degradation
+- [07-01]: Node.js 20 runtime — Required by firebase-functions v7; v18 deprecated
 
 ### Blockers/Concerns
 
 - **Battery drain risk**: Previous background fetch removed for performance; must profile with Instruments before release
 - **Widget Firestore deadlock**: Known issue (#13070) — must use App Groups only, never Firebase in widget extension
 - **BGTask testing**: Background tasks require physical device testing; Simulator unreliable
+- **Cloud Scheduler API**: Must verify enabled in Google Cloud Console before deploying
 
 ### Pending Todos
 
-None yet.
+- Deploy Cloud Functions (Plan 07-02)
+- Enable Cloud Scheduler API in GCP Console
+- Verify scheduled function runs at midnight ET
 
 ## Session Continuity
 
 **Last session:** 2026-01-30
-**Stopped at:** v1.0.1 roadmap created (phases 7-9 defined)
+**Stopped at:** Completed 07-01-PLAN.md (Cloud Functions Infrastructure)
 **Resume file:** None
 
-**Next steps:** Run `/gsd:plan-phase 7` to plan Cloud Functions Migration
+**Next steps:** Run `/gsd:execute-phase` for Plan 07-02 (Deployment and Verification)
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-30 after v1.0.1 roadmap created*
+*Last updated: 2026-01-30 after 07-01 plan completed*
