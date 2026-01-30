@@ -59,22 +59,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WIDGET-01 | TBD | Pending |
-| WIDGET-02 | TBD | Pending |
-| WIDGET-03 | TBD | Pending |
-| FEED-01 | TBD | Pending |
-| FEED-02 | TBD | Pending |
-| FEED-03 | TBD | Pending |
-| FEED-04 | TBD | Pending |
-| RANK-01 | TBD | Pending |
-| RANK-02 | TBD | Pending |
-| RANK-03 | TBD | Pending |
+| WIDGET-01 | Phase 9 | Pending |
+| WIDGET-02 | Phase 9 | Pending |
+| WIDGET-03 | Phase 9 | Pending |
+| FEED-01 | Phase 8 | Pending |
+| FEED-02 | Phase 8 | Pending |
+| FEED-03 | Phase 8 | Pending |
+| FEED-04 | Phase 8 | Pending |
+| RANK-01 | Phase 7 | Pending |
+| RANK-02 | Phase 7 | Pending |
+| RANK-03 | Phase 7 | Pending |
 
 **Coverage:**
 - v1.0.1 requirements: 10 total
-- Mapped to phases: 0
-- Unmapped: 10 (pending roadmap creation)
+- Mapped to phases: 10
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-30*
-*Last updated: 2026-01-30 after initial definition*
+*Last updated: 2026-01-30 after roadmap created (traceability complete)*
