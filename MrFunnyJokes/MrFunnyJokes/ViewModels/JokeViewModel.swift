@@ -55,10 +55,29 @@ final class JokeViewModel: ObservableObject {
     private let initialLoadPerCategory = 8
 
     var filteredJokes: [Joke] {
-        guard let category = selectedCategory else {
-            return jokes
+        // Step 1: Apply category filter if selected
+        let categoryFiltered: [Joke]
+        if let category = selectedCategory {
+            categoryFiltered = jokes.filter { $0.category == category }
+        } else {
+            categoryFiltered = jokes
         }
-        return jokes.filter { $0.category == category }
+
+        // Step 2: Filter to unrated only
+        // Exception: Keep jokes rated THIS session visible until refresh
+        // Per CONTEXT.md: "stays visible for current session, removed on next refresh"
+        let unratedJokes = categoryFiltered.filter { joke in
+            // If no rating, include it
+            guard let _ = joke.userRating else { return true }
+
+            // If rated this session, keep it visible
+            let key = joke.firestoreId ?? joke.id.uuidString
+            return sessionRatedJokeIds.contains(key)
+        }
+
+        // Step 3: Sort by popularity score (descending) per CONTEXT.md
+        // "Unrated jokes ordered by popularity score (trending/popular first)"
+        return unratedJokes.sorted { ($0.popularityScore ?? 0) > ($1.popularityScore ?? 0) }
     }
 
     // Jokes that have been rated by the user
@@ -824,6 +843,10 @@ final class JokeViewModel: ObservableObject {
             }
         } else {
             let clampedRating = min(max(rating, 1), 5)
+            // Track this joke as rated during current session
+            // It will remain visible in feed until next refresh
+            let key = joke.firestoreId ?? joke.id.uuidString
+            sessionRatedJokeIds.insert(key)
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
