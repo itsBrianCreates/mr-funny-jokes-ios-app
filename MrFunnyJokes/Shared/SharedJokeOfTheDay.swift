@@ -22,10 +22,11 @@ struct SharedJokeOfTheDay: Codable {
     }
 
     /// Default placeholder for when no data is available yet
+    /// Shown when: JOTD is stale (>24h), network fetch fails, and fallback cache is empty
     static let placeholder = SharedJokeOfTheDay(
         id: "placeholder",
-        setup: "Loading jokes...",
-        punchline: "Open the app to get today's joke!",
+        setup: "Open Mr. Funny Jokes to get started!",
+        punchline: "",
         category: nil,
         firestoreId: nil,
         character: nil,
