@@ -148,6 +148,7 @@ struct MainContentView: View {
     @State private var navigationPath = NavigationPath()
     @State private var showingSettings = false
     @State private var scrollToJokeOfTheDay = false
+    @State private var showingJokeOfTheDaySheet = false
 
     enum AppTab: Hashable {
         case home
@@ -189,6 +190,18 @@ struct MainContentView: View {
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
+        .sheet(isPresented: $showingJokeOfTheDaySheet) {
+            if let joke = jokeViewModel.jokeOfTheDay {
+                JokeDetailSheet(
+                    joke: joke,
+                    isCopied: jokeViewModel.copiedJokeId == joke.id,
+                    onDismiss: { showingJokeOfTheDaySheet = false },
+                    onShare: { jokeViewModel.shareJoke(joke) },
+                    onCopy: { jokeViewModel.copyJoke(joke) },
+                    onRate: { rating in jokeViewModel.rateJoke(joke, rating: rating) }
+                )
+            }
+        }
     }
 
     // MARK: - Deep Linking
@@ -197,6 +210,13 @@ struct MainContentView: View {
         guard url.scheme == "mrfunnyjokes" else { return }
 
         switch url.host {
+        case "jotd":
+            // Widget tap: navigate to home and show joke of the day detail sheet
+            selectedTab = .home
+            // Small delay to ensure view is ready before presenting sheet
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                showingJokeOfTheDaySheet = true
+            }
         case "home":
             selectedTab = .home
         case "me":

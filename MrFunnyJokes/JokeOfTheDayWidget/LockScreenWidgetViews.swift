@@ -15,7 +15,7 @@ struct AccessoryCircularView: View {
                 .font(.system(size: 24, weight: .medium))
                 .imageScale(.large)
         }
-        .widgetURL(URL(string: "mrfunnyjokes://home"))
+        .widgetURL(URL(string: "mrfunnyjokes://jotd"))
     }
 }
 
@@ -41,7 +41,7 @@ struct AccessoryRectangularView: View {
                 .lineLimit(2)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .widgetURL(URL(string: "mrfunnyjokes://home"))
+        .widgetURL(URL(string: "mrfunnyjokes://jotd"))
     }
 }
 
@@ -61,6 +61,6 @@ struct AccessoryInlineView: View {
             // Fallback: just the setup
             Text(joke.setup)
         }
-        .widgetURL(URL(string: "mrfunnyjokes://home"))
+        .widgetURL(URL(string: "mrfunnyjokes://jotd"))
     }
 }

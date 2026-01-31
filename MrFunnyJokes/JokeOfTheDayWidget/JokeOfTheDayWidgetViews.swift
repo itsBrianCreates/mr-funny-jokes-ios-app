@@ -81,7 +81,7 @@ struct SmallWidgetView: View {
         }
         .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .widgetURL(URL(string: "mrfunnyjokes://home"))
+        .widgetURL(URL(string: "mrfunnyjokes://jotd"))
     }
 }
 
@@ -137,7 +137,7 @@ struct MediumWidgetView: View {
         }
         .padding(11)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .widgetURL(URL(string: "mrfunnyjokes://home"))
+        .widgetURL(URL(string: "mrfunnyjokes://jotd"))
     }
 }
 
@@ -209,7 +209,7 @@ struct LargeWidgetView: View {
         }
         .padding(11)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .widgetURL(URL(string: "mrfunnyjokes://home"))
+        .widgetURL(URL(string: "mrfunnyjokes://jotd"))
     }
 }
 
