@@ -9,9 +9,9 @@ Requirements for Content Freshness release. Each maps to roadmap phases.
 
 ### Widget Freshness
 
-- [ ] **WIDGET-01**: All 6 widgets display today's joke without user opening the app
-- [ ] **WIDGET-02**: Widget content updates daily even if app hasn't been opened in days
-- [ ] **WIDGET-03**: Widget shows graceful fallback message when data is stale (>3 days)
+- [x] **WIDGET-01**: All 6 widgets display today's joke without user opening the app
+- [x] **WIDGET-02**: Widget content updates daily even if app hasn't been opened in days
+- [x] **WIDGET-03**: Widget shows graceful fallback message when data is stale (>3 days)
 
 ### Feed Experience
 
@@ -59,9 +59,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WIDGET-01 | Phase 9 | Pending |
-| WIDGET-02 | Phase 9 | Pending |
-| WIDGET-03 | Phase 9 | Pending |
+| WIDGET-01 | Phase 9 | Complete |
+| WIDGET-02 | Phase 9 | Complete |
+| WIDGET-03 | Phase 9 | Complete |
 | FEED-01 | Phase 8 | Complete |
 | FEED-02 | Phase 8 | Complete |
 | FEED-03 | Phase 8 | Complete |
@@ -77,4 +77,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-30*
-*Last updated: 2026-01-31 after Phase 8 complete (FEED-01 through FEED-04 satisfied)*
+*Last updated: 2026-01-31 after Phase 9 complete (all v1.0.1 requirements satisfied)*

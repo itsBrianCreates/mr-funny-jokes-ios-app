@@ -105,8 +105,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Widget infrastructure (WidgetDataFetcher + fallback cache)
-- [ ] 09-02-PLAN.md — Provider enhancement + main app wiring + verification
+- [x] 09-01-PLAN.md — Widget infrastructure (WidgetDataFetcher + fallback cache)
+- [x] 09-02-PLAN.md — Provider enhancement + main app wiring + verification
 
 ## Progress
 
@@ -123,9 +123,9 @@ Phases 7 and 8 can run in parallel. Phase 9 should follow Phase 8.
 | 6. Content & Submission | v1.0 | 1/1 | Complete | 2026-01-25 |
 | 7. Cloud Functions Migration | v1.0.1 | 2/2 | Complete | 2026-01-30 |
 | 8. Feed Content Loading | v1.0.1 | 2/2 | Complete | 2026-01-31 |
-| 9. Widget Background Refresh | v1.0.1 | 0/2 | Planned | - |
+| 9. Widget Background Refresh | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-31 after Phase 9 planning complete*
+*Last updated: 2026-01-31 after Phase 9 execution complete — v1.0.1 milestone complete*
