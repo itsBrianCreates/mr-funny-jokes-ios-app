@@ -495,6 +495,9 @@ final class JokeViewModel: ObservableObject {
                 }
                 sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
 
+                // Populate widget fallback cache for offline graceful degradation
+                populateFallbackCache(from: newJokes)
+
                 // Apply user ratings from local storage
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
@@ -548,6 +551,9 @@ final class JokeViewModel: ObservableObject {
                     )
                 }
                 sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
+
+                // Populate widget fallback cache for offline graceful degradation
+                populateFallbackCache(from: newJokes)
 
                 // Apply user ratings from local storage
                 let jokesWithRatings = newJokes.map { joke -> Joke in
@@ -633,6 +639,9 @@ final class JokeViewModel: ObservableObject {
                     )
                 }
                 sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
+
+                // Populate widget fallback cache for offline graceful degradation
+                populateFallbackCache(from: newJokes)
 
                 // Apply user ratings
                 let jokesWithRatings = newJokes.map { joke -> Joke in
@@ -980,6 +989,27 @@ final class JokeViewModel: ObservableObject {
     func selectMeCategory(_ category: JokeCategory?) {
         HapticManager.shared.lightTap()
         selectedMeCategory = category
+    }
+
+    // MARK: - Widget Fallback Cache
+
+    /// Populate widget fallback cache with jokes for offline graceful degradation
+    /// Called after jokes are fetched from Firestore to ensure widgets have backup content
+    private func populateFallbackCache(from jokes: [Joke]) {
+        // Convert to SharedJokeOfTheDay format, taking up to 20 jokes
+        let fallbackJokes = jokes.prefix(20).map { joke in
+            SharedJokeOfTheDay(
+                id: joke.id.uuidString,
+                setup: joke.setup,
+                punchline: joke.punchline,
+                category: joke.category.rawValue,
+                firestoreId: joke.firestoreId,
+                character: joke.character,
+                lastUpdated: Date()
+            )
+        }
+
+        sharedStorage.saveFallbackJokes(Array(fallbackJokes))
     }
 
 }
