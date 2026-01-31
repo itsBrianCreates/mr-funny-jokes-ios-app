@@ -3,11 +3,11 @@
 ## Current Position
 
 **Milestone:** v1.0.1 Content Freshness
-**Phase:** 8 of 9 (Feed Content Loading)
-**Plan:** 1 of 2 complete
-**Status:** In progress
+**Phase:** 8 of 9 (Feed Content Loading) - COMPLETE
+**Plan:** 2 of 2 complete
+**Status:** Phase complete
 
-Progress: [██████████████░░░░░░] 70% (14/20 plans)
+Progress: [███████████████░░░░░] 75% (15/20 plans)
 
 ## Project Reference
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 | Phase | Plans | Status |
 |-------|-------|--------|
 | 7. Cloud Functions Migration | 2/2 | Complete |
-| 8. Feed Content Loading | 1/2 | In progress |
+| 8. Feed Content Loading | 2/2 | Complete |
 | 9. Widget Background Refresh | TBD | Not started |
 
 ## Accumulated Context
@@ -43,6 +43,8 @@ Recent decisions affecting current work (full log in PROJECT.md):
 - [07-01]: Node.js 20 runtime — Required by firebase-functions v7; v18 deprecated
 - [07-02]: Archive local scripts — Enables quick rollback if Cloud Functions issues arise
 - [08-01]: Keep LoadMoreButton view definition — May be useful for other screens, just removed from feed body
+- [08-02]: Background loading on first scroll — Preserves launch performance, loads full catalog lazily
+- [08-02]: Session-rated visibility — Rated jokes stay visible until pull-to-refresh for smoother UX
 
 ### Blockers/Concerns
 
@@ -61,12 +63,12 @@ Recent decisions affecting current work (full log in PROJECT.md):
 ## Session Continuity
 
 **Last session:** 2026-01-31
-**Stopped at:** Completed 08-01-PLAN.md (Automatic Infinite Scroll)
+**Stopped at:** Completed 08-02-PLAN.md (Background Loading and Unrated Filtering)
 **Resume file:** None
 
-**Next steps:** Execute 08-02-PLAN.md (Eager Pre-loading)
+**Next steps:** Execute Phase 09: Widget Background Refresh
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-31 after 08-01 plan completed*
+*Last updated: 2026-01-31 after 08-02 plan completed*
