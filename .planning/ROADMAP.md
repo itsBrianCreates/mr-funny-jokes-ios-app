@@ -102,10 +102,11 @@ Plans:
   2. Lock screen widgets (circular, rectangular, inline) show today's joke after overnight period without app launch
   3. Widgets update daily even if app hasn't been opened in 3+ days
   4. When data is stale (>3 days), widget shows graceful fallback message
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: TBD
+- [ ] 09-01-PLAN.md — Widget infrastructure (WidgetDataFetcher + fallback cache)
+- [ ] 09-02-PLAN.md — Provider enhancement + main app wiring + verification
 
 ## Progress
 
@@ -122,9 +123,9 @@ Phases 7 and 8 can run in parallel. Phase 9 should follow Phase 8.
 | 6. Content & Submission | v1.0 | 1/1 | Complete | 2026-01-25 |
 | 7. Cloud Functions Migration | v1.0.1 | 2/2 | Complete | 2026-01-30 |
 | 8. Feed Content Loading | v1.0.1 | 2/2 | Complete | 2026-01-31 |
-| 9. Widget Background Refresh | v1.0.1 | 0/? | Not started | - |
+| 9. Widget Background Refresh | v1.0.1 | 0/2 | Planned | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-31 after Phase 8 execution complete*
+*Last updated: 2026-01-31 after Phase 9 planning complete*
