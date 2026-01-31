@@ -128,6 +128,10 @@ struct JokeFeedView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 16)
             }
+            .refreshable {
+                // Full reset per CONTEXT.md
+                await viewModel.refresh()
+            }
             .onChange(of: viewModel.selectedCategory) {
                 // Scroll to top when filter changes
                 Task { @MainActor in
