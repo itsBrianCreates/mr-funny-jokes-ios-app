@@ -11,6 +11,8 @@ final class SharedStorageService {
     private let cachedJokesKey = "cachedJokesForSiri"
     private let recentlyToldKey = "recentlyToldJokeIds"
     private let maxRecentlyTold = 10
+    private let fallbackJokesKey = "fallbackJokesCache"
+    private let maxFallbackJokes = 20
 
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: SharedStorageService.appGroupIdentifier)
@@ -103,6 +105,45 @@ final class SharedStorageService {
         guard let defaults = sharedDefaults,
               let data = defaults.data(forKey: cachedJokesKey),
               let jokes = try? JSONDecoder().decode([SharedJoke].self, from: data) else {
+            return 0
+        }
+        return jokes.count
+    }
+
+    // MARK: - Widget Fallback Cache
+
+    /// Save fallback jokes for widget offline use
+    func saveFallbackJokes(_ jokes: [SharedJokeOfTheDay]) {
+        guard let defaults = sharedDefaults else { return }
+
+        // Trim to max count
+        let trimmedJokes = Array(jokes.prefix(maxFallbackJokes))
+
+        do {
+            let data = try JSONEncoder().encode(trimmedJokes)
+            defaults.set(data, forKey: fallbackJokesKey)
+        } catch {
+            print("Failed to encode fallback jokes: \(error)")
+        }
+    }
+
+    /// Get a random fallback joke for widget when network unavailable
+    func getRandomFallbackJoke() -> SharedJokeOfTheDay? {
+        guard let defaults = sharedDefaults,
+              let data = defaults.data(forKey: fallbackJokesKey),
+              let jokes = try? JSONDecoder().decode([SharedJokeOfTheDay].self, from: data),
+              !jokes.isEmpty else {
+            return nil
+        }
+
+        return jokes.randomElement()
+    }
+
+    /// Get the count of fallback jokes cached for widget
+    func getFallbackJokeCount() -> Int {
+        guard let defaults = sharedDefaults,
+              let data = defaults.data(forKey: fallbackJokesKey),
+              let jokes = try? JSONDecoder().decode([SharedJokeOfTheDay].self, from: data) else {
             return 0
         }
         return jokes.count
