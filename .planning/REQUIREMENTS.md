@@ -22,9 +22,9 @@ Requirements for Content Freshness release. Each maps to roadmap phases.
 
 ### Backend Reliability
 
-- [ ] **RANK-01**: Monthly rankings aggregation runs automatically via Firebase Cloud Functions
-- [ ] **RANK-02**: Cloud function runs daily at midnight ET
-- [ ] **RANK-03**: Local cron job retired after cloud deployment verified
+- [x] **RANK-01**: Monthly rankings aggregation runs automatically via Firebase Cloud Functions
+- [x] **RANK-02**: Cloud function runs daily at midnight ET
+- [x] **RANK-03**: Local cron job retired after cloud deployment verified
 
 ## v2+ Requirements
 
@@ -66,9 +66,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FEED-02 | Phase 8 | Pending |
 | FEED-03 | Phase 8 | Pending |
 | FEED-04 | Phase 8 | Pending |
-| RANK-01 | Phase 7 | Pending |
-| RANK-02 | Phase 7 | Pending |
-| RANK-03 | Phase 7 | Pending |
+| RANK-01 | Phase 7 | Complete |
+| RANK-02 | Phase 7 | Complete |
+| RANK-03 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.0.1 requirements: 10 total
@@ -77,4 +77,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-30*
-*Last updated: 2026-01-30 after roadmap created (traceability complete)*
+*Last updated: 2026-01-30 after Phase 7 complete (RANK-01, RANK-02, RANK-03 satisfied)*

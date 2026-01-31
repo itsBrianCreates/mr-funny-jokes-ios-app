@@ -75,8 +75,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Create Cloud Functions infrastructure and port aggregation logic
-- [ ] 07-02-PLAN.md — Deploy to Firebase, verify execution, archive local scripts
+- [x] 07-01-PLAN.md — Create Cloud Functions infrastructure and port aggregation logic
+- [x] 07-02-PLAN.md — Deploy to Firebase, verify execution, archive local scripts
 
 #### Phase 8: Feed Content Loading
 **Goal**: Full joke catalog loads automatically in background, feed shows unrated jokes first
@@ -119,11 +119,11 @@ Phases 7 and 8 can run in parallel. Phase 9 should follow Phase 8.
 | 4. Home Screen Widget Polish | v1.0 | 2/2 | Complete | 2026-01-25 |
 | 5. Rankings & Notifications | v1.0 | 2/2 | Complete | 2026-01-25 |
 | 6. Content & Submission | v1.0 | 1/1 | Complete | 2026-01-25 |
-| 7. Cloud Functions Migration | v1.0.1 | 0/2 | Ready | - |
+| 7. Cloud Functions Migration | v1.0.1 | 2/2 | Complete | 2026-01-30 |
 | 8. Feed Content Loading | v1.0.1 | 0/? | Not started | - |
 | 9. Widget Background Refresh | v1.0.1 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-30 after Phase 7 planning complete*
+*Last updated: 2026-01-30 after Phase 7 execution complete*
