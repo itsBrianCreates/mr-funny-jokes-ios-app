@@ -90,8 +90,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Infinite scroll infrastructure and remove Load More button
-- [ ] 08-02-PLAN.md — Background catalog loading and unrated-only filtering
+- [x] 08-01-PLAN.md — Infinite scroll infrastructure and remove Load More button
+- [x] 08-02-PLAN.md — Background catalog loading and unrated-only filtering
 
 #### Phase 9: Widget Background Refresh
 **Goal**: All 6 widgets display fresh Joke of the Day without requiring app launch
@@ -121,10 +121,10 @@ Phases 7 and 8 can run in parallel. Phase 9 should follow Phase 8.
 | 5. Rankings & Notifications | v1.0 | 2/2 | Complete | 2026-01-25 |
 | 6. Content & Submission | v1.0 | 1/1 | Complete | 2026-01-25 |
 | 7. Cloud Functions Migration | v1.0.1 | 2/2 | Complete | 2026-01-30 |
-| 8. Feed Content Loading | v1.0.1 | 0/2 | Planned | - |
+| 8. Feed Content Loading | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 9. Widget Background Refresh | v1.0.1 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-30 after Phase 7 execution complete*
+*Last updated: 2026-01-31 after Phase 8 execution complete*
