@@ -15,10 +15,10 @@ Requirements for Content Freshness release. Each maps to roadmap phases.
 
 ### Feed Experience
 
-- [ ] **FEED-01**: Joke feed loads next page automatically at scroll threshold (infinite scroll)
-- [ ] **FEED-02**: "Load More" button removed from feed UI
-- [ ] **FEED-03**: Full joke catalog loads in background after initial display (enables proper sorting)
-- [ ] **FEED-04**: Feed re-sorts to prioritize unrated jokes after background catalog load completes
+- [x] **FEED-01**: Joke feed loads next page automatically at scroll threshold (infinite scroll)
+- [x] **FEED-02**: "Load More" button removed from feed UI
+- [x] **FEED-03**: Full joke catalog loads in background after initial display (enables proper sorting)
+- [x] **FEED-04**: Feed re-sorts to prioritize unrated jokes after background catalog load completes
 
 ### Backend Reliability
 
@@ -62,10 +62,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WIDGET-01 | Phase 9 | Pending |
 | WIDGET-02 | Phase 9 | Pending |
 | WIDGET-03 | Phase 9 | Pending |
-| FEED-01 | Phase 8 | Pending |
-| FEED-02 | Phase 8 | Pending |
-| FEED-03 | Phase 8 | Pending |
-| FEED-04 | Phase 8 | Pending |
+| FEED-01 | Phase 8 | Complete |
+| FEED-02 | Phase 8 | Complete |
+| FEED-03 | Phase 8 | Complete |
+| FEED-04 | Phase 8 | Complete |
 | RANK-01 | Phase 7 | Complete |
 | RANK-02 | Phase 7 | Complete |
 | RANK-03 | Phase 7 | Complete |
@@ -77,4 +77,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-30*
-*Last updated: 2026-01-30 after Phase 7 complete (RANK-01, RANK-02, RANK-03 satisfied)*
+*Last updated: 2026-01-31 after Phase 8 complete (FEED-01 through FEED-04 satisfied)*
