@@ -26,6 +26,21 @@ final class JokeViewModel: ObservableObject {
     /// Indicates if we've reached the end and no more jokes are available
     @Published var hasMoreJokes = true
 
+    /// Tracks if background catalog loading is complete
+    @Published private(set) var isBackgroundLoadingComplete = false
+
+    /// Background loading task reference for cancellation
+    private var backgroundLoadTask: Task<Void, Never>?
+
+    /// Tracks if background load has been triggered (only once per session)
+    private var hasTriggeredBackgroundLoad = false
+
+    /// Tracks jokes rated during this session (kept visible until refresh)
+    private var sessionRatedJokeIds: Set<String> = []
+
+    /// Batch size for background loading (larger than scroll loading for efficiency)
+    private let backgroundBatchSize = 50
+
     private let storage = LocalStorageService.shared
     private let sharedStorage = SharedStorageService.shared
     private let firestoreService = FirestoreService.shared
@@ -551,6 +566,13 @@ final class JokeViewModel: ObservableObject {
     /// Refreshes the joke feed when category changes
     func refresh() async {
         guard !isRefreshing else { return }
+
+        // Cancel background loading and reset state
+        backgroundLoadTask?.cancel()
+        hasTriggeredBackgroundLoad = false
+        isBackgroundLoadingComplete = false
+        sessionRatedJokeIds.removeAll()
+
         isRefreshing = true
 
         do {
@@ -619,6 +641,9 @@ final class JokeViewModel: ObservableObject {
 
     /// Called when user scrolls near the bottom of the list
     func loadMoreIfNeeded(currentItem: Joke) {
+        // Trigger background catalog loading on first scroll
+        triggerBackgroundLoadIfNeeded()
+
         // Check if we're near the end of the list
         let thresholdIndex = filteredJokes.index(filteredJokes.endIndex, offsetBy: -3, limitedBy: filteredJokes.startIndex) ?? filteredJokes.startIndex
 
@@ -628,6 +653,65 @@ final class JokeViewModel: ObservableObject {
         }
 
         loadMore()
+    }
+
+    // MARK: - Background Catalog Loading
+
+    /// Triggers background catalog loading if not already started
+    /// Called on first scroll, not app launch (per CONTEXT.md)
+    func triggerBackgroundLoadIfNeeded() {
+        guard !hasTriggeredBackgroundLoad && !isBackgroundLoadingComplete else { return }
+        hasTriggeredBackgroundLoad = true
+
+        backgroundLoadTask = Task { [weak self] in
+            await self?.loadFullCatalogInBackground()
+        }
+    }
+
+    /// Loads the full joke catalog silently in background
+    /// Designed for 500-2000 jokes per CONTEXT.md
+    private func loadFullCatalogInBackground() async {
+        // Load in batches to avoid memory spikes
+        while hasMoreJokes && !Task.isCancelled {
+            do {
+                let newJokes: [Joke]
+                if let category = selectedCategory {
+                    newJokes = try await firestoreService.fetchMoreJokes(category: category, limit: backgroundBatchSize)
+                } else {
+                    newJokes = try await firestoreService.fetchMoreJokes(limit: backgroundBatchSize)
+                }
+
+                guard !Task.isCancelled else { return }
+
+                if newJokes.isEmpty {
+                    break
+                }
+
+                // Apply user ratings
+                let jokesWithRatings = newJokes.map { joke -> Joke in
+                    var mutableJoke = joke
+                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                    return mutableJoke
+                }
+
+                // Merge with existing jokes, avoiding duplicates
+                var updatedJokes = jokes
+                for joke in jokesWithRatings {
+                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
+                        updatedJokes.append(joke)
+                    }
+                }
+                jokes = updatedJokes
+
+                // Small delay between batches to avoid overwhelming
+                try? await Task.sleep(for: .milliseconds(100))
+            } catch {
+                // Silent failure per CONTEXT.md - just stop loading
+                break
+            }
+        }
+
+        isBackgroundLoadingComplete = true
     }
 
     /// Load more jokes (for infinite scroll)
