@@ -87,10 +87,11 @@ Plans:
   2. "Load More" button no longer appears in feed UI
   3. Full joke catalog available for sorting after background load completes
   4. When returning to feed tab, unrated jokes appear before already-rated jokes
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md — Infinite scroll infrastructure and remove Load More button
+- [ ] 08-02-PLAN.md — Background catalog loading and unrated-only filtering
 
 #### Phase 9: Widget Background Refresh
 **Goal**: All 6 widgets display fresh Joke of the Day without requiring app launch
@@ -120,7 +121,7 @@ Phases 7 and 8 can run in parallel. Phase 9 should follow Phase 8.
 | 5. Rankings & Notifications | v1.0 | 2/2 | Complete | 2026-01-25 |
 | 6. Content & Submission | v1.0 | 1/1 | Complete | 2026-01-25 |
 | 7. Cloud Functions Migration | v1.0.1 | 2/2 | Complete | 2026-01-30 |
-| 8. Feed Content Loading | v1.0.1 | 0/? | Not started | - |
+| 8. Feed Content Loading | v1.0.1 | 0/2 | Planned | - |
 | 9. Widget Background Refresh | v1.0.1 | 0/? | Not started | - |
 
 ---
