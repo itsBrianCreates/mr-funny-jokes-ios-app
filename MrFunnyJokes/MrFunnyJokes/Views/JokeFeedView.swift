@@ -103,6 +103,8 @@ struct JokeFeedView: View {
                         .onAppear {
                             // Track impression for feed freshness
                             viewModel.markJokeImpression(joke)
+                            // Trigger infinite scroll loading when approaching end
+                            viewModel.loadMoreIfNeeded(currentItem: joke)
                         }
                     }
 
@@ -115,13 +117,6 @@ struct JokeFeedView: View {
                     if viewModel.isLoadingMore {
                         LoadingMoreView()
                             .transition(.opacity)
-                    }
-
-                    // Load More button (when not loading and more jokes available)
-                    if !viewModel.isLoadingMore && viewModel.hasMoreJokes && !feedJokes.isEmpty {
-                        LoadMoreButton {
-                            viewModel.loadMore()
-                        }
                     }
 
                     // End of feed message (when no more jokes)
