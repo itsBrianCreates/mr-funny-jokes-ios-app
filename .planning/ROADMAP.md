@@ -2,13 +2,14 @@
 
 ## Milestones
 
-- ✅ **v1.0 MVP** - Phases 1-6 (shipped 2026-01-25)
-- 🚧 **v1.0.1 Content Freshness** - Phases 7-9 (in progress)
+- ✅ **v1.0 MVP** — Phases 1-6 (shipped 2026-01-25)
+- ✅ **v1.0.1 Content Freshness** — Phases 7-9 (shipped 2026-01-31)
+- 📋 **v1.1 TBD** — Phases 10+ (planned)
 
 ## Phases
 
 <details>
-<summary>v1.0 MVP (Phases 1-6) - SHIPPED 2026-01-25</summary>
+<summary>✅ v1.0 MVP (Phases 1-6) — SHIPPED 2026-01-25</summary>
 
 ### Phase 1: Foundation Cleanup
 **Goal**: Clean existing codebase and establish baseline for native iOS integration
@@ -59,59 +60,40 @@ Plans:
 
 </details>
 
-### 🚧 v1.0.1 Content Freshness (In Progress)
+<details>
+<summary>✅ v1.0.1 Content Freshness (Phases 7-9) — SHIPPED 2026-01-31</summary>
 
-**Milestone Goal:** Widgets stay fresh without app launch, feed prioritizes unrated jokes, backend runs in cloud.
-
-#### Phase 7: Cloud Functions Migration
+### Phase 7: Cloud Functions Migration
 **Goal**: Rankings aggregation runs automatically in cloud, eliminating manual cron dependency
-**Depends on**: Nothing (backend-only, no iOS changes)
-**Requirements**: RANK-01, RANK-02, RANK-03
-**Success Criteria** (what must be TRUE):
-  1. Monthly rankings aggregation runs daily at midnight ET without manual intervention
-  2. Cloud function logs visible in Firebase Console showing successful runs
-  3. Local cron job script retired (moved to archive or deleted)
-  4. Rankings data in Firestore matches expected aggregation logic
 **Plans**: 2 plans
 
 Plans:
-- [x] 07-01-PLAN.md — Create Cloud Functions infrastructure and port aggregation logic
-- [x] 07-02-PLAN.md — Deploy to Firebase, verify execution, archive local scripts
+- [x] 07-01: Create Cloud Functions infrastructure and port aggregation logic
+- [x] 07-02: Deploy to Firebase, verify execution, archive local scripts
 
-#### Phase 8: Feed Content Loading
+### Phase 8: Feed Content Loading
 **Goal**: Full joke catalog loads automatically in background, feed shows unrated jokes first
-**Depends on**: Nothing (independent of Phase 7)
-**Requirements**: FEED-01, FEED-02, FEED-03, FEED-04
-**Success Criteria** (what must be TRUE):
-  1. User scrolling feed reaches next page automatically at threshold (no tap required)
-  2. "Load More" button no longer appears in feed UI
-  3. Full joke catalog available for sorting after background load completes
-  4. When returning to feed tab, unrated jokes appear before already-rated jokes
 **Plans**: 2 plans
 
 Plans:
-- [x] 08-01-PLAN.md — Infinite scroll infrastructure and remove Load More button
-- [x] 08-02-PLAN.md — Background catalog loading and unrated-only filtering
+- [x] 08-01: Infinite scroll infrastructure and remove Load More button
+- [x] 08-02: Background catalog loading and unrated-only filtering
 
-#### Phase 9: Widget Background Refresh
+### Phase 9: Widget Background Refresh
 **Goal**: All 6 widgets display fresh Joke of the Day without requiring app launch
-**Depends on**: Phase 8 (validates background operation patterns)
-**Requirements**: WIDGET-01, WIDGET-02, WIDGET-03
-**Success Criteria** (what must be TRUE):
-  1. Home screen widgets (small, medium, large) show today's joke after overnight period without app launch
-  2. Lock screen widgets (circular, rectangular, inline) show today's joke after overnight period without app launch
-  3. Widgets update daily even if app hasn't been opened in 3+ days
-  4. When data is stale (>3 days), widget shows graceful fallback message
 **Plans**: 2 plans
 
 Plans:
-- [x] 09-01-PLAN.md — Widget infrastructure (WidgetDataFetcher + fallback cache)
-- [x] 09-02-PLAN.md — Provider enhancement + main app wiring + verification
+- [x] 09-01: Widget infrastructure (WidgetDataFetcher + fallback cache)
+- [x] 09-02: Provider enhancement + main app wiring + verification
+
+</details>
+
+### 📋 v1.1 TBD (Planned)
+
+Define next milestone with `/gsd:new-milestone`
 
 ## Progress
-
-**Execution Order:**
-Phases 7 and 8 can run in parallel. Phase 9 should follow Phase 8.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -128,4 +110,4 @@ Phases 7 and 8 can run in parallel. Phase 9 should follow Phase 8.
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-31 after Phase 9 execution complete — v1.0.1 milestone complete*
+*Last updated: 2026-01-31 — v1.0.1 milestone archived*

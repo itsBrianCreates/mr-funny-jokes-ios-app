@@ -1,5 +1,33 @@
 # Project Milestones: Mr. Funny Jokes
 
+## v1.0.1 Content Freshness (Shipped: 2026-01-31)
+
+**Delivered:** Widget background refresh, infinite scroll feed, and cloud-based rankings for content that stays fresh without app launches.
+
+**Phases completed:** 7-9 (6 plans total)
+
+**Key accomplishments:**
+
+- Migrated rankings aggregation to Firebase Cloud Functions (runs daily at midnight ET)
+- Added infinite scroll to feed, removing manual "Load More" button
+- Feed now prioritizes unrated jokes sorted by popularity score
+- All 6 widgets refresh daily via Firestore REST API without app launch
+- Widget tap deep links to joke detail sheet with punchline and sharing
+- Graceful fallback cache for offline widget experience
+
+**Stats:**
+
+- 39 files created/modified
+- 8,215 lines of Swift
+- 3 phases, 6 plans, ~18 tasks
+- 2 days (Jan 30 → Jan 31, 2026)
+
+**Git range:** `037a513` → `af5e891`
+
+**What's next:** Physical device overnight test, App Store submission, then v1.1 based on user feedback.
+
+---
+
 ## v1.0 MVP (Shipped: 2026-01-25)
 
 **Delivered:** Native iOS integration (Siri, widgets, notifications) to address App Store Guideline 4.2.2 rejection.

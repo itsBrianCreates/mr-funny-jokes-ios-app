@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A native iOS joke app featuring character personas (Mr. Funny, Mr. Potty, Mr. Bad, Mr. Love, Mr. Sad) that deliver jokes matching their personality. Users swipe through jokes, rate them with emoji reactions, and see community rankings. The app integrates deeply with iOS through Siri, home screen and lock screen widgets, and native notifications.
+A native iOS joke app featuring character personas (Mr. Funny, Mr. Potty, Mr. Bad, Mr. Love, Mr. Sad) that deliver jokes matching their personality. Users swipe through jokes, rate them with emoji reactions, and see community rankings. The app integrates deeply with iOS through Siri, home screen and lock screen widgets that refresh daily, native notifications, and infinite scroll feeds that prioritize fresh content.
 
 ## Core Value
 
@@ -34,15 +34,16 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - ✓ Monthly rankings (30-day window) — v1.0
 - ✓ iOS Settings deep link for notifications — v1.0
 - ✓ iPhone-only deployment — v1.0
+- ✓ Widgets update daily in background without app launch — v1.0.1
+- ✓ Joke feed prioritizes unrated jokes over already-rated ones — v1.0.1
+- ✓ Full joke catalog loads automatically in background (no manual "Load More") — v1.0.1
+- ✓ Monthly rankings aggregation runs in cloud (Firebase Cloud Functions) — v1.0.1
 
 ### Active
 
-**Current Milestone: v1.0.1 — Content Freshness**
+**Next Milestone: v1.1 — TBD**
 
-- [ ] Widgets update daily in background without app launch
-- [ ] Joke feed prioritizes unrated jokes over already-rated ones
-- [ ] Full joke catalog loads automatically in background (no manual "Load More")
-- [ ] Monthly rankings aggregation runs in cloud (Firebase Cloud Functions)
+(Define with `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -55,20 +56,22 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - Interactive widget buttons — not needed for 4.2.2 compliance
 - Control Center widget — iOS 18+ only, defer to v2
 - iPad support — iPhone-only simplifies testing
+- Aggressive background refresh — battery drain risk, removed in v1.0.1 research
+- Firebase SDK in widget extension — deadlock issue #13070
 
 ## Context
 
-**Current State:** v1.0 approved and live on App Store. Working on v1.0.1 content freshness fixes.
+**Current State:** v1.0.1 shipped. App live on App Store with content freshness improvements.
 
-**Tech Stack:** SwiftUI, Firebase Firestore, WidgetKit, App Intents, UserNotifications
+**Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
-**Known Issues (v1.0.1 targets):**
-- Widgets only update when app is launched — stale jokes for days if user doesn't open app
-- Joke feed shows already-rated jokes first — users see repetitive content
-- Full joke catalog requires manual "Load More" taps — users miss content
-- Rankings aggregation runs via local cron job — needs cloud automation
+**Codebase:** 8,215 lines of Swift across main app and widget extension.
+
+**Known Issues:**
 - Backend collection still named "weekly_rankings" while UI shows "Monthly" (cosmetic debt)
 - Direct "Hey Siri" voice command triggers iOS built-in jokes (Shortcuts app works reliably)
+- Local crontab entry needs manual removal (Cloud Functions now handle aggregation)
+- daily_jokes population is manual (consider automating via Cloud Function)
 
 ## Constraints
 
@@ -88,6 +91,11 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | SF Symbol for circular lock screen widget | Character images don't render in vibrant mode | ✓ Good |
 | Client-side category filtering | Firestore query missed non-standard type values | ✓ Good |
 | Shortcuts app for Siri (not voice) | Direct voice triggers iOS built-in jokes; Shortcuts reliable | ✓ Good |
+| Firestore REST API for widgets | Avoids SDK deadlock issue #13070 | ✓ Good |
+| Background load on first scroll | Preserves app launch performance | ✓ Good |
+| Session-rated visibility | Rated jokes stay visible until pull-to-refresh for smoother UX | ✓ Good |
+| Archive local cron scripts | Enables quick rollback if Cloud Functions issues arise | ✓ Good |
+| Node.js 20 for Cloud Functions | Required by firebase-functions v7; v18 deprecated | ✓ Good |
 
 ---
-*Last updated: 2026-01-30 after v1.0.1 milestone started*
+*Last updated: 2026-01-31 after v1.0.1 milestone*
