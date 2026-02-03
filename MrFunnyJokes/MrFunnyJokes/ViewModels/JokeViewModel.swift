@@ -77,33 +77,42 @@ final class JokeViewModel: ObservableObject {
 
         // Step 3: Sort by popularity score (descending) per CONTEXT.md
         // "Unrated jokes ordered by popularity score (trending/popular first)"
-        return unratedJokes.sorted { ($0.popularityScore ?? 0) > ($1.popularityScore ?? 0) }
+        return unratedJokes.sorted { $0.popularityScore > $1.popularityScore }
     }
 
-    // Jokes that have been rated by the user
+    // Jokes that have been rated by the user (sorted by most recently rated)
     var ratedJokes: [Joke] {
-        jokes.filter { $0.userRating != nil }
+        sortByRatingTimestamp(jokes.filter { $0.userRating != nil })
     }
 
-    // Jokes grouped by rating (1-5 scale)
+    // Jokes grouped by rating (1-5 scale), sorted by most recently rated
     var hilariousJokes: [Joke] {
-        jokes.filter { $0.userRating == 5 }
+        sortByRatingTimestamp(jokes.filter { $0.userRating == 5 })
     }
 
     var funnyJokes: [Joke] {
-        jokes.filter { $0.userRating == 4 }
+        sortByRatingTimestamp(jokes.filter { $0.userRating == 4 })
     }
 
     var mehJokes: [Joke] {
-        jokes.filter { $0.userRating == 3 }
+        sortByRatingTimestamp(jokes.filter { $0.userRating == 3 })
     }
 
     var groanJokes: [Joke] {
-        jokes.filter { $0.userRating == 2 }
+        sortByRatingTimestamp(jokes.filter { $0.userRating == 2 })
     }
 
     var horribleJokes: [Joke] {
-        jokes.filter { $0.userRating == 1 }
+        sortByRatingTimestamp(jokes.filter { $0.userRating == 1 })
+    }
+
+    /// Sort jokes by rating timestamp (most recently rated first)
+    private func sortByRatingTimestamp(_ jokes: [Joke]) -> [Joke] {
+        jokes.sorted { joke1, joke2 in
+            let timestamp1 = storage.getRatingTimestamp(for: joke1.id, firestoreId: joke1.firestoreId) ?? 0
+            let timestamp2 = storage.getRatingTimestamp(for: joke2.id, firestoreId: joke2.firestoreId) ?? 0
+            return timestamp1 > timestamp2  // Most recent first
+        }
     }
 
     // MARK: - Filtered Rated Jokes (for Me tab)
@@ -360,8 +369,17 @@ final class JokeViewModel: ObservableObject {
         let cached = await storage.loadAllCachedJokesAsync()
 
         if !cached.isEmpty {
+            // Ensure ratings are applied from authoritative source (defensive - cache should have them,
+            // but re-apply for consistency with all other load paths: fetchInitialAPIContent,
+            // fetchInitialAPIContentBackground, refresh, performLoadMore)
+            let cachedWithRatings = cached.map { joke -> Joke in
+                var mutableJoke = joke
+                mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                return mutableJoke
+            }
+
             // We have cached content - show it immediately and fetch fresh in background
-            jokes = sortJokesForFreshFeed(cached)
+            jokes = sortJokesForFreshFeed(cachedWithRatings)
             // Mark initial loading complete so UI can transition from splash
             await completeInitialLoading()
 

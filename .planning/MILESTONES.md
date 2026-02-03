@@ -1,5 +1,33 @@
 # Project Milestones: Mr. Funny Jokes
 
+## v1.0.2 Bug Fixes & UX Polish (Shipped: 2026-02-02)
+
+**Delivered:** Fixed Me tab rating persistence and added YouTube promo dismissal with bonus UX improvements.
+
+**Phases completed:** 10 (1 plan total)
+
+**Key accomplishments:**
+
+- Fixed Me tab bug where rated jokes disappeared after app restart
+- Added YouTube promo dismissal with X button (animated, haptic feedback)
+- Promo auto-hides when Subscribe button is tapped
+- Promo dismissal state persists across app sessions via @AppStorage
+- **Bonus:** Me tab now shows most recently rated jokes first
+- **Bonus:** Pull-to-refresh properly bounces back to top
+
+**Stats:**
+
+- 9 files modified
+- 8,303 lines of Swift
+- 1 phase, 1 plan, 2 tasks + 2 bonus fixes
+- 1 day (2026-02-02)
+
+**Git range:** `21d9f86` → `a522789`
+
+**What's next:** App Store submission, then v1.1 based on user feedback.
+
+---
+
 ## v1.0.1 Content Freshness (Shipped: 2026-01-31)
 
 **Delivered:** Widget background refresh, infinite scroll feed, and cloud-based rankings for content that stays fresh without app launches.

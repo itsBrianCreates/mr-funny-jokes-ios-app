@@ -5,6 +5,7 @@ final class LocalStorageService: @unchecked Sendable {
 
     private let userDefaults: UserDefaults
     private let ratingsKey = "jokeRatings"
+    private let ratingTimestampsKey = "jokeRatingTimestamps"
     private let impressionsKey = "jokeImpressions"
     private let cachedJokesKeyPrefix = "cachedJokes_"
     private let deviceIdKey = "anonymousDeviceId"
@@ -102,6 +103,11 @@ final class LocalStorageService: @unchecked Sendable {
             ratings[key] = rating
             self.saveRatingsSync(ratings)
 
+            // Save timestamp for sorting (most recently rated first)
+            var timestamps = self.loadRatingTimestampsSync()
+            timestamps[key] = Date().timeIntervalSince1970
+            self.saveRatingTimestampsSync(timestamps)
+
             // Update in-memory cache
             cachedRatedIds?.insert(key)
         }
@@ -114,6 +120,11 @@ final class LocalStorageService: @unchecked Sendable {
             var ratings = self.loadRatingsSync()
             ratings.removeValue(forKey: key)
             self.saveRatingsSync(ratings)
+
+            // Remove timestamp as well
+            var timestamps = self.loadRatingTimestampsSync()
+            timestamps.removeValue(forKey: key)
+            self.saveRatingTimestampsSync(timestamps)
 
             // Update in-memory cache
             cachedRatedIds?.remove(key)
@@ -163,6 +174,25 @@ final class LocalStorageService: @unchecked Sendable {
 
     private func saveRatingsSync(_ ratings: [String: Int]) {
         userDefaults.set(ratings, forKey: ratingsKey)
+    }
+
+    // MARK: - Rating Timestamps (for sorting by most recent)
+
+    /// Get the timestamp when a joke was rated (for sorting)
+    func getRatingTimestamp(for jokeId: UUID, firestoreId: String?) -> TimeInterval? {
+        let key = firestoreId ?? jokeId.uuidString
+        return queue.sync {
+            let timestamps = self.loadRatingTimestampsSync()
+            return timestamps[key]
+        }
+    }
+
+    private func loadRatingTimestampsSync() -> [String: TimeInterval] {
+        return userDefaults.dictionary(forKey: ratingTimestampsKey) as? [String: TimeInterval] ?? [:]
+    }
+
+    private func saveRatingTimestampsSync(_ timestamps: [String: TimeInterval]) {
+        userDefaults.set(timestamps, forKey: ratingTimestampsKey)
     }
 
     private func loadRatings() -> [String: Int] {

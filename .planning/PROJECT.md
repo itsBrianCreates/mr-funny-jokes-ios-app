@@ -38,12 +38,15 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - ✓ Joke feed prioritizes unrated jokes over already-rated ones — v1.0.1
 - ✓ Full joke catalog loads automatically in background (no manual "Load More") — v1.0.1
 - ✓ Monthly rankings aggregation runs in cloud (Firebase Cloud Functions) — v1.0.1
+- ✓ Me tab correctly persists and displays rated jokes across sessions — v1.0.2
+- ✓ YouTube promo card can be dismissed with X button — v1.0.2
+- ✓ YouTube promo auto-hides after user clicks Subscribe button — v1.0.2
 
 ### Active
 
-**Next Milestone: v1.1 — TBD**
+**Next Milestone: v1.1 — TBD (define with /gsd:new-milestone)**
 
-(Define with `/gsd:new-milestone`)
+(No active requirements — run /gsd:new-milestone to define v1.1)
 
 ### Out of Scope
 
@@ -61,11 +64,11 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.0.1 shipped. App live on App Store with content freshness improvements.
+**Current State:** v1.0.2 shipped. Ready for App Store submission.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
-**Codebase:** 8,215 lines of Swift across main app and widget extension.
+**Codebase:** 8,303 lines of Swift across main app and widget extension.
 
 **Known Issues:**
 - Backend collection still named "weekly_rankings" while UI shows "Monthly" (cosmetic debt)
@@ -96,6 +99,9 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Session-rated visibility | Rated jokes stay visible until pull-to-refresh for smoother UX | ✓ Good |
 | Archive local cron scripts | Enables quick rollback if Cloud Functions issues arise | ✓ Good |
 | Node.js 20 for Cloud Functions | Required by firebase-functions v7; v18 deprecated | ✓ Good |
+| Explicit rating re-application in loadInitialContentAsync | Consistency with all other load paths | ✓ Good |
+| @AppStorage for promo dismissal | Simple persistent state without extra infrastructure | ✓ Good |
+| Rating timestamps for Me tab sorting | Most recently rated jokes appear first | ✓ Good |
 
 ---
-*Last updated: 2026-01-31 after v1.0.1 milestone*
+*Last updated: 2026-02-02 after v1.0.2 milestone*

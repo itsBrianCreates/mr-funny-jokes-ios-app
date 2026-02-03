@@ -8,6 +8,9 @@ struct JokeFeedView: View {
     /// State for navigating to Monthly Top 10 detail view
     @State private var monthlyTopTenDestination: RankingType?
 
+    /// Persistent state for YouTube promo dismissal
+    @AppStorage("youtubePromoDismissed") private var youtubePromoDismissed = false
+
     /// Unique identifier for the top anchor - used for reliable scroll-to-top
     private let topAnchorID = "feed-top-anchor"
 
@@ -21,9 +24,9 @@ struct JokeFeedView: View {
         viewModel.selectedCategory == nil
     }
 
-    /// Show YouTube promo card only when viewing "All" jokes
+    /// Show YouTube promo card only when viewing "All" jokes and not dismissed
     private var showYouTubePromo: Bool {
-        viewModel.selectedCategory == nil
+        viewModel.selectedCategory == nil && !youtubePromoDismissed
     }
 
     /// Show Monthly Top 10 carousel only when viewing "All" jokes
@@ -90,7 +93,15 @@ struct JokeFeedView: View {
                     ForEach(Array(feedJokes.enumerated()), id: \.element.id) { index, joke in
                         // Insert YouTube promo card at position 4 (5th item)
                         if showYouTubePromo && index == youtubePromoPosition {
-                            YouTubePromoCardView()
+                            YouTubePromoCardView(onDismiss: {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    youtubePromoDismissed = true
+                                }
+                            })
+                            .transition(.asymmetric(
+                                insertion: .opacity,
+                                removal: .opacity.combined(with: .scale(scale: 0.95))
+                            ))
                         }
 
                         JokeCardView(
@@ -110,7 +121,15 @@ struct JokeFeedView: View {
 
                     // If we have fewer jokes than the promo position, show promo at the end
                     if showYouTubePromo && feedJokes.count > 0 && feedJokes.count <= youtubePromoPosition {
-                        YouTubePromoCardView()
+                        YouTubePromoCardView(onDismiss: {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                youtubePromoDismissed = true
+                            }
+                        })
+                        .transition(.asymmetric(
+                            insertion: .opacity,
+                            removal: .opacity.combined(with: .scale(scale: 0.95))
+                        ))
                     }
 
                     // Loading more indicator (skeleton cards at bottom)
@@ -131,6 +150,11 @@ struct JokeFeedView: View {
             .refreshable {
                 // Full reset per CONTEXT.md
                 await viewModel.refresh()
+                // Scroll to top after refresh - delay needed for SwiftUI refresh animation to complete
+                try? await Task.sleep(for: .milliseconds(100))
+                withAnimation(.easeOut(duration: 0.2)) {
+                    proxy.scrollTo(topAnchorID, anchor: .top)
+                }
             }
             .onChange(of: viewModel.selectedCategory) {
                 // Scroll to top when filter changes

@@ -4,7 +4,8 @@
 
 - ✅ **v1.0 MVP** — Phases 1-6 (shipped 2026-01-25)
 - ✅ **v1.0.1 Content Freshness** — Phases 7-9 (shipped 2026-01-31)
-- 📋 **v1.1 TBD** — Phases 10+ (planned)
+- ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
+- 📋 **v1.1 TBD** — Phases 11+ (define with /gsd:new-milestone)
 
 ## Phases
 
@@ -89,6 +90,25 @@ Plans:
 
 </details>
 
+<details>
+<summary>✅ v1.0.2 Bug Fixes (Phase 10) — SHIPPED 2026-02-02</summary>
+
+### Phase 10: Bug Fixes & UX Polish
+**Goal**: Fix Me tab persistence bug and add YouTube promo dismissal
+**Requirements**: ME-01, ME-02, PROMO-01, PROMO-02, PROMO-03
+**Plans**: 1 plan
+
+Plans:
+- [x] 10-01: Me tab rating persistence fix and YouTube promo dismissal
+
+**Success Criteria:** All 5 verified ✓
+
+**Bonus fixes:** Me tab shows most recently rated first, PTR bounce-back fix
+
+**Full details:** [milestones/v1.0.2-ROADMAP.md](milestones/v1.0.2-ROADMAP.md)
+
+</details>
+
 ### 📋 v1.1 TBD (Planned)
 
 Define next milestone with `/gsd:new-milestone`
@@ -106,8 +126,9 @@ Define next milestone with `/gsd:new-milestone`
 | 7. Cloud Functions Migration | v1.0.1 | 2/2 | Complete | 2026-01-30 |
 | 8. Feed Content Loading | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 9. Widget Background Refresh | v1.0.1 | 2/2 | Complete | 2026-01-31 |
+| 10. Bug Fixes & UX Polish | v1.0.2 | 1/1 | Complete | 2026-02-02 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-31 — v1.0.1 milestone archived*
+*Last updated: 2026-02-02 — v1.0.2 shipped*

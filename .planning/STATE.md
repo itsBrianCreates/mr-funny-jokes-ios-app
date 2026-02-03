@@ -3,18 +3,18 @@
 ## Current Position
 
 **Milestone:** v1.1 (not yet defined)
-**Phase:** 10 of ? (pending)
-**Plan:** Not started
+**Phase:** None active
+**Plan:** None
 **Status:** Ready to plan next milestone
 
-Progress: [████████████████████] 100% (17/17 plans through v1.0.1)
+Progress: Milestone v1.0.2 shipped — run `/gsd:new-milestone` to define v1.1
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-31)
+See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Planning next milestone
+**Current focus:** Ready for App Store submission and v1.1 planning
 
 ## Shipped Milestones
 
@@ -22,6 +22,7 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 |---------|------|--------|---------|
 | v1.0 | MVP | 1-6 | 2026-01-25 |
 | v1.0.1 | Content Freshness | 7-9 | 2026-01-31 |
+| v1.0.2 | Bug Fixes & UX Polish | 10 | 2026-02-02 |
 
 ## Accumulated Context
 
@@ -29,11 +30,10 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 
 Recent decisions (full log in PROJECT.md):
 
-- [v1.0.1]: Firestore REST API for widgets — avoids SDK deadlock #13070
-- [v1.0.1]: Background load on first scroll — preserves launch performance
-- [v1.0.1]: Session-rated visibility — smoother UX until pull-to-refresh
-- [v1.0.1]: Archive local cron scripts — enables rollback if Cloud Functions issues
-- [v1.0.1]: Widget deep link uses mrfunnyjokes://jotd URL scheme
+- [v1.0.2]: Explicit rating re-application in loadInitialContentAsync — consistency with all other load paths
+- [v1.0.2]: @AppStorage for promo dismissal — simple persistent state without extra infrastructure
+- [v1.0.2]: Rating timestamps for Me tab sorting — most recently rated jokes appear first
+- [v1.0.2]: PTR scroll-to-top — ensures bounce-back after pull-to-refresh
 
 ### Open Items
 
@@ -48,13 +48,13 @@ Recent decisions (full log in PROJECT.md):
 
 ## Session Continuity
 
-**Last session:** 2026-01-31
-**Stopped at:** Completed v1.0.1 milestone archival
+**Last session:** 2026-02-02
+**Stopped at:** v1.0.2 milestone complete
 **Resume file:** None
 
-**Next steps:** `/gsd:new-milestone` to define v1.1
+**Next steps:** Run `/gsd:new-milestone` to define v1.1 requirements and roadmap
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-01-31 after v1.0.1 milestone complete*
+*Last updated: 2026-02-02 after v1.0.2 milestone shipped*

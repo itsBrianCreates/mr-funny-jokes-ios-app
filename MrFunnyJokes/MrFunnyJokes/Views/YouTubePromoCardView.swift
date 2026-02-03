@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct YouTubePromoCardView: View {
+    /// Callback when promo is dismissed (X button or Subscribe tap)
+    var onDismiss: (() -> Void)?
+
     /// YouTube red color for the subscribe button
     private let youtubeRed = Color(red: 1.0, green: 0, blue: 0) // #FF0000
 
@@ -35,6 +38,7 @@ struct YouTubePromoCardView: View {
             Button {
                 HapticManager.shared.mediumImpact()
                 openURL(youtubeURL)
+                onDismiss?()  // Hide promo after subscribing
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "play.rectangle.fill")
@@ -55,6 +59,18 @@ struct YouTubePromoCardView: View {
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
         )
+        .overlay(alignment: .topTrailing) {
+            Button {
+                HapticManager.shared.lightTap()
+                onDismiss?()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                    .padding(8)
+            }
+            .buttonStyle(.plain)
+        }
         .scaleEffect(isAppearing ? 1 : 0.95)
         .opacity(isAppearing ? 1 : 0)
         .onAppear {
@@ -68,8 +84,8 @@ struct YouTubePromoCardView: View {
 #Preview {
     ScrollView {
         VStack(spacing: 20) {
-            YouTubePromoCardView()
-            YouTubePromoCardView()
+            YouTubePromoCardView(onDismiss: nil)
+            YouTubePromoCardView(onDismiss: nil)
         }
         .padding()
     }
