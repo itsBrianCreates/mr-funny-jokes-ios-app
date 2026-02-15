@@ -18,6 +18,7 @@
 		A10000000000000000000012 /* LocalStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* LocalStorageService.swift */; };
 		A10000000000000000000013 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* Color+Extensions.swift */; };
 		A10000000000000000000014 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* HapticManager.swift */; };
+		A10000000000000000000015 /* SeasonalHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* SeasonalHelper.swift */; };
 		A10000000000000000000016 /* GrainOMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* GrainOMeterView.swift */; };
 		A10000000000000000000017 /* MeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* MeView.swift */; };
 		A10000000000000000000019 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* SearchView.swift */; };
@@ -103,6 +104,7 @@
 		A20000000000000000000012 /* LocalStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageService.swift; sourceTree = "<group>"; };
 		A20000000000000000000013 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		A20000000000000000000014 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* SeasonalHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonalHelper.swift; sourceTree = "<group>"; };
 		A20000000000000000000016 /* GrainOMeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrainOMeterView.swift; sourceTree = "<group>"; };
 		A20000000000000000000017 /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
 		A20000000000000000000019 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 			children = (
 				A20000000000000000000013 /* Color+Extensions.swift */,
 				A20000000000000000000014 /* HapticManager.swift */,
+				A20000000000000000000015 /* SeasonalHelper.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -487,6 +490,7 @@
 				A10000000000000000000013 /* Color+Extensions.swift in Sources */,
 				C353057F2EEDF9A300C81E13 /* MonthlyRankingsViewModel.swift in Sources */,
 				A10000000000000000000014 /* HapticManager.swift in Sources */,
+				A10000000000000000000015 /* SeasonalHelper.swift in Sources */,
 				A10000000000000000000016 /* GrainOMeterView.swift in Sources */,
 				A10000000000000000000017 /* MeView.swift in Sources */,
 				A10000000000000000000019 /* SearchView.swift in Sources */,
