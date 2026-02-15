@@ -44,9 +44,13 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ### Active
 
-**Next Milestone: v1.1 — TBD (define with /gsd:new-milestone)**
+**Current Milestone: v1.0.3 — Seasonal Content & Scroll Fix**
 
-(No active requirements — run /gsd:new-milestone to define v1.1)
+**Goal:** Demote Christmas jokes outside their season and fix iOS 18 scrolling glitches.
+
+**Target features:**
+- Seasonal ranking: Christmas/holiday-tagged jokes pushed to bottom of feed outside Nov 1 - Dec 31
+- iOS 18 scroll stability: Fix glitchy upward scrolling in feed on older iOS versions
 
 ### Out of Scope
 
@@ -64,7 +68,7 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.0.2 shipped. Ready for App Store submission.
+**Current State:** v1.0.3 in progress. Seasonal content ranking and scroll stability fixes.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
@@ -104,4 +108,4 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Rating timestamps for Me tab sorting | Most recently rated jokes appear first | ✓ Good |
 
 ---
-*Last updated: 2026-02-02 after v1.0.2 milestone*
+*Last updated: 2026-02-15 after v1.0.3 milestone started*
