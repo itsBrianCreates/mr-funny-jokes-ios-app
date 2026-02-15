@@ -64,10 +64,22 @@ final class CharacterDetailViewModel: ObservableObject {
 
     /// Filtered jokes based on selected joke type
     var filteredJokes: [Joke] {
-        guard let category = selectedJokeType else {
-            return jokes
+        let categoryFiltered: [Joke]
+        if let category = selectedJokeType {
+            categoryFiltered = jokes.filter { $0.category == category }
+        } else {
+            categoryFiltered = jokes
         }
-        return jokes.filter { $0.category == category }
+
+        // MARK: - Seasonal Content Ranking
+        // Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
+        if !SeasonalHelper.isChristmasSeason() {
+            let nonChristmas = categoryFiltered.filter { !$0.isChristmasJoke }
+            let christmas = categoryFiltered.filter { $0.isChristmasJoke }
+            return nonChristmas + christmas
+        } else {
+            return categoryFiltered
+        }
     }
 
     /// Available joke types for this character (based on character's allowed categories)

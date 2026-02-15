@@ -77,7 +77,17 @@ final class JokeViewModel: ObservableObject {
 
         // Step 3: Sort by popularity score (descending) per CONTEXT.md
         // "Unrated jokes ordered by popularity score (trending/popular first)"
-        return unratedJokes.sorted { $0.popularityScore > $1.popularityScore }
+        let sorted = unratedJokes.sorted { $0.popularityScore > $1.popularityScore }
+
+        // MARK: - Seasonal Content Ranking
+        // Step 4: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
+        if !SeasonalHelper.isChristmasSeason() {
+            let nonChristmas = sorted.filter { !$0.isChristmasJoke }
+            let christmas = sorted.filter { $0.isChristmasJoke }
+            return nonChristmas + christmas
+        } else {
+            return sorted
+        }
     }
 
     // Jokes that have been rated by the user (sorted by most recently rated)
