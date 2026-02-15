@@ -127,10 +127,10 @@ Plans:
   2. User scrolling the main feed in December sees Christmas/holiday jokes ranked by popularity alongside all other jokes
   3. User browsing a character feed (e.g., Mr. Funny) in February sees holiday jokes demoted to the bottom
   4. User applying a category filter still sees seasonal demotion in effect outside the holiday window
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 11-01: TBD
+- [ ] 11-01-PLAN.md — Seasonal helper utility and feed demotion logic
 
 ### Phase 12: Feed Scroll Stability
 **Goal**: Feed scrolling is smooth and stable regardless of content loading or conditional UI elements
@@ -159,10 +159,10 @@ Plans:
 | 8. Feed Content Loading | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 9. Widget Background Refresh | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 10. Bug Fixes & UX Polish | v1.0.2 | 1/1 | Complete | 2026-02-02 |
-| 11. Seasonal Content Ranking | v1.0.3 | 0/? | Not started | - |
+| 11. Seasonal Content Ranking | v1.0.3 | 0/1 | Not started | - |
 | 12. Feed Scroll Stability | v1.0.3 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-15 — v1.0.3 roadmap created*
+*Last updated: 2026-02-15 — Phase 11 planned (1 plan)*
