@@ -5,7 +5,7 @@
 - ✅ **v1.0 MVP** — Phases 1-6 (shipped 2026-01-25)
 - ✅ **v1.0.1 Content Freshness** — Phases 7-9 (shipped 2026-01-31)
 - ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
-- 📋 **v1.1 TBD** — Phases 11+ (define with /gsd:new-milestone)
+- 🚧 **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (in progress)
 
 ## Phases
 
@@ -101,7 +101,7 @@ Plans:
 Plans:
 - [x] 10-01: Me tab rating persistence fix and YouTube promo dismissal
 
-**Success Criteria:** All 5 verified ✓
+**Success Criteria:** All 5 verified
 
 **Bonus fixes:** Me tab shows most recently rated first, PTR bounce-back fix
 
@@ -109,9 +109,41 @@ Plans:
 
 </details>
 
-### 📋 v1.1 TBD (Planned)
+### 🚧 v1.0.3 Seasonal Content & Scroll Fix (In Progress)
 
-Define next milestone with `/gsd:new-milestone`
+**Milestone Goal:** Demote Christmas jokes outside their season and fix iOS 18 scrolling glitches.
+
+- [ ] **Phase 11: Seasonal Content Ranking** - Holiday jokes demoted to bottom of all feeds outside Nov 1 - Dec 31
+- [ ] **Phase 12: Feed Scroll Stability** - Smooth, glitch-free scrolling in feed on iOS 18+
+
+## Phase Details
+
+### Phase 11: Seasonal Content Ranking
+**Goal**: Holiday jokes appear at the bottom of feeds outside their season and rank normally during their season
+**Depends on**: Nothing (independent of Phase 12)
+**Requirements**: SEASON-01, SEASON-02, SEASON-03
+**Success Criteria** (what must be TRUE):
+  1. User scrolling the main feed in February sees Christmas/holiday jokes at the bottom, not mixed in with top-rated jokes
+  2. User scrolling the main feed in December sees Christmas/holiday jokes ranked by popularity alongside all other jokes
+  3. User browsing a character feed (e.g., Mr. Funny) in February sees holiday jokes demoted to the bottom
+  4. User applying a category filter still sees seasonal demotion in effect outside the holiday window
+**Plans**: TBD
+
+Plans:
+- [ ] 11-01: TBD
+
+### Phase 12: Feed Scroll Stability
+**Goal**: Feed scrolling is smooth and stable regardless of content loading or conditional UI elements
+**Depends on**: Nothing (independent of Phase 11)
+**Requirements**: SCROLL-01, SCROLL-02, SCROLL-03
+**Success Criteria** (what must be TRUE):
+  1. User can scroll upward from the bottom of a long feed without visible jumps or position glitches on iOS 18
+  2. Feed scroll position remains stable when background content loading completes while user is mid-scroll
+  3. Scrolling past conditional content (character carousel, JOTD card, promo card) produces no anchor shifts or stuttering
+**Plans**: TBD
+
+Plans:
+- [ ] 12-01: TBD
 
 ## Progress
 
@@ -127,8 +159,10 @@ Define next milestone with `/gsd:new-milestone`
 | 8. Feed Content Loading | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 9. Widget Background Refresh | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 10. Bug Fixes & UX Polish | v1.0.2 | 1/1 | Complete | 2026-02-02 |
+| 11. Seasonal Content Ranking | v1.0.3 | 0/? | Not started | - |
+| 12. Feed Scroll Stability | v1.0.3 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-02 — v1.0.2 shipped*
+*Last updated: 2026-02-15 — v1.0.3 roadmap created*

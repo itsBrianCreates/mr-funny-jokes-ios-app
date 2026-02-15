@@ -39,18 +39,18 @@ Requirements for v1.0.3 Seasonal Content & Scroll Fix. Each maps to roadmap phas
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEASON-01 | — | Pending |
-| SEASON-02 | — | Pending |
-| SEASON-03 | — | Pending |
-| SCROLL-01 | — | Pending |
-| SCROLL-02 | — | Pending |
-| SCROLL-03 | — | Pending |
+| SEASON-01 | Phase 11 | Pending |
+| SEASON-02 | Phase 11 | Pending |
+| SEASON-03 | Phase 11 | Pending |
+| SCROLL-01 | Phase 12 | Pending |
+| SCROLL-02 | Phase 12 | Pending |
+| SCROLL-03 | Phase 12 | Pending |
 
 **Coverage:**
 - v1.0.3 requirements: 6 total
-- Mapped to phases: 0
-- Unmapped: 6 (pending roadmap)
+- Mapped to phases: 6
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-15 after initial definition*
+*Last updated: 2026-02-15 after roadmap created (traceability updated)*
