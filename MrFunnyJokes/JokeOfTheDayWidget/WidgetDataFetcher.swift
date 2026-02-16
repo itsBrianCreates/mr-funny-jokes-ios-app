@@ -127,7 +127,7 @@ struct WidgetDataFetcher {
         for delimiter in delimiters {
             if let range = text.range(of: delimiter) {
                 let setup = String(text[..<range.lowerBound])
-                var punchline = String(text[range.upperBound...])
+                let punchline = String(text[range.upperBound...])
 
                 // For "? " and "! " delimiters, include the punctuation in setup
                 if delimiter == "? " {
