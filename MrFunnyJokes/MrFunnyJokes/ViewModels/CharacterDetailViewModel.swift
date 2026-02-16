@@ -129,7 +129,7 @@ final class CharacterDetailViewModel: ObservableObject {
     /// Loads more jokes (for infinite scroll)
     func loadMoreJokes() async {
         guard !isLoadingMore && hasMoreJokes else { return }
-        isLoadingMore = true
+        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = true }
         let startTime = Date()
 
         do {
@@ -171,7 +171,7 @@ final class CharacterDetailViewModel: ObservableObject {
 
         // Ensure minimum loading time for smooth UX
         await ensureMinimumLoadingTime(startTime: startTime)
-        isLoadingMore = false
+        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = false }
     }
 
     /// Ensures the loading indicator is shown for at least 400ms for better UX

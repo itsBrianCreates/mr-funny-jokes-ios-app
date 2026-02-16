@@ -238,7 +238,9 @@ final class JokeViewModel: ObservableObject {
         networkMonitor.$isConnected
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isConnected in
-                self?.isOffline = !isConnected
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    self?.isOffline = !isConnected
+                }
             }
             .store(in: &cancellables)
 
@@ -785,7 +787,7 @@ final class JokeViewModel: ObservableObject {
     private let maxEmptyFetches = 3
 
     private func performLoadMore() async {
-        isLoadingMore = true
+        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = true }
         let startTime = Date()
 
         do {
@@ -843,7 +845,7 @@ final class JokeViewModel: ObservableObject {
 
         // Ensure skeleton is visible for at least a short time
         await ensureMinimumLoadingTime(startTime: startTime)
-        isLoadingMore = false
+        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = false }
     }
 
     /// Ensures the loading indicator is shown for at least 400ms for better UX

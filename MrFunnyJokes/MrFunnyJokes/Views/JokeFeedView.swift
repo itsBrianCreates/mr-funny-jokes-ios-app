@@ -34,8 +34,6 @@ struct JokeFeedView: View {
         viewModel.selectedCategory == nil
     }
 
-    /// Position to insert YouTube promo card (after 4 jokes, so 5th item)
-    private let youtubePromoPosition = 4
 
     /// Filtered jokes excluding the Joke of the Day to avoid duplicates
     private var feedJokes: [Joke] {
@@ -89,21 +87,21 @@ struct JokeFeedView: View {
                         )
                     }
 
-                    // Regular joke feed with YouTube promo card inserted
-                    ForEach(Array(feedJokes.enumerated()), id: \.element.id) { index, joke in
-                        // Insert YouTube promo card at position 4 (5th item)
-                        if showYouTubePromo && index == youtubePromoPosition {
-                            YouTubePromoCardView(onDismiss: {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    youtubePromoDismissed = true
-                                }
-                            })
-                            .transition(.asymmetric(
-                                insertion: .opacity,
-                                removal: .opacity.combined(with: .scale(scale: 0.95))
-                            ))
-                        }
+                    // YouTube promo card (only when "All" is selected and not dismissed)
+                    if showYouTubePromo {
+                        YouTubePromoCardView(onDismiss: {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                youtubePromoDismissed = true
+                            }
+                        })
+                        .transition(.asymmetric(
+                            insertion: .opacity,
+                            removal: .opacity.combined(with: .scale(scale: 0.95))
+                        ))
+                    }
 
+                    // Regular joke feed
+                    ForEach(feedJokes) { joke in
                         JokeCardView(
                             joke: joke,
                             isCopied: viewModel.copiedJokeId == joke.id,
@@ -117,19 +115,6 @@ struct JokeFeedView: View {
                             // Trigger infinite scroll loading when approaching end
                             viewModel.loadMoreIfNeeded(currentItem: joke)
                         }
-                    }
-
-                    // If we have fewer jokes than the promo position, show promo at the end
-                    if showYouTubePromo && feedJokes.count > 0 && feedJokes.count <= youtubePromoPosition {
-                        YouTubePromoCardView(onDismiss: {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                youtubePromoDismissed = true
-                            }
-                        })
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .opacity.combined(with: .scale(scale: 0.95))
-                        ))
                     }
 
                     // Loading more indicator (skeleton cards at bottom)
@@ -165,8 +150,6 @@ struct JokeFeedView: View {
                     }
                 }
             }
-            .animation(.easeInOut(duration: 0.3), value: viewModel.isOffline)
-            .animation(.easeInOut(duration: 0.3), value: viewModel.isLoadingMore)
             .navigationDestination(item: $monthlyTopTenDestination) { type in
                 MonthlyTopTenDetailView(
                     viewModel: rankingsViewModel,

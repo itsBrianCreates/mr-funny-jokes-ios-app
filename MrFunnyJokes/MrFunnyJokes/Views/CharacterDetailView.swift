@@ -187,7 +187,6 @@ struct CharacterDetailView: View {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
-        .animation(.easeInOut(duration: 0.3), value: viewModel.isLoadingMore)
     }
 
     // MARK: - Loading View
