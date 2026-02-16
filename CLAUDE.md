@@ -62,8 +62,6 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 
 ## Architectural Decisions
 
-These decisions were made during v1.0 and v1.0.1 development:
-
 | Decision | Rationale |
 |----------|-----------|
 | Widget uses REST API, not Firebase SDK | SDK causes deadlock issue #13070 |
@@ -73,6 +71,10 @@ These decisions were made during v1.0 and v1.0.1 development:
 | Background load on first scroll | Preserves app launch performance |
 | Session-rated visibility | Rated jokes stay visible until pull-to-refresh |
 | Node.js 20 for Cloud Functions | Required by firebase-functions v7 |
+| @AppStorage for promo dismissal | Simple persistent state without extra infrastructure |
+| Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns |
+| Scoped withAnimation over implicit .animation() | Prevents scroll container animation interference on iOS 18 |
+| YouTube promo as standalone LazyVStack item | Prevents scroll anchor shifts from conditional content in ForEach |
 
 ---
 
@@ -118,6 +120,49 @@ NotificationCenter.default.post(
 )
 ```
 
+### ForEach Identity Pitfall (ScrollView)
+
+**Problem:** `ForEach(Array(collection.enumerated()))` creates unstable identities — items get new indices when the array changes, causing scroll jumps on iOS 18.
+
+**Bad:**
+```swift
+ForEach(Array(feedJokes.enumerated()), id: \.offset) { index, joke in
+    JokeCardView(joke: joke)
+}
+```
+
+**Good:**
+```swift
+ForEach(feedJokes) { joke in  // Uses Identifiable conformance
+    JokeCardView(joke: joke)
+}
+```
+
+### Animation on Scroll Containers Pitfall
+
+**Problem:** `.animation()` modifiers on ScrollView/LazyVStack cause scroll position jumps when state changes (loading, offline status) trigger re-renders.
+
+**Bad:**
+```swift
+ScrollView {
+    LazyVStack {
+        ForEach(jokes) { joke in ... }
+    }
+}
+.animation(.default, value: viewModel.isLoadingMore)  // Disrupts scroll position
+```
+
+**Good:**
+```swift
+// In ViewModel — animate at the mutation site
+func loadMore() async {
+    let results = await fetch()
+    withAnimation { self.isLoadingMore = false }  // Scoped animation
+}
+```
+
+**Rule:** Always use `withAnimation` at the mutation site in the ViewModel. Never put `.animation()` on scroll containers.
+
 ### Cross-ViewModel Communication
 
 Use Combine for notification subscriptions:
@@ -152,7 +197,7 @@ MrFunnyJokes/
 ├── ViewModels/           # @MainActor ObservableObject classes
 ├── Views/                # SwiftUI views
 ├── Services/             # Firebase, storage, network
-├── Utilities/            # Helpers (HapticManager, etc.)
+├── Utilities/            # Helpers (HapticManager, SeasonalHelper, etc.)
 ├── Shared/               # Code shared with widget
 └── JokeOfTheDayWidget/   # Widget extension
 ```
@@ -190,7 +235,13 @@ Say "CodeStory" to generate social media drafts from your session notes.
 `dad_joke`, `knock_knock`, `pickup_line`
 
 ### Valid Tags
-`animals`, `food`, `work`, `school`, `sports`, `music`, `technology`, `science`, `health`, `weather`, `holidays`, `family`, `travel`, `wordplay`, `religious`
+`animals`, `food`, `work`, `school`, `sports`, `music`, `technology`, `science`, `health`, `weather`, `holidays`, `halloween`, `thanksgiving`, `christmas`, `family`, `travel`, `wordplay`, `religious`
+
+### Seasonal Content
+- Christmas jokes identified by `tags: ["christmas"]` (only this tag — not "holidays")
+- Demoted outside Nov 1 - Dec 31 via `SeasonalHelper.isChristmasSeason()`
+- Demotion applied in `filteredJokes` computed properties (both `JokeViewModel` and `CharacterDetailViewModel`)
+- Pattern: partition array into non-seasonal + seasonal, then concatenate
 
 ### Key Files
 | File | Purpose |
@@ -199,3 +250,4 @@ Say "CodeStory" to generate social media drafts from your session notes.
 | `.planning/STATE.md` | Current milestone and phase status |
 | `.planning/codebase/CONVENTIONS.md` | Detailed code patterns |
 | `scripts/add-jokes.js` | Joke batch insertion script |
+| `Utilities/SeasonalHelper.swift` | Season detection and `Joke.isChristmasJoke` extension |
