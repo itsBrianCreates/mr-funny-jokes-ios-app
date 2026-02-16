@@ -140,10 +140,10 @@ Plans:
   1. User can scroll upward from the bottom of a long feed without visible jumps or position glitches on iOS 18
   2. Feed scroll position remains stable when background content loading completes while user is mid-scroll
   3. Scrolling past conditional content (character carousel, JOTD card, promo card) produces no anchor shifts or stuttering
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 12-01: TBD
+- [ ] 12-01-PLAN.md — Fix feed item identity, remove scroll-disrupting animations, stabilize conditional content
 
 ## Progress
 
@@ -160,9 +160,9 @@ Plans:
 | 9. Widget Background Refresh | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 10. Bug Fixes & UX Polish | v1.0.2 | 1/1 | Complete | 2026-02-02 |
 | 11. Seasonal Content Ranking | v1.0.3 | 1/1 | Complete | 2026-02-15 |
-| 12. Feed Scroll Stability | v1.0.3 | 0/? | Not started | - |
+| 12. Feed Scroll Stability | v1.0.3 | 0/1 | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-15 — Phase 11 complete*
+*Last updated: 2026-02-15 — Phase 12 planned*
