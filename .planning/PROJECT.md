@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A native iOS joke app featuring character personas (Mr. Funny, Mr. Potty, Mr. Bad, Mr. Love, Mr. Sad) that deliver jokes matching their personality. Users swipe through jokes, rate them with emoji reactions, and see community rankings. The app integrates deeply with iOS through Siri, home screen and lock screen widgets that refresh daily, native notifications, and infinite scroll feeds that prioritize fresh content.
+A native iOS joke app featuring character personas (Mr. Funny, Mr. Potty, Mr. Bad, Mr. Love, Mr. Sad) that deliver jokes matching their personality. Users swipe through jokes, rate them with emoji reactions, and see community rankings. The app integrates deeply with iOS through Siri, home screen and lock screen widgets that refresh daily, native notifications, and infinite scroll feeds that prioritize fresh content. Seasonal content is automatically ranked — holiday jokes step aside outside their season.
 
 ## Core Value
 
@@ -41,16 +41,16 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - ✓ Me tab correctly persists and displays rated jokes across sessions — v1.0.2
 - ✓ YouTube promo card can be dismissed with X button — v1.0.2
 - ✓ YouTube promo auto-hides after user clicks Subscribe button — v1.0.2
+- ✓ Christmas/holiday jokes demoted to bottom of feed outside Nov 1 - Dec 31 — v1.0.3
+- ✓ Christmas/holiday jokes rank normally by popularity during Nov 1 - Dec 31 — v1.0.3
+- ✓ Seasonal demotion applies to all feed contexts (main, character, category-filtered) — v1.0.3
+- ✓ Smooth upward scrolling without position jumps on iOS 18+ — v1.0.3
+- ✓ Stable scroll position during background content loading — v1.0.3
+- ✓ Conditional content (promo card, carousel) doesn't destabilize scroll anchors — v1.0.3
 
 ### Active
 
-**Current Milestone: v1.0.3 — Seasonal Content & Scroll Fix**
-
-**Goal:** Demote Christmas jokes outside their season and fix iOS 18 scrolling glitches.
-
-**Target features:**
-- Seasonal ranking: Christmas/holiday-tagged jokes pushed to bottom of feed outside Nov 1 - Dec 31
-- iOS 18 scroll stability: Fix glitchy upward scrolling in feed on older iOS versions
+(No active milestone — planning next)
 
 ### Out of Scope
 
@@ -65,14 +65,16 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - iPad support — iPhone-only simplifies testing
 - Aggressive background refresh — battery drain risk, removed in v1.0.1 research
 - Firebase SDK in widget extension — deadlock issue #13070
+- Multi-holiday seasonal system — just Christmas for now; extend later if needed
+- Server-side seasonal ranking — client-side sort modification is simpler and sufficient
 
 ## Context
 
-**Current State:** v1.0.3 in progress. Seasonal content ranking and scroll stability fixes.
+**Current State:** v1.0.3 shipped. All planned features through seasonal content and scroll stability are complete.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
-**Codebase:** 8,303 lines of Swift across main app and widget extension.
+**Codebase:** 8,335 lines of Swift across main app and widget extension. 403 jokes in Firestore.
 
 **Known Issues:**
 - Backend collection still named "weekly_rankings" while UI shows "Monthly" (cosmetic debt)
@@ -106,6 +108,11 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Explicit rating re-application in loadInitialContentAsync | Consistency with all other load paths | ✓ Good |
 | @AppStorage for promo dismissal | Simple persistent state without extra infrastructure | ✓ Good |
 | Rating timestamps for Me tab sorting | Most recently rated jokes appear first | ✓ Good |
+| Christmas season = Nov 1 - Dec 31 | Users experience seasons locally; broad window for holiday spirit | ✓ Good |
+| Only "christmas" tag triggers demotion | "holidays" tag unaffected; precise targeting avoids false positives | ✓ Good |
+| Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns | ✓ Good |
+| Scoped withAnimation over implicit .animation() | Prevents scroll container animation interference on iOS 18 | ✓ Good |
+| YouTube promo as standalone LazyVStack item | Prevents scroll anchor shifts from conditional content in ForEach | ✓ Good |
 
 ---
-*Last updated: 2026-02-15 after v1.0.3 milestone started*
+*Last updated: 2026-02-15 after v1.0.3 milestone*

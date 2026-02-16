@@ -1,5 +1,31 @@
 # Project Milestones: Mr. Funny Jokes
 
+## v1.0.3 Seasonal Content & Scroll Fix (Shipped: 2026-02-15)
+
+**Delivered:** Seasonal content ranking that demotes Christmas jokes outside their season, plus scroll stability fixes for iOS 18.
+
+**Phases completed:** 11-12 (2 plans total)
+
+**Key accomplishments:**
+
+- Christmas jokes demoted to bottom of all feeds outside Nov 1 - Dec 31 via SeasonalHelper utility
+- Stable ForEach identity replacing enumerated pattern — eliminates upward scroll jumps on iOS 18
+- Scoped withAnimation at ViewModel mutation sites replacing implicit .animation() on ScrollView
+- YouTube promo card extracted as standalone LazyVStack item — no more scroll anchor shifts
+
+**Stats:**
+
+- 6 Swift files modified
+- 8,335 lines of Swift
+- 2 phases, 2 plans, 4 tasks
+- 1 day (2026-02-15)
+
+**Git range:** `046ca73` → `ec3ba7b`
+
+**What's next:** Next milestone based on user feedback and App Store analytics.
+
+---
+
 ## v1.0.2 Bug Fixes & UX Polish (Shipped: 2026-02-02)
 
 **Delivered:** Fixed Me tab rating persistence and added YouTube promo dismissal with bonus UX improvements.
