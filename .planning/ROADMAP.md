@@ -114,7 +114,7 @@ Plans:
 **Milestone Goal:** Demote Christmas jokes outside their season and fix iOS 18 scrolling glitches.
 
 - [x] **Phase 11: Seasonal Content Ranking** - Holiday jokes demoted to bottom of all feeds outside Nov 1 - Dec 31
-- [ ] **Phase 12: Feed Scroll Stability** - Smooth, glitch-free scrolling in feed on iOS 18+
+- [x] **Phase 12: Feed Scroll Stability** - Smooth, glitch-free scrolling in feed on iOS 18+
 
 ## Phase Details
 
@@ -143,7 +143,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 12-01-PLAN.md — Fix feed item identity, remove scroll-disrupting animations, stabilize conditional content
+- [x] 12-01-PLAN.md — Fix feed item identity, remove scroll-disrupting animations, stabilize conditional content
 
 ## Progress
 
@@ -160,9 +160,9 @@ Plans:
 | 9. Widget Background Refresh | v1.0.1 | 2/2 | Complete | 2026-01-31 |
 | 10. Bug Fixes & UX Polish | v1.0.2 | 1/1 | Complete | 2026-02-02 |
 | 11. Seasonal Content Ranking | v1.0.3 | 1/1 | Complete | 2026-02-15 |
-| 12. Feed Scroll Stability | v1.0.3 | 0/1 | Not started | - |
+| 12. Feed Scroll Stability | v1.0.3 | 1/1 | Complete | 2026-02-15 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-15 — Phase 12 planned*
+*Last updated: 2026-02-15 — Phase 12 complete*

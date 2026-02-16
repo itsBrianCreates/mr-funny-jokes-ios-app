@@ -3,13 +3,13 @@
 ## Current Position
 
 **Milestone:** v1.0.3 — Seasonal Content & Scroll Fix
-**Phase:** 11 of 12 (Seasonal Content Ranking) -- COMPLETE
+**Phase:** 12 of 12 (Feed Scroll Stability) -- COMPLETE
 **Plan:** 1 of 1 complete
-**Status:** Phase 11 complete, ready for Phase 12
+**Status:** All phases complete, milestone ready for completion
 
-Last activity: 2026-02-15 — Phase 11 Plan 01 executed (seasonal content ranking)
+Last activity: 2026-02-15 — Phase 12 Plan 01 executed (feed scroll stability)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████████] 100%
 
 ## Project Reference
 
@@ -29,13 +29,14 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: ~43 min
-- Total execution time: ~12.9 hours
+- Total plans completed: 19
+- Average duration: ~42 min
+- Total execution time: ~13 hours
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 11 | 01 | 4min | 2 | 4 |
+| 12 | 01 | 6min | 2 | 6 |
 
 *Updated after each plan completion*
 
@@ -45,6 +46,9 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 Recent decisions (full log in PROJECT.md):
 
+- [v1.0.3-P12]: Move YouTube promo card outside ForEach as standalone LazyVStack item
+- [v1.0.3-P12]: Use withAnimation at mutation sites instead of .animation() on scroll containers
+- [v1.0.3-P12]: Pattern: scoped withAnimation over implicit .animation() for scroll stability
 - [v1.0.3-P11]: Christmas season = Nov 1 through Dec 31 using device local calendar
 - [v1.0.3-P11]: Only "christmas" tag triggers demotion -- "holidays" tag not affected
 - [v1.0.3-P11]: Seasonal demotion at filteredJokes level, not in sortJokesForFreshFeed
@@ -58,9 +62,10 @@ Recent decisions (full log in PROJECT.md):
 - SeasonalHelper.swift provides isChristmasSeason() and Joke.isChristmasJoke
 - Sorting by `popularityScore` descending in filteredJokes, with seasonal partition-and-append
 - Client-side category filtering + seasonal demotion both applied in filteredJokes
-- Feed uses ScrollView + LazyVStack with unstable enumerated IDs
-- `.animation()` modifiers on `isLoadingMore` interfere with scroll
-- Conditional content (carousel, JOTD, promo) destabilizes scroll anchors
+- Feed uses ScrollView + LazyVStack with stable ForEach(feedJokes) identity
+- Scoped withAnimation for isLoadingMore/isOffline transitions in ViewModels
+- YouTube promo card is standalone LazyVStack item (not inside ForEach)
+- Same scroll stability pattern applied to CharacterDetailView
 
 ### Open Items
 
@@ -76,12 +81,12 @@ Recent decisions (full log in PROJECT.md):
 ## Session Continuity
 
 **Last session:** 2026-02-15
-**Stopped at:** Completed 11-01-PLAN.md (Seasonal Content Ranking)
+**Stopped at:** Completed 12-01-PLAN.md (Feed Scroll Stability)
 **Resume file:** None
 
-**Next steps:** `/gsd:plan-phase 12` to plan Scroll Stability Fix
+**Next steps:** `/gsd:complete-milestone` to wrap v1.0.3
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-15 after Phase 11 Plan 01 complete*
+*Last updated: 2026-02-15 after Phase 12 Plan 01 complete*
