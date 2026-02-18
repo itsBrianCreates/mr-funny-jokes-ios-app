@@ -1,252 +1,265 @@
 # Project Research Summary
 
-**Project:** Mr. Funny Jokes - v1.0.1 Content Freshness
-**Domain:** iOS content app with widgets and cloud infrastructure
-**Researched:** 2026-01-30
+**Project:** Mr. Funny Jokes v1.1.0
+**Domain:** iOS rating system migration and leaderboard redesign
+**Researched:** 2026-02-17
 **Confidence:** HIGH
 
 ## Executive Summary
 
-The v1.0.1 Content Freshness milestone addresses staleness issues in the existing iOS joke app by implementing four key features: widget background refresh, feed prioritization, background joke loading, and cloud-based rankings aggregation. This milestone is achievable with iOS native APIs and Firebase Cloud Functions, requiring no third-party dependencies beyond the existing Firebase SDK.
+The v1.1.0 milestone simplifies the joke rating system from 5-point (1-5) to binary (Hilarious/Horrible) and replaces monthly rankings with all-time Top 10. This change touches every layer of the app: UI components, ViewModels, local storage, Firestore schema, and Cloud Functions. The good news: this is a **simplification**, not a feature addition. The existing architecture is well-structured for this change — MVVM boundaries are clean, the rating pipeline is centralized, and most work involves removing complexity rather than building new systems.
 
-The recommended approach leverages existing infrastructure intelligently. The app already has SharedStorageService with App Groups, proper widget TimelineProvider architecture, and Firestore pagination. All four features integrate cleanly without breaking changes. The key insight: iOS background refresh is "best effort" and cannot be relied upon exclusively—combine timeline-based widget refresh, BGAppRefreshTask opportunistic fetching, and graceful degradation for stale data.
+The research reveals that **zero new dependencies are required**. Every capability needed — binary rating UI, data migration, all-time aggregation — is achievable with the existing SwiftUI, Firebase Firestore, and Cloud Functions stack. The codebase already contains the exact patterns needed: a segmented Picker exists in MonthlyTopTenDetailView, rating events are already filtered to values 1 and 5, and batch migration scripts are an established pattern. The primary risk is **data migration timing** — existing users' ratings must be preserved and properly migrated, and the changes to local storage, Cloud Functions, and UI must be coordinated to avoid inconsistent states.
 
-Critical risks center on repeating past mistakes: the app previously removed background fetch due to battery drain concerns. This time, constrain background operations to widget data only (not full catalog loading), profile battery impact with Instruments before release, and avoid Firebase Firestore direct access in widget extensions (known deadlock issue). Total estimated effort: 10-18 hours across all features, with medium implementation risk for background tasks and low risk for feed prioritization.
+The recommended approach is a phased rollout: migrate data first (both local UserDefaults and establish the all-time Cloud Function), then update the rating UI, then redesign the Me tab, and finally rename the leaderboard. This order minimizes risk of data loss and ensures users always see consistent state. The critical pitfall to avoid is changing the UserDefaults storage format — keeping ratings as `[String: Int]` with values constrained to 1 or 5 preserves all existing data while enabling binary semantics.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The v1.0.1 milestone requires minimal stack additions—all features use iOS native APIs and existing Firebase infrastructure.
+The milestone requires **no new dependencies or libraries**. All changes use the existing stack with refactored logic:
 
-**Core technologies:**
-- **BGTaskScheduler (iOS 13+)**: Background app refresh for widget data updates — provides 30-second execution windows for lightweight fetches, system-scheduled based on user behavior
-- **Firebase Cloud Functions v2 with onSchedule**: Replaces local cron job for rankings aggregation — active development track with better cold start performance than v1, requires Blaze plan but costs negligible ($0.10/month for scheduler + free tier invocations)
-- **WidgetKit Timeline with network fetch**: Widgets fetch directly as fallback when app hasn't run — allows URLSession calls in TimelineProvider, 40-70 refresh opportunities per day budget
-- **Existing infrastructure (no changes)**: SharedStorageService, LocalStorageService, FirestoreService pagination — already supports all required operations
+**Core technologies (unchanged):**
+- **SwiftUI** with native `Picker(.segmented)` — already used in MonthlyTopTenDetailView for the Hilarious/Horrible toggle, proven pattern for binary choices
+- **Firebase Firestore iOS SDK** — rating sync continues to use existing transaction-based `updateJokeRating()`, no schema changes to jokes collection
+- **Cloud Functions (Node.js 20)** — same runtime and dependencies, logic simplified by removing time-windowed queries
+- **UserDefaults** for local ratings — keep `[String: Int]` type, map binary ratings to 1 (Horrible) and 5 (Hilarious) to preserve existing data
+- **Combine** for cross-ViewModel sync — notification pattern unchanged
 
-**Critical decision:** Use hybrid approach for widget freshness—BGAppRefreshTask as primary mechanism when app runs regularly, widget direct fetch as fallback for inactive users, graceful degradation when data exceeds 3 days old.
+**Key implementation decisions:**
+- Rating values stay as Int (1 or 5) rather than introducing a new enum — minimizes cascading type changes across storage, notifications, and Firestore
+- Segmented control replaces drag slider — simpler interaction, better accessibility, follows existing codebase pattern
+- All-time rankings stored in existing `weekly_rankings` collection with document ID "all_time" — pragmatic to avoid collection migration
 
 ### Expected Features
 
 **Must have (table stakes):**
-- **Widget background refresh** — Users expect widgets to show current content without app launch; currently broken (shows stale jokes for days)
-- **Automatic feed loading** — Manual "Load More" button is friction; infinite scroll is standard for content apps
-- **Offline access** — Already implemented with Firestore cache + LocalStorageService
-- **Feed prioritization** — Already implemented with 3-tier sorting (unseen > seen unrated > rated)
+- **Binary rating UI** with immediate visual feedback — two large, tappable options (Hilarious/Horrible) replacing 5-emoji slider
+- **Rating persistence** across sessions and to backend — UserDefaults + Firestore sync unchanged
+- **All-time Top 10 leaderboard** replacing monthly — Cloud Function aggregates all rating_events without week filter
+- **Me tab binary filter** with segmented control — Hilarious/Horrible tabs instead of 5 collapsible sections
+- **Rating data migration** — map 4-5 to Hilarious, 1-2 to Horrible, drop 3s (neutral)
+- **Rated indicator on cards** — CompactGroanOMeterView simplified to 2 emoji states
 
-**Should have (competitive):**
-- **Cloud rankings aggregation** — Professionalize backend by moving from local cron to Firebase Cloud Functions; enables scaling and reliability
+**Should have (polish):**
+- **Animated rating transition** — spring animation on button select (existing pattern from GroanOMeterView)
+- **Segment count badges** — "Hilarious (12) | Horrible (5)" in Me tab picker
+- **Tiebreaker sorting** in rankings — when vote counts are equal, sort by popularity_score as secondary criterion
 
 **Defer (v2+):**
-- **Widget push refresh via silent notifications** — High complexity, requires APNs infrastructure, iOS may throttle; timeline-based refresh sufficient for daily jokes
-- **Real-time widget updates** — iOS doesn't support frequent updates; budget exhausted quickly
-- **Background app refresh every 15 minutes** — Battery drain risk, iOS deprioritizes aggressive apps
-
-**Anti-features explicitly avoided:**
-- Force-refresh on every app open (battery waste)
-- Complex ML feed algorithms (overkill for joke content)
-- Aggressive background fetch schedules (repeat of removed feature)
-- Firebase Firestore direct access in widget extensions (known deadlock issue)
+- Undo rating in feed (swipe-to-delete in Me tab covers this use case)
+- Streak indicators for engagement gamification
+- "Your vote counted" toast (haptic feedback is sufficient)
+- Netflix-style "double thumbs up" (reintroduces complexity being eliminated)
 
 ### Architecture Approach
 
-All four features integrate with the existing MVVM architecture without breaking changes. New components are minimal: BackgroundRefreshService orchestrates BGTask logic, BackgroundCatalogLoader handles incremental fetch in background Task. Existing components need only behavioral enhancements.
+The binary rating change is a **narrowing** of the existing pipeline, not a new system. The rating flow from user tap → local storage → Firestore → Cloud Function aggregation → leaderboard display remains intact. The key architectural insight: most components shrink or simplify rather than grow.
 
 **Major components:**
-1. **BackgroundRefreshService (NEW)** — Orchestrates BGAppRefreshTask execution, fetches Joke of the Day from Firestore, updates SharedStorageService, triggers WidgetCenter reload
-2. **BackgroundCatalogLoader (NEW)** — Runs low-priority Task.detached after initial load, fetches remaining catalog in 50-joke batches, respects network conditions and battery state
-3. **Firebase Cloud Functions project (NEW)** — Scheduled function with onSchedule trigger runs daily at midnight ET, aggregates rating_events into weekly_rankings, uses preferRest: true for faster cold starts
-4. **JokeViewModel (ENHANCED)** — Add resortFeedOnReturn() method called from JokeFeedView.onAppear, triggers existing sortJokesForFreshFeed() when returning to feed tab
 
-**Implementation pattern:** SwiftUI .backgroundTask modifier provides clean integration point for BGAppRefreshTask. Cloud Functions v2 onSchedule handles cron syntax with explicit timezone. Widget TimelineProvider already supports network fetch; add stale data detection and direct Firestore call as fallback.
+1. **Rating UI layer** — Replace `GroanOMeterView` (5-emoji drag slider) with `BinaryRatingView` (segmented Picker). Simplify `CompactGroanOMeterView` from 5 cases to 2. Update `Joke.ratingEmoji` computed property.
+
+2. **ViewModel layer** — Remove `funnyJokes`, `mehJokes`, `groanJokes` computed properties from JokeViewModel. Simplify `rateJoke()` to only accept 1 or 5. Always log rating events (existing guard `if rating == 1 || rating == 5` becomes redundant since all ratings are now 1 or 5).
+
+3. **Local storage layer** — One-time migration in `LocalStorageService` to remap 4→5, 2→1, remove 3s. Keep `[String: Int]` type for backward compatibility. Migration gated by UserDefaults flag, runs once on first launch.
+
+4. **Firestore layer** — No schema changes to `jokes` collection. Cloud Function removes week_id filter from rating_events query and writes to single `all_time` document. Document ID format changes from `{deviceId}_{jokeId}_{weekId}` to `{deviceId}_{jokeId}` for new events; aggregation deduplicates at query time.
+
+5. **Leaderboard layer** — Rename `MonthlyRankingsViewModel` to `AllTimeRankingsViewModel`. Update `fetchWeeklyRankings()` to read `all_time` doc. Update UI strings and headers.
+
+**Integration points preserved:**
+- Cross-ViewModel notification via `jokeRatingDidChange` (works with any Int rating value)
+- Session-rated visibility tracking (unchanged)
+- Haptic feedback on rate (`HapticManager.shared.selection()`)
+- `withAnimation` at mutation site in ViewModel (never on scroll containers per CLAUDE.md convention)
 
 ### Critical Pitfalls
 
-1. **Widget Extension Firestore Deadlocks** — Firebase Firestore SDK causes thread deadlocks in widget extensions (GitHub issue #13070); works in development but crashes in production. **Prevention:** Use App Groups data sharing only; existing SharedStorageService pattern is correct—maintain it. Widget should NEVER import Firebase directly.
+1. **UserDefaults rating data loss during type migration** — Changing the storage value type from Int silently wipes all existing ratings. **Prevention:** Keep `[String: Int]` type, map binary to 1/5 values. Create migration script that reads old values, remaps in-place, writes back. Test update scenario (install current version, rate jokes, update to new version).
 
-2. **BGTaskScheduler Identifier Mismatch** — Background tasks silently fail when identifier doesn't exactly match between Info.plist, registration code, and task request. No error thrown. **Prevention:** Define identifier as constant used in all three locations; test with Xcode simulation commands before TestFlight.
+2. **Firestore rating_events mixed schema breaks aggregation** — Old events have rating values 2-4 which new binary logic might exclude. **Prevention:** Keep aggregation logic as `rating >= 4` for hilarious and `rating <= 2` for horrible to handle both old and new data. Do NOT narrow to only `rating == 1` or `rating == 5`.
 
-3. **Background Fetch Battery Drain (Repeat Issue)** — App previously removed background fetch; re-introducing without constraints risks same performance complaints. **Prevention:** Constrain background fetch to widget data only (not full catalog), profile with Instruments Energy Log, set strict 30-second operation limit.
+3. **All-time aggregation query timeout on large collection** — Switching from week-filtered query to full collection scan causes Cloud Function timeouts as rating_events grows. **Prevention:** For v1.1 with 433 jokes and low traffic, full scan is acceptable. Plan for write-time counters (`hilarious_count`, `horrible_count` on joke documents) if collection exceeds 10K events.
 
-4. **Firebase Cloud Functions Billing Surprise** — Setting minInstances: 1 in test environments costs $6-8/month per idle function. **Prevention:** Environment-based minInstances (0 for test, conditional for production), set billing alerts in GCP Console, use preferRest: true for Firestore to reduce cold start costs.
+4. **GroanOMeter gesture handling regression** — Reusing the 5-emoji drag slider code for 2 buttons produces incorrect ratings or layout bugs. **Prevention:** Build new `BinaryRatingView` component. Do NOT modify GroanOMeterView. Update all touchpoints: `Joke.ratingEmoji`, `CompactGroanOMeterView`, card display logic.
 
-5. **System Deprioritization for Unused Apps** — iOS learns user patterns; infrequently opened apps get deprioritized or halted from background execution. **Prevention:** Don't rely solely on BGTask for freshness; combine timeline refresh + background fetch + graceful degradation showing "Tap to get today's joke!" when data exceeds 3 days.
-
-**Additional moderate risks:** Widget timeline budget exhaustion (40-70 refreshes/day—mitigated by existing .after(tomorrow) policy), App Groups data race conditions (mitigate with atomic writes via defaults.synchronize()), Cloud Functions cold start latency (10-15 seconds—use 2nd gen + preferRest: true).
+5. **Cross-ViewModel rating notification mismatch** — If one ViewModel is updated to binary before the other, rating sync breaks. **Prevention:** Update both `JokeViewModel.rateJoke()` and `CharacterDetailViewModel.rateJoke()` in same commit. Extract shared logic if possible.
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure optimizes for risk mitigation and incremental delivery:
+Based on research, suggested phase structure:
 
-### Phase 1: Cloud Functions Migration
-**Rationale:** Backend-first approach eliminates dependency on local cron without touching iOS code. Independent deployment enables testing in isolation. Lowest risk (no app changes), highest immediate value (reliability).
+### Phase 1: Data Layer & Migration
+**Rationale:** Data integrity is the foundation. All UI depends on correctly migrated ratings. Cloud Function must produce all-time data before leaderboard UI can display it.
 
-**Delivers:** Automated rankings aggregation running reliably regardless of developer machine state.
+**Delivers:**
+- Local rating migration (UserDefaults 1-5 to binary)
+- Updated Cloud Function (removes week filter, writes all_time doc)
+- Initial all-time rankings data populated
+- Firestore migration script for rating_events (optional — Cloud Function handles mixed data)
 
-**Addresses:** Cloud rankings aggregation feature from FEATURES.md; removes operational friction.
+**Key files:**
+- `LocalStorageService.swift` — add `migrateRatingsToBinary()` method
+- `functions/index.js` — remove week_id filter, aggregate all events, write to `all_time` doc
+- `scripts/migrate-ratings.js` — NEW (optional batch script for cleaning rating_events)
 
-**Avoids:** Billing surprise pitfall (#4) by setting environment-based minInstances and GCP budget alerts from start.
+**Avoids:** Pitfall #1 (data loss), Pitfall #2 (mixed schema)
 
-**Stack:** Firebase Cloud Functions v2, onSchedule, preferRest: true for Firestore.
+**Research flag:** LOW — established patterns (existing migration scripts, Cloud Function aggregation logic)
 
-**Effort:** 4-6 hours (function implementation, testing, deployment).
+---
 
-**Research flag:** Standard pattern—Cloud Functions scheduling is well-documented. No additional research needed.
+### Phase 2: Binary Rating UI
+**Rationale:** Core interaction change. Once data layer is stable, replacing the rating UI is highest impact. This phase delivers immediate UX improvement.
 
-### Phase 2: Feed Content Prioritization
-**Rationale:** Small behavioral change using existing infrastructure. Immediate UX improvement with minimal risk. Builds confidence before tackling complex background tasks.
+**Delivers:**
+- New `BinaryRatingView` component (segmented control replacing GroanOMeterView)
+- Updated `CompactBinaryRatingView` for card indicators
+- Simplified `rateJoke()` in both ViewModels
+- Updated `Joke.ratingEmoji` computed property
 
-**Delivers:** Feed automatically shows unrated jokes first when returning to feed tab.
+**Key files:**
+- `Views/BinaryRatingView.swift` — NEW (segmented Picker for rating selection)
+- `Views/GrainOMeterView.swift` — MODIFY (update CompactGroanOMeterView to binary)
+- `ViewModels/JokeViewModel.swift` — MODIFY (simplify rateJoke, always log events)
+- `ViewModels/CharacterDetailViewModel.swift` — MODIFY (same rateJoke simplification)
+- `Models/Joke.swift` — MODIFY (binary ratingEmoji logic)
+- `Views/JokeDetailSheet.swift` — MODIFY (swap GroanOMeterView for BinaryRatingView)
+- `Views/JokeCardView.swift` — MODIFY (updated compact view)
 
-**Addresses:** Feed prioritization feature (technically already implemented via sortJokesForFreshFeed; this phase makes it automatic on tab return).
+**Avoids:** Pitfall #4 (gesture regression), Pitfall #5 (cross-ViewModel mismatch)
 
-**Implements:** JokeViewModel.resortFeedOnReturn() called from JokeFeedView.onAppear; uses existing LocalStorageService memory cache.
+**Research flag:** LOW — native SwiftUI Picker pattern already in codebase
 
-**Stack:** No additions—pure client-side logic with existing services.
+---
 
-**Effort:** 2-4 hours (method addition, view integration, testing).
+### Phase 3: Me Tab Redesign
+**Rationale:** Depends on both data migration (Phase 1) and binary rating UI (Phase 2). Simplifies from 5 sections to 2-tab segmented control.
 
-**Research flag:** No research needed—leveraging existing implementation.
+**Delivers:**
+- Me tab with Hilarious/Horrible segmented control
+- Removed funnyJokes/mehJokes/groanJokes computed properties
+- Updated empty states for binary context
+- Segment count badges
 
-### Phase 3: Background Joke Loading
-**Rationale:** Enables full catalog availability before implementing widget refresh. Background catalog loading validates that background operations don't drain battery before applying pattern to widget refresh.
+**Key files:**
+- `Views/MeView.swift` — MAJOR REDESIGN (segmented control + 2 lists)
+- `ViewModels/JokeViewModel.swift` — MODIFY (remove 3 filtered computed properties)
 
-**Delivers:** Full joke catalog loads automatically in background after initial display; removes manual "Load More" friction.
+**Avoids:** Pitfall #6 (section collapse during migration), Pitfall #9 (scroll position reset)
 
-**Addresses:** Automatic content loading from FEATURES.md.
+**Research flag:** LOW — follows existing MonthlyTopTenDetailView segmented control pattern
 
-**Avoids:** Battery drain pitfall (#9) by using low-priority Task.detached, respecting network conditions, pausing when backgrounded, and profiling with Instruments before release.
+---
 
-**Implements:** BackgroundCatalogLoader component running after JokeViewModel.loadInitialContentAsync() completes.
+### Phase 4: All-Time Leaderboard UI
+**Rationale:** Depends on Cloud Function (Phase 1) having populated all_time data. This is display-only, doesn't block rating flow, can come last.
 
-**Stack:** Task.detached(priority: .utility), existing FirestoreService.fetchMoreJokes() pagination.
+**Delivers:**
+- All-time Top 10 views and ViewModel
+- Updated UI strings ("Monthly" → "All-Time")
+- Removed date range display
+- Deleted old MonthlyTopTen files
 
-**Effort:** 4-6 hours (background task implementation, network condition handling, battery profiling).
+**Key files:**
+- `ViewModels/AllTimeRankingsViewModel.swift` — NEW (renamed from Monthly, fetches all_time doc)
+- `Views/AllTimeTopTen/AllTimeTopTenCarouselView.swift` — NEW (renamed)
+- `Views/AllTimeTopTen/AllTimeTopTenDetailView.swift` — NEW (renamed, removed date range)
+- `Services/FirestoreService.swift` — MODIFY (add fetchAllTimeRankings method)
+- `Models/FirestoreModels.swift` — MODIFY (make weekStart/weekEnd optional)
+- `Views/JokeFeedView.swift` — MODIFY (references to AllTime instead of Monthly)
+- DELETE: `ViewModels/MonthlyRankingsViewModel.swift`, `Views/MonthlyTopTen/` directory
 
-**Research flag:** Standard pattern for background loading—no additional research needed unless battery profiling reveals issues.
+**Avoids:** Pitfall #11 (naming inconsistency)
 
-### Phase 4: Widget Background Refresh
-**Rationale:** Most complex iOS integration saved for last. Dependencies on established background operation patterns from Phase 3. Highest user-facing value (solves main complaint: stale widgets).
+**Research flag:** LOW — mostly renaming and cosmetic changes
 
-**Delivers:** Widgets update daily with fresh Joke of the Day without requiring user to open main app. Graceful degradation for stale data.
-
-**Addresses:** Widget background refresh (table stakes) from FEATURES.md.
-
-**Avoids:** Multiple critical pitfalls—Firestore deadlock (#1) by maintaining App Groups pattern, identifier mismatch (#2) via constants, registration timing (#3) via AppDelegate-only registration, system deprioritization (#8) via hybrid approach with widget direct fetch fallback.
-
-**Implements:** BackgroundRefreshService component, BGAppRefreshTask registration in AppDelegate, Info.plist configuration, widget TimelineProvider fallback fetch.
-
-**Stack:** BGTaskScheduler, .backgroundTask(.appRefresh) SwiftUI modifier, WidgetCenter.shared.reloadAllTimelines().
-
-**Effort:** 6-8 hours (background task setup, widget fallback fetch, testing with simulation commands, TestFlight validation).
-
-**Research flag:** Standard pattern but testing complexity high—budget extra time for physical device testing since background tasks don't work reliably in Simulator.
+---
 
 ### Phase Ordering Rationale
 
-- **Backend before iOS:** Cloud Functions (Phase 1) can deploy and test independently; no risk to existing app.
-- **Simple before complex:** Feed prioritization (Phase 2) builds confidence with existing infrastructure before tackling background tasks.
-- **Validation before application:** Background catalog loading (Phase 3) validates battery-friendly background operations before applying pattern to widget refresh.
-- **Highest risk last:** Widget background refresh (Phase 4) has most integration complexity, unpredictable iOS timing behavior, and testing challenges—defer until other patterns proven.
+**Why this order:**
+1. **Data first** — Migration must complete before UI shows binary ratings. Cloud Function must populate data before leaderboard renders it.
+2. **Core interaction second** — Binary rating UI is the most-used feature, highest UX impact.
+3. **Me tab third** — Depends on both migration and new rating UI being stable.
+4. **Leaderboard last** — Display-only, no data dependencies on other phases after Cloud Function deploys.
 
-**Dependency chain:** Phases 1 and 2 are independent and could run in parallel. Phase 3 should complete before Phase 4 to validate background operation patterns. Total sequential completion: 16-24 hours; could reduce to 10-18 hours with parallel execution of Phases 1-2.
+**Why these groupings:**
+- Phase 1 and 2 can overlap slightly (Cloud Function deploys while rating UI is in development), but Phase 1 must finish first
+- Phase 3 and 4 are independent of each other (can be built in parallel after Phases 1-2 complete)
+- All four phases together complete the milestone — none can be deferred
+
+**How this avoids pitfalls:**
+- Data migration runs before any UI changes ship (avoids showing inconsistent state)
+- Both ViewModels updated in same phase (avoids notification mismatch)
+- Cloud Function tested with existing data before UI consumes it (avoids empty leaderboards)
+- GroanOMeterView fully replaced, not modified (avoids gesture regression)
 
 ### Research Flags
 
 **Phases with standard patterns (skip research-phase):**
-- **Phase 1 (Cloud Functions):** Well-documented Firebase pattern; existing aggregation script provides logic reference
-- **Phase 2 (Feed Prioritization):** Pure client-side logic using existing sortJokesForFreshFeed implementation
-- **Phase 3 (Background Loading):** Standard Task.detached pattern; existing pagination infrastructure supports it
+- **Phase 1:** Migration scripts follow `migrate-holiday-tags.js` pattern exactly
+- **Phase 2:** Native SwiftUI Picker already in codebase at MonthlyTopTenDetailView.swift:54-58
+- **Phase 3:** Segmented control pattern established, just removing sections
+- **Phase 4:** Renaming and cosmetic changes only
 
-**Phases likely needing validation during planning:**
-- **Phase 4 (Widget Refresh):** Standard pattern but unpredictable iOS timing requires extensive real-device testing; budget extra time for TestFlight validation cycles; consider adding analytics to track background refresh success rate in production
-
-**Overall assessment:** No additional research-phase invocations needed. All patterns well-documented. Main risk is execution and testing discipline, not knowledge gaps.
+**No phases require additional research.** All patterns are either established in the codebase or documented in official Apple/Firebase sources.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | iOS native APIs verified against Apple Developer Documentation; Firebase Cloud Functions v2 official docs; no third-party dependencies |
-| Features | HIGH | Clear requirements based on existing user complaints (stale widgets) and standard content app patterns (infinite scroll, offline access) |
-| Architecture | HIGH | Integration points clearly defined; existing codebase already structured correctly with SharedStorageService, App Groups, widget TimelineProvider; new components minimal |
-| Pitfalls | HIGH | Critical issues verified via GitHub issues (Firestore deadlock), Apple documentation (BGTask limitations), Firebase docs (billing), and existing app context (battery drain history) |
+| Stack | HIGH | Zero new dependencies; all changes use existing SwiftUI, Firebase, UserDefaults patterns verified in codebase |
+| Features | HIGH | Binary rating patterns validated against Netflix/YouTube case studies; all features map to existing capabilities |
+| Architecture | HIGH | Full codebase analysis completed; all affected files identified; MVVM boundaries remain clean |
+| Pitfalls | HIGH | Verified against actual code (LocalStorageService, JokeViewModel, functions/index.js); UserDefaults migration is critical path |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-**Testing unpredictability:** Background tasks and widget refresh timing are system-controlled and vary based on user behavior, battery state, network conditions. Cannot guarantee exact refresh times in production.
+**Minor gaps (handle during implementation):**
+- **Collection naming debt:** Keeping `weekly_rankings` collection name while using `all_time` document ID is pragmatic but cosmetically misleading. Add code comment. Can rename collection in future release.
+- **Rating average semantics:** The `rating_avg` field on jokes becomes less meaningful with binary values (trends toward extremes). Consider whether to display it or deprecate. Not blocking — can decide during UI phase.
+- **Scalability threshold:** Full collection scan for all-time aggregation is safe at current scale (433 jokes, low traffic). If rating_events exceeds 10K documents, plan migration to write-time counters. Monitor during beta.
 
-- **How to handle:** Implement comprehensive logging with timestamps sent to Firebase Analytics; track background refresh success rate as metric; design graceful degradation (show "Tap to get today's joke!" when data exceeds 3 days); test on multiple physical devices in TestFlight before release; accept that some users (inactive app users) will see stale content occasionally.
-
-**Battery impact validation:** Previous background fetch implementation was removed due to performance concerns. Must validate that new implementation doesn't repeat issue.
-
-- **How to handle:** Profile with Instruments Energy Log before Phase 3 and Phase 4 TestFlight releases; set acceptance criteria (background activity <5% in Battery settings); constrain background operations (widget data only, not full catalog); use strict time limits (30 seconds max); cancel operations in expirationHandler; monitor TestFlight feedback for battery complaints.
-
-**Firebase billing monitoring:** Blaze plan required for Cloud Functions; costs should be negligible but need safeguards.
-
-- **How to handle:** Set up GCP budget alerts at $10, $25, $50 thresholds during Phase 1 deployment; use environment-based minInstances configuration (0 for test, conditional for production); monitor Cloud Functions dashboard weekly during first month; document expected monthly cost (~$0.10 for scheduler + free tier invocations).
-
-**iOS version fragmentation:** BGTaskScheduler requires iOS 13+; app currently targets iOS 17+ so no issue, but worth noting for future reference.
-
-- **How to handle:** Verify deployment target in Xcode project settings; no compatibility issues expected since existing app is iOS 17+ only.
+**No blocking gaps.** Research is complete and actionable for roadmap creation.
 
 ## Sources
 
 ### Primary (HIGH confidence)
 
-**Apple Official Documentation:**
-- [Using background tasks to update your app](https://developer.apple.com/documentation/uikit/using-background-tasks-to-update-your-app) — BGTaskScheduler API, limitations, best practices
-- [Refreshing and Maintaining Your App Using Background Tasks](https://developer.apple.com/documentation/BackgroundTasks/refreshing-and-maintaining-your-app-using-background-tasks) — Background task lifecycle, testing
-- [Keeping a widget up to date](https://developer.apple.com/documentation/widgetkit/keeping-a-widget-up-to-date) — Widget timeline policies, refresh budget (40-70/day)
-- [Making network requests in a widget extension](https://developer.apple.com/documentation/widgetkit/making-network-requests-in-a-widget-extension) — URLSession usage in widgets
-- [WidgetCenter](https://developer.apple.com/documentation/widgetkit/widgetcenter) — Programmatic timeline reload API
+**Verified against existing codebase:**
+- `MrFunnyJokes/ViewModels/JokeViewModel.swift` (lines 863-908) — rating logic, filtered computed properties
+- `MrFunnyJokes/ViewModels/CharacterDetailViewModel.swift` (line 223) — duplicate rating logic
+- `MrFunnyJokes/Views/MonthlyTopTen/MonthlyTopTenDetailView.swift` (lines 54-58) — existing segmented Picker pattern
+- `MrFunnyJokes/Services/LocalStorageService.swift` — UserDefaults `[String: Int]` rating storage
+- `MrFunnyJokes/Models/FirestoreModels.swift` (lines 196-222) — `RankingType` enum with Hilarious/Horrible
+- `scripts/migrate-holiday-tags.js` — established migration script pattern
+- `functions/index.js` — Cloud Function aggregation logic
 
-**WWDC Sessions:**
-- [Efficiency awaits: Background tasks in SwiftUI - WWDC22](https://developer.apple.com/videos/play/wwdc2022/10142/) — SwiftUI .backgroundTask modifier integration
-
-**Firebase Official Documentation:**
-- [Schedule functions | Cloud Functions for Firebase](https://firebase.google.com/docs/functions/schedule-functions) — onSchedule trigger, cron syntax, timezone configuration
-- [scheduler namespace | Cloud Functions v2](https://firebase.google.com/docs/reference/functions/2nd-gen/node/firebase-functions.scheduler) — ScheduleOptions API reference
-- [Manage functions](https://firebase.google.com/docs/functions/manage-functions) — minInstances, cold start optimization
-- [Tips & tricks | Cloud Functions](https://firebase.google.com/docs/functions/tips) — Best practices, performance optimization
-- [Firebase Pricing](https://firebase.google.com/pricing) — Blaze plan costs, free tier limits
-
-**Known Issues:**
-- [GitHub Issue #13070 - Firestore deadlock in widget extension](https://github.com/firebase/firebase-ios-sdk/issues/13070) — Verified reproduction steps, workaround (App Groups)
+**Official documentation:**
+- [Apple: SegmentedPickerStyle](https://developer.apple.com/documentation/swiftui/segmentedpickerstyle) — native SwiftUI component
+- [Firebase: Transactions and Batched Writes](https://firebase.google.com/docs/firestore/manage-data/transactions) — 500 operation batch limit
+- [Firebase: Write-time Aggregations](https://firebase.google.com/docs/firestore/solutions/aggregation) — aggregation patterns
+- [Firebase: Summarize Data with Aggregation Queries](https://firebase.google.com/docs/firestore/query-data/aggregation-queries) — count() and query optimization
 
 ### Secondary (MEDIUM confidence)
 
-**Technical Articles (verified against official docs):**
-- [Background tasks in SwiftUI | Swift with Majid](https://swiftwithmajid.com/2022/07/06/background-tasks-in-swiftui/) — SwiftUI integration patterns
-- [How to Update or Refresh a Widget? - Swift Senpai](https://swiftsenpai.com/development/refreshing-widget/) — Widget refresh patterns
-- [How to Fetch and Show Remote Data on a Widget - Swift Senpai](https://swiftsenpai.com/development/widget-load-remote-data/) — URLSession in widgets
-- [Don't rely on BGAppRefreshTask for your app's business logic](https://mertbulan.com/programming/dont-rely-on-bgapprefreshtask-for-your-apps-business-logic/) — System limitations, user behavior dependency
-- [iOS App Extensions: Data Sharing](https://dmtopolog.com/ios-app-extensions-data-sharing/) — App Groups, NSFileCoordinator patterns
-- [Firebase Cloud Functions 2nd generation](https://firebase.blog/posts/2022/12/cloud-functions-firebase-v2/) — v2 improvements over v1
-- [Reducing Firestore Cold Start times](https://cjroeser.com/2022/12/28/reducing-firestore-cold-start-times-in-firebase-google-cloud-functions/) — preferRest: true optimization
-- [Understanding Widget Runtime Limitations](https://medium.com/@telawittig/understanding-the-limitations-of-widgets-runtime-in-ios-app-development-and-strategies-for-managing-a3bb018b9f5a) — 30MB memory limit, runtime constraints
-- [Swift iOS BackgroundTasks framework](https://itnext.io/swift-ios-13-backgroundtasks-framework-background-app-refresh-in-4-steps-3da32e65bc3d) — Testing with simulation commands
+**Binary rating UX research:**
+- [Appcues: 5 Stars vs Thumbs Up/Down](https://www.appcues.com/blog/rating-system-ux-star-thumbs) — Netflix 200% engagement increase case study
+- [Yale Insights: Thumbs Up/Down Eliminates Bias](https://insights.som.yale.edu/insights/simple-thumbs-up-or-down-eliminates-racial-bias-in-online-ratings)
 
-**UX Best Practices:**
-- [NN/g - Infinite Scrolling: When to Use It](https://www.nngroup.com/articles/infinite-scrolling-tips/) — Pagination vs. infinite scroll patterns
+**Data migration patterns:**
+- [Beware UserDefaults: A Tale of Hard to Find Bugs](https://christianselig.com/2024/10/beware-userdefaults/) — real-world migration pitfalls
+- [How to Handle Firebase Firestore Data Migration](https://bootstrapped.app/guide/how-to-handle-firebase-firestore-data-migration-and-schema-evolution)
 
-### Existing Codebase Context
-
-**Current architecture strengths (verified via code review):**
-- SharedStorageService + App Groups correctly implemented
-- Widget TimelineProvider uses .after(tomorrow) policy (correct)
-- AppDelegate exists for BGTaskScheduler registration
-- Firestore persistent cache (50MB) configured
-- JokeViewModel already implements sortJokesForFreshFeed with 3-tier prioritization
-
-**Historical context:**
-- Background fetch previously removed due to battery concerns
-- Local cron job (`scripts/aggregate-weekly-rankings.js`) currently runs manually
+**Community resources:**
+- [Hacking with Swift: Segmented Control](https://www.hackingwithswift.com/quick-start/swiftui/how-to-create-a-segmented-control-and-read-values-from-it)
+- [Firestore Query Performance Best Practices](https://estuary.dev/blog/firestore-query-best-practices/)
 
 ---
 
-*Research completed: 2026-01-30*
+*Research completed: 2026-02-17*
 *Ready for roadmap: yes*
