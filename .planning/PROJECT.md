@@ -50,7 +50,15 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ### Active
 
-(No active milestone — planning next)
+**Milestone v1.1.0 — Rating Simplification & All-Time Top 10**
+
+- [ ] Binary rating system (Hilarious/Horrible) replaces 5-emoji scale
+- [ ] Rating UI uses segmented control for two-option selection
+- [ ] Existing 1-5 ratings migrated: 4-5 → Hilarious, 1-2 → Horrible, 3s dropped
+- [ ] All-Time Top 10 replaces Monthly Top 10
+- [ ] Cloud Function recomputes all-time rankings daily
+- [ ] Me tab redesigned with Hilarious/Horrible segmented control matching Top 10 screen
+- [ ] Feature branch `v1.1.0` created before any code changes
 
 ### Out of Scope
 
@@ -70,11 +78,11 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.0.3 shipped. All planned features through seasonal content and scroll stability are complete.
+**Current State:** v1.1.0 in progress. Simplifying rating system from 5-point to binary (Hilarious/Horrible) and switching from Monthly to All-Time Top 10.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
-**Codebase:** 8,335 lines of Swift across main app and widget extension. 403 jokes in Firestore.
+**Codebase:** 8,335 lines of Swift across main app and widget extension. 433 jokes in Firestore.
 
 **Known Issues:**
 - Backend collection still named "weekly_rankings" while UI shows "Monthly" (cosmetic debt)
@@ -113,6 +121,10 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns | ✓ Good |
 | Scoped withAnimation over implicit .animation() | Prevents scroll container animation interference on iOS 18 | ✓ Good |
 | YouTube promo as standalone LazyVStack item | Prevents scroll anchor shifts from conditional content in ForEach | ✓ Good |
+| Binary rating (Hilarious/Horrible) over 5-point scale | Simpler UX, cleaner data for Top 10, consistent Me tab/Top 10 UI | — Pending |
+| All-Time Top 10 over Monthly | Not enough users for meaningful monthly rankings; all-time accumulates value | — Pending |
+| Migrate existing ratings (4-5→Hilarious, 1-2→Horrible, drop 3s) | Preserves user history for All-Time rankings | — Pending |
+| Feature branch for v1.1.0 | Easy revert if changes aren't satisfactory | — Pending |
 
 ---
-*Last updated: 2026-02-15 after v1.0.3 milestone*
+*Last updated: 2026-02-17 after v1.1.0 milestone started*
