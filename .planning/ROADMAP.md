@@ -70,11 +70,11 @@
   2. User who previously rated jokes with 1-5 scale sees their ratings preserved after app update (4-5 become Hilarious, 1-2 become Horrible, 3s cleanly removed)
   3. Cloud Function produces an all-time rankings document that reflects all historical rating data
   4. Firestore rating_events collection contains only binary-compatible rating values (old 2-4 values cleaned or handled by aggregation)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 13-01: TBD
-- [ ] 13-02: TBD
+- [ ] 13-01-PLAN.md — Feature branch, Firestore migration script, Cloud Function all-time update
+- [ ] 13-02-PLAN.md — Local rating migration in iOS app (UserDefaults binary conversion)
 
 ### Phase 14: Binary Rating UI
 **Goal**: Users rate jokes with a clear two-option choice that feels responsive and satisfying
