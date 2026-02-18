@@ -58,30 +58,28 @@ Requirements for Rating Simplification & All-Time Top 10. Each maps to roadmap p
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RATE-01 | — | Pending |
-| RATE-02 | — | Pending |
-| RATE-03 | — | Pending |
-| RATE-04 | — | Pending |
-| RATE-05 | — | Pending |
-| TOP-01 | — | Pending |
-| TOP-02 | — | Pending |
-| TOP-03 | — | Pending |
-| TOP-04 | — | Pending |
-| ME-01 | — | Pending |
-| ME-02 | — | Pending |
-| ME-03 | — | Pending |
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
+| RATE-01 | Phase 14 | Pending |
+| RATE-02 | Phase 14 | Pending |
+| RATE-03 | Phase 14 | Pending |
+| RATE-04 | Phase 14 | Pending |
+| RATE-05 | Phase 13 | Pending |
+| TOP-01 | Phase 16 | Pending |
+| TOP-02 | Phase 13 | Pending |
+| TOP-03 | Phase 13 | Pending |
+| TOP-04 | Phase 16 | Pending |
+| ME-01 | Phase 15 | Pending |
+| ME-02 | Phase 15 | Pending |
+| ME-03 | Phase 15 | Pending |
+| INFRA-01 | Phase 13 | Pending |
+| INFRA-02 | Phase 13 | Pending |
 
 **Coverage:**
 - v1.1.0 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 ⚠️
+- Mapped to phases: 14
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-17*
-*Last updated: 2026-02-17 after initial definition*
+*Last updated: 2026-02-17 — traceability updated after roadmap creation*

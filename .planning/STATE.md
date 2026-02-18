@@ -3,11 +3,11 @@
 ## Current Position
 
 **Milestone:** v1.1.0 — Rating Simplification & All-Time Top 10
-**Phase:** Not started (defining requirements)
+**Phase:** 13 of 16 (Data Migration & Cloud Function)
 **Plan:** —
-**Status:** Defining requirements
+**Status:** Ready to plan
 
-Last activity: 2026-02-17 — Milestone v1.1.0 started
+Last activity: 2026-02-17 — Roadmap created for v1.1.0 (4 phases, 14 requirements)
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -16,7 +16,7 @@ Progress: [░░░░░░░░░░] 0%
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** v1.1.0 — Binary ratings, All-Time Top 10, Me tab redesign
+**Current focus:** Phase 13 — Migrate ratings to binary format, deploy all-time Cloud Function
 
 ## Shipped Milestones
 
@@ -42,26 +42,30 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 
 See PROJECT.md Key Decisions table for full log.
 
+Recent decisions affecting current work:
+- Binary rating (Hilarious/Horrible) over 5-point scale — simpler UX, cleaner data
+- All-Time Top 10 over Monthly — not enough users for meaningful monthly rankings
+- Keep Int type for ratings (1 and 5) — minimizes cascading type changes
+- Keep `weekly_rankings` collection name, use `all_time` document ID — pragmatic
+
 ### Open Items
 
 - Remove local crontab entry (user action: `crontab -e` to remove aggregation line)
-- Physical device overnight test for widget background refresh
 - Consider automating daily_jokes population via Cloud Function
 
 ### Tech Debt
 
-- Collection named "weekly_rankings" but UI shows "Monthly" (cosmetic) — will be addressed in v1.1.0
-- Firebase bundle ID warning in Xcode (informational only)
+- Collection named "weekly_rankings" but stores all-time data (cosmetic) — accepted tradeoff
 
 ## Session Continuity
 
 **Last session:** 2026-02-17
-**Stopped at:** Defining v1.1.0 requirements
+**Stopped at:** Roadmap created for v1.1.0 milestone
 **Resume file:** None
 
-**Next steps:** Define requirements → create roadmap → `/gsd:plan-phase [N]`
+**Next steps:** `/gsd:plan-phase 13`
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-17 after v1.1.0 milestone started*
+*Last updated: 2026-02-17 — v1.1.0 roadmap created*
