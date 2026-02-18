@@ -1,0 +1,87 @@
+# Requirements: Mr. Funny Jokes
+
+**Defined:** 2026-02-17
+**Core Value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
+
+## v1.1.0 Requirements
+
+Requirements for Rating Simplification & All-Time Top 10. Each maps to roadmap phases.
+
+### Rating System
+
+- [ ] **RATE-01**: User can rate a joke as Hilarious or Horrible via segmented control (replaces 5-emoji slider)
+- [ ] **RATE-02**: Rating selection triggers haptic feedback
+- [ ] **RATE-03**: Rating selection includes smooth transition animation
+- [ ] **RATE-04**: User can change their rating by selecting the other option
+- [ ] **RATE-05**: Existing local ratings migrated at app launch: 4-5 → Hilarious (5), 1-2 → Horrible (1), 3s dropped
+
+### All-Time Top 10
+
+- [ ] **TOP-01**: All-Time Top 10 replaces Monthly Top 10 across all UI
+- [ ] **TOP-02**: Cloud Function aggregates all rating events (no time window) into all-time rankings daily
+- [ ] **TOP-03**: Existing rating_events migrated: 4-5 → Hilarious, 1-2 → Horrible, 3s removed from Firestore
+- [ ] **TOP-04**: UI labels updated from "Monthly" to "All-Time" throughout
+
+### Me Tab
+
+- [ ] **ME-01**: Me tab displays rated jokes in two segments: Hilarious and Horrible (replaces 5 sections)
+- [ ] **ME-02**: Segmented control includes joke count badges per category
+- [ ] **ME-03**: Me tab UI pattern matches All-Time Top 10 detail view for consistency
+
+### Infrastructure
+
+- [ ] **INFRA-01**: Feature branch `v1.1.0` created from `main` before any code changes
+- [ ] **INFRA-02**: Firestore migration script converts existing rating_events to binary format
+
+## Future Requirements
+
+### Rating Enhancements
+
+- **RATE-F01**: User can remove a rating entirely (un-rate a joke)
+- **RATE-F02**: Rating counts visible on joke cards in feed
+
+### Leaderboard Enhancements
+
+- **TOP-F01**: Monthly Top 10 option (when user base grows)
+- **TOP-F02**: Character-specific Top 10 leaderboards
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Monthly rankings retention | Not enough users; all-time accumulates value |
+| 3-point or 4-point rating scale | Binary is simpler and proven (Netflix/YouTube pattern) |
+| Server-side rating migration | Client-side UserDefaults migration + Firestore script sufficient |
+| weekly_rankings collection rename | Cosmetic debt; keep collection name, use `all_time` document ID |
+| Widget rating display | Widgets don't show ratings; no changes needed |
+| Real-time ranking updates | Daily Cloud Function aggregation is sufficient for current scale |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| RATE-01 | — | Pending |
+| RATE-02 | — | Pending |
+| RATE-03 | — | Pending |
+| RATE-04 | — | Pending |
+| RATE-05 | — | Pending |
+| TOP-01 | — | Pending |
+| TOP-02 | — | Pending |
+| TOP-03 | — | Pending |
+| TOP-04 | — | Pending |
+| ME-01 | — | Pending |
+| ME-02 | — | Pending |
+| ME-03 | — | Pending |
+| INFRA-01 | — | Pending |
+| INFRA-02 | — | Pending |
+
+**Coverage:**
+- v1.1.0 requirements: 14 total
+- Mapped to phases: 0
+- Unmapped: 14 ⚠️
+
+---
+*Requirements defined: 2026-02-17*
+*Last updated: 2026-02-17 after initial definition*
