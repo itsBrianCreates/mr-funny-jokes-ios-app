@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A joke card with rank badge and rating count for the Monthly Top 10
+/// A joke card with rank badge and rating count for the All-Time Top 10
 struct RankedJokeCard: View {
     let rankedJoke: RankedJoke
     let rankingType: RankingType

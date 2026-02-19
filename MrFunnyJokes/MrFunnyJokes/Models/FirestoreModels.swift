@@ -159,12 +159,12 @@ struct RankedJokeEntry: Codable, Identifiable {
     }
 }
 
-/// Represents a week's rankings from the Firestore "weekly_rankings" collection
-/// Document ID format: "2024-W03" (ISO week format)
+/// Represents rankings from the Firestore "weekly_rankings" collection
+/// Document ID: "all_time" for cumulative rankings
 struct WeeklyRankings: Codable {
     let weekId: String
-    let weekStart: Date
-    let weekEnd: Date
+    let weekStart: Date?
+    let weekEnd: Date?
     let hilarious: [RankedJokeEntry]
     let horrible: [RankedJokeEntry]
     let totalHilariousRatings: Int

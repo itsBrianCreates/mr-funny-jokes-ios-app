@@ -261,7 +261,7 @@ struct CharacterJokeCardView: View {
                     Spacer()
 
                     if let rating = joke.userRating {
-                        CompactGroanOMeterView(rating: rating)
+                        CompactRatingView(rating: rating)
                     }
                 }
             }

@@ -1,7 +1,7 @@
 /**
- * Cloud Functions for Mr. Funny Jokes - Rankings Aggregation
+ * Cloud Functions for Mr. Funny Jokes - All-Time Rankings Aggregation
  *
- * Migrated from scripts/aggregate-weekly-rankings.js
+ * Aggregates ALL rating_events into an all-time rankings document.
  *
  * Exports:
  * - aggregateRankings: Scheduled function (daily at midnight ET)
@@ -11,6 +11,8 @@
  * - Ratings 4-5 = "hilarious"
  * - Ratings 1-2 = "horrible"
  * - Rating 3 = neutral (not counted)
+ *
+ * Output: weekly_rankings/all_time document with top 10 hilarious and horrible jokes
  */
 
 const { onSchedule } = require("firebase-functions/v2/scheduler");
@@ -86,6 +88,30 @@ async function fetchRatingEvents(weekId) {
 }
 
 /**
+ * Fetch ALL rating events from Firestore (no time window filter)
+ */
+async function fetchAllRatingEvents() {
+  const snapshot = await db.collection(RATING_EVENTS_COLLECTION).get();
+  return snapshot.docs.map(doc => doc.data());
+}
+
+/**
+ * Save all-time rankings to Firestore
+ */
+async function saveAllTimeRankings(rankings) {
+  const document = {
+    week_id: "all_time",
+    hilarious: rankings.hilarious,
+    horrible: rankings.horrible,
+    total_hilarious_ratings: rankings.totalHilarious,
+    total_horrible_ratings: rankings.totalHorrible,
+    computed_at: FieldValue.serverTimestamp()
+  };
+
+  await db.collection(WEEKLY_RANKINGS_COLLECTION).doc("all_time").set(document);
+}
+
+/**
  * Aggregate ratings into hilarious and horrible counts
  */
 function aggregateRatings(events) {
@@ -152,16 +178,16 @@ async function saveWeeklyRankings(weekId, rankings) {
 
 /**
  * Core aggregation logic - shared by scheduled and HTTP triggers
+ * Aggregates ALL rating events into an all-time rankings document
  */
-async function runAggregation(weekId = null) {
-  const targetWeek = weekId || getCurrentWeekId();
-  logger.info(`Processing week: ${targetWeek}`);
+async function runAggregation() {
+  logger.info("Processing all-time aggregation");
 
-  const events = await fetchRatingEvents(targetWeek);
-  logger.info(`Found ${events.length} rating events`);
+  const events = await fetchAllRatingEvents();
+  logger.info(`Found ${events.length} total rating events`);
 
   if (events.length === 0) {
-    logger.warn("No rating events found for this week");
+    logger.warn("No rating events found");
   }
 
   const { hilariousCounts, horribleCounts, totalHilarious, totalHorrible } = aggregateRatings(events);
@@ -171,17 +197,17 @@ async function runAggregation(weekId = null) {
   logger.info(`Top ${hilariousTop10.length} hilarious jokes identified`);
   logger.info(`Top ${horribleTop10.length} horrible jokes identified`);
 
-  await saveWeeklyRankings(targetWeek, {
+  await saveAllTimeRankings({
     hilarious: hilariousTop10,
     horrible: horribleTop10,
     totalHilarious,
     totalHorrible
   });
 
-  logger.info(`Saved weekly rankings for ${targetWeek}`);
+  logger.info("Saved all-time rankings to weekly_rankings/all_time");
 
   return {
-    weekId: targetWeek,
+    documentId: "all_time",
     eventsProcessed: events.length,
     hilariousTop10Count: hilariousTop10.length,
     horribleTop10Count: horribleTop10.length,
@@ -213,19 +239,15 @@ exports.aggregateRankings = onSchedule({
 // HTTP FUNCTION: Manual trigger endpoint
 // ============================================
 exports.triggerAggregation = onRequest(async (req, res) => {
-  logger.info("Manual aggregation triggered", {
-    method: req.method,
-    query: req.query
+  logger.info("Manual all-time aggregation triggered", {
+    method: req.method
   });
 
-  // Optional: Allow specifying a week via query param
-  const weekId = req.query.week || null;
-
   try {
-    const result = await runAggregation(weekId);
+    const result = await runAggregation();
     res.status(200).json({
       success: true,
-      message: "Aggregation complete",
+      message: "All-time aggregation complete",
       result
     });
   } catch (error) {

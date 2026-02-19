@@ -2,11 +2,11 @@ import SwiftUI
 
 struct JokeFeedView: View {
     @ObservedObject var viewModel: JokeViewModel
-    @StateObject private var rankingsViewModel = MonthlyRankingsViewModel()
+    @StateObject private var rankingsViewModel = AllTimeRankingsViewModel()
     let onCharacterTap: (JokeCharacter) -> Void
 
-    /// State for navigating to Monthly Top 10 detail view
-    @State private var monthlyTopTenDestination: RankingType?
+    /// State for navigating to All-Time Top 10 detail view
+    @State private var allTimeTopTenDestination: RankingType?
 
     /// Persistent state for YouTube promo dismissal
     @AppStorage("youtubePromoDismissed") private var youtubePromoDismissed = false
@@ -29,8 +29,8 @@ struct JokeFeedView: View {
         viewModel.selectedCategory == nil && !youtubePromoDismissed
     }
 
-    /// Show Monthly Top 10 carousel only when viewing "All" jokes
-    private var showMonthlyTopTen: Bool {
+    /// Show All-Time Top 10 carousel only when viewing "All" jokes
+    private var showAllTimeTopTen: Bool {
         viewModel.selectedCategory == nil
     }
 
@@ -77,12 +77,12 @@ struct JokeFeedView: View {
                         }
                     }
 
-                    // Monthly Top 10 carousel (only when "All" is selected)
-                    if showMonthlyTopTen {
-                        MonthlyTopTenCarouselView(
+                    // All-Time Top 10 carousel (only when "All" is selected)
+                    if showAllTimeTopTen {
+                        AllTimeTopTenCarouselView(
                             viewModel: rankingsViewModel,
                             onCardTap: { type in
-                                monthlyTopTenDestination = type
+                                allTimeTopTenDestination = type
                             }
                         )
                     }
@@ -150,8 +150,8 @@ struct JokeFeedView: View {
                     }
                 }
             }
-            .navigationDestination(item: $monthlyTopTenDestination) { type in
-                MonthlyTopTenDetailView(
+            .navigationDestination(item: $allTimeTopTenDestination) { type in
+                AllTimeTopTenDetailView(
                     viewModel: rankingsViewModel,
                     jokeViewModel: viewModel,
                     selectedType: type

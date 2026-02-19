@@ -6,7 +6,6 @@ import Combine
 final class JokeViewModel: ObservableObject {
     @Published var jokes: [Joke] = []
     @Published var selectedCategory: JokeCategory? = nil
-    @Published var selectedMeCategory: JokeCategory? = nil
     @Published var isLoading = false
     @Published var isRefreshing = false
     @Published var copiedJokeId: UUID?
@@ -95,21 +94,9 @@ final class JokeViewModel: ObservableObject {
         sortByRatingTimestamp(jokes.filter { $0.userRating != nil })
     }
 
-    // Jokes grouped by rating (1-5 scale), sorted by most recently rated
+    // Jokes grouped by binary rating, sorted by most recently rated
     var hilariousJokes: [Joke] {
         sortByRatingTimestamp(jokes.filter { $0.userRating == 5 })
-    }
-
-    var funnyJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating == 4 })
-    }
-
-    var mehJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating == 3 })
-    }
-
-    var groanJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating == 2 })
     }
 
     var horribleJokes: [Joke] {
@@ -123,56 +110,6 @@ final class JokeViewModel: ObservableObject {
             let timestamp2 = storage.getRatingTimestamp(for: joke2.id, firestoreId: joke2.firestoreId) ?? 0
             return timestamp1 > timestamp2  // Most recent first
         }
-    }
-
-    // MARK: - Filtered Rated Jokes (for Me tab)
-
-    /// Rated jokes filtered by the selected Me tab category
-    var filteredRatedJokes: [Joke] {
-        guard let category = selectedMeCategory else {
-            return ratedJokes
-        }
-        return ratedJokes.filter { $0.category == category }
-    }
-
-    /// Hilarious jokes filtered by the selected Me tab category
-    var filteredHilariousJokes: [Joke] {
-        guard let category = selectedMeCategory else {
-            return hilariousJokes
-        }
-        return hilariousJokes.filter { $0.category == category }
-    }
-
-    /// Funny jokes filtered by the selected Me tab category
-    var filteredFunnyJokes: [Joke] {
-        guard let category = selectedMeCategory else {
-            return funnyJokes
-        }
-        return funnyJokes.filter { $0.category == category }
-    }
-
-    /// Meh jokes filtered by the selected Me tab category
-    var filteredMehJokes: [Joke] {
-        guard let category = selectedMeCategory else {
-            return mehJokes
-        }
-        return mehJokes.filter { $0.category == category }
-    }
-
-    /// Groan jokes filtered by the selected Me tab category
-    var filteredGroanJokes: [Joke] {
-        guard let category = selectedMeCategory else {
-            return groanJokes
-        }
-        return groanJokes.filter { $0.category == category }
-    }
-
-    /// Horrible jokes filtered by the selected Me tab category
-    var filteredHorribleJokes: [Joke] {
-        guard let category = selectedMeCategory else {
-            return horribleJokes
-        }
-        return horribleJokes.filter { $0.category == category }
     }
 
     /// The cached joke of the day firestoreId - used to match Firebase jokes
@@ -374,6 +311,10 @@ final class JokeViewModel: ObservableObject {
     /// Load content on app start asynchronously - cache first, then API
     /// This is fully async to avoid blocking the main thread during startup
     private func loadInitialContentAsync() async {
+        // PHASE 0: Migrate 5-point ratings to binary (runs once, gated by UserDefaults flag)
+        // Must run before memory cache preload so cache loads already-migrated data
+        storage.migrateRatingsToBinaryIfNeeded()
+
         // PHASE 1: Preload memory cache for fast sorting (critical for performance)
         await storage.preloadMemoryCacheAsync()
 
@@ -1012,13 +953,6 @@ final class JokeViewModel: ObservableObject {
         Task {
             await refresh()
         }
-    }
-
-    // MARK: - Me Tab Category Selection
-
-    func selectMeCategory(_ category: JokeCategory?) {
-        HapticManager.shared.lightTap()
-        selectedMeCategory = category
     }
 
     // MARK: - Widget Fallback Cache

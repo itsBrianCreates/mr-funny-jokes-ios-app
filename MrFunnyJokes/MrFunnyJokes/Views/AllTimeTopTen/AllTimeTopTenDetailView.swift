@@ -1,55 +1,14 @@
 import SwiftUI
 
-/// Detail view showing the Monthly Top 10 countdown with pill tabs for switching between Hilarious and Horrible
-struct MonthlyTopTenDetailView: View {
-    @ObservedObject var viewModel: MonthlyRankingsViewModel
+/// Detail view showing the All-Time Top 10 countdown with pill tabs for switching between Hilarious and Horrible
+struct AllTimeTopTenDetailView: View {
+    @ObservedObject var viewModel: AllTimeRankingsViewModel
     @ObservedObject var jokeViewModel: JokeViewModel
     @State var selectedType: RankingType
-
-    /// Computed date range that uses viewModel data or fallback
-    private var dateRange: String {
-        if !viewModel.monthDateRange.isEmpty {
-            return viewModel.monthDateRange
-        }
-        // Fallback to current month
-        let calendar = Calendar(identifier: .iso8601)
-        var easternCalendar = calendar
-        easternCalendar.timeZone = TimeZone(identifier: "America/New_York")!
-
-        let now = Date()
-        guard let monthInterval = easternCalendar.dateInterval(of: .month, for: now) else {
-            return "This Month"
-        }
-
-        let monthFormatter = DateFormatter()
-        monthFormatter.dateFormat = "MMM"
-        let dayFormatter = DateFormatter()
-        dayFormatter.dateFormat = "d"
-
-        let startMonth = easternCalendar.component(.month, from: monthInterval.start)
-        let endMonth = easternCalendar.component(.month, from: monthInterval.end)
-        let startMonthStr = monthFormatter.string(from: monthInterval.start)
-        let startDayStr = dayFormatter.string(from: monthInterval.start)
-        let endDayStr = dayFormatter.string(from: monthInterval.end.addingTimeInterval(-1))
-
-        if startMonth == endMonth {
-            return "\(startMonthStr) \(startDayStr) - \(endDayStr)"
-        } else {
-            let endMonthStr = monthFormatter.string(from: monthInterval.end)
-            return "\(startMonthStr) \(startDayStr) - \(endMonthStr) \(endDayStr)"
-        }
-    }
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
-                // Date range subtitle
-                Text(dateRange)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 4)
-
                 // Segmented control
                 Picker("Category", selection: $selectedType) {
                     ForEach(RankingType.allCases) { type in
@@ -85,7 +44,7 @@ struct MonthlyTopTenDetailView: View {
             }
             .padding(.horizontal)
         }
-        .navigationTitle("Monthly Top 10")
+        .navigationTitle("All-Time Top 10")
         .navigationBarTitleDisplayMode(.large)
     }
 }
@@ -124,7 +83,7 @@ struct EmptyStateView: View {
                 .font(.title2.weight(.semibold))
 
             // Description
-            Text("Be one of the first to rate jokes this month!\nJokes rated \(type == .hilarious ? "5 stars" : "1 star") will appear here.")
+            Text("Be one of the first to rate jokes!\nJokes rated \(type == .hilarious ? "Hilarious 😂" : "Horrible 🫠") will appear here.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -139,8 +98,8 @@ struct EmptyStateView: View {
 
 #Preview("With Data") {
     NavigationStack {
-        MonthlyTopTenDetailView(
-            viewModel: MonthlyRankingsViewModel(),
+        AllTimeTopTenDetailView(
+            viewModel: AllTimeRankingsViewModel(),
             jokeViewModel: JokeViewModel(),
             selectedType: .hilarious
         )

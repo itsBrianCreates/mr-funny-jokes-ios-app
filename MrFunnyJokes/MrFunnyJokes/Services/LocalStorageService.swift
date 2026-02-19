@@ -140,6 +140,68 @@ final class LocalStorageService: @unchecked Sendable {
         }
     }
 
+    // MARK: - Rating Migration (v1.1.0)
+
+    private let binaryMigrationKey = "hasMigratedRatingsToBinary"
+
+    /// One-time migration: converts 5-point ratings to binary (Hilarious=5, Horrible=1)
+    /// - Ratings 4 or 5 -> 5 (Hilarious)
+    /// - Ratings 1 or 2 -> 1 (Horrible)
+    /// - Rating 3 -> removed (neutral, no opinion)
+    /// Idempotent: gated by UserDefaults flag, runs once per device
+    func migrateRatingsToBinaryIfNeeded() {
+        guard !userDefaults.bool(forKey: binaryMigrationKey) else { return }
+
+        queue.sync {
+            var ratings = self.loadRatingsSync()
+            var timestamps = self.loadRatingTimestampsSync()
+            var changed = false
+            var keysToRemove: [String] = []
+            var remappedCount = 0
+            var droppedCount = 0
+
+            for (key, value) in ratings {
+                switch value {
+                case 4, 5:
+                    if value != 5 {
+                        ratings[key] = 5
+                        changed = true
+                        remappedCount += 1
+                    }
+                case 1, 2:
+                    if value != 1 {
+                        ratings[key] = 1
+                        changed = true
+                        remappedCount += 1
+                    }
+                case 3:
+                    keysToRemove.append(key)
+                    changed = true
+                    droppedCount += 1
+                default:
+                    // Already 1 or 5, or unexpected value — skip
+                    break
+                }
+            }
+
+            // Remove rating-3 entries from both dictionaries
+            for key in keysToRemove {
+                ratings.removeValue(forKey: key)
+                timestamps.removeValue(forKey: key)
+            }
+
+            if changed {
+                self.saveRatingsSync(ratings)
+                self.saveRatingTimestampsSync(timestamps)
+            }
+
+            print("[Migration] Binary rating migration complete: \(remappedCount) remapped, \(droppedCount) dropped")
+        }
+
+        // Set flag AFTER successful completion
+        userDefaults.set(true, forKey: binaryMigrationKey)
+    }
+
     // MARK: - Legacy Rating Methods (deprecated)
 
     @available(*, deprecated, message: "Use saveRating(for:firestoreId:rating:) instead")

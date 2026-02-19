@@ -45,7 +45,9 @@ struct JokeDetailSheet: View {
                     }
 
                     // Rating section
-                    GroanOMeterView(currentRating: joke.userRating, onRate: onRate)
+                    BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
+
+                    Divider()
 
                     // Action buttons - iOS style
                     VStack(spacing: 12) {
@@ -234,7 +236,7 @@ struct JokeDetailSheet: View {
                     category: .dadJoke,
                     setup: "Why don't scientists trust atoms?",
                     punchline: "Because they make up everything!",
-                    userRating: 4,
+                    userRating: 5,
                     firestoreId: "0CDqve8AUmDb0VbXWwdQ",
                     character: "Mr. Funny"
                 ),
@@ -255,7 +257,7 @@ struct JokeDetailSheet: View {
                     category: .knockKnock,
                     setup: "Knock, knock. Who's there? Nobel.",
                     punchline: "Nobel who? Nobel … that's why I knocked.",
-                    userRating: 3,
+                    userRating: 1,
                     firestoreId: "ABC123XYZ456example",
                     character: "Mr. Potty"
                 ),

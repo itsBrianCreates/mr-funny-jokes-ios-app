@@ -109,3 +109,31 @@
 **What's next:** App Store submission, then v1.1 enhancements based on review feedback.
 
 ---
+
+## v1.1.0 Rating Simplification & All-Time Top 10 (Shipped: 2026-02-18)
+
+**Delivered:** Simplified rating from 5-point to binary (Hilarious/Horrible) and replaced Monthly Top 10 with All-Time Top 10 for a cleaner UX with more meaningful rankings.
+
+**Phases completed:** 13-16 (6 plans total)
+
+**Key accomplishments:**
+
+- Binary rating system (Hilarious/Horrible) replacing 5-emoji slider with haptic feedback and smooth animation
+- Three-layer rating migration (UserDefaults + Firestore + Cloud Function) preserving all user history
+- All-Time Top 10 leaderboard replacing Monthly Top 10 across all UI surfaces
+- Segmented Me tab redesign with card-style rows and count badges
+- Complete dead code cleanup — zero traces of 5-point rating system remain
+
+**Stats:**
+
+- 39 files modified
+- 8,150 lines of Swift
+- 4 phases, 6 plans, 10 tasks
+- 1 day (2026-02-18)
+
+**Git range:** `5aaf9f2` → `934d5c9`
+
+**What's next:** App Store submission with v1.1.0 binary, then next milestone based on user feedback.
+
+---
+

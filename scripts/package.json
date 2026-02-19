@@ -8,7 +8,11 @@
     "backup": "node migrate-joke-ids.js --backup-only",
     "verify": "node migrate-joke-ids.js --verify-only",
     "add-jokes": "node add-jokes.js",
-    "add-jokes:dry-run": "node add-jokes.js --dry-run"
+    "add-jokes:dry-run": "node add-jokes.js --dry-run",
+    "migrate-holidays": "node migrate-holiday-tags.js",
+    "migrate-holidays:dry-run": "node migrate-holiday-tags.js --dry-run",
+    "migrate-ratings": "node migrate-rating-events.js",
+    "migrate-ratings:dry-run": "node migrate-rating-events.js --dry-run"
   },
   "dependencies": {
     "firebase-admin": "^12.0.0"

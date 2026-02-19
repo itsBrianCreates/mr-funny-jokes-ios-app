@@ -69,7 +69,7 @@ struct JokeCardView: View {
                     Spacer()
 
                     if let rating = joke.userRating {
-                        CompactGroanOMeterView(rating: rating)
+                        CompactRatingView(rating: rating)
                     }
                 }
             }
@@ -137,7 +137,7 @@ struct CharacterIndicatorView: View {
                     category: .knockKnock,
                     setup: "Knock, knock. Who's there? Nobel.",
                     punchline: "Nobel who? Nobel … that's why I knocked.",
-                    userRating: 3,
+                    userRating: 1,
                     character: "Mr. Potty"
                 ),
                 isCopied: true,
@@ -151,7 +151,7 @@ struct CharacterIndicatorView: View {
                     category: .pickupLine,
                     setup: "Are you a magician?",
                     punchline: "Because whenever I look at you, everyone else disappears!",
-                    userRating: 4,
+                    userRating: 5,
                     character: "Mr. Love"
                 ),
                 isCopied: false,

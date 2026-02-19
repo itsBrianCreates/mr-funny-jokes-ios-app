@@ -85,15 +85,12 @@ struct Joke: Identifiable, Codable, Equatable {
         guard let rating = userRating else { return nil }
         switch rating {
         case 1: return "🫠"
-        case 2: return "😩"
-        case 3: return "😐"
-        case 4: return "😄"
         case 5: return "😂"
         default: return nil
         }
     }
 
-    static let ratingEmojis = ["🫠", "😩", "😐", "😄", "😂"]
+    static let ratingEmojis = ["🫠", "😂"]
 
     /// Formats the joke text for sharing, with special handling for knock-knock jokes
     /// to display each part on its own line.

@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// A section showing "Monthly Top 10" header with chevron and two category cards below
-struct MonthlyTopTenCarouselView: View {
-    @ObservedObject var viewModel: MonthlyRankingsViewModel
+/// A section showing "All-Time Top 10" header with chevron and two category cards below
+struct AllTimeTopTenCarouselView: View {
+    @ObservedObject var viewModel: AllTimeRankingsViewModel
     let onCardTap: (RankingType) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Header row with title and chevron
-            MonthlyTop10Header {
+            AllTimeTop10Header {
                 HapticManager.shared.mediumImpact()
                 onCardTap(.hilarious) // Default to hilarious when tapping header
             }
@@ -16,10 +16,10 @@ struct MonthlyTopTenCarouselView: View {
             // Two cards side by side
             HStack(spacing: 12) {
                 if viewModel.isLoading {
-                    MonthlyTopTenCardSkeleton()
-                    MonthlyTopTenCardSkeleton()
+                    AllTimeTopTenCardSkeleton()
+                    AllTimeTopTenCardSkeleton()
                 } else {
-                    MonthlyTopTenCard(
+                    AllTimeTopTenCard(
                         type: .hilarious,
                         totalRatings: viewModel.totalHilariousRatings,
                         hasData: viewModel.hasDataFor(type: .hilarious)
@@ -29,7 +29,7 @@ struct MonthlyTopTenCarouselView: View {
                         onCardTap(.hilarious)
                     }
 
-                    MonthlyTopTenCard(
+                    AllTimeTopTenCard(
                         type: .horrible,
                         totalRatings: viewModel.totalHorribleRatings,
                         hasData: viewModel.hasDataFor(type: .horrible)
@@ -46,13 +46,13 @@ struct MonthlyTopTenCarouselView: View {
 
 // MARK: - Header with Chevron
 
-struct MonthlyTop10Header: View {
+struct AllTimeTop10Header: View {
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 6) {
-                Text("Monthly Top 10")
+                Text("All-Time Top 10")
                     .font(.title2.weight(.bold))
                     .foregroundStyle(.primary)
 
@@ -68,10 +68,10 @@ struct MonthlyTop10Header: View {
     }
 }
 
-// MARK: - Monthly Top Ten Card
+// MARK: - All-Time Top Ten Card
 
 /// A compact card for Hilarious or Horrible category - soft background style
-struct MonthlyTopTenCard: View {
+struct AllTimeTopTenCard: View {
     let type: RankingType
     let totalRatings: Int
     let hasData: Bool
@@ -107,7 +107,7 @@ struct MonthlyTopTenCard: View {
 
 // MARK: - Skeleton Loader
 
-struct MonthlyTopTenCardSkeleton: View {
+struct AllTimeTopTenCardSkeleton: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             // Emoji skeleton
@@ -131,9 +131,9 @@ struct MonthlyTopTenCardSkeleton: View {
 #Preview {
     VStack(spacing: 24) {
         // Full carousel view
-        MonthlyTopTenCarouselView(
+        AllTimeTopTenCarouselView(
             viewModel: {
-                let vm = MonthlyRankingsViewModel()
+                let vm = AllTimeRankingsViewModel()
                 return vm
             }(),
             onCardTap: { type in
@@ -146,11 +146,11 @@ struct MonthlyTopTenCardSkeleton: View {
 
         // Skeleton state
         VStack(alignment: .leading, spacing: 12) {
-            MonthlyTop10Header {}
+            AllTimeTop10Header {}
 
             HStack(spacing: 12) {
-                MonthlyTopTenCardSkeleton()
-                MonthlyTopTenCardSkeleton()
+                AllTimeTopTenCardSkeleton()
+                AllTimeTopTenCardSkeleton()
             }
         }
         .padding(.horizontal)
@@ -159,16 +159,16 @@ struct MonthlyTopTenCardSkeleton: View {
 
         // Individual cards with data
         VStack(alignment: .leading, spacing: 12) {
-            MonthlyTop10Header {}
+            AllTimeTop10Header {}
 
             HStack(spacing: 12) {
-                MonthlyTopTenCard(
+                AllTimeTopTenCard(
                     type: .hilarious,
                     totalRatings: 2847,
                     hasData: true
                 )
 
-                MonthlyTopTenCard(
+                AllTimeTopTenCard(
                     type: .horrible,
                     totalRatings: 1523,
                     hasData: true

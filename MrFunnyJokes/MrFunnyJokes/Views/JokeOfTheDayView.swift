@@ -103,7 +103,7 @@ struct JokeOfTheDayView: View {
 
                     // Rating indicator or "Tap to rate"
                     if let rating = joke.userRating {
-                        CompactGroanOMeterView(rating: rating)
+                        CompactRatingView(rating: rating)
                     } else {
                         Text("Tap to rate")
                             .font(.caption)

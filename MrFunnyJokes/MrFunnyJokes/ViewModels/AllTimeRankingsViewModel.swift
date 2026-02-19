@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class MonthlyRankingsViewModel: ObservableObject {
+final class AllTimeRankingsViewModel: ObservableObject {
     // MARK: - Published Properties
 
     @Published var hilariousJokes: [RankedJoke] = []
@@ -11,7 +11,6 @@ final class MonthlyRankingsViewModel: ObservableObject {
     @Published var hasData = false
     @Published var totalHilariousRatings = 0
     @Published var totalHorribleRatings = 0
-    @Published var monthDateRange: String = ""
 
     // MARK: - Private Properties
 
@@ -43,8 +42,8 @@ final class MonthlyRankingsViewModel: ObservableObject {
         isLoading = true
 
         do {
-            // Fetch monthly rankings from Firestore (backend collection name unchanged)
-            guard let rankings = try await firestoreService.fetchWeeklyRankings() else {
+            // Fetch all-time rankings from Firestore (backend collection name unchanged)
+            guard let rankings = try await firestoreService.fetchAllTimeRankings() else {
                 // No rankings data yet
                 isLoading = false
                 hasData = false
@@ -75,43 +74,14 @@ final class MonthlyRankingsViewModel: ObservableObject {
             totalHilariousRatings = rankings.totalHilariousRatings
             totalHorribleRatings = rankings.totalHorribleRatings
 
-            // Format date range
-            monthDateRange = formatDateRange(start: rankings.weekStart, end: rankings.weekEnd)
-
             hasData = !hilariousJokes.isEmpty || !horribleJokes.isEmpty
 
         } catch {
-            print("Failed to load monthly rankings: \(error)")
+            print("Failed to load all-time rankings: \(error)")
             hasData = false
         }
 
         isLoading = false
-    }
-
-    /// Format the month date range for display (e.g., "Dec 1 - 31")
-    private func formatDateRange(start: Date, end: Date) -> String {
-        let calendar = Calendar.current
-        let startMonth = calendar.component(.month, from: start)
-        let endMonth = calendar.component(.month, from: end)
-
-        let monthFormatter = DateFormatter()
-        monthFormatter.dateFormat = "MMM"
-
-        let dayFormatter = DateFormatter()
-        dayFormatter.dateFormat = "d"
-
-        let startMonthStr = monthFormatter.string(from: start)
-        let startDayStr = dayFormatter.string(from: start)
-        let endDayStr = dayFormatter.string(from: end)
-
-        if startMonth == endMonth {
-            // Same month: "Dec 1 - 31"
-            return "\(startMonthStr) \(startDayStr) - \(endDayStr)"
-        } else {
-            // Different months: "Dec 30 - Jan 5"
-            let endMonthStr = monthFormatter.string(from: end)
-            return "\(startMonthStr) \(startDayStr) - \(endMonthStr) \(endDayStr)"
-        }
     }
 
     /// Get jokes for a specific ranking type, reversed for countdown display (10 -> 1)

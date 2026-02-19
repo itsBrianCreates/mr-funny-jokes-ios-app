@@ -6,7 +6,7 @@
 - ✅ **v1.0.1 Content Freshness** — Phases 7-9 (shipped 2026-01-31)
 - ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
-- 🚧 **v1.1.0 Rating Simplification & All-Time Top 10** — Phases 13-16 (in progress)
+- ✅ **v1.1.0 Rating Simplification & All-Time Top 10** — Phases 13-16 (shipped 2026-02-18)
 
 ## Phases
 
@@ -46,80 +46,17 @@
 
 </details>
 
-### 🚧 v1.1.0 Rating Simplification & All-Time Top 10 (In Progress)
+<details>
+<summary>✅ v1.1.0 Rating Simplification & All-Time Top 10 (Phases 13-16) — SHIPPED 2026-02-18</summary>
 
-**Milestone Goal:** Simplify rating from 5-point to binary (Hilarious/Horrible) and replace Monthly Top 10 with All-Time Top 10, delivering a cleaner UX with more meaningful rankings.
+- [x] Phase 13: Data Migration & Cloud Function (2/2 plans) — completed 2026-02-18
+- [x] Phase 14: Binary Rating UI (2/2 plans) — completed 2026-02-18
+- [x] Phase 15: Me Tab Redesign (1/1 plan) — completed 2026-02-18
+- [x] Phase 16: All-Time Leaderboard UI (1/1 plan) — completed 2026-02-18
 
-**Phase Numbering:**
-- Integer phases (13, 14, 15, 16): Planned milestone work
-- Decimal phases (13.1, 14.1): Urgent insertions if needed (marked with INSERTED)
-
-- [ ] **Phase 13: Data Migration & Cloud Function** — Migrate existing ratings to binary format and deploy all-time aggregation
-- [ ] **Phase 14: Binary Rating UI** — Replace 5-emoji slider with Hilarious/Horrible segmented control
-- [ ] **Phase 15: Me Tab Redesign** — Simplify Me tab from 5 sections to binary segmented control
-- [ ] **Phase 16: All-Time Leaderboard UI** — Replace Monthly Top 10 with All-Time Top 10 across all UI
-
-## Phase Details
-
-### Phase 13: Data Migration & Cloud Function
-**Goal**: Existing user ratings are preserved in binary format and all-time rankings data is available for consumption
-**Depends on**: Nothing (first phase of v1.1.0)
-**Requirements**: INFRA-01, INFRA-02, RATE-05, TOP-02, TOP-03
-**Success Criteria** (what must be TRUE):
-  1. Feature branch `v1.1.0` exists and all v1.1.0 work happens on it
-  2. User who previously rated jokes with 1-5 scale sees their ratings preserved after app update (4-5 become Hilarious, 1-2 become Horrible, 3s cleanly removed)
-  3. Cloud Function produces an all-time rankings document that reflects all historical rating data
-  4. Firestore rating_events collection contains only binary-compatible rating values (old 2-4 values cleaned or handled by aggregation)
-**Plans**: 2 plans
-
-Plans:
-- [ ] 13-01-PLAN.md — Feature branch, Firestore migration script, Cloud Function all-time update
-- [ ] 13-02-PLAN.md — Local rating migration in iOS app (UserDefaults binary conversion)
-
-### Phase 14: Binary Rating UI
-**Goal**: Users rate jokes with a clear two-option choice that feels responsive and satisfying
-**Depends on**: Phase 13
-**Requirements**: RATE-01, RATE-02, RATE-03, RATE-04
-**Success Criteria** (what must be TRUE):
-  1. User sees a segmented control with Hilarious and Horrible options on every joke detail (no trace of old 5-emoji slider)
-  2. Tapping a rating option triggers haptic feedback and a smooth visual transition
-  3. User can change their rating by tapping the other option and the change persists
-  4. Rated jokes show the correct binary indicator (Hilarious or Horrible emoji) on feed cards
-**Plans**: TBD
-
-Plans:
-- [ ] 14-01: TBD
-
-### Phase 15: Me Tab Redesign
-**Goal**: Users can browse their rated jokes organized by Hilarious and Horrible with a consistent, clean interface
-**Depends on**: Phase 14
-**Requirements**: ME-01, ME-02, ME-03
-**Success Criteria** (what must be TRUE):
-  1. Me tab displays a segmented control with two segments: Hilarious and Horrible (no trace of old 5-section layout)
-  2. Each segment shows a count badge indicating how many jokes are in that category
-  3. Me tab visual pattern matches All-Time Top 10 detail view (consistent segmented control styling)
-**Plans**: TBD
-
-Plans:
-- [ ] 15-01: TBD
-
-### Phase 16: All-Time Leaderboard UI
-**Goal**: Users see an all-time Top 10 leaderboard that reflects the cumulative best and worst jokes
-**Depends on**: Phase 13
-**Requirements**: TOP-01, TOP-04
-**Success Criteria** (what must be TRUE):
-  1. All UI that previously showed "Monthly Top 10" now shows "All-Time Top 10" (headers, navigation, carousel)
-  2. Leaderboard displays rankings sourced from the all-time Cloud Function data (not time-windowed)
-  3. No references to "Monthly", date ranges, or week periods remain anywhere in the app UI
-**Plans**: TBD
-
-Plans:
-- [ ] 16-01: TBD
+</details>
 
 ## Progress
-
-**Execution Order:**
-Phases execute in numeric order: 13 → 14 → 15 → 16
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -135,12 +72,12 @@ Phases execute in numeric order: 13 → 14 → 15 → 16
 | 10. Bug Fixes & UX Polish | v1.0.2 | 1/1 | Complete | 2026-02-02 |
 | 11. Seasonal Content Ranking | v1.0.3 | 1/1 | Complete | 2026-02-15 |
 | 12. Feed Scroll Stability | v1.0.3 | 1/1 | Complete | 2026-02-15 |
-| 13. Data Migration & Cloud Function | v1.1.0 | 0/? | Not started | - |
-| 14. Binary Rating UI | v1.1.0 | 0/? | Not started | - |
-| 15. Me Tab Redesign | v1.1.0 | 0/? | Not started | - |
-| 16. All-Time Leaderboard UI | v1.1.0 | 0/? | Not started | - |
+| 13. Data Migration & Cloud Function | v1.1.0 | 2/2 | Complete | 2026-02-18 |
+| 14. Binary Rating UI | v1.1.0 | 2/2 | Complete | 2026-02-18 |
+| 15. Me Tab Redesign | v1.1.0 | 1/1 | Complete | 2026-02-18 |
+| 16. All-Time Leaderboard UI | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-17 — v1.1.0 milestone roadmap created*
+*Last updated: 2026-02-18 — v1.1.0 milestone shipped*

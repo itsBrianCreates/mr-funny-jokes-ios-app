@@ -443,7 +443,7 @@ final class FirestoreService {
         ])
     }
 
-    // MARK: - Rating Events (for Weekly Top 10)
+    // MARK: - Rating Events & Rankings
 
     /// Logs a rating event for weekly rankings aggregation
     /// - Parameters:
@@ -469,12 +469,10 @@ final class FirestoreService {
         try await db.collection(ratingEventsCollection).document(documentId).setData(eventData, merge: true)
     }
 
-    /// Fetches the current week's rankings
+    /// Fetches the all-time rankings
     /// - Returns: WeeklyRankings object if available, nil otherwise
-    func fetchWeeklyRankings() async throws -> WeeklyRankings? {
-        let weekId = getCurrentWeekId()
-
-        let document = try await db.collection(weeklyRankingsCollection).document(weekId).getDocument()
+    func fetchAllTimeRankings() async throws -> WeeklyRankings? {
+        let document = try await db.collection(weeklyRankingsCollection).document("all_time").getDocument()
 
         guard document.exists else { return nil }
 
@@ -517,21 +515,6 @@ final class FirestoreService {
         let week = easternCalendar.component(.weekOfYear, from: now)
 
         return String(format: "%d-W%02d", year, week)
-    }
-
-    /// Returns the date range for the current week in Eastern Time
-    func getCurrentWeekDateRange() -> (start: Date, end: Date)? {
-        let calendar = Calendar(identifier: .iso8601)
-        var easternCalendar = calendar
-        easternCalendar.timeZone = TimeZone(identifier: "America/New_York")!
-
-        let now = Date()
-
-        guard let weekInterval = easternCalendar.dateInterval(of: .weekOfYear, for: now) else {
-            return nil
-        }
-
-        return (weekInterval.start, weekInterval.end.addingTimeInterval(-1))
     }
 
     // MARK: - Reset Pagination
