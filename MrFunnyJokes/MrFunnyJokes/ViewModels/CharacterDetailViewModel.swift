@@ -4,6 +4,7 @@ import SwiftUI
 /// Used to sync ratings across CharacterDetailViewModel and JokeViewModel
 extension Notification.Name {
     static let jokeRatingDidChange = Notification.Name("jokeRatingDidChange")
+    static let jokeSaveDidChange = Notification.Name("jokeSaveDidChange")
 }
 
 /// ViewModel for managing character detail view state and data
@@ -107,10 +108,11 @@ final class CharacterDetailViewModel: ObservableObject {
                 limit: fetchBatchSize
             )
 
-            // Apply user ratings
+            // Apply user ratings and save state
             let jokesWithRatings = characterJokes.map { joke -> Joke in
                 var mutableJoke = joke
                 mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                 return mutableJoke
             }
 
@@ -153,10 +155,11 @@ final class CharacterDetailViewModel: ObservableObject {
                 }
 
                 if !uniqueNewJokes.isEmpty {
-                    // Apply user ratings
+                    // Apply user ratings and save state
                     let jokesWithRatings = uniqueNewJokes.map { joke -> Joke in
                         var mutableJoke = joke
                         mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                        mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                         return mutableJoke
                     }
 
@@ -281,6 +284,50 @@ final class CharacterDetailViewModel: ObservableObject {
                 "firestoreId": joke.firestoreId as Any,
                 "jokeId": joke.id,
                 "rating": rating,
+                "jokeData": jokeData as Any
+            ]
+        )
+    }
+
+    // MARK: - Saving
+
+    /// Toggle save state for a joke
+    func saveJoke(_ joke: Joke) {
+        HapticManager.shared.lightTap()
+
+        let key = joke.firestoreId ?? joke.id.uuidString
+        let currentlySaved = storage.isJokeSaved(firestoreId: key)
+
+        // Toggle save state in storage
+        if currentlySaved {
+            storage.unsaveJoke(firestoreId: key)
+        } else {
+            storage.saveJoke(firestoreId: key)
+        }
+
+        // Update local state
+        if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
+            jokes[index].isSaved = !currentlySaved
+        }
+
+        // Notify other ViewModels about the save change
+        let updatedJoke: Joke
+        if let index = jokes.firstIndex(where: { $0.id == joke.id }) {
+            updatedJoke = jokes[index]
+        } else {
+            var mutableJoke = joke
+            mutableJoke.isSaved = !currentlySaved
+            updatedJoke = mutableJoke
+        }
+
+        let jokeData = try? JSONEncoder().encode(updatedJoke)
+        NotificationCenter.default.post(
+            name: .jokeSaveDidChange,
+            object: nil,
+            userInfo: [
+                "jokeId": joke.id,
+                "firestoreId": key,
+                "isSaved": !currentlySaved,
                 "jokeData": jokeData as Any
             ]
         )
