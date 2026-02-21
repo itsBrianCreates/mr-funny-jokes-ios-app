@@ -89,20 +89,6 @@ final class JokeViewModel: ObservableObject {
         }
     }
 
-    // Jokes that have been rated by the user (sorted by most recently rated)
-    var ratedJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating != nil })
-    }
-
-    // Jokes grouped by binary rating, sorted by most recently rated
-    var hilariousJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating == 5 })
-    }
-
-    var horribleJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating == 1 })
-    }
-
     // Jokes that have been saved by the user (sorted by most recently saved)
     var savedJokes: [Joke] {
         let saved = jokes.filter { $0.isSaved }
