@@ -91,10 +91,10 @@ Plans:
   2. Copying or sharing a joke logs an event with the joke ID
   3. Selecting a character from the home screen logs an event with the character ID
   4. Events appear in Firebase Analytics Debug View when running with the -FIRAnalyticsDebugEnabled launch argument
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 20-01: TBD
+- [ ] 20-01-PLAN.md — Wire analytics events into rating, sharing/copying, and character selection flows
 
 ## Progress
 
