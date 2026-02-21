@@ -85,10 +85,10 @@ Plans:
   2. Saved jokes appear in newest-first order (most recently saved at top)
   3. Each saved joke row displays a Hilarious or Horrible indicator if the user rated that joke
   4. The Hilarious/Horrible segmented control is gone from the Me tab
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 18-01: TBD
+- [ ] 18-01-PLAN.md — Add CompactRatingView rating indicator to MeView saved joke cards
 
 ## Progress
 
