@@ -77,10 +77,10 @@
   2. Firebase Analytics auto-initializes on app launch via existing FirebaseApp.configure() — no additional setup code required
   3. AnalyticsService.shared singleton exists following the same pattern as FirestoreService.shared and other existing services
   4. AnalyticsService exposes methods that call Analytics.logEvent() with descriptive event names and minimal parameters
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 19-01: TBD
+- [ ] 19-01-PLAN.md — Add FirebaseAnalytics SPM dependency, enable analytics in plist, create AnalyticsService singleton
 
 ### Phase 20: Event Instrumentation
 **Goal**: Key user actions (rating, sharing, character selection) produce analytics events visible in Firebase
@@ -121,7 +121,7 @@ Phases execute in numeric order: 19 → 20
 | 16. All-Time Leaderboard UI | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 | 17. Save System & Rating Decoupling | v1.1.0 | 2/2 | Complete | 2026-02-20 |
 | 18. Me Tab Saved Jokes | v1.1.0 | 2/2 | Complete | 2026-02-21 |
-| 19. Analytics Foundation | v1.10 | 0/TBD | Not started | - |
+| 19. Analytics Foundation | v1.10 | 0/1 | Not started | - |
 | 20. Event Instrumentation | v1.10 | 0/TBD | Not started | - |
 
 ---
