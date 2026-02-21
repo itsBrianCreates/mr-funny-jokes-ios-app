@@ -50,12 +50,31 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - ✓ Existing 1-5 ratings migrated: 4-5 → Hilarious, 1-2 → Horrible, 3s dropped — v1.1.0
 - ✓ All-Time Top 10 replaces Monthly Top 10 — v1.1.0
 - ✓ Cloud Function recomputes all-time rankings daily — v1.1.0
-- ✓ Me tab redesigned with Hilarious/Horrible segmented control matching Top 10 screen — v1.1.0
+- ✓ Me tab redesigned with Hilarious/Horrible segmented control matching Top 10 screen — v1.1.0 (superseded by save-based Me tab)
 - ✓ Feature branch `v1.1.0` created before any code changes — v1.1.0
 
 ### Active
 
-(No active requirements — define with next milestone)
+#### Save System
+- [ ] User can save a joke from the joke detail sheet via a Save button (person icon)
+- [ ] Save button appears below rating section and above Copy/Share in joke sheet
+- [ ] Saved state persists across app sessions via UserDefaults
+- [ ] Save button toggles between "Save" and "Saved" states — tap to save, tap again to unsave
+- [ ] Saving a joke is independent of rating — user can save without rating
+
+#### Rating Decoupling
+- [ ] Rating a joke no longer adds it to the Me tab
+- [ ] Rating icon remains on joke card, opening sheet shows user's rating
+- [ ] Ratings still persist to UserDefaults and Firestore for All-Time Top 10
+
+#### Data Migration
+- [ ] All previously rated jokes are automatically converted to saved jokes on first launch
+
+#### Me Tab Redesign
+- [ ] Me tab shows saved jokes (not rated jokes)
+- [ ] Saved jokes ordered by date saved, newest first
+- [ ] Each saved joke row shows Hilarious/Horrible indicator if user rated it
+- [ ] Segmented control (Hilarious/Horrible) removed from Me tab
 
 ### Out of Scope
 
@@ -77,7 +96,7 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.1.0 shipped. Binary rating system (Hilarious/Horrible) and All-Time Top 10 leaderboard are live. App ready for App Store submission.
+**Current State:** v1.1.0 extended — adding Save/Me Tab rework before App Store submission. Binary rating and All-Time Top 10 are live. Now decoupling rating from saving and redesigning Me tab.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
@@ -129,5 +148,10 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Keep GrainOMeterView.swift filename | Avoids Xcode project file modifications for a rename | ✓ Good |
 | Tap buttons instead of drag gesture for binary rating | Clearer UX for a two-option choice | ✓ Good |
 
+| Separate saving from rating | Rating = opinion for Top 10; saving = personal collection for Me tab | — Pending |
+| Save toggle (Save/Saved) over one-way save | Lets users remove jokes from Me tab without swipe-to-delete | — Pending |
+| Person icon for Save button | Matches Me tab navigation icon, reinforces "save to My collection" | — Pending |
+| Migrate rated jokes to saved on first launch | Preserves existing user collections during decoupling | — Pending |
+
 ---
-*Last updated: 2026-02-18 after v1.1.0 milestone*
+*Last updated: 2026-02-20 after v1.1.0 Save & Me Tab rework*
