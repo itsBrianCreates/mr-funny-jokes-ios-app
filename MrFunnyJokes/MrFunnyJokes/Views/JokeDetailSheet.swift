@@ -60,6 +60,7 @@ struct JokeDetailSheet: View {
                                 Image(systemName: joke.isSaved ? "person.fill" : "person")
                                     .contentTransition(.symbolEffect(.replace))
                                 Text(joke.isSaved ? "Saved" : "Save")
+                                    .font(.body.weight(.semibold))
                             }
                             .frame(maxWidth: .infinity, minHeight: 24)
                             .padding(.vertical, 14)
@@ -75,6 +76,7 @@ struct JokeDetailSheet: View {
                                 Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
                                     .contentTransition(.symbolEffect(.replace))
                                 Text(isCopied ? "Copied" : "Copy")
+                                    .font(.body.weight(.semibold))
                             }
                             .frame(maxWidth: .infinity, minHeight: 24)
                             .padding(.vertical, 14)
@@ -89,6 +91,7 @@ struct JokeDetailSheet: View {
                             HStack {
                                 Image(systemName: "square.and.arrow.up")
                                 Text("Share")
+                                    .font(.body.weight(.semibold))
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
