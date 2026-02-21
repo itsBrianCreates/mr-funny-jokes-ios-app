@@ -6,7 +6,7 @@
 - ✅ **v1.0.1 Content Freshness** — Phases 7-9 (shipped 2026-01-31)
 - ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
-- 🚧 **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (phases 13-16 shipped, 17-18 in progress)
+- ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
 
 ## Phases
 
@@ -76,7 +76,7 @@ Plans:
 - [x] 17-01-PLAN.md — Save persistence layer, Joke model extension, ViewModel save logic, migration
 - [x] 17-02-PLAN.md — Save button in JokeDetailSheet, all call sites, MeView rewiring
 
-#### Phase 18: Me Tab Saved Jokes — in progress
+#### Phase 18: Me Tab Saved Jokes — completed 2026-02-21
 **Goal**: Me tab displays the user's saved joke collection with rating indicators
 **Depends on**: Phase 17 (save storage and migration must exist)
 **Requirements**: METB-01, METB-02, METB-03, METB-04
@@ -89,7 +89,7 @@ Plans:
 
 Plans:
 - [x] 18-01-PLAN.md — Add CompactRatingView rating indicator to MeView saved joke cards
-- [ ] 18-02-PLAN.md — Move Save button below divider, group with Copy/Share, apply blue tint (gap closure)
+- [x] 18-02-PLAN.md — Move Save button below divider, group with Copy/Share, apply blue tint (gap closure)
 
 ## Progress
 
@@ -112,9 +112,9 @@ Plans:
 | 15. Me Tab Redesign | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 | 16. All-Time Leaderboard UI | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 | 17. Save System & Rating Decoupling | v1.1.0 | 2/2 | Complete | 2026-02-20 |
-| 18. Me Tab Saved Jokes | v1.1.0 | 1/2 | In Progress | — |
+| 18. Me Tab Saved Jokes | v1.1.0 | 2/2 | Complete | 2026-02-21 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-21 — Phase 18 gap closure plan added (Save button styling/positioning)*
+*Last updated: 2026-02-21 — Phase 18 complete (all plans executed, verification passed)*

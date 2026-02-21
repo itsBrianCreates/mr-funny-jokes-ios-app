@@ -1,16 +1,24 @@
 ---
 phase: 18-me-tab-saved-jokes
-verified: 2026-02-21T15:03:20Z
+verified: 2026-02-21T18:00:00Z
 status: passed
-score: 4/4 must-haves verified
+score: 6/6 must-haves verified
+re_verification:
+  previous_status: passed
+  previous_score: 4/4
+  gaps_closed:
+    - "Save button appears below the Divider, grouped with Copy and Share in the same VStack"
+    - "Save button uses blue tint (matching Copy/Share), toggling to green when saved"
+  gaps_remaining: []
+  regressions: []
 ---
 
 # Phase 18: Me Tab Saved Jokes Verification Report
 
 **Phase Goal:** Me tab displays the user's saved joke collection with rating indicators
-**Verified:** 2026-02-21T15:03:20Z
+**Verified:** 2026-02-21T18:00:00Z
 **Status:** passed
-**Re-verification:** No — initial verification
+**Re-verification:** Yes — after gap closure (plan 18-02)
 
 ## Goal Achievement
 
@@ -19,35 +27,40 @@ score: 4/4 must-haves verified
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
 | 1 | Me tab shows saved jokes instead of rated jokes | VERIFIED | `MeView.body` branches on `viewModel.savedJokes.isEmpty` and renders `savedJokesList` which iterates `ForEach(viewModel.savedJokes)`. No reference to `ratedJokes`, `hilariousJokes`, or `horribleJokes` anywhere in MeView.swift. |
-| 2 | Saved jokes appear in newest-first order (most recently saved at top) | VERIFIED | `JokeViewModel.savedJokes` (lines 93-100) sorts by `storage.getSavedTimestamp(...)` descending (`t1 > t2`). `LocalStorageService.getSavedTimestamp(for:)` confirmed present at line 193 of LocalStorageService.swift. |
-| 3 | Each saved joke row displays a Hilarious or Horrible indicator if the user rated that joke | VERIFIED | `MeView.jokeCard(for:)` metadata HStack (lines 102-118) contains `Spacer()` followed by `if let rating = joke.userRating { CompactRatingView(rating: rating) }`. `CompactRatingView` (GrainOMeterView.swift lines 93-110) renders laughing emoji (😂) for rating 5, melting emoji (🫠) for rating 1, `EmptyView` for all other values. `Joke.userRating: Int?` is applied in all ViewModel load paths. |
+| 2 | Saved jokes appear in newest-first order (most recently saved at top) | VERIFIED | `JokeViewModel.savedJokes` sorts by `storage.getSavedTimestamp(...)` descending (`t1 > t2`). `LocalStorageService.getSavedTimestamp(for:)` confirmed present. |
+| 3 | Each saved joke row displays a Hilarious or Horrible indicator if the user rated that joke | VERIFIED | `MeView.jokeCard(for:)` metadata HStack (lines 102-118) contains `Spacer()` followed by `if let rating = joke.userRating { CompactRatingView(rating: rating) }`. `CompactRatingView` renders laughing emoji for rating 5, melting emoji for rating 1, `EmptyView` for all other values. |
 | 4 | The Hilarious/Horrible segmented control is gone from the Me tab | VERIFIED | MeView.swift contains zero matches for `Picker`, `segmentedControl`, `Segmented`, `hilariousJokes`, `horribleJokes`, or `ratedJokes`. The view has only two sections: `emptyState` and `savedJokesList`. |
+| 5 | Save button appears below the Divider, grouped with Copy and Share in the same VStack | VERIFIED | JokeDetailSheet.swift lines 51-98: `Divider()` at line 51, then `VStack(spacing: 12)` starting at line 54 containing Save (lines 55-69), Copy (lines 71-84), Share (lines 86-98) in that order. No Save button exists above the Divider. |
+| 6 | Save button uses blue tint (matching Copy/Share), toggling to green when saved | VERIFIED | JokeDetailSheet.swift line 68: `.tint(joke.isSaved ? .green : .blue)`. Matches Copy button's pattern at line 83: `.tint(isCopied ? .green : .blue)`. Share button uses `.tint(.blue)` at line 97. Animation added at line 69: `.animation(.easeInOut(duration: 0.2), value: joke.isSaved)`. |
 
-**Score:** 4/4 truths verified
+**Score:** 6/6 truths verified
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `MrFunnyJokes/MrFunnyJokes/Views/MeView.swift` | Rating indicator in saved joke cards | VERIFIED | File exists, 134 lines, substantive (complete view with body, emptyState, savedJokesList, jokeCard). Contains `CompactRatingView(rating: rating)` at line 116 inside `jokeCard(for:)` with preceding `Spacer()` at line 113 and `if let rating = joke.userRating` guard at line 115. |
-| `MrFunnyJokes/MrFunnyJokes/Views/GrainOMeterView.swift` | CompactRatingView component | VERIFIED | File exists. `CompactRatingView` defined at lines 93-110 with `rating: Int?` parameter, switch on 5/1/default. Not modified in this phase — used as-is per plan. |
+| `MrFunnyJokes/MrFunnyJokes/Views/MeView.swift` | Saved jokes list with rating indicators, no segmented control | VERIFIED | 134 lines. `savedJokesList` iterates `viewModel.savedJokes`. `jokeCard(for:)` renders `CompactRatingView(rating: rating)` inside `if let rating = joke.userRating` guard at lines 115-117. |
+| `MrFunnyJokes/MrFunnyJokes/Views/JokeDetailSheet.swift` | Save button grouped with Copy and Share below Divider | VERIFIED | 291 lines. Save button at lines 55-69 is the first item in `VStack(spacing: 12)` at line 54, which follows `Divider()` at line 51. `.tint(joke.isSaved ? .green : .blue)` confirmed at line 68. |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `MeView.jokeCard(for:)` HStack | `CompactRatingView` | Direct SwiftUI view call at line 116 | WIRED | Pattern `CompactRatingView(rating:` present in MeView.swift line 116 inside the `jokeCard` HStack, exactly as specified in PLAN frontmatter `key_links[0].pattern`. |
-| `MeView.jokeCard` | `Joke.userRating` | Property access on Joke model at line 115 | WIRED | Pattern `joke.userRating` present at line 115 in `if let rating = joke.userRating` guard. `Joke.userRating: Int?` defined in Joke.swift line 8. Populated by `storage.getRating(...)` in all JokeViewModel load paths before jokes reach the view. |
-| `JokeViewModel.savedJokes` | `LocalStorageService.getSavedTimestamp` | Sort comparator at lines 96-98 | WIRED | `getSavedTimestamp(for:)` called in both sort positions, returning `TimeInterval?` with `?? 0` default. Method confirmed in LocalStorageService.swift line 193. |
+| `MeView.jokeCard(for:)` HStack | `CompactRatingView` | Direct SwiftUI view call at line 116 | WIRED | `CompactRatingView(rating: rating)` at line 116 inside `if let rating = joke.userRating` guard. |
+| `MeView.jokeCard` | `Joke.userRating` | Property access at line 115 | WIRED | `if let rating = joke.userRating` at line 115. |
+| `JokeViewModel.savedJokes` | `LocalStorageService.getSavedTimestamp` | Sort comparator | WIRED | `getSavedTimestamp(for:)` called in sort closure returning `TimeInterval?` with `?? 0` default. |
+| Save button | Action buttons VStack | First item in `VStack(spacing: 12)` at line 54 | WIRED | Save button block (lines 55-69) precedes Copy (lines 71-84) and Share (lines 86-98) inside the same `VStack(spacing: 12)`. Divider at line 51 separates rating section from action buttons. |
 
 ### Requirements Coverage
 
-| Requirement | Description | Status | Blocking Issue |
-|-------------|-------------|--------|----------------|
-| METB-01 | Me tab shows saved jokes (not rated jokes) | SATISFIED | None — `viewModel.savedJokes` used as the sole data source in MeView |
-| METB-02 | Saved jokes ordered by date saved, newest first | SATISFIED | None — `savedJokes` sorts by `getSavedTimestamp` descending |
-| METB-03 | Each saved joke row shows Hilarious/Horrible indicator if rated | SATISFIED | None — `CompactRatingView(rating: rating)` in `jokeCard` HStack behind `if let` guard |
-| METB-04 | Segmented control removed from Me tab | SATISFIED | None — no Picker or segmented control exists in MeView.swift |
+| Requirement | Status | Blocking Issue |
+|-------------|--------|----------------|
+| Me tab shows saved jokes (not rated jokes) | SATISFIED | None |
+| Saved jokes ordered by date saved, newest first | SATISFIED | None |
+| Each saved joke row shows Hilarious/Horrible indicator if rated | SATISFIED | None |
+| Segmented control removed from Me tab | SATISFIED | None |
+| Save button grouped with Copy/Share below Divider | SATISFIED | None — commit bb08304 confirmed, structure verified in file |
+| Save button tint blue/green matching Copy button pattern | SATISFIED | None — `.tint(joke.isSaved ? .green : .blue)` at line 68 |
 
 ### Anti-Patterns Found
 
@@ -55,7 +68,7 @@ score: 4/4 must-haves verified
 |------|------|---------|----------|--------|
 | — | — | None found | — | — |
 
-No TODO/FIXME/placeholder comments, no empty implementations (`return null/return {}`) in MeView.swift.
+No TODO/FIXME/placeholder comments, no empty implementations in either MeView.swift or JokeDetailSheet.swift.
 
 ### Human Verification Required
 
@@ -77,15 +90,23 @@ No TODO/FIXME/placeholder comments, no empty implementations (`return null/retur
 **Expected:** No emoji appears on the right side of the metadata row — the category label is the rightmost element.
 **Why human:** Confirming absence of UI element requires visual inspection.
 
+#### 4. Save Button Visual Grouping (gap closure)
+
+**Test:** Open any joke detail sheet. Observe the button layout below the rating section.
+**Expected:** Three buttons appear in a column — Save, Copy, Share — all with the same bordered style and blue tint. Save button turns green with filled person icon when tapped. All three buttons are visually below the horizontal divider.
+**Why human:** Visual grouping, tint rendering, and symbol transition animation require runtime observation.
+
 ### Gaps Summary
 
-No gaps. All four METB requirements are satisfied. The phase goal — Me tab displays the user's saved joke collection with rating indicators — is fully achieved.
+No gaps. All six must-haves are satisfied.
 
-The implementation is exact: `CompactRatingView` is the only artifact modified, in a single method (`jokeCard(for:)`), matching the JokeCardView pattern. All load paths in JokeViewModel apply `userRating` before jokes reach the view layer. No segmented control or rated-joke logic remains in MeView.
+The original four truths (METB-01 through METB-04) passed regression check — MeView.swift is unchanged from the previous verification, confirmed by zero matches for segmented control terminology and `CompactRatingView(rating: rating)` still present at line 116.
 
-Commit `e867dce` is confirmed in git history and changed exactly one file (MeView.swift, +6 lines).
+The two gap closure truths (plan 18-02) are fully implemented in commit `bb08304`:
+- Save button moved to first position in `VStack(spacing: 12)` at line 54 of JokeDetailSheet.swift, after `Divider()` at line 51
+- `.tint(joke.isSaved ? .green : .blue)` at line 68 exactly matches Copy button's `.tint(isCopied ? .green : .blue)` at line 83
 
 ---
 
-_Verified: 2026-02-21T15:03:20Z_
+_Verified: 2026-02-21T18:00:00Z_
 _Verifier: Claude (gsd-verifier)_
