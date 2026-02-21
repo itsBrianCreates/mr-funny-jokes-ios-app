@@ -52,29 +52,17 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - ✓ Cloud Function recomputes all-time rankings daily — v1.1.0
 - ✓ Me tab redesigned with Hilarious/Horrible segmented control matching Top 10 screen — v1.1.0 (superseded by save-based Me tab)
 - ✓ Feature branch `v1.1.0` created before any code changes — v1.1.0
+- ✓ Save button in joke detail sheet (person icon), grouped with Copy/Share below divider — v1.1.0
+- ✓ Saved state persists across app sessions via UserDefaults — v1.1.0
+- ✓ Save toggle (Save/Saved) with independent save and rate actions — v1.1.0
+- ✓ Rating decoupled from Me tab — only saving adds jokes to Me tab — v1.1.0
+- ✓ Rated jokes auto-migrated to saved on first launch — v1.1.0
+- ✓ Me tab shows saved jokes ordered newest-first with rating indicators — v1.1.0
+- ✓ Segmented control removed from Me tab — v1.1.0
 
 ### Active
 
-#### Save System
-- [ ] User can save a joke from the joke detail sheet via a Save button (person icon)
-- [ ] Save button appears below rating section and above Copy/Share in joke sheet
-- [ ] Saved state persists across app sessions via UserDefaults
-- [ ] Save button toggles between "Save" and "Saved" states — tap to save, tap again to unsave
-- [ ] Saving a joke is independent of rating — user can save without rating
-
-#### Rating Decoupling
-- [ ] Rating a joke no longer adds it to the Me tab
-- [ ] Rating icon remains on joke card, opening sheet shows user's rating
-- [ ] Ratings still persist to UserDefaults and Firestore for All-Time Top 10
-
-#### Data Migration
-- [ ] All previously rated jokes are automatically converted to saved jokes on first launch
-
-#### Me Tab Redesign
-- [ ] Me tab shows saved jokes (not rated jokes)
-- [ ] Saved jokes ordered by date saved, newest first
-- [ ] Each saved joke row shows Hilarious/Horrible indicator if user rated it
-- [ ] Segmented control (Hilarious/Horrible) removed from Me tab
+(None — next milestone will define new requirements)
 
 ### Out of Scope
 
@@ -96,11 +84,11 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.1.0 extended — adding Save/Me Tab rework before App Store submission. Binary rating and All-Time Top 10 are live. Now decoupling rating from saving and redesigning Me tab.
+**Current State:** v1.1.0 shipped — binary rating, all-time rankings, save system, and Me tab rework all complete. Ready for App Store submission.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
-**Codebase:** 8,150 lines of Swift across main app and widget extension. 433 jokes in Firestore.
+**Codebase:** ~8,500 lines of Swift across main app and widget extension. 433 jokes in Firestore.
 
 **Known Issues:**
 - Backend collection named "weekly_rankings" but stores all-time data (cosmetic debt, accepted)
@@ -148,10 +136,12 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Keep GrainOMeterView.swift filename | Avoids Xcode project file modifications for a rename | ✓ Good |
 | Tap buttons instead of drag gesture for binary rating | Clearer UX for a two-option choice | ✓ Good |
 
-| Separate saving from rating | Rating = opinion for Top 10; saving = personal collection for Me tab | — Pending |
-| Save toggle (Save/Saved) over one-way save | Lets users remove jokes from Me tab without swipe-to-delete | — Pending |
-| Person icon for Save button | Matches Me tab navigation icon, reinforces "save to My collection" | — Pending |
-| Migrate rated jokes to saved on first launch | Preserves existing user collections during decoupling | — Pending |
+| Separate saving from rating | Rating = opinion for Top 10; saving = personal collection for Me tab | ✓ Good |
+| Save toggle (Save/Saved) over one-way save | Lets users remove jokes from Me tab without swipe-to-delete | ✓ Good |
+| Person icon for Save button | Matches Me tab navigation icon, reinforces "save to My collection" | ✓ Good |
+| Migrate rated jokes to saved on first launch | Preserves existing user collections during decoupling | ✓ Good |
+| Save button grouped with Copy/Share below divider | Visual consistency — all action buttons share same VStack with blue/green tint | ✓ Good |
+| Semibold font weight on action buttons | Unifies visual weight with rating buttons, improves contrast on tinted backgrounds | ✓ Good |
 
 ---
-*Last updated: 2026-02-20 after v1.1.0 Save & Me Tab rework*
+*Last updated: 2026-02-21 after v1.1.0 milestone*
