@@ -198,7 +198,8 @@ struct MainContentView: View {
                     onDismiss: { showingJokeOfTheDaySheet = false },
                     onShare: { jokeViewModel.shareJoke(joke) },
                     onCopy: { jokeViewModel.copyJoke(joke) },
-                    onRate: { rating in jokeViewModel.rateJoke(joke, rating: rating) }
+                    onRate: { rating in jokeViewModel.rateJoke(joke, rating: rating) },
+                    onSave: { jokeViewModel.saveJoke(joke) }
                 )
             }
         }

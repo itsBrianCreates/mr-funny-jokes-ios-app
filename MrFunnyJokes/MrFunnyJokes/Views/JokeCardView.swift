@@ -6,6 +6,7 @@ struct JokeCardView: View {
     let onShare: () -> Void
     let onCopy: () -> Void
     let onRate: (Int) -> Void
+    let onSave: () -> Void
 
     @State private var showingSheet = false
 
@@ -84,7 +85,8 @@ struct JokeCardView: View {
                 onDismiss: { showingSheet = false },
                 onShare: onShare,
                 onCopy: onCopy,
-                onRate: onRate
+                onRate: onRate,
+                onSave: onSave
             )
         }
     }
@@ -129,7 +131,8 @@ struct CharacterIndicatorView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             JokeCardView(
@@ -143,7 +146,8 @@ struct CharacterIndicatorView: View {
                 isCopied: true,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             JokeCardView(
@@ -157,7 +161,8 @@ struct CharacterIndicatorView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // Card without character
@@ -170,7 +175,8 @@ struct CharacterIndicatorView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
         }
         .padding()

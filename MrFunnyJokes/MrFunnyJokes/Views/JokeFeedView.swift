@@ -70,7 +70,8 @@ struct JokeFeedView: View {
                             isCopied: viewModel.copiedJokeId == jokeOfTheDay.id,
                             onShare: { viewModel.shareJoke(jokeOfTheDay) },
                             onCopy: { viewModel.copyJoke(jokeOfTheDay) },
-                            onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) }
+                            onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) },
+                            onSave: { viewModel.saveJoke(jokeOfTheDay) }
                         )
                         .onAppear {
                             viewModel.markJokeImpression(jokeOfTheDay)
@@ -107,7 +108,8 @@ struct JokeFeedView: View {
                             isCopied: viewModel.copiedJokeId == joke.id,
                             onShare: { viewModel.shareJoke(joke) },
                             onCopy: { viewModel.copyJoke(joke) },
-                            onRate: { rating in viewModel.rateJoke(joke, rating: rating) }
+                            onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
+                            onSave: { viewModel.saveJoke(joke) }
                         )
                         .onAppear {
                             // Track impression for feed freshness
