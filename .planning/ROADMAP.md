@@ -70,10 +70,11 @@
   3. Rating a joke does NOT cause it to appear in the Me tab -- only saving does
   4. Rating icon on joke cards still works, and the joke sheet still displays the user's existing rating
   5. All previously rated jokes appear as saved jokes after the first launch with the update (migration)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 17-01: TBD
+- [ ] 17-01-PLAN.md — Save persistence layer, Joke model extension, ViewModel save logic, migration
+- [ ] 17-02-PLAN.md — Save button in JokeDetailSheet, all call sites, MeView rewiring
 
 #### Phase 18: Me Tab Saved Jokes
 **Goal**: Me tab displays the user's saved joke collection with rating indicators
