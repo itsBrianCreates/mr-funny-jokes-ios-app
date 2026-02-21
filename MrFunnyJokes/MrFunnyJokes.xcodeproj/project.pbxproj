@@ -50,6 +50,7 @@
 		C333E63E2EE10888007377F4 /* CharacterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E63C2EE10888007377F4 /* CharacterDetailView.swift */; };
 		C333E63F2EE10888007377F4 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E6402EE10888007377F4 /* Character.swift */; };
 		C333E6412EE10888007377F4 /* CharacterDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */; };
+		C319A0022F09D100007A6AFF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C319A0012F09D100007A6AFF /* FirebaseAnalytics */; };
 		C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9622EE0A55A007A6AFF /* FirebaseCore */; };
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
@@ -156,6 +157,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C319A0022F09D100007A6AFF /* FirebaseAnalytics in Frameworks */,
 				C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */,
 				C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */,
 			);
@@ -381,6 +383,11 @@
 				B40000000000000000000002 /* PBXTargetDependency */,
 			);
 			name = MrFunnyJokes;
+			packageProductDependencies = (
+				C319A0012F09D100007A6AFF /* FirebaseAnalytics */,
+				C340D9622EE0A55A007A6AFF /* FirebaseCore */,
+				C340D9642EE0A55A007A6AFF /* FirebaseFirestore */,
+			);
 			productName = MrFunnyJokes;
 			productReference = A30000000000000000000001 /* MrFunnyJokes.app */;
 			productType = "com.apple.product-type.application";
@@ -820,6 +827,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C319A0012F09D100007A6AFF /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C340D9612EE0A55A007A6AFF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		C340D9622EE0A55A007A6AFF /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C340D9612EE0A55A007A6AFF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
