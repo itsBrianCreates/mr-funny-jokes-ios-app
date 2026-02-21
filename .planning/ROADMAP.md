@@ -6,7 +6,7 @@
 - ✅ **v1.0.1 Content Freshness** — Phases 7-9 (shipped 2026-01-31)
 - ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
-- ✅ **v1.1.0 Rating Simplification & All-Time Top 10** — Phases 13-16 (shipped 2026-02-18)
+- 🚧 **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (phases 13-16 shipped, 17-18 in progress)
 
 ## Phases
 
@@ -46,8 +46,12 @@
 
 </details>
 
+### 🚧 v1.1.0 Rating Simplification, Save & Me Tab Rework
+
+**Milestone Goal:** Simplify rating to binary, introduce all-time rankings, decouple saving from rating, and redesign Me tab around saved jokes.
+
 <details>
-<summary>✅ v1.1.0 Rating Simplification & All-Time Top 10 (Phases 13-16) — SHIPPED 2026-02-18</summary>
+<summary>✅ Phases 13-16 (Rating & Top 10) — SHIPPED 2026-02-18</summary>
 
 - [x] Phase 13: Data Migration & Cloud Function (2/2 plans) — completed 2026-02-18
 - [x] Phase 14: Binary Rating UI (2/2 plans) — completed 2026-02-18
@@ -55,6 +59,35 @@
 - [x] Phase 16: All-Time Leaderboard UI (1/1 plan) — completed 2026-02-18
 
 </details>
+
+#### Phase 17: Save System & Rating Decoupling
+**Goal**: Users can save jokes independently of rating, and rating no longer drives the Me tab
+**Depends on**: Phase 16 (binary rating system must exist)
+**Requirements**: SAVE-01, SAVE-02, SAVE-03, SAVE-04, SAVE-05, RATE-01, RATE-02, RATE-03, MIGR-01
+**Success Criteria** (what must be TRUE):
+  1. User can tap a Save button in the joke detail sheet to save a joke without rating it
+  2. Save button toggles between Save and Saved states, and saved state persists after closing and reopening the app
+  3. Rating a joke does NOT cause it to appear in the Me tab -- only saving does
+  4. Rating icon on joke cards still works, and the joke sheet still displays the user's existing rating
+  5. All previously rated jokes appear as saved jokes after the first launch with the update (migration)
+**Plans**: TBD
+
+Plans:
+- [ ] 17-01: TBD
+
+#### Phase 18: Me Tab Saved Jokes
+**Goal**: Me tab displays the user's saved joke collection with rating indicators
+**Depends on**: Phase 17 (save storage and migration must exist)
+**Requirements**: METB-01, METB-02, METB-03, METB-04
+**Success Criteria** (what must be TRUE):
+  1. Me tab shows saved jokes instead of rated jokes
+  2. Saved jokes appear in newest-first order (most recently saved at top)
+  3. Each saved joke row displays a Hilarious or Horrible indicator if the user rated that joke
+  4. The Hilarious/Horrible segmented control is gone from the Me tab
+**Plans**: TBD
+
+Plans:
+- [ ] 18-01: TBD
 
 ## Progress
 
@@ -76,8 +109,10 @@
 | 14. Binary Rating UI | v1.1.0 | 2/2 | Complete | 2026-02-18 |
 | 15. Me Tab Redesign | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 | 16. All-Time Leaderboard UI | v1.1.0 | 1/1 | Complete | 2026-02-18 |
+| 17. Save System & Rating Decoupling | v1.1.0 | 0/? | Not started | - |
+| 18. Me Tab Saved Jokes | v1.1.0 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-18 — v1.1.0 milestone shipped*
+*Last updated: 2026-02-20 — v1.1.0 extended with Save & Me Tab rework (phases 17-18)*

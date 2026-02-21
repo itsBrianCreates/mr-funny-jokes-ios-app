@@ -1,20 +1,21 @@
 # Project State: Mr. Funny Jokes
 
-## Current Position
-
-**Milestone:** v1.1.0 Save & Me Tab Rework (extended)
-**Status:** Defining requirements
-
-Last activity: 2026-02-20 — v1.1.0 extended with Save & Me Tab rework
-
-Progress: Phases 13-16 shipped, adding phases 17+ for save/me tab changes
-
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-18)
+See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Save & Me Tab rework for v1.1.0 before App Store submission
+**Current focus:** Phase 17 — Save System & Rating Decoupling
+
+## Current Position
+
+**Milestone:** v1.1.0 Rating Simplification, Save & Me Tab Rework
+Phase: 17 of 18 (Save System & Rating Decoupling)
+Plan: Not yet planned
+Status: Ready to plan
+Last activity: 2026-02-20 — Roadmap extended with phases 17-18
+
+Progress (phases 17-18): [░░░░░░░░░░] 0%
 
 ## Shipped Milestones
 
@@ -24,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-02-18)
 | v1.0.1 | Content Freshness | 7-9 | 2026-01-31 |
 | v1.0.2 | Bug Fixes & UX Polish | 10 | 2026-02-02 |
 | v1.0.3 | Seasonal Content & Scroll Fix | 11-12 | 2026-02-15 |
-| v1.1.0 | Rating Simplification & All-Time Top 10 | 13-16 | 2026-02-18 |
+| v1.1.0 | Rating & Top 10 (phases 13-16) | 13-16 | 2026-02-18 |
 
 ## Performance Metrics
 
@@ -41,6 +42,8 @@ See: .planning/PROJECT.md (updated 2026-02-18)
 
 See PROJECT.md Key Decisions table for full log.
 
+Recent: Separate saving from rating (rating = opinion for Top 10, saving = personal collection for Me tab)
+
 ### Open Items
 
 - Remove local crontab entry (user action: `crontab -e` to remove aggregation line)
@@ -52,13 +55,13 @@ See PROJECT.md Key Decisions table for full log.
 
 ## Session Continuity
 
-**Last session:** 2026-02-18
-**Stopped at:** v1.1.0 milestone archived
+**Last session:** 2026-02-20
+**Stopped at:** Roadmap created for phases 17-18
 **Resume file:** None
 
-**Next steps:** Plan and execute save/me tab phases
+**Next steps:** `/gsd:plan-phase 17`
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-20 — v1.1.0 extended with Save & Me Tab rework*
+*Last updated: 2026-02-20 — Roadmap extended with phases 17-18 for Save & Me Tab rework*

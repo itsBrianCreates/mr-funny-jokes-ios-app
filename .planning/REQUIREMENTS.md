@@ -45,25 +45,25 @@ Requirements for extending v1.1.0 before App Store submission. Decouples rating 
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SAVE-01 | — | Pending |
-| SAVE-02 | — | Pending |
-| SAVE-03 | — | Pending |
-| SAVE-04 | — | Pending |
-| SAVE-05 | — | Pending |
-| RATE-01 | — | Pending |
-| RATE-02 | — | Pending |
-| RATE-03 | — | Pending |
-| MIGR-01 | — | Pending |
-| METB-01 | — | Pending |
-| METB-02 | — | Pending |
-| METB-03 | — | Pending |
-| METB-04 | — | Pending |
+| SAVE-01 | Phase 17 | Pending |
+| SAVE-02 | Phase 17 | Pending |
+| SAVE-03 | Phase 17 | Pending |
+| SAVE-04 | Phase 17 | Pending |
+| SAVE-05 | Phase 17 | Pending |
+| RATE-01 | Phase 17 | Pending |
+| RATE-02 | Phase 17 | Pending |
+| RATE-03 | Phase 17 | Pending |
+| MIGR-01 | Phase 17 | Pending |
+| METB-01 | Phase 18 | Pending |
+| METB-02 | Phase 18 | Pending |
+| METB-03 | Phase 18 | Pending |
+| METB-04 | Phase 18 | Pending |
 
 **Coverage:**
 - v1.1.0 requirements: 13 total
-- Mapped to phases: 0
-- Unmapped: 13 ⚠️
+- Mapped to phases: 13
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-20 after initial definition*
+*Last updated: 2026-02-20 — Phase mappings added (phases 17-18)*
