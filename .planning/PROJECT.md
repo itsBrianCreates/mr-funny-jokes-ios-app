@@ -62,7 +62,16 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ### Active
 
-(None — next milestone will define new requirements)
+## Current Milestone: v1.10 Firebase Analytics
+
+**Goal:** Integrate Firebase Analytics to track key user actions — lightweight instrumentation of core interactions.
+
+**Target features:**
+- Add FirebaseAnalytics SPM dependency to existing Firebase package
+- Update GoogleService-Info.plist with analytics-enabled config
+- Verify auto-initialization via existing FirebaseApp.configure()
+- Log key events: joke rated, joke shared/copied, character selected
+- AnalyticsService singleton following existing service pattern
 
 ### Out of Scope
 
@@ -84,7 +93,7 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.1.0 shipped — binary rating, all-time rankings, save system, and Me tab rework all complete. Ready for App Store submission.
+**Current State:** v1.1.0 shipped. Starting v1.10 — Firebase Analytics integration for key user action tracking.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
@@ -144,4 +153,4 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Semibold font weight on action buttons | Unifies visual weight with rating buttons, improves contrast on tinted backgrounds | ✓ Good |
 
 ---
-*Last updated: 2026-02-21 after v1.1.0 milestone*
+*Last updated: 2026-02-21 after v1.10 milestone start*
