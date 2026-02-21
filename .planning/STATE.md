@@ -5,15 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Phase 18 — Me Tab Saved Jokes (Complete)
+**Current focus:** Phase 18 — Me Tab Saved Jokes (Complete, including gap closure)
 
 ## Current Position
 
 **Milestone:** v1.1.0 Rating Simplification, Save & Me Tab Rework
 Phase: 18 of 18 (Me Tab Saved Jokes)
-Plan: 1 of 1 complete
-Status: Phase 18 Complete — Milestone Complete
-Last activity: 2026-02-21 — Completed 18-01 (rating indicator on saved joke cards)
+Plan: 2 of 2 complete
+Status: Phase 18 Complete — Milestone Complete (gap closure 18-02 applied)
+Last activity: 2026-02-21 — Completed 18-02 (Save button styling gap closure)
 
 Progress (phases 17-18): [██████████] 100%
 
@@ -30,8 +30,8 @@ Progress (phases 17-18): [██████████] 100%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29
-- Average duration: ~31 min
+- Total plans completed: 30
+- Average duration: ~30 min
 - Total execution time: ~14.9 hours
 
 | Phase | Plan | Duration | Tasks | Files |
@@ -39,6 +39,7 @@ Progress (phases 17-18): [██████████] 100%
 | 17-01 | Save data layer | 57 min | 2 | 4 |
 | 17-02 | UI wiring | 22 min | 2 | 11 |
 | 18-01 | Rating indicator on saved cards | 2 min | 1 | 1 |
+| 18-02 | Save button styling (gap closure) | 2 min | 1 | 1 |
 
 *Updated after each plan completion*
 
@@ -51,7 +52,7 @@ See PROJECT.md Key Decisions table for full log.
 Recent: Separate saving from rating (rating = opinion for Top 10, saving = personal collection for Me tab)
 Recent: Save persistence uses UserDefaults with Set<String> IDs + [String: TimeInterval] timestamps, matching rating pattern exactly
 Recent: Dedicated unsaveJoke method for clean swipe-to-delete semantics in MeView
-Recent: Save button placed between rating and copy/share in JokeDetailSheet; onSave follows same callback propagation as onRate
+Recent: Save button grouped with Copy/Share below divider in JokeDetailSheet with consistent blue/green tint pattern
 Recent: MeView shows flat saved-jokes list (no segmented control) since saves have no sub-categories
 Recent: Matched JokeCardView layout pattern exactly for rating indicator in MeView saved joke cards
 
@@ -67,12 +68,12 @@ Recent: Matched JokeCardView layout pattern exactly for rating indicator in MeVi
 ## Session Continuity
 
 **Last session:** 2026-02-21
-**Stopped at:** Completed 18-01-PLAN.md (rating indicator) -- Phase 18 complete, Milestone v1.1.0 complete
+**Stopped at:** Completed 18-02-PLAN.md (Save button styling gap closure)
 **Resume file:** None
 
-**Next steps:** Milestone v1.1.0 complete. All phases 17-18 shipped.
+**Next steps:** Milestone v1.1.0 complete with gap closure. All phases 17-18 shipped.
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-21 — Completed 18-01 rating indicator on saved joke cards (METB-03)*
+*Last updated: 2026-02-21 — Completed 18-02 Save button styling gap closure*
