@@ -48,26 +48,26 @@ struct JokeDetailSheet: View {
                     // Rating section
                     BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
 
-                    // Save button
-                    Button {
-                        onSave()
-                        HapticManager.shared.lightTap()
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: joke.isSaved ? "person.fill" : "person")
-                                .contentTransition(.symbolEffect(.replace))
-                            Text(joke.isSaved ? "Saved" : "Save")
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 24)
-                        .padding(.vertical, 14)
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(joke.isSaved ? .yellow : .gray)
-
                     Divider()
 
                     // Action buttons - iOS style
                     VStack(spacing: 12) {
+                        Button {
+                            onSave()
+                            HapticManager.shared.lightTap()
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: joke.isSaved ? "person.fill" : "person")
+                                    .contentTransition(.symbolEffect(.replace))
+                                Text(joke.isSaved ? "Saved" : "Save")
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 24)
+                            .padding(.vertical, 14)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(joke.isSaved ? .green : .blue)
+                        .animation(.easeInOut(duration: 0.2), value: joke.isSaved)
+
                         Button {
                             onCopy()
                         } label: {
