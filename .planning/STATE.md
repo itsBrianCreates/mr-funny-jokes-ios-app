@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Milestone:** v1.1.0 Rating Simplification, Save & Me Tab Rework
 Phase: 17 of 18 (Save System & Rating Decoupling)
-Plan: 1 of 2 complete
-Status: Executing
-Last activity: 2026-02-21 — Completed 17-01 (save data layer)
+Plan: 2 of 2 complete
+Status: Phase 17 Complete
+Last activity: 2026-02-21 — Completed 17-02 (UI wiring)
 
-Progress (phases 17-18): [██░░░░░░░░] 25%
+Progress (phases 17-18): [█████░░░░░] 50%
 
 ## Shipped Milestones
 
@@ -30,13 +30,14 @@ Progress (phases 17-18): [██░░░░░░░░] 25%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
-- Average duration: ~36 min
-- Total execution time: ~14.5 hours
+- Total plans completed: 28
+- Average duration: ~35 min
+- Total execution time: ~14.9 hours
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 17-01 | Save data layer | 57 min | 2 | 4 |
+| 17-02 | UI wiring | 22 min | 2 | 11 |
 
 *Updated after each plan completion*
 
@@ -49,6 +50,8 @@ See PROJECT.md Key Decisions table for full log.
 Recent: Separate saving from rating (rating = opinion for Top 10, saving = personal collection for Me tab)
 Recent: Save persistence uses UserDefaults with Set<String> IDs + [String: TimeInterval] timestamps, matching rating pattern exactly
 Recent: Dedicated unsaveJoke method for clean swipe-to-delete semantics in MeView
+Recent: Save button placed between rating and copy/share in JokeDetailSheet; onSave follows same callback propagation as onRate
+Recent: MeView shows flat saved-jokes list (no segmented control) since saves have no sub-categories
 
 ### Open Items
 
@@ -62,12 +65,12 @@ Recent: Dedicated unsaveJoke method for clean swipe-to-delete semantics in MeVie
 ## Session Continuity
 
 **Last session:** 2026-02-21
-**Stopped at:** Completed 17-01-PLAN.md (save data layer)
+**Stopped at:** Completed 17-02-PLAN.md (UI wiring) -- Phase 17 complete
 **Resume file:** None
 
-**Next steps:** `/gsd:execute-phase 17` (plan 02 - UI wiring)
+**Next steps:** `/gsd:execute-phase 18` (Me Tab redesign)
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-21 — Completed 17-01 save data layer (persistence, model, ViewModels, migration)*
+*Last updated: 2026-02-21 — Completed 17-02 UI wiring (Save button, onSave callbacks, MeView rewrite, dead code removal)*
