@@ -42,6 +42,7 @@ final class LocalStorageService: @unchecked Sendable {
             if !self.memoryCacheLoaded {
                 self.cachedImpressionIds = Set(self.loadImpressionsSync())
                 self.cachedRatedIds = Set(self.loadRatingsSync().keys)
+                self.cachedSavedIds = self.loadSavedIdsSync()
                 self.memoryCacheLoaded = true
             }
         }
@@ -58,6 +59,7 @@ final class LocalStorageService: @unchecked Sendable {
                 if !self.memoryCacheLoaded {
                     self.cachedImpressionIds = Set(self.loadImpressionsSync())
                     self.cachedRatedIds = Set(self.loadRatingsSync().keys)
+                    self.cachedSavedIds = self.loadSavedIdsSync()
                     self.memoryCacheLoaded = true
                 }
                 continuation.resume()
@@ -138,6 +140,111 @@ final class LocalStorageService: @unchecked Sendable {
             let ratings = self.loadRatingsSync()
             return ratings[key]
         }
+    }
+
+    // MARK: - Save System (v1.1.0)
+
+    private let savedJokesKey = "savedJokeIds"
+    private let savedTimestampsKey = "savedJokeTimestamps"
+
+    /// In-memory cache of saved joke IDs - loaded once, updated on writes
+    private var cachedSavedIds: Set<String>?
+
+    /// Save a joke by firestoreId
+    func saveJoke(firestoreId: String) {
+        queue.sync {
+            var savedIds = self.loadSavedIdsSync()
+            savedIds.insert(firestoreId)
+            self.saveSavedIdsSync(savedIds)
+
+            var timestamps = self.loadSavedTimestampsSync()
+            timestamps[firestoreId] = Date().timeIntervalSince1970
+            self.saveSavedTimestampsSync(timestamps)
+
+            // Update in-memory cache
+            cachedSavedIds?.insert(firestoreId)
+        }
+    }
+
+    /// Unsave a joke by firestoreId
+    func unsaveJoke(firestoreId: String) {
+        queue.sync {
+            var savedIds = self.loadSavedIdsSync()
+            savedIds.remove(firestoreId)
+            self.saveSavedIdsSync(savedIds)
+
+            var timestamps = self.loadSavedTimestampsSync()
+            timestamps.removeValue(forKey: firestoreId)
+            self.saveSavedTimestampsSync(timestamps)
+
+            // Update in-memory cache
+            cachedSavedIds?.remove(firestoreId)
+        }
+    }
+
+    /// Check if a joke is saved
+    func isJokeSaved(firestoreId: String) -> Bool {
+        queue.sync {
+            loadSavedIdsSync().contains(firestoreId)
+        }
+    }
+
+    /// Get the timestamp when a joke was saved (for sorting)
+    func getSavedTimestamp(for firestoreId: String) -> TimeInterval? {
+        queue.sync {
+            let timestamps = self.loadSavedTimestampsSync()
+            return timestamps[firestoreId]
+        }
+    }
+
+    private func loadSavedIdsSync() -> Set<String> {
+        let array = userDefaults.stringArray(forKey: savedJokesKey) ?? []
+        return Set(array)
+    }
+
+    private func saveSavedIdsSync(_ ids: Set<String>) {
+        userDefaults.set(Array(ids), forKey: savedJokesKey)
+    }
+
+    private func loadSavedTimestampsSync() -> [String: TimeInterval] {
+        return userDefaults.dictionary(forKey: savedTimestampsKey) as? [String: TimeInterval] ?? [:]
+    }
+
+    private func saveSavedTimestampsSync(_ timestamps: [String: TimeInterval]) {
+        userDefaults.set(timestamps, forKey: savedTimestampsKey)
+    }
+
+    // MARK: - Save Migration (v1.1.0)
+
+    /// One-time migration: copies all rated joke IDs into the saved collection
+    /// Preserves rating timestamps as save timestamps for continuity
+    /// Idempotent: gated by UserDefaults flag, runs once per device
+    func migrateRatedToSavedIfNeeded() {
+        guard !userDefaults.bool(forKey: "hasMigratedRatedToSaved") else { return }
+
+        queue.sync {
+            let ratings = self.loadRatingsSync()
+            let ratingTimestamps = self.loadRatingTimestampsSync()
+            var savedIds = self.loadSavedIdsSync()
+            var savedTimestamps = self.loadSavedTimestampsSync()
+
+            for (jokeId, _) in ratings {
+                savedIds.insert(jokeId)
+                if let ts = ratingTimestamps[jokeId] {
+                    savedTimestamps[jokeId] = ts
+                } else {
+                    savedTimestamps[jokeId] = Date().timeIntervalSince1970
+                }
+            }
+
+            self.saveSavedIdsSync(savedIds)
+            self.saveSavedTimestampsSync(savedTimestamps)
+
+            print("[Migration] Rated-to-saved migration complete: \(ratings.count) jokes migrated")
+        }
+
+        // Set flag AFTER successful completion
+        userDefaults.set(true, forKey: "hasMigratedRatedToSaved")
     }
 
     // MARK: - Rating Migration (v1.1.0)
