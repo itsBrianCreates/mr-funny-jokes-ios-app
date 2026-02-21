@@ -60,21 +60,21 @@
 
 </details>
 
-#### Phase 17: Save System & Rating Decoupling
+#### Phase 17: Save System & Rating Decoupling — completed 2026-02-20
 **Goal**: Users can save jokes independently of rating, and rating no longer drives the Me tab
 **Depends on**: Phase 16 (binary rating system must exist)
 **Requirements**: SAVE-01, SAVE-02, SAVE-03, SAVE-04, SAVE-05, RATE-01, RATE-02, RATE-03, MIGR-01
 **Success Criteria** (what must be TRUE):
-  1. User can tap a Save button in the joke detail sheet to save a joke without rating it
-  2. Save button toggles between Save and Saved states, and saved state persists after closing and reopening the app
-  3. Rating a joke does NOT cause it to appear in the Me tab -- only saving does
-  4. Rating icon on joke cards still works, and the joke sheet still displays the user's existing rating
-  5. All previously rated jokes appear as saved jokes after the first launch with the update (migration)
+  1. ✓ User can tap a Save button in the joke detail sheet to save a joke without rating it
+  2. ✓ Save button toggles between Save and Saved states, and saved state persists after closing and reopening the app
+  3. ✓ Rating a joke does NOT cause it to appear in the Me tab -- only saving does
+  4. ✓ Rating icon on joke cards still works, and the joke sheet still displays the user's existing rating
+  5. ✓ All previously rated jokes appear as saved jokes after the first launch with the update (migration)
 **Plans:** 2 plans
 
 Plans:
-- [ ] 17-01-PLAN.md — Save persistence layer, Joke model extension, ViewModel save logic, migration
-- [ ] 17-02-PLAN.md — Save button in JokeDetailSheet, all call sites, MeView rewiring
+- [x] 17-01-PLAN.md — Save persistence layer, Joke model extension, ViewModel save logic, migration
+- [x] 17-02-PLAN.md — Save button in JokeDetailSheet, all call sites, MeView rewiring
 
 #### Phase 18: Me Tab Saved Jokes
 **Goal**: Me tab displays the user's saved joke collection with rating indicators
@@ -110,10 +110,10 @@ Plans:
 | 14. Binary Rating UI | v1.1.0 | 2/2 | Complete | 2026-02-18 |
 | 15. Me Tab Redesign | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 | 16. All-Time Leaderboard UI | v1.1.0 | 1/1 | Complete | 2026-02-18 |
-| 17. Save System & Rating Decoupling | v1.1.0 | 0/? | Not started | - |
+| 17. Save System & Rating Decoupling | v1.1.0 | 2/2 | Complete | 2026-02-20 |
 | 18. Me Tab Saved Jokes | v1.1.0 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-20 — v1.1.0 extended with Save & Me Tab rework (phases 17-18)*
+*Last updated: 2026-02-20 — Phase 17 complete (Save System & Rating Decoupling)*
