@@ -30,6 +30,7 @@
 		A10000000000000000000025 /* SkeletonFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* SkeletonFeedView.swift */; };
 		A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */; };
 		A10000000000000000000028 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* FirestoreService.swift */; };
+		C319A0032F09D100007A6AFF /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319A0042F09D100007A6AFF /* AnalyticsService.swift */; };
 		A10000000000000000000029 /* FirestoreModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* FirestoreModels.swift */; };
 		B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* SharedJokeOfTheDay.swift */; };
 		B10000000000000000000002 /* SharedStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* SharedStorageService.swift */; };
@@ -118,6 +119,7 @@
 		A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonJokeOfTheDayView.swift; sourceTree = "<group>"; };
 		A20000000000000000000027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000028 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		C319A0042F09D100007A6AFF /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		A20000000000000000000029 /* FirestoreModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreModels.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* MrFunnyJokes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MrFunnyJokes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20000000000000000000001 /* SharedJokeOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJokeOfTheDay.swift; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 		A50000000000000000000008 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				C319A0042F09D100007A6AFF /* AnalyticsService.swift */,
 				C3DE8C132EEA805B009729AF /* NotificationManager.swift */,
 				A20000000000000000000012 /* LocalStorageService.swift */,
 				A20000000000000000000028 /* FirestoreService.swift */,
@@ -493,6 +496,7 @@
 				C333E6412EE10888007377F4 /* CharacterDetailViewModel.swift in Sources */,
 				A10000000000000000000012 /* LocalStorageService.swift in Sources */,
 				A10000000000000000000028 /* FirestoreService.swift in Sources */,
+				C319A0032F09D100007A6AFF /* AnalyticsService.swift in Sources */,
 				A10000000000000000000029 /* FirestoreModels.swift in Sources */,
 				A10000000000000000000013 /* Color+Extensions.swift in Sources */,
 				C353057F2EEDF9A300C81E13 /* AllTimeRankingsViewModel.swift in Sources */,
