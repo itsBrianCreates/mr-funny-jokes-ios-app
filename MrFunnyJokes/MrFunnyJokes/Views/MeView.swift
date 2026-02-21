@@ -109,6 +109,12 @@ struct MeView: View {
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                    Spacer()
+
+                    if let rating = joke.userRating {
+                        CompactRatingView(rating: rating)
+                    }
                 }
             }
             .padding()
