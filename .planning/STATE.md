@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Milestone:** v1.1.0 Rating Simplification, Save & Me Tab Rework
 Phase: 17 of 18 (Save System & Rating Decoupling)
-Plan: Not yet planned
-Status: Ready to plan
-Last activity: 2026-02-20 — Roadmap extended with phases 17-18
+Plan: 1 of 2 complete
+Status: Executing
+Last activity: 2026-02-21 — Completed 17-01 (save data layer)
 
-Progress (phases 17-18): [░░░░░░░░░░] 0%
+Progress (phases 17-18): [██░░░░░░░░] 25%
 
 ## Shipped Milestones
 
@@ -30,9 +30,13 @@ Progress (phases 17-18): [░░░░░░░░░░] 0%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
-- Average duration: ~35 min
-- Total execution time: ~13.5 hours
+- Total plans completed: 27
+- Average duration: ~36 min
+- Total execution time: ~14.5 hours
+
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 17-01 | Save data layer | 57 min | 2 | 4 |
 
 *Updated after each plan completion*
 
@@ -43,6 +47,8 @@ Progress (phases 17-18): [░░░░░░░░░░] 0%
 See PROJECT.md Key Decisions table for full log.
 
 Recent: Separate saving from rating (rating = opinion for Top 10, saving = personal collection for Me tab)
+Recent: Save persistence uses UserDefaults with Set<String> IDs + [String: TimeInterval] timestamps, matching rating pattern exactly
+Recent: Dedicated unsaveJoke method for clean swipe-to-delete semantics in MeView
 
 ### Open Items
 
@@ -55,13 +61,13 @@ Recent: Separate saving from rating (rating = opinion for Top 10, saving = perso
 
 ## Session Continuity
 
-**Last session:** 2026-02-20
-**Stopped at:** Roadmap created for phases 17-18
+**Last session:** 2026-02-21
+**Stopped at:** Completed 17-01-PLAN.md (save data layer)
 **Resume file:** None
 
-**Next steps:** `/gsd:plan-phase 17`
+**Next steps:** `/gsd:execute-phase 17` (plan 02 - UI wiring)
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-20 — Roadmap extended with phases 17-18 for Save & Me Tab rework*
+*Last updated: 2026-02-21 — Completed 17-01 save data layer (persistence, model, ViewModels, migration)*
