@@ -52,20 +52,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SETUP-01 | — | Pending |
-| SETUP-02 | — | Pending |
-| SETUP-03 | — | Pending |
-| EVNT-01 | — | Pending |
-| EVNT-02 | — | Pending |
-| EVNT-03 | — | Pending |
-| SRVC-01 | — | Pending |
-| SRVC-02 | — | Pending |
+| SETUP-01 | Phase 19 | Pending |
+| SETUP-02 | Phase 19 | Pending |
+| SETUP-03 | Phase 19 | Pending |
+| EVNT-01 | Phase 20 | Pending |
+| EVNT-02 | Phase 20 | Pending |
+| EVNT-03 | Phase 20 | Pending |
+| SRVC-01 | Phase 19 | Pending |
+| SRVC-02 | Phase 19 | Pending |
 
 **Coverage:**
 - v1.10 requirements: 8 total
-- Mapped to phases: 0
-- Unmapped: 8 (will be mapped during roadmap creation)
+- Mapped to phases: 8
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-21 after initial definition*
+*Last updated: 2026-02-21 — traceability updated with phase mappings*

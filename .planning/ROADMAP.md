@@ -7,6 +7,7 @@
 - ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
 - ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
+- 🚧 **v1.10 Firebase Analytics** — Phases 19-20 (in progress)
 
 ## Phases
 
@@ -58,7 +59,47 @@
 
 </details>
 
+### 🚧 v1.10 Firebase Analytics (In Progress)
+
+**Milestone Goal:** Integrate Firebase Analytics to track key user actions with lightweight instrumentation of core interactions.
+
+- [ ] **Phase 19: Analytics Foundation** — Firebase Analytics dependency, configuration, and AnalyticsService singleton
+- [ ] **Phase 20: Event Instrumentation** — Wire analytics events into joke rating, sharing, and character selection flows
+
+## Phase Details
+
+### Phase 19: Analytics Foundation
+**Goal**: App initializes Firebase Analytics on launch with a service layer ready to log events
+**Depends on**: Nothing (first phase of milestone)
+**Requirements**: SETUP-01, SETUP-02, SETUP-03, SRVC-01, SRVC-02
+**Success Criteria** (what must be TRUE):
+  1. App builds and runs with FirebaseAnalytics SPM product linked to the app target
+  2. Firebase Analytics auto-initializes on app launch via existing FirebaseApp.configure() — no additional setup code required
+  3. AnalyticsService.shared singleton exists following the same pattern as FirestoreService.shared and other existing services
+  4. AnalyticsService exposes methods that call Analytics.logEvent() with descriptive event names and minimal parameters
+**Plans**: TBD
+
+Plans:
+- [ ] 19-01: TBD
+
+### Phase 20: Event Instrumentation
+**Goal**: Key user actions (rating, sharing, character selection) produce analytics events visible in Firebase
+**Depends on**: Phase 19
+**Requirements**: EVNT-01, EVNT-02, EVNT-03
+**Success Criteria** (what must be TRUE):
+  1. Rating a joke as Hilarious or Horrible logs an event with the joke ID, character name, and rating value
+  2. Copying or sharing a joke logs an event with the joke ID
+  3. Selecting a character from the home screen logs an event with the character ID
+  4. Events appear in Firebase Analytics Debug View when running with the -FIRAnalyticsDebugEnabled launch argument
+**Plans**: TBD
+
+Plans:
+- [ ] 20-01: TBD
+
 ## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 19 → 20
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -80,8 +121,10 @@
 | 16. All-Time Leaderboard UI | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 | 17. Save System & Rating Decoupling | v1.1.0 | 2/2 | Complete | 2026-02-20 |
 | 18. Me Tab Saved Jokes | v1.1.0 | 2/2 | Complete | 2026-02-21 |
+| 19. Analytics Foundation | v1.10 | 0/TBD | Not started | - |
+| 20. Event Instrumentation | v1.10 | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-21 — Phase 18 complete (all plans executed, verification passed)*
+*Last updated: 2026-02-21 — v1.10 Firebase Analytics roadmap added (Phases 19-20)*
