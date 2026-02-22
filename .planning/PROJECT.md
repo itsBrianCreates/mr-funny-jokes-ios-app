@@ -69,7 +69,14 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ### Active
 
-(Next milestone — to be defined)
+## Current Milestone: v1.1.0 Bug Fixes
+
+**Goal:** Fix app responsiveness on first launch, feed reordering after rating, and pull-to-refresh scroll behavior before App Store release.
+
+**Target fixes:**
+- First-launch unresponsiveness (tapping jokes, sharing feels laggy until force-quit)
+- Feed not reordering rated jokes to bottom after pull-to-refresh
+- Pull-to-refresh doesn't scroll back to top of feed
 
 ### Out of Scope
 
@@ -91,7 +98,7 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.10 shipped. Firebase Analytics integrated with lightweight event instrumentation. Planning next milestone for bug fixes.
+**Current State:** v1.10 shipped internally. Preparing v1.1.0 for App Store release — fixing UX bugs found during device testing.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Analytics, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
@@ -156,4 +163,4 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Semibold font weight on action buttons | Unifies visual weight with rating buttons, improves contrast on tinted backgrounds | ✓ Good |
 
 ---
-*Last updated: 2026-02-22 after v1.10 milestone*
+*Last updated: 2026-02-22 after v1.1.0 Bug Fixes milestone start*

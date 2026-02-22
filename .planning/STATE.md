@@ -5,15 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Planning next milestone (bug fixes)
+**Current focus:** v1.1.0 Bug Fixes — responsiveness, feed reordering, pull-to-refresh
 
 ## Current Position
 
-**Milestone:** (next — to be defined)
-Phase: —
+**Milestone:** v1.1.0 Bug Fixes
+Phase: Not started (defining requirements)
 Plan: —
-Status: Between milestones — v1.10 shipped, planning next
-Last activity: 2026-02-22 — Archived v1.10 Firebase Analytics milestone
+Status: Defining requirements
+Last activity: 2026-02-22 — Milestone v1.1.0 started
 
 Progress: [          ] 0%
 
@@ -53,12 +53,12 @@ See PROJECT.md Key Decisions table for full log.
 ## Session Continuity
 
 **Last session:** 2026-02-22
-**Stopped at:** Archived v1.10 milestone
+**Stopped at:** Defining v1.1.0 Bug Fixes milestone
 **Resume file:** None
 
-**Next steps:** `/gsd:new-milestone` to define bug fix milestone.
+**Next steps:** Define requirements, create roadmap, then `/gsd:plan-phase 21`.
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-22 — v1.10 archived, ready for next milestone*
+*Last updated: 2026-02-22 — v1.1.0 Bug Fixes milestone started*
