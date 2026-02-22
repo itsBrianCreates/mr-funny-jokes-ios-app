@@ -6,6 +6,8 @@ struct JokeCardView: View {
     let onShare: () -> Void
     let onCopy: () -> Void
     let onRate: (Int) -> Void
+    let onSave: () -> Void
+    let onView: () -> Void
 
     @State private var showingSheet = false
 
@@ -42,6 +44,7 @@ struct JokeCardView: View {
         Button {
             HapticManager.shared.mediumImpact()
             showingSheet = true
+            onView()
         } label: {
             VStack(alignment: .leading, spacing: 12) {
                 // Setup text (formatted for knock-knock jokes)
@@ -84,7 +87,8 @@ struct JokeCardView: View {
                 onDismiss: { showingSheet = false },
                 onShare: onShare,
                 onCopy: onCopy,
-                onRate: onRate
+                onRate: onRate,
+                onSave: onSave
             )
         }
     }
@@ -129,7 +133,9 @@ struct CharacterIndicatorView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {},
+                onView: {}
             )
 
             JokeCardView(
@@ -143,7 +149,9 @@ struct CharacterIndicatorView: View {
                 isCopied: true,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {},
+                onView: {}
             )
 
             JokeCardView(
@@ -157,7 +165,9 @@ struct CharacterIndicatorView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {},
+                onView: {}
             )
 
             // Card without character
@@ -170,7 +180,9 @@ struct CharacterIndicatorView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {},
+                onView: {}
             )
         }
         .padding()

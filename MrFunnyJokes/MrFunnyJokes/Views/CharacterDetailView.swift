@@ -171,7 +171,8 @@ struct CharacterDetailView: View {
                     isCopied: viewModel.copiedJokeId == joke.id,
                     onShare: { viewModel.shareJoke(joke) },
                     onCopy: { viewModel.copyJoke(joke) },
-                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) }
+                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
+                    onSave: { viewModel.saveJoke(joke) }
                 )
                 .onAppear {
                     viewModel.markJokeImpression(joke)
@@ -233,6 +234,7 @@ struct CharacterJokeCardView: View {
     let onShare: () -> Void
     let onCopy: () -> Void
     let onRate: (Int) -> Void
+    let onSave: () -> Void
 
     @State private var showingSheet = false
 
@@ -277,7 +279,8 @@ struct CharacterJokeCardView: View {
                 onDismiss: { showingSheet = false },
                 onShare: onShare,
                 onCopy: onCopy,
-                onRate: onRate
+                onRate: onRate,
+                onSave: onSave
             )
         }
     }

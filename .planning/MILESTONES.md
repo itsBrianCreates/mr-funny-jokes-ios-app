@@ -110,30 +110,89 @@
 
 ---
 
-## v1.1.0 Rating Simplification & All-Time Top 10 (Shipped: 2026-02-18)
 
-**Delivered:** Simplified rating from 5-point to binary (Hilarious/Horrible) and replaced Monthly Top 10 with All-Time Top 10 for a cleaner UX with more meaningful rankings.
+## v1.1.0 Rating Simplification, Save & Me Tab Rework (Shipped: 2026-02-21)
 
-**Phases completed:** 13-16 (6 plans total)
+**Delivered:** Simplified rating from 5-point to binary, decoupled saving from rating, redesigned Me tab around saved jokes with rating indicators, and replaced monthly rankings with all-time leaderboard.
+
+**Phases completed:** 13-18 (10 plans total)
 
 **Key accomplishments:**
 
-- Binary rating system (Hilarious/Horrible) replacing 5-emoji slider with haptic feedback and smooth animation
+- Binary rating system (Hilarious/Horrible) replacing 5-emoji slider across all touchpoints
 - Three-layer rating migration (UserDefaults + Firestore + Cloud Function) preserving all user history
-- All-Time Top 10 leaderboard replacing Monthly Top 10 across all UI surfaces
-- Segmented Me tab redesign with card-style rows and count badges
-- Complete dead code cleanup — zero traces of 5-point rating system remain
+- All-Time Top 10 leaderboard replacing Monthly Top 10 with daily cloud recomputation
+- Save system decoupled from rating — Save button in JokeDetailSheet for personal collection
+- Me tab rewired to show saved jokes with swipe-to-unsave and rating indicators
+- Consistent action button styling (Save/Copy/Share) with semibold weight and blue/green tint
 
 **Stats:**
 
-- 39 files modified
-- 8,150 lines of Swift
-- 4 phases, 6 plans, 10 tasks
-- 1 day (2026-02-18)
+- 21 Swift/JS files modified
+- +951 / -558 lines changed
+- 6 phases, 10 plans
+- 4 days (2026-02-18 → 2026-02-21)
 
-**Git range:** `5aaf9f2` → `934d5c9`
+**Git range:** `5aaf9f2` → `a6b0a24`
 
-**What's next:** App Store submission with v1.1.0 binary, then next milestone based on user feedback.
+**What's next:** Firebase Analytics integration (v1.1.1).
+
+---
+
+
+## v1.10 Firebase Analytics (Shipped: 2026-02-22)
+
+**Delivered:** Firebase Analytics integration with lightweight instrumentation of core user interactions — rating, sharing, copying jokes and character selection.
+
+**Phases completed:** 19-20 (2 plans total)
+
+**Key accomplishments:**
+
+- FirebaseAnalytics SPM dependency linked with analytics auto-initialization via existing FirebaseApp.configure()
+- AnalyticsService singleton following existing service pattern (HapticManager-style)
+- 7 analytics call sites wired into JokeViewModel, CharacterDetailViewModel, and MrFunnyJokesApp
+- Fire-and-forget event pattern — calls placed after state mutations, before async Firestore sync
+- Events: joke_rated (with character + rating), joke_shared (with share/copy method), character_selected
+
+**Stats:**
+
+- 4 Swift files created/modified
+- 800 insertions, 31 deletions
+- 2 phases, 2 plans, 4 tasks
+- 2 days (2026-02-21 → 2026-02-22)
+
+**Git range:** `1a3e1ba` → `c330a58`
+
+**What's next:** Bug fix milestone based on user testing feedback.
+
+---
+
+
+## v1.1.0 Bug Fixes (Shipped: 2026-02-22)
+
+**Delivered:** Fixed first-launch unresponsiveness and feed reordering behavior before App Store release.
+
+**Phases completed:** 21-22 (3 plans total)
+
+**Key accomplishments:**
+
+- Pre-warmed haptic engines and deferred ViewModel creation for instant first-launch responsiveness
+- Splash screen holds until Firestore background fetch completes — main thread free at first interaction
+- Analytics calls moved to Task.detached to avoid blocking share/rate/copy UI
+- Impression-tiered feed ordering (unseen > seen-unrated > rated) with session-deferred reordering
+- Pull-to-refresh correctly reorders rated jokes to bottom and scrolls to top
+- Detail-sheet-open tracking via onView callback wired through view hierarchy
+
+**Stats:**
+
+- 13 files modified
+- 1,075 insertions, 46 deletions
+- 2 phases, 3 plans, 6 tasks
+- 1 day (2026-02-22)
+
+**Git range:** `5b63f53` → `10f9738`
+
+**What's next:** App Store submission for v1.1.0.
 
 ---
 

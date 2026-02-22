@@ -31,7 +31,8 @@ struct AllTimeTopTenDetailView: View {
                             isCopied: jokeViewModel.copiedJokeId == rankedJoke.joke.id,
                             onShare: { jokeViewModel.shareJoke(rankedJoke.joke) },
                             onCopy: { jokeViewModel.copyJoke(rankedJoke.joke) },
-                            onRate: { rating in jokeViewModel.rateJoke(rankedJoke.joke, rating: rating) }
+                            onRate: { rating in jokeViewModel.rateJoke(rankedJoke.joke, rating: rating) },
+                            onSave: { jokeViewModel.saveJoke(rankedJoke.joke) }
                         )
                     }
                 } else {

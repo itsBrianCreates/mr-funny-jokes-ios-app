@@ -34,9 +34,6 @@ final class JokeViewModel: ObservableObject {
     /// Tracks if background load has been triggered (only once per session)
     private var hasTriggeredBackgroundLoad = false
 
-    /// Tracks jokes rated during this session (kept visible until refresh)
-    private var sessionRatedJokeIds: Set<String> = []
-
     /// Batch size for background loading (larger than scroll loading for efficiency)
     private let backgroundBatchSize = 50
 
@@ -47,6 +44,10 @@ final class JokeViewModel: ObservableObject {
     private var loadMoreTask: Task<Void, Never>?
     private var initialLoadTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
+
+    /// Jokes rated during this session — kept in their current freshness tier
+    /// so they don't jump to the bottom immediately. Cleared on pull-to-refresh.
+    private var sessionRatedJokeIds: Set<String> = []
 
     /// Number of jokes to fetch per batch
     private let batchSize = 10
@@ -62,45 +63,65 @@ final class JokeViewModel: ObservableObject {
             categoryFiltered = jokes
         }
 
-        // Step 2: Filter to unrated only
-        // Exception: Keep jokes rated THIS session visible until refresh
-        // Per CONTEXT.md: "stays visible for current session, removed on next refresh"
-        let unratedJokes = categoryFiltered.filter { joke in
-            // If no rating, include it
-            guard let _ = joke.userRating else { return true }
+        // Step 2: Tier by freshness using impression data
+        // Unseen jokes first, then seen-but-unrated, then rated/viewed at bottom
+        // Session-rated jokes stay in their pre-rating tier (unseen or seen-unrated)
+        let impressionIds = cachedImpressionIds ?? storage.getImpressionIdsFast()
+        let ratedIds = cachedRatedIds ?? storage.getRatedJokeIdsFast()
+        let viewedIds = storage.getViewedIdsFast()
 
-            // If rated this session, keep it visible
+        var unseen: [Joke] = []
+        var seenUnrated: [Joke] = []
+        var rated: [Joke] = []
+
+        for joke in categoryFiltered {
             let key = joke.firestoreId ?? joke.id.uuidString
-            return sessionRatedJokeIds.contains(key)
+            let isSessionRated = sessionRatedJokeIds.contains(key)
+
+            // Session-rated jokes: treat as if they were NOT rated for tiering
+            // They stay in their current position until pull-to-refresh
+            let effectivelyRated = joke.userRating != nil && !isSessionRated
+            let hasImpression = impressionIds.contains(key)
+            let persistedRated = ratedIds.contains(key) && !isSessionRated
+            let isViewed = viewedIds.contains(key)
+
+            if effectivelyRated || persistedRated || isViewed {
+                rated.append(joke)
+            } else if !hasImpression {
+                unseen.append(joke)
+            } else {
+                seenUnrated.append(joke)
+            }
         }
 
-        // Step 3: Sort by popularity score (descending) per CONTEXT.md
-        // "Unrated jokes ordered by popularity score (trending/popular first)"
-        let sorted = unratedJokes.sorted { $0.popularityScore > $1.popularityScore }
+        // Step 3: Sort within each tier by popularity (descending)
+        // PopularityScore as tiebreaker preserves quality ordering within tiers
+        let sortedUnseen = unseen.sorted { $0.popularityScore > $1.popularityScore }
+        let sortedSeenUnrated = seenUnrated.sorted { $0.popularityScore > $1.popularityScore }
+        let sortedRated = rated.sorted { $0.popularityScore > $1.popularityScore }
+
+        // Step 4: Combine tiers — unseen first, seen-unrated middle, rated at bottom
+        let combined = sortedUnseen + sortedSeenUnrated + sortedRated
 
         // MARK: - Seasonal Content Ranking
-        // Step 4: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
+        // Step 5: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
         if !SeasonalHelper.isChristmasSeason() {
-            let nonChristmas = sorted.filter { !$0.isChristmasJoke }
-            let christmas = sorted.filter { $0.isChristmasJoke }
+            let nonChristmas = combined.filter { !$0.isChristmasJoke }
+            let christmas = combined.filter { $0.isChristmasJoke }
             return nonChristmas + christmas
         } else {
-            return sorted
+            return combined
         }
     }
 
-    // Jokes that have been rated by the user (sorted by most recently rated)
-    var ratedJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating != nil })
-    }
-
-    // Jokes grouped by binary rating, sorted by most recently rated
-    var hilariousJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating == 5 })
-    }
-
-    var horribleJokes: [Joke] {
-        sortByRatingTimestamp(jokes.filter { $0.userRating == 1 })
+    // Jokes that have been saved by the user (sorted by most recently saved)
+    var savedJokes: [Joke] {
+        let saved = jokes.filter { $0.isSaved }
+        return saved.sorted { joke1, joke2 in
+            let t1 = storage.getSavedTimestamp(for: joke1.firestoreId ?? joke1.id.uuidString) ?? 0
+            let t2 = storage.getSavedTimestamp(for: joke2.firestoreId ?? joke2.id.uuidString) ?? 0
+            return t1 > t2  // Most recently saved first
+        }
     }
 
     /// Sort jokes by rating timestamp (most recently rated first)
@@ -142,8 +163,9 @@ final class JokeViewModel: ObservableObject {
                 firestoreId: sharedJoke.firestoreId,
                 character: sharedJoke.character
             )
-            // Apply any saved user rating from local storage
+            // Apply any saved user rating and save state from local storage
             joke.userRating = storage.getRating(for: jokeId, firestoreId: sharedJoke.firestoreId)
+            joke.isSaved = storage.isJokeSaved(firestoreId: sharedJoke.firestoreId ?? jokeId.uuidString)
             return joke
         }
 
@@ -187,6 +209,15 @@ final class JokeViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] notification in
                 self?.handleRatingNotification(notification)
+            }
+            .store(in: &cancellables)
+
+        // Listen for save changes from other ViewModels (e.g., CharacterDetailViewModel)
+        // This ensures the Me tab updates when saves are made in character views
+        NotificationCenter.default.publisher(for: .jokeSaveDidChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.handleSaveNotification(notification)
             }
             .store(in: &cancellables)
 
@@ -306,14 +337,22 @@ final class JokeViewModel: ObservableObject {
         invalidateSortCache()
     }
 
+    /// Marks a joke as explicitly viewed (detail sheet opened)
+    /// Persists separately from scroll impressions so viewed jokes demote to bottom on restart
+    func markJokeViewed(_ joke: Joke) {
+        storage.markViewed(firestoreId: joke.firestoreId)
+        invalidateSortCache()
+    }
+
     // MARK: - Initial Load
 
     /// Load content on app start asynchronously - cache first, then API
     /// This is fully async to avoid blocking the main thread during startup
     private func loadInitialContentAsync() async {
-        // PHASE 0: Migrate 5-point ratings to binary (runs once, gated by UserDefaults flag)
+        // PHASE 0: Run one-time migrations (gated by UserDefaults flags)
         // Must run before memory cache preload so cache loads already-migrated data
         storage.migrateRatingsToBinaryIfNeeded()
+        storage.migrateRatedToSavedIfNeeded()
 
         // PHASE 1: Preload memory cache for fast sorting (critical for performance)
         await storage.preloadMemoryCacheAsync()
@@ -322,22 +361,22 @@ final class JokeViewModel: ObservableObject {
         let cached = await storage.loadAllCachedJokesAsync()
 
         if !cached.isEmpty {
-            // Ensure ratings are applied from authoritative source (defensive - cache should have them,
+            // Ensure ratings and save state are applied from authoritative source (defensive - cache should have them,
             // but re-apply for consistency with all other load paths: fetchInitialAPIContent,
             // fetchInitialAPIContentBackground, refresh, performLoadMore)
             let cachedWithRatings = cached.map { joke -> Joke in
                 var mutableJoke = joke
                 mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                 return mutableJoke
             }
 
-            // We have cached content - show it immediately and fetch fresh in background
+            // Load cached content into feed (renders behind splash)
             jokes = sortJokesForFreshFeed(cachedWithRatings)
-            // Mark initial loading complete so UI can transition from splash
-            await completeInitialLoading()
 
-            // PHASE 3: Fetch fresh content from Firebase in background
-            // This updates the UI when ready but doesn't block the splash transition
+            // PHASE 3: Fetch fresh content from Firebase before dismissing splash
+            // Splash stays visible until fetch completes, so the main thread is free
+            // when the user can first interact. Max splash timer (5s) prevents infinite wait.
             await fetchInitialAPIContentBackground()
         } else {
             // No cache (first launch) - must wait for Firebase fetch
@@ -469,10 +508,11 @@ final class JokeViewModel: ObservableObject {
                 // Populate widget fallback cache for offline graceful degradation
                 populateFallbackCache(from: newJokes)
 
-                // Apply user ratings from local storage
+                // Apply user ratings and save state from local storage
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
                     mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                     return mutableJoke
                 }
 
@@ -526,10 +566,11 @@ final class JokeViewModel: ObservableObject {
                 // Populate widget fallback cache for offline graceful degradation
                 populateFallbackCache(from: newJokes)
 
-                // Apply user ratings from local storage
+                // Apply user ratings and save state from local storage
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
                     mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                     return mutableJoke
                 }
 
@@ -567,9 +608,10 @@ final class JokeViewModel: ObservableObject {
         backgroundLoadTask?.cancel()
         hasTriggeredBackgroundLoad = false
         isBackgroundLoadingComplete = false
-        sessionRatedJokeIds.removeAll()
-
         isRefreshing = true
+
+        // Clear session tracking so rated/viewed jokes reorder on refresh
+        sessionRatedJokeIds.removeAll()
 
         do {
             // Reset pagination to get fresh data
@@ -614,10 +656,11 @@ final class JokeViewModel: ObservableObject {
                 // Populate widget fallback cache for offline graceful degradation
                 populateFallbackCache(from: newJokes)
 
-                // Apply user ratings
+                // Apply user ratings and save state
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
                     mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                     return mutableJoke
                 }
 
@@ -686,10 +729,11 @@ final class JokeViewModel: ObservableObject {
                     break
                 }
 
-                // Apply user ratings
+                // Apply user ratings and save state
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
                     mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                     return mutableJoke
                 }
 
@@ -763,10 +807,11 @@ final class JokeViewModel: ObservableObject {
                     storage.saveCachedJokes(categoryJokes, for: category)
                 }
 
-                // Apply user ratings
+                // Apply user ratings and save state
                 let jokesWithRatings = newJokes.map { joke -> Joke in
                     var mutableJoke = joke
                     mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                     return mutableJoke
                 }
 
@@ -818,16 +863,20 @@ final class JokeViewModel: ObservableObject {
 
         if rating == 0 {
             storage.removeRating(for: joke.id, firestoreId: joke.firestoreId)
+            let sessionKey = joke.firestoreId ?? joke.id.uuidString
+            sessionRatedJokeIds.remove(sessionKey)
             if let index = jokeIndex {
                 jokes[index].userRating = nil
             }
         } else {
             let clampedRating = min(max(rating, 1), 5)
-            // Track this joke as rated during current session
-            // It will remain visible in feed until next refresh
-            let key = joke.firestoreId ?? joke.id.uuidString
-            sessionRatedJokeIds.insert(key)
+            let ratingName = clampedRating == 5 ? "hilarious" : "horrible"
+            let analyticsJokeId = joke.firestoreId ?? joke.id.uuidString
+            let analyticsCharacter = joke.character ?? "unknown"
+            Task.detached { AnalyticsService.shared.logJokeRated(jokeId: analyticsJokeId, character: analyticsCharacter, rating: ratingName) }
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
+            let sessionKey = joke.firestoreId ?? joke.id.uuidString
+            sessionRatedJokeIds.insert(sessionKey)
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
             } else {
@@ -861,10 +910,136 @@ final class JokeViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Saving
+
+    /// Toggle save state for a joke
+    func saveJoke(_ joke: Joke) {
+        HapticManager.shared.lightTap()
+
+        let key = joke.firestoreId ?? joke.id.uuidString
+        let currentlySaved = storage.isJokeSaved(firestoreId: key)
+
+        // Toggle save state in storage
+        if currentlySaved {
+            storage.unsaveJoke(firestoreId: key)
+        } else {
+            storage.saveJoke(firestoreId: key)
+        }
+
+        // Update local state with animation
+        let jokeIndex = jokes.firstIndex(where: {
+            if let firestoreId = joke.firestoreId, let otherFirestoreId = $0.firestoreId {
+                return firestoreId == otherFirestoreId
+            }
+            return $0.id == joke.id
+        })
+
+        if let index = jokeIndex {
+            withAnimation { jokes[index].isSaved = !currentlySaved }
+        } else {
+            // Joke not in array - add it
+            var mutableJoke = joke
+            mutableJoke.isSaved = !currentlySaved
+            withAnimation { jokes.append(mutableJoke) }
+        }
+
+        // Post notification to sync with other ViewModels
+        let updatedJoke: Joke
+        if let index = jokeIndex {
+            updatedJoke = jokes[index]
+        } else {
+            var mutableJoke = joke
+            mutableJoke.isSaved = !currentlySaved
+            updatedJoke = mutableJoke
+        }
+
+        let jokeData = try? JSONEncoder().encode(updatedJoke)
+        NotificationCenter.default.post(
+            name: .jokeSaveDidChange,
+            object: nil,
+            userInfo: [
+                "jokeId": joke.id,
+                "firestoreId": key,
+                "isSaved": !currentlySaved,
+                "jokeData": jokeData as Any
+            ]
+        )
+    }
+
+    /// Unsave a joke (dedicated method for swipe-to-delete in MeView)
+    func unsaveJoke(_ joke: Joke) {
+        let key = joke.firestoreId ?? joke.id.uuidString
+
+        // Only unsave if currently saved
+        guard storage.isJokeSaved(firestoreId: key) else { return }
+
+        storage.unsaveJoke(firestoreId: key)
+
+        // Update local state with animation
+        let jokeIndex = jokes.firstIndex(where: {
+            if let firestoreId = joke.firestoreId, let otherFirestoreId = $0.firestoreId {
+                return firestoreId == otherFirestoreId
+            }
+            return $0.id == joke.id
+        })
+
+        if let index = jokeIndex {
+            withAnimation { jokes[index].isSaved = false }
+        }
+
+        // Post notification to sync with other ViewModels
+        let jokeData = try? JSONEncoder().encode(joke)
+        NotificationCenter.default.post(
+            name: .jokeSaveDidChange,
+            object: nil,
+            userInfo: [
+                "jokeId": joke.id,
+                "firestoreId": key,
+                "isSaved": false,
+                "jokeData": jokeData as Any
+            ]
+        )
+    }
+
+    /// Handle save change notifications from other ViewModels
+    private func handleSaveNotification(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let isSaved = userInfo["isSaved"] as? Bool else { return }
+
+        let firestoreId = userInfo["firestoreId"] as? String
+        let jokeId = userInfo["jokeId"] as? UUID
+        let jokeData = userInfo["jokeData"] as? Data
+
+        // Find and update the joke in our array
+        let jokeIndex = jokes.firstIndex(where: {
+            if let fid = firestoreId, let otherFid = $0.firestoreId {
+                return fid == otherFid
+            }
+            if let jid = jokeId {
+                return $0.id == jid
+            }
+            return false
+        })
+
+        if let index = jokeIndex {
+            // Joke exists in array - update its save state
+            withAnimation { jokes[index].isSaved = isSaved }
+        } else if isSaved, let data = jokeData {
+            // Joke not in array and is being saved
+            // Decode the joke from notification data and add it to the array
+            if var joke = try? JSONDecoder().decode(Joke.self, from: data) {
+                joke.isSaved = isSaved
+                withAnimation { jokes.append(joke) }
+            }
+        }
+    }
+
     // MARK: - Sharing
 
     func shareJoke(_ joke: Joke) {
         HapticManager.shared.success()
+        let jokeId = joke.firestoreId ?? joke.id.uuidString
+        Task.detached { AnalyticsService.shared.logJokeShared(jokeId: jokeId, method: "share") }
 
         // Get character name from joke's character field, fallback to generic app name
         let characterName: String
@@ -911,6 +1086,8 @@ final class JokeViewModel: ObservableObject {
 
     func copyJoke(_ joke: Joke) {
         HapticManager.shared.success()
+        let jokeId = joke.firestoreId ?? joke.id.uuidString
+        Task.detached { AnalyticsService.shared.logJokeShared(jokeId: jokeId, method: "copy") }
 
         // Get character name from joke's character field, fallback to generic app name
         let characterName: String

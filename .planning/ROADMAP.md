@@ -6,7 +6,9 @@
 - ✅ **v1.0.1 Content Freshness** — Phases 7-9 (shipped 2026-01-31)
 - ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
-- ✅ **v1.1.0 Rating Simplification & All-Time Top 10** — Phases 13-16 (shipped 2026-02-18)
+- ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
+- ✅ **v1.10 Firebase Analytics** — Phases 19-20 (shipped 2026-02-22)
+- ✅ **v1.1.0 Bug Fixes** — Phases 21-22 (shipped 2026-02-22)
 
 ## Phases
 
@@ -47,12 +49,30 @@
 </details>
 
 <details>
-<summary>✅ v1.1.0 Rating Simplification & All-Time Top 10 (Phases 13-16) — SHIPPED 2026-02-18</summary>
+<summary>✅ v1.1.0 Rating Simplification, Save & Me Tab Rework (Phases 13-18) — SHIPPED 2026-02-21</summary>
 
 - [x] Phase 13: Data Migration & Cloud Function (2/2 plans) — completed 2026-02-18
 - [x] Phase 14: Binary Rating UI (2/2 plans) — completed 2026-02-18
 - [x] Phase 15: Me Tab Redesign (1/1 plan) — completed 2026-02-18
 - [x] Phase 16: All-Time Leaderboard UI (1/1 plan) — completed 2026-02-18
+- [x] Phase 17: Save System & Rating Decoupling (2/2 plans) — completed 2026-02-20
+- [x] Phase 18: Me Tab Saved Jokes (2/2 plans) — completed 2026-02-21
+
+</details>
+
+<details>
+<summary>✅ v1.10 Firebase Analytics (Phases 19-20) — SHIPPED 2026-02-22</summary>
+
+- [x] Phase 19: Analytics Foundation (1/1 plan) — completed 2026-02-21
+- [x] Phase 20: Event Instrumentation (1/1 plan) — completed 2026-02-22
+
+</details>
+
+<details>
+<summary>✅ v1.1.0 Bug Fixes (Phases 21-22) — SHIPPED 2026-02-22</summary>
+
+- [x] Phase 21: First-Launch Responsiveness (1/1 plan) — completed 2026-02-22
+- [x] Phase 22: Feed Refresh Behavior (2/2 plans) — completed 2026-02-22
 
 </details>
 
@@ -76,8 +96,14 @@
 | 14. Binary Rating UI | v1.1.0 | 2/2 | Complete | 2026-02-18 |
 | 15. Me Tab Redesign | v1.1.0 | 1/1 | Complete | 2026-02-18 |
 | 16. All-Time Leaderboard UI | v1.1.0 | 1/1 | Complete | 2026-02-18 |
+| 17. Save System & Rating Decoupling | v1.1.0 | 2/2 | Complete | 2026-02-20 |
+| 18. Me Tab Saved Jokes | v1.1.0 | 2/2 | Complete | 2026-02-21 |
+| 19. Analytics Foundation | v1.10 | 1/1 | Complete | 2026-02-21 |
+| 20. Event Instrumentation | v1.10 | 1/1 | Complete | 2026-02-22 |
+| 21. First-Launch Responsiveness | v1.1.0 BF | 1/1 | Complete | 2026-02-22 |
+| 22. Feed Refresh Behavior | v1.1.0 BF | 2/2 | Complete | 2026-02-22 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-18 — v1.1.0 milestone shipped*
+*Last updated: 2026-02-22 — All milestones shipped through v1.1.0*

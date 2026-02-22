@@ -74,14 +74,15 @@ struct RootView: View {
             }
         }
         .onAppear {
-            // Defer ViewModel creation to next run loop tick
-            // This allows splash screen to render first, eliminating white screen
-            Task { @MainActor in
-                // Small yield to ensure splash is visible before heavy init
-                await Task.yield()
+            startSplashTimer()
+            startMaximumSplashTimer()
+            // Pre-warm haptic engines on a background thread
+            Task.detached { HapticManager.shared.warmUp() }
+            // Defer ViewModel creation so the animated splash renders first.
+            // JokeViewModel() triggers FirestoreService.shared init which is heavy
+            // on first launch — this keeps it off the initial render path.
+            DispatchQueue.main.async {
                 jokeViewModel = JokeViewModel()
-                startSplashTimer()
-                startMaximumSplashTimer()
             }
         }
     }
@@ -198,7 +199,8 @@ struct MainContentView: View {
                     onDismiss: { showingJokeOfTheDaySheet = false },
                     onShare: { jokeViewModel.shareJoke(joke) },
                     onCopy: { jokeViewModel.copyJoke(joke) },
-                    onRate: { rating in jokeViewModel.rateJoke(joke, rating: rating) }
+                    onRate: { rating in jokeViewModel.rateJoke(joke, rating: rating) },
+                    onSave: { jokeViewModel.saveJoke(joke) }
                 )
             }
         }
@@ -242,6 +244,7 @@ struct MainContentView: View {
             JokeFeedView(
                 viewModel: jokeViewModel,
                 onCharacterTap: { character in
+                    AnalyticsService.shared.logCharacterSelected(characterId: character.id)
                     navigationPath.append(character)
                 }
             )
