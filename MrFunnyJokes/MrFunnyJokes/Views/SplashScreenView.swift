@@ -61,18 +61,13 @@ struct SplashScreenView: View {
                 .padding(.horizontal)
 
                 // Loading message with fade transition
-                VStack(spacing: 16) {
-                    Text(loadingMessages[currentMessageIndex])
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.secondary)
-                        .contentTransition(.opacity)
-                        .id(currentMessageIndex)
-
-                    ProgressView()
-                        .tint(.brandYellow)
-                }
-                .opacity(showSubtitle ? 1 : 0)
+                Text(loadingMessages[currentMessageIndex])
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                    .opacity(showSubtitle ? 1 : 0)
+                    .contentTransition(.opacity)
+                    .id(currentMessageIndex)
 
                 Spacer()
                 Spacer()
