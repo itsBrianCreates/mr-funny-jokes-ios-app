@@ -3,7 +3,7 @@ status: diagnosed
 phase: 22-feed-refresh-behavior
 source: 22-01-SUMMARY.md
 started: 2026-02-21T12:00:00Z
-updated: 2026-02-21T12:05:00Z
+updated: 2026-02-21T12:10:00Z
 ---
 
 ## Current Test
@@ -30,11 +30,23 @@ result: pass
 expected: Scroll partway down the feed, then pull to refresh. The feed should scroll back to the very top, showing the first unrated joke.
 result: pass
 
+### 5. Viewed Jokes Demote on Refresh
+expected: Open a joke's detail sheet (without rating), close it, then pull to refresh. The viewed joke should move toward the bottom of the feed.
+result: issue
+reported: "if I click to view a joke and then I refresh the feed, that joke should move to the bottom. that FAILED"
+severity: major
+
+### 6. Feed Freshness — Unseen Jokes Surface on Refresh
+expected: After scrolling through several jokes, pull to refresh. Unseen jokes should appear at the top, and previously seen jokes should move down.
+result: issue
+reported: "the top view jokes don't ever change if I don't click on them, rate them, pull to refresh, close the app and come back. the content feels stale. we need a better way to surface jokes that I have not seen yet"
+severity: major
+
 ## Summary
 
-total: 4
+total: 6
 passed: 3
-issues: 1
+issues: 3
 pending: 0
 skipped: 0
 
@@ -54,14 +66,33 @@ skipped: 0
     - "Clear session-rated IDs only on pull-to-refresh (viewModel.refresh()) or app restart"
   debug_session: ""
 
-## Additional Findings (Out of Scope)
+- truth: "Viewed (detail sheet opened) jokes should demote on refresh"
+  status: failed
+  reason: "User reported: clicking to view a joke and then refreshing the feed does not move it to the bottom"
+  severity: major
+  test: 5
+  root_cause: "filteredJokes only separates rated vs unrated. Opening the detail sheet (JokeCardView.showingSheet) does not mark the joke as 'viewed' in any way that affects sort order. markJokeImpression fires on onAppear (scroll into viewport) but filteredJokes ignores impression data entirely — it sorts purely by popularityScore."
+  artifacts:
+    - path: "MrFunnyJokes/MrFunnyJokes/ViewModels/JokeViewModel.swift"
+      issue: "filteredJokes (lines 53-83) sorts by popularityScore only, ignores impression/viewed state"
+    - path: "MrFunnyJokes/MrFunnyJokes/Views/JokeCardView.swift"
+      issue: "Detail sheet open (line 81) does not notify ViewModel of 'viewed' state"
+  missing:
+    - "Track 'viewed' jokes (detail sheet opened) via a callback or notification"
+    - "filteredJokes should demote viewed jokes on refresh (similar to rated jokes)"
+  debug_session: ""
 
-These items were reported during testing but are beyond Phase 22's original scope:
-
-### Viewed Jokes Should Demote on Refresh
-reported: "if I click to view a joke and then I refresh the feed, that joke should move to the bottom. that FAILED"
-notes: Currently only rated jokes are reordered. Opening the detail sheet without rating does not affect feed position.
-
-### Feed Impression Tracking
-reported: "the top view jokes don't ever change if I don't click on them, rate them, pull to refresh, close the app and come back. the content feels stale. we need a better way to surface jokes that I have not seen yet"
-notes: New feature — track which jokes have been "seen" in the feed viewport and rotate in unseen content.
+- truth: "Feed should surface unseen jokes after pull-to-refresh, demoting previously seen jokes"
+  status: failed
+  reason: "User reported: top jokes never change unless rated. Content feels stale."
+  severity: major
+  test: 6
+  root_cause: "filteredJokes sorts by popularityScore within unrated/rated groups, completely ignoring impression data. sortJokesForFreshFeed() exists and already tiers unseen > seen-unrated > rated, but it's only used when setting the jokes array on load — filteredJokes re-sorts everything by popularityScore, defeating the freshness ordering."
+  artifacts:
+    - path: "MrFunnyJokes/MrFunnyJokes/ViewModels/JokeViewModel.swift"
+      issue: "filteredJokes (lines 67-69) sorts by popularityScore, overriding freshness tiers from sortJokesForFreshFeed"
+    - path: "MrFunnyJokes/MrFunnyJokes/ViewModels/JokeViewModel.swift"
+      issue: "sortJokesForFreshFeed (line 260) has correct tiering but its order is destroyed by filteredJokes"
+  missing:
+    - "filteredJokes should tier by: unseen > seen-unrated > viewed/rated, with popularityScore as tiebreaker within each tier"
+  debug_session: ""
