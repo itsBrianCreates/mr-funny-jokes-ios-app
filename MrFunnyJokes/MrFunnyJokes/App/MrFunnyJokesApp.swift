@@ -74,12 +74,16 @@ struct RootView: View {
             }
         }
         .onAppear {
-            // Pre-warm haptic engines on a background thread (doesn't need main thread)
-            Task.detached { HapticManager.shared.warmUp() }
-            // Create ViewModel immediately — its async loading won't block the splash render
-            jokeViewModel = JokeViewModel()
             startSplashTimer()
             startMaximumSplashTimer()
+            // Pre-warm haptic engines on a background thread
+            Task.detached { HapticManager.shared.warmUp() }
+            // Defer ViewModel creation so the animated splash renders first.
+            // JokeViewModel() triggers FirestoreService.shared init which is heavy
+            // on first launch — this keeps it off the initial render path.
+            DispatchQueue.main.async {
+                jokeViewModel = JokeViewModel()
+            }
         }
     }
 
