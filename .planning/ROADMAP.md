@@ -8,7 +8,7 @@
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
 - ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
 - ✅ **v1.10 Firebase Analytics** — Phases 19-20 (shipped 2026-02-22)
-- ✅ **v1.1.0 Bug Fixes** — Phases 21-22 (shipped 2026-02-22)
+- **v1.1.0 Bug Fixes** — Phases 21-22 (in progress — gap closure)
 
 ## Phases
 
@@ -73,7 +73,7 @@
 **Milestone Goal:** Fix app responsiveness on first launch, feed reordering after rating, and pull-to-refresh scroll behavior before App Store release.
 
 - [x] **Phase 21: First-Launch Responsiveness** — App responds immediately on cold start without force-quit workaround — completed 2026-02-22
-- [x] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed — completed 2026-02-22
+- [ ] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed — gap closure in progress
 
 ## Phase Details
 
@@ -91,17 +91,19 @@ Plans:
 - [x] 21-01-PLAN.md — Pre-warm haptic engines, hold splash, analytics off main thread — completed 2026-02-22
 
 ### Phase 22: Feed Refresh Behavior
-**Goal**: Pull-to-refresh correctly reorders the feed and scrolls to the top, with reordering persisting across app sessions
+**Goal**: Pull-to-refresh correctly reorders the feed and scrolls to the top, with rated jokes staying in place until refresh
 **Depends on**: Nothing (independent bug fix)
 **Requirements**: FEED-01, FEED-02, FEED-03
 **Success Criteria** (what must be TRUE):
   1. After rating a joke and pulling to refresh, rated jokes appear at the bottom of the feed and unrated jokes appear at the top
   2. After closing and reopening the app, previously rated jokes remain at the bottom of the feed (reordering persists)
   3. After pull-to-refresh completes, the feed scrolls back to the very top showing the first unrated joke
-**Plans**: 1 plan
+  4. Rated jokes stay in their current feed position until pull-to-refresh or app restart
+**Plans**: 2 plans
 
 Plans:
 - [x] 22-01-PLAN.md — Fix filteredJokes to keep rated jokes at bottom, verify scroll-to-top — completed 2026-02-22
+- [ ] 22-02-PLAN.md — Gap closure: defer rated joke reorder until pull-to-refresh via sessionRatedJokeIds
 
 ## Progress
 
@@ -128,9 +130,9 @@ Plans:
 | 19. Analytics Foundation | v1.10 | 1/1 | Complete | 2026-02-21 |
 | 20. Event Instrumentation | v1.10 | 1/1 | Complete | 2026-02-22 |
 | 21. First-Launch Responsiveness | v1.1.0 BF | 1/1 | Complete | 2026-02-22 |
-| 22. Feed Refresh Behavior | v1.1.0 BF | 1/1 | Complete | 2026-02-22 |
+| 22. Feed Refresh Behavior | v1.1.0 BF | 1/2 | In Progress | — |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-22 — Phase 22 complete (feed refresh behavior), milestone v1.1.0 Bug Fixes complete*
+*Last updated: 2026-02-21 — Phase 22 gap closure plan added (deferred rated joke reorder)*
