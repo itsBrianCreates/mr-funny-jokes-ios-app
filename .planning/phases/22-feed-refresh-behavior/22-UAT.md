@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 22-feed-refresh-behavior
 source: 22-01-SUMMARY.md
 started: 2026-02-21T12:00:00Z
@@ -45,9 +45,13 @@ skipped: 0
   reason: "User reported: when I rate a joke it jumps to the bottom immediately. Should stay in place until pull-to-refresh or app restart so user can still find it to share."
   severity: major
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "filteredJokes is a computed property that immediately re-evaluates when rateJoke() mutates jokes[index].userRating. The unrated/rated separation in filteredJokes fires instantly on every @Published jokes mutation, causing the rated joke to jump to the bottom of the ForEach immediately."
+  artifacts:
+    - path: "MrFunnyJokes/MrFunnyJokes/ViewModels/JokeViewModel.swift"
+      issue: "filteredJokes computed property (lines 53-83) separates unrated/rated on every evaluation; rateJoke() (lines 807-865) mutates jokes[index].userRating immediately"
+  missing:
+    - "Track session-rated joke IDs so filteredJokes treats them as unrated for sorting purposes"
+    - "Clear session-rated IDs only on pull-to-refresh (viewModel.refresh()) or app restart"
   debug_session: ""
 
 ## Additional Findings (Out of Scope)
