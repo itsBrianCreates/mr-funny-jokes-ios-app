@@ -243,6 +243,7 @@ struct MainContentView: View {
             JokeFeedView(
                 viewModel: jokeViewModel,
                 onCharacterTap: { character in
+                    AnalyticsService.shared.logCharacterSelected(characterId: character.id)
                     navigationPath.append(character)
                 }
             )
