@@ -34,9 +34,6 @@ final class JokeViewModel: ObservableObject {
     /// Tracks if background load has been triggered (only once per session)
     private var hasTriggeredBackgroundLoad = false
 
-    /// Tracks jokes rated during this session (kept visible until refresh)
-    private var sessionRatedJokeIds: Set<String> = []
-
     /// Batch size for background loading (larger than scroll loading for efficiency)
     private let backgroundBatchSize = 50
 
@@ -62,30 +59,26 @@ final class JokeViewModel: ObservableObject {
             categoryFiltered = jokes
         }
 
-        // Step 2: Filter to unrated only
-        // Exception: Keep jokes rated THIS session visible until refresh
-        // Per CONTEXT.md: "stays visible for current session, removed on next refresh"
-        let unratedJokes = categoryFiltered.filter { joke in
-            // If no rating, include it
-            guard let _ = joke.userRating else { return true }
+        // Step 2: Separate into unrated and rated groups
+        // Unrated jokes appear first, rated jokes appear at the bottom
+        let unrated = categoryFiltered.filter { $0.userRating == nil }
+        let rated = categoryFiltered.filter { $0.userRating != nil }
 
-            // If rated this session, keep it visible
-            let key = joke.firestoreId ?? joke.id.uuidString
-            return sessionRatedJokeIds.contains(key)
-        }
+        // Step 3: Sort each group by popularity score (descending)
+        let sortedUnrated = unrated.sorted { $0.popularityScore > $1.popularityScore }
+        let sortedRated = rated.sorted { $0.popularityScore > $1.popularityScore }
 
-        // Step 3: Sort by popularity score (descending) per CONTEXT.md
-        // "Unrated jokes ordered by popularity score (trending/popular first)"
-        let sorted = unratedJokes.sorted { $0.popularityScore > $1.popularityScore }
+        // Step 4: Combine with unrated first, rated at bottom
+        let combined = sortedUnrated + sortedRated
 
         // MARK: - Seasonal Content Ranking
-        // Step 4: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
+        // Step 5: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
         if !SeasonalHelper.isChristmasSeason() {
-            let nonChristmas = sorted.filter { !$0.isChristmasJoke }
-            let christmas = sorted.filter { $0.isChristmasJoke }
+            let nonChristmas = combined.filter { !$0.isChristmasJoke }
+            let christmas = combined.filter { $0.isChristmasJoke }
             return nonChristmas + christmas
         } else {
-            return sorted
+            return combined
         }
     }
 
@@ -576,8 +569,6 @@ final class JokeViewModel: ObservableObject {
         backgroundLoadTask?.cancel()
         hasTriggeredBackgroundLoad = false
         isBackgroundLoadingComplete = false
-        sessionRatedJokeIds.removeAll()
-
         isRefreshing = true
 
         do {
@@ -835,10 +826,6 @@ final class JokeViewModel: ObservableObject {
             }
         } else {
             let clampedRating = min(max(rating, 1), 5)
-            // Track this joke as rated during current session
-            // It will remain visible in feed until next refresh
-            let key = joke.firestoreId ?? joke.id.uuidString
-            sessionRatedJokeIds.insert(key)
             let ratingName = clampedRating == 5 ? "hilarious" : "horrible"
             let analyticsJokeId = joke.firestoreId ?? joke.id.uuidString
             let analyticsCharacter = joke.character ?? "unknown"
