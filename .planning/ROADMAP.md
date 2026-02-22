@@ -8,6 +8,7 @@
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
 - ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
 - ✅ **v1.10 Firebase Analytics** — Phases 19-20 (shipped 2026-02-22)
+- **v1.1.0 Bug Fixes** — Phases 21-22 (in progress)
 
 ## Phases
 
@@ -67,6 +68,41 @@
 
 </details>
 
+### v1.1.0 Bug Fixes (In Progress)
+
+**Milestone Goal:** Fix app responsiveness on first launch, feed reordering after rating, and pull-to-refresh scroll behavior before App Store release.
+
+- [ ] **Phase 21: First-Launch Responsiveness** — App responds immediately on cold start without force-quit workaround
+- [ ] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed
+
+## Phase Details
+
+### Phase 21: First-Launch Responsiveness
+**Goal**: Users experience immediate responsiveness when tapping jokes, sharing, and navigating on the very first app launch
+**Depends on**: Nothing (independent bug fix)
+**Requirements**: PERF-01, PERF-02
+**Success Criteria** (what must be TRUE):
+  1. User can tap a joke card and see the detail sheet appear without perceptible delay on first launch
+  2. User can tap Share/Copy in the detail sheet and get immediate response on first launch
+  3. First launch and subsequent launches feel equally responsive — no force-quit needed to "wake up" the app
+**Plans**: TBD
+
+Plans:
+- [ ] 21-01: TBD
+
+### Phase 22: Feed Refresh Behavior
+**Goal**: Pull-to-refresh correctly reorders the feed and scrolls to the top, with reordering persisting across app sessions
+**Depends on**: Nothing (independent bug fix)
+**Requirements**: FEED-01, FEED-02, FEED-03
+**Success Criteria** (what must be TRUE):
+  1. After rating a joke and pulling to refresh, rated jokes appear at the bottom of the feed and unrated jokes appear at the top
+  2. After closing and reopening the app, previously rated jokes remain at the bottom of the feed (reordering persists)
+  3. After pull-to-refresh completes, the feed scrolls back to the very top showing the first unrated joke
+**Plans**: TBD
+
+Plans:
+- [ ] 22-01: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -91,8 +127,10 @@
 | 18. Me Tab Saved Jokes | v1.1.0 | 2/2 | Complete | 2026-02-21 |
 | 19. Analytics Foundation | v1.10 | 1/1 | Complete | 2026-02-21 |
 | 20. Event Instrumentation | v1.10 | 1/1 | Complete | 2026-02-22 |
+| 21. First-Launch Responsiveness | v1.1.0 BF | 0/TBD | Not started | - |
+| 22. Feed Refresh Behavior | v1.1.0 BF | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-22 — v1.10 Firebase Analytics archived*
+*Last updated: 2026-02-22 — v1.1.0 Bug Fixes milestone roadmap created*

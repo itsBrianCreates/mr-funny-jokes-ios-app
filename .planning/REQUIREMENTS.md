@@ -42,17 +42,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PERF-01 | Pending | Pending |
-| PERF-02 | Pending | Pending |
-| FEED-01 | Pending | Pending |
-| FEED-02 | Pending | Pending |
-| FEED-03 | Pending | Pending |
+| PERF-01 | Phase 21 | Pending |
+| PERF-02 | Phase 21 | Pending |
+| FEED-01 | Phase 22 | Pending |
+| FEED-02 | Phase 22 | Pending |
+| FEED-03 | Phase 22 | Pending |
 
 **Coverage:**
 - v1.1.0 requirements: 5 total
-- Mapped to phases: 0
-- Unmapped: 5
+- Mapped to phases: 5
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-22*
-*Last updated: 2026-02-22 — initial definition*
+*Last updated: 2026-02-22 — traceability updated with phase mappings*
