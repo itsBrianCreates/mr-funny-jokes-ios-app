@@ -64,10 +64,11 @@ final class JokeViewModel: ObservableObject {
         }
 
         // Step 2: Tier by freshness using impression data
-        // Unseen jokes first, then seen-but-unrated, then rated
+        // Unseen jokes first, then seen-but-unrated, then rated/viewed at bottom
         // Session-rated jokes stay in their pre-rating tier (unseen or seen-unrated)
         let impressionIds = cachedImpressionIds ?? storage.getImpressionIdsFast()
         let ratedIds = cachedRatedIds ?? storage.getRatedJokeIdsFast()
+        let viewedIds = storage.getViewedIdsFast()
 
         var unseen: [Joke] = []
         var seenUnrated: [Joke] = []
@@ -82,8 +83,9 @@ final class JokeViewModel: ObservableObject {
             let effectivelyRated = joke.userRating != nil && !isSessionRated
             let hasImpression = impressionIds.contains(key)
             let persistedRated = ratedIds.contains(key) && !isSessionRated
+            let isViewed = viewedIds.contains(key)
 
-            if effectivelyRated || persistedRated {
+            if effectivelyRated || persistedRated || isViewed {
                 rated.append(joke)
             } else if !hasImpression {
                 unseen.append(joke)
@@ -336,9 +338,9 @@ final class JokeViewModel: ObservableObject {
     }
 
     /// Marks a joke as explicitly viewed (detail sheet opened)
-    /// Uses the same impression tracking as scroll-viewport marking
+    /// Persists separately from scroll impressions so viewed jokes demote to bottom on restart
     func markJokeViewed(_ joke: Joke) {
-        storage.markImpression(firestoreId: joke.firestoreId)
+        storage.markViewed(firestoreId: joke.firestoreId)
         invalidateSortCache()
     }
 

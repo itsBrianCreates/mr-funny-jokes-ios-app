@@ -7,6 +7,7 @@ final class LocalStorageService: @unchecked Sendable {
     private let ratingsKey = "jokeRatings"
     private let ratingTimestampsKey = "jokeRatingTimestamps"
     private let impressionsKey = "jokeImpressions"
+    private let viewedJokesKey = "viewedJokeIds"
     private let cachedJokesKeyPrefix = "cachedJokes_"
     private let deviceIdKey = "anonymousDeviceId"
     private let queue = DispatchQueue(label: "com.mrfunnyjokes.storage", qos: .userInitiated)
@@ -24,6 +25,9 @@ final class LocalStorageService: @unchecked Sendable {
 
     /// In-memory cache of rated joke IDs - loaded once, updated on writes
     private var cachedRatedIds: Set<String>?
+
+    /// In-memory cache of viewed joke IDs (detail sheet opened) - loaded once, updated on writes
+    private var cachedViewedIds: Set<String>?
 
     /// Flag indicating if in-memory caches are loaded
     private var memoryCacheLoaded = false
@@ -43,6 +47,7 @@ final class LocalStorageService: @unchecked Sendable {
                 self.cachedImpressionIds = Set(self.loadImpressionsSync())
                 self.cachedRatedIds = Set(self.loadRatingsSync().keys)
                 self.cachedSavedIds = self.loadSavedIdsSync()
+                self.cachedViewedIds = self.loadViewedIdsSync()
                 self.memoryCacheLoaded = true
             }
         }
@@ -60,6 +65,7 @@ final class LocalStorageService: @unchecked Sendable {
                     self.cachedImpressionIds = Set(self.loadImpressionsSync())
                     self.cachedRatedIds = Set(self.loadRatingsSync().keys)
                     self.cachedSavedIds = self.loadSavedIdsSync()
+                    self.cachedViewedIds = self.loadViewedIdsSync()
                     self.memoryCacheLoaded = true
                 }
                 continuation.resume()
@@ -212,6 +218,33 @@ final class LocalStorageService: @unchecked Sendable {
 
     private func saveSavedTimestampsSync(_ timestamps: [String: TimeInterval]) {
         userDefaults.set(timestamps, forKey: savedTimestampsKey)
+    }
+
+    // MARK: - Viewed Jokes (Detail Sheet Opened)
+
+    /// Mark a joke as viewed (detail sheet opened) — persists across app restarts
+    func markViewed(firestoreId: String?) {
+        guard let firestoreId = firestoreId else { return }
+        queue.sync {
+            var viewedIds = self.loadViewedIdsSync()
+            viewedIds.insert(firestoreId)
+            self.saveViewedIdsSync(viewedIds)
+            cachedViewedIds?.insert(firestoreId)
+        }
+    }
+
+    /// Fast, non-blocking access to viewed joke IDs from memory cache
+    func getViewedIdsFast() -> Set<String> {
+        return cachedViewedIds ?? []
+    }
+
+    private func loadViewedIdsSync() -> Set<String> {
+        let array = userDefaults.stringArray(forKey: viewedJokesKey) ?? []
+        return Set(array)
+    }
+
+    private func saveViewedIdsSync(_ ids: Set<String>) {
+        userDefaults.set(Array(ids), forKey: viewedJokesKey)
     }
 
     // MARK: - Save Migration (v1.1.0)
