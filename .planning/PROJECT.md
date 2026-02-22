@@ -67,16 +67,16 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - ✓ Joke shared/copied event logged with joke ID and method — v1.10
 - ✓ Character selected event logged with character ID — v1.10
 
+- ✓ App responds to taps immediately on first launch — no force-quit required — v1.1.0 BF
+- ✓ First-launch and subsequent launches feel equally responsive — v1.1.0 BF
+- ✓ Pull-to-refresh reorders rated jokes to bottom, unrated to top — v1.1.0 BF
+- ✓ Feed reordering persists across app close and reopen — v1.1.0 BF
+- ✓ Pull-to-refresh scrolls feed back to top — v1.1.0 BF
+- ✓ Impression-tiered feed ordering: unseen > seen-unrated > rated — v1.1.0 BF
+
 ### Active
 
-## Current Milestone: v1.1.0 Bug Fixes
-
-**Goal:** Fix app responsiveness on first launch, feed reordering after rating, and pull-to-refresh scroll behavior before App Store release.
-
-**Target fixes:**
-- First-launch unresponsiveness (tapping jokes, sharing feels laggy until force-quit)
-- Feed not reordering rated jokes to bottom after pull-to-refresh
-- Pull-to-refresh doesn't scroll back to top of feed
+(No active milestone — planning next version)
 
 ### Out of Scope
 
@@ -98,17 +98,18 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.10 shipped internally. Preparing v1.1.0 for App Store release — fixing UX bugs found during device testing.
+**Current State:** v1.1.0 shipped internally. All internal milestones (v1.0 through v1.1.0 Bug Fixes) complete. Ready for App Store submission.
 
 **Tech Stack:** SwiftUI, Firebase Firestore, Firebase Analytics, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
-**Codebase:** ~8,500 lines of Swift across main app and widget extension. 433 jokes in Firestore.
+**Codebase:** ~9,500 lines of Swift across main app and widget extension. 433 jokes in Firestore. 22 phases, 35 plans across 7 milestones.
 
 **Known Issues:**
 - Backend collection named "weekly_rankings" but stores all-time data (cosmetic debt, accepted)
 - Direct "Hey Siri" voice command triggers iOS built-in jokes (Shortcuts app works reliably)
 - Local crontab entry needs manual removal (Cloud Functions now handle aggregation)
 - daily_jokes population is manual (consider automating via Cloud Function)
+- Debug builds show ~10s static launch screen from FirebaseApp.configure() — expected to be 1-2s in release builds
 
 ## Constraints
 
@@ -162,5 +163,13 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Save button grouped with Copy/Share below divider | Visual consistency — all action buttons share same VStack with blue/green tint | ✓ Good |
 | Semibold font weight on action buttons | Unifies visual weight with rating buttons, improves contrast on tinted backgrounds | ✓ Good |
 
+| Hold splash until Firestore fetch completes | Main thread free at first user interaction; 5s max timer prevents infinite wait | ✓ Good |
+| Stored haptic generators with re-preparation | High-frequency haptic methods pre-warmed for instant first-launch response | ✓ Good |
+| Task.detached for analytics calls | Non-blocking fire-and-forget pattern for share/rate/copy UI responsiveness | ✓ Good |
+| Deferred ViewModel creation via DispatchQueue.main.async | Animated splash renders before heavy Firebase init | ✓ Good |
+| Impression-tiered feed ordering | Unseen > seen-unrated > rated with popularityScore tiebreaker — fresh content first | ✓ Good |
+| Session-deferred rating reorder via sessionRatedJokeIds | Rated jokes stay in place until pull-to-refresh; prevents disorienting mid-session reorder | ✓ Good |
+| onView callback on card tap, not scroll viewport | Detail-sheet-open is intentional viewing; scroll-viewport is passive impression | ✓ Good |
+
 ---
-*Last updated: 2026-02-22 after v1.1.0 Bug Fixes milestone start*
+*Last updated: 2026-02-22 after v1.1.0 Bug Fixes milestone completion*

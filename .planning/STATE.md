@@ -5,17 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** v1.1.0 Bug Fixes — feed reordering, pull-to-refresh
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-**Milestone:** v1.1.0 Bug Fixes
-Phase: 22 of 22 (Feed Refresh Behavior) — complete
-Plan: 02 of 02
-Status: Phase 22 complete, all UAT gaps closed
-Last activity: 2026-02-22 — Phase 22 Plan 02 complete: impression-tiered feed, session-deferred reorder, onView callback
+**Milestone:** (none — between milestones)
+Phase: 22 phases complete across 7 milestones
+Status: All milestones shipped through v1.1.0
+Last activity: 2026-02-22 — v1.1.0 Bug Fixes milestone completed
 
-Progress: [==========] 100%
+Progress: All milestones complete
 
 ## Shipped Milestones
 
@@ -27,27 +26,13 @@ Progress: [==========] 100%
 | v1.0.3 | Seasonal Content & Scroll Fix | 11-12 | 2026-02-15 |
 | v1.1.0 | Rating Simplification, Save & Me Tab Rework | 13-18 | 2026-02-21 |
 | v1.10 | Firebase Analytics | 19-20 | 2026-02-22 |
-
-## Performance Metrics
-
-**Velocity:** (reset for new milestone)
-
-| Phase | Plan | Duration | Tasks | Files |
-|-------|------|----------|-------|-------|
-| 21 | 01 | 30min | 2+3 | 5 |
-| 22 | 01 | 3min | 2 | 1 |
-| 22 | 02 | 4min | 2 | 4 |
+| v1.1.0 BF | Bug Fixes | 21-22 | 2026-02-22 |
 
 ## Accumulated Context
 
 ### Decisions
 
 See PROJECT.md Key Decisions table for full log.
-
-- Phase 21: Hold splash until Firestore fetch completes; move analytics to Task.detached; defer ViewModel creation for faster splash render
-- Debug builds show ~10s static launch screen from FirebaseApp.configure() — expected to be 1-2s in release builds
-- Phase 22-01: Removed sessionRatedJokeIds; rated jokes stay visible at bottom via userRating-based sorting in filteredJokes
-- Phase 22-02: Re-added sessionRatedJokeIds to defer rating reorder until pull-to-refresh; filteredJokes now uses impression-tiered ordering (unseen > seen-unrated > rated) with popularityScore tiebreaker; markJokeViewed reuses impression system for detail-sheet tracking
 
 ### Open Items
 
@@ -62,12 +47,12 @@ See PROJECT.md Key Decisions table for full log.
 ## Session Continuity
 
 **Last session:** 2026-02-22
-**Stopped at:** Completed 22-02-PLAN.md — all 3 UAT gaps closed
+**Stopped at:** v1.1.0 Bug Fixes milestone completed
 **Resume file:** None
 
-**Next steps:** UAT re-verification of feed refresh behavior (rated-joke deferred reorder, viewed-joke demotion, feed freshness tiering).
+**Next steps:** `/gsd:new-milestone` to plan next version, or App Store submission.
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-22 — Phase 22 Plan 02 complete (UAT gap closure)*
+*Last updated: 2026-02-22 — v1.1.0 Bug Fixes milestone completed*

@@ -167,3 +167,32 @@
 
 ---
 
+
+## v1.1.0 Bug Fixes (Shipped: 2026-02-22)
+
+**Delivered:** Fixed first-launch unresponsiveness and feed reordering behavior before App Store release.
+
+**Phases completed:** 21-22 (3 plans total)
+
+**Key accomplishments:**
+
+- Pre-warmed haptic engines and deferred ViewModel creation for instant first-launch responsiveness
+- Splash screen holds until Firestore background fetch completes — main thread free at first interaction
+- Analytics calls moved to Task.detached to avoid blocking share/rate/copy UI
+- Impression-tiered feed ordering (unseen > seen-unrated > rated) with session-deferred reordering
+- Pull-to-refresh correctly reorders rated jokes to bottom and scrolls to top
+- Detail-sheet-open tracking via onView callback wired through view hierarchy
+
+**Stats:**
+
+- 13 files modified
+- 1,075 insertions, 46 deletions
+- 2 phases, 3 plans, 6 tasks
+- 1 day (2026-02-22)
+
+**Git range:** `5b63f53` → `10f9738`
+
+**What's next:** App Store submission for v1.1.0.
+
+---
+
