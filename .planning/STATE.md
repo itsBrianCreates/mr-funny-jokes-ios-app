@@ -11,9 +11,9 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Milestone:** v1.1.0 Bug Fixes
 Phase: 22 of 22 (Feed Refresh Behavior) — complete
-Plan: 01 of 01
-Status: Phase 22 complete, milestone complete
-Last activity: 2026-02-22 — Phase 22 complete: rated jokes reordered to bottom, scroll-to-top verified
+Plan: 02 of 02
+Status: Phase 22 complete, all UAT gaps closed
+Last activity: 2026-02-22 — Phase 22 Plan 02 complete: impression-tiered feed, session-deferred reorder, onView callback
 
 Progress: [==========] 100%
 
@@ -36,6 +36,7 @@ Progress: [==========] 100%
 |-------|------|----------|-------|-------|
 | 21 | 01 | 30min | 2+3 | 5 |
 | 22 | 01 | 3min | 2 | 1 |
+| 22 | 02 | 4min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -45,7 +46,8 @@ See PROJECT.md Key Decisions table for full log.
 
 - Phase 21: Hold splash until Firestore fetch completes; move analytics to Task.detached; defer ViewModel creation for faster splash render
 - Debug builds show ~10s static launch screen from FirebaseApp.configure() — expected to be 1-2s in release builds
-- Phase 22: Removed sessionRatedJokeIds; rated jokes stay visible at bottom via userRating-based sorting in filteredJokes
+- Phase 22-01: Removed sessionRatedJokeIds; rated jokes stay visible at bottom via userRating-based sorting in filteredJokes
+- Phase 22-02: Re-added sessionRatedJokeIds to defer rating reorder until pull-to-refresh; filteredJokes now uses impression-tiered ordering (unseen > seen-unrated > rated) with popularityScore tiebreaker; markJokeViewed reuses impression system for detail-sheet tracking
 
 ### Open Items
 
@@ -60,12 +62,12 @@ See PROJECT.md Key Decisions table for full log.
 ## Session Continuity
 
 **Last session:** 2026-02-22
-**Stopped at:** Phase 22 complete — milestone complete
+**Stopped at:** Completed 22-02-PLAN.md — all 3 UAT gaps closed
 **Resume file:** None
 
-**Next steps:** All phases in v1.1.0 Bug Fixes milestone complete.
+**Next steps:** UAT re-verification of feed refresh behavior (rated-joke deferred reorder, viewed-joke demotion, feed freshness tiering).
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-22 — Phase 22 complete (feed refresh behavior)*
+*Last updated: 2026-02-22 — Phase 22 Plan 02 complete (UAT gap closure)*
