@@ -8,7 +8,7 @@
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
 - ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
 - ✅ **v1.10 Firebase Analytics** — Phases 19-20 (shipped 2026-02-22)
-- **v1.1.0 Bug Fixes** — Phases 21-22 (in progress)
+- ✅ **v1.1.0 Bug Fixes** — Phases 21-22 (shipped 2026-02-22)
 
 ## Phases
 
@@ -73,7 +73,7 @@
 **Milestone Goal:** Fix app responsiveness on first launch, feed reordering after rating, and pull-to-refresh scroll behavior before App Store release.
 
 - [x] **Phase 21: First-Launch Responsiveness** — App responds immediately on cold start without force-quit workaround — completed 2026-02-22
-- [ ] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed
+- [x] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed — completed 2026-02-22
 
 ## Phase Details
 
@@ -101,7 +101,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 22-01-PLAN.md — Fix filteredJokes to keep rated jokes at bottom, verify scroll-to-top
+- [x] 22-01-PLAN.md — Fix filteredJokes to keep rated jokes at bottom, verify scroll-to-top — completed 2026-02-22
 
 ## Progress
 
@@ -128,9 +128,9 @@ Plans:
 | 19. Analytics Foundation | v1.10 | 1/1 | Complete | 2026-02-21 |
 | 20. Event Instrumentation | v1.10 | 1/1 | Complete | 2026-02-22 |
 | 21. First-Launch Responsiveness | v1.1.0 BF | 1/1 | Complete | 2026-02-22 |
-| 22. Feed Refresh Behavior | v1.1.0 BF | 0/TBD | Not started | - |
+| 22. Feed Refresh Behavior | v1.1.0 BF | 1/1 | Complete | 2026-02-22 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-22 — Phase 21 complete (first-launch responsiveness)*
+*Last updated: 2026-02-22 — Phase 22 complete (feed refresh behavior), milestone v1.1.0 Bug Fixes complete*
