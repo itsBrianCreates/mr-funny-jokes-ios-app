@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** Phase 19 — Analytics Foundation
+**Current focus:** Phase 20 — Event Instrumentation
 
 ## Current Position
 
 **Milestone:** v1.10 Firebase Analytics
-Phase: 19 of 20 (Analytics Foundation)
+Phase: 20 of 20 (Event Instrumentation)
 Plan: 1 of 1 complete
-Status: Phase 19 complete — ready for Phase 20
-Last activity: 2026-02-21 — Completed Phase 19 Plan 01 (Analytics Foundation)
+Status: Phase 20 complete — milestone v1.10 complete
+Last activity: 2026-02-22 — Completed Phase 20 Plan 01 (Event Instrumentation)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████████] 100%
 
 ## Shipped Milestones
 
@@ -30,13 +30,14 @@ Progress: [█████░░░░░] 50%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 4min
-- Total execution time: 4min
+- Total plans completed: 2
+- Average duration: 3min
+- Total execution time: 6min
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 19 | 01 | 4min | 2 | 3 |
+| 20 | 01 | 2min | 2 | 3 |
 
 *Metrics reset per milestone. See MILESTONES.md for historical data.*
 
@@ -47,6 +48,8 @@ Progress: [█████░░░░░] 50%
 - Phase 19: No @MainActor on AnalyticsService — Analytics.logEvent() is thread-safe, no UI state
 - Phase 19: Event names use snake_case (joke_rated, joke_shared, character_selected) — Firebase convention
 - Phase 19: Rating param is String not Int for human-readable Firebase Console display
+- Phase 20: Analytics calls placed after state mutations, before async Firestore sync — ensures events fire regardless of network
+- Phase 20: No analytics in widget extension — per existing architectural decision (Firebase SDK deadlock #13070)
 
 See PROJECT.md Key Decisions table for full log.
 
@@ -61,13 +64,13 @@ See PROJECT.md Key Decisions table for full log.
 
 ## Session Continuity
 
-**Last session:** 2026-02-21
-**Stopped at:** Completed 19-01-PLAN.md (Analytics Foundation)
+**Last session:** 2026-02-22
+**Stopped at:** Completed 20-01-PLAN.md (Event Instrumentation)
 **Resume file:** None
 
-**Next steps:** Plan and execute Phase 20 (Analytics Instrumentation)
+**Next steps:** Milestone v1.10 Firebase Analytics complete. Ship or define next milestone.
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-21 — Phase 19 Plan 01 complete*
+*Last updated: 2026-02-22 — Phase 20 Plan 01 complete, milestone v1.10 complete*
