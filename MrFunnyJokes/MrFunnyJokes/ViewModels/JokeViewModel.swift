@@ -49,6 +49,11 @@ final class JokeViewModel: ObservableObject {
     /// so they don't jump to the bottom immediately. Cleared on pull-to-refresh.
     private var sessionRatedJokeIds: Set<String> = []
 
+    /// Jokes viewed (detail sheet opened) during this session — kept in their
+    /// current freshness tier so they don't jump to the bottom immediately.
+    /// Cleared on pull-to-refresh.
+    private var sessionViewedJokeIds: Set<String> = []
+
     /// Number of jokes to fetch per batch
     private let batchSize = 10
     /// Number of jokes to fetch per category on initial load
@@ -78,12 +83,13 @@ final class JokeViewModel: ObservableObject {
             let key = joke.firestoreId ?? joke.id.uuidString
             let isSessionRated = sessionRatedJokeIds.contains(key)
 
-            // Session-rated jokes: treat as if they were NOT rated for tiering
+            // Session-rated/viewed jokes: treat as if they were NOT rated/viewed for tiering
             // They stay in their current position until pull-to-refresh
+            let isSessionViewed = sessionViewedJokeIds.contains(key)
             let effectivelyRated = joke.userRating != nil && !isSessionRated
             let hasImpression = impressionIds.contains(key)
             let persistedRated = ratedIds.contains(key) && !isSessionRated
-            let isViewed = viewedIds.contains(key)
+            let isViewed = viewedIds.contains(key) && !isSessionViewed
 
             if effectivelyRated || persistedRated || isViewed {
                 rated.append(joke)
@@ -339,7 +345,10 @@ final class JokeViewModel: ObservableObject {
 
     /// Marks a joke as explicitly viewed (detail sheet opened)
     /// Persists separately from scroll impressions so viewed jokes demote to bottom on restart
+    /// Session-deferred: joke stays in place until pull-to-refresh
     func markJokeViewed(_ joke: Joke) {
+        let key = joke.firestoreId ?? joke.id.uuidString
+        sessionViewedJokeIds.insert(key)
         storage.markViewed(firestoreId: joke.firestoreId)
         invalidateSortCache()
     }
@@ -612,6 +621,7 @@ final class JokeViewModel: ObservableObject {
 
         // Clear session tracking so rated/viewed jokes reorder on refresh
         sessionRatedJokeIds.removeAll()
+        sessionViewedJokeIds.removeAll()
 
         do {
             // Reset pagination to get fresh data
