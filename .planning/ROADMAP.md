@@ -98,10 +98,10 @@ Plans:
   1. After rating a joke and pulling to refresh, rated jokes appear at the bottom of the feed and unrated jokes appear at the top
   2. After closing and reopening the app, previously rated jokes remain at the bottom of the feed (reordering persists)
   3. After pull-to-refresh completes, the feed scrolls back to the very top showing the first unrated joke
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 22-01: TBD
+- [ ] 22-01-PLAN.md — Fix filteredJokes to keep rated jokes at bottom, verify scroll-to-top
 
 ## Progress
 
