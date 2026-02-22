@@ -79,6 +79,10 @@ struct RootView: View {
             Task { @MainActor in
                 // Small yield to ensure splash is visible before heavy init
                 await Task.yield()
+                // Pre-warm services during splash to eliminate first-launch sluggishness
+                HapticManager.shared.warmUp()
+                _ = FirestoreService.shared
+                // Now create ViewModel (will use already-warm services)
                 jokeViewModel = JokeViewModel()
                 startSplashTimer()
                 startMaximumSplashTimer()
