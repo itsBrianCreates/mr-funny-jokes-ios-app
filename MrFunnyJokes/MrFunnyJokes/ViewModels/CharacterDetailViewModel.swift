@@ -246,6 +246,12 @@ final class CharacterDetailViewModel: ObservableObject {
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
             }
+            let ratingName = clampedRating == 5 ? "hilarious" : "horrible"
+            AnalyticsService.shared.logJokeRated(
+                jokeId: joke.firestoreId ?? joke.id.uuidString,
+                character: joke.character ?? "unknown",
+                rating: ratingName
+            )
 
             // Sync rating to Firestore if we have a Firestore ID
             if let firestoreId = joke.firestoreId {
@@ -337,6 +343,10 @@ final class CharacterDetailViewModel: ObservableObject {
 
     func shareJoke(_ joke: Joke) {
         HapticManager.shared.success()
+        AnalyticsService.shared.logJokeShared(
+            jokeId: joke.firestoreId ?? joke.id.uuidString,
+            method: "share"
+        )
 
         let text = joke.formattedTextForSharing(characterName: character.name)
 
@@ -374,6 +384,10 @@ final class CharacterDetailViewModel: ObservableObject {
 
     func copyJoke(_ joke: Joke) {
         HapticManager.shared.success()
+        AnalyticsService.shared.logJokeShared(
+            jokeId: joke.firestoreId ?? joke.id.uuidString,
+            method: "copy"
+        )
 
         let text = joke.formattedTextForSharing(characterName: character.name)
         UIPasteboard.general.string = text

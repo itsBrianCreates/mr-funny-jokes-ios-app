@@ -840,6 +840,12 @@ final class JokeViewModel: ObservableObject {
             // It will remain visible in feed until next refresh
             let key = joke.firestoreId ?? joke.id.uuidString
             sessionRatedJokeIds.insert(key)
+            let ratingName = clampedRating == 5 ? "hilarious" : "horrible"
+            AnalyticsService.shared.logJokeRated(
+                jokeId: joke.firestoreId ?? joke.id.uuidString,
+                character: joke.character ?? "unknown",
+                rating: ratingName
+            )
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
@@ -1002,6 +1008,10 @@ final class JokeViewModel: ObservableObject {
 
     func shareJoke(_ joke: Joke) {
         HapticManager.shared.success()
+        AnalyticsService.shared.logJokeShared(
+            jokeId: joke.firestoreId ?? joke.id.uuidString,
+            method: "share"
+        )
 
         // Get character name from joke's character field, fallback to generic app name
         let characterName: String
@@ -1048,6 +1058,10 @@ final class JokeViewModel: ObservableObject {
 
     func copyJoke(_ joke: Joke) {
         HapticManager.shared.success()
+        AnalyticsService.shared.logJokeShared(
+            jokeId: joke.firestoreId ?? joke.id.uuidString,
+            method: "copy"
+        )
 
         // Get character name from joke's character field, fallback to generic app name
         let characterName: String
