@@ -8,7 +8,7 @@
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
 - ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
 - ✅ **v1.10 Firebase Analytics** — Phases 19-20 (shipped 2026-02-22)
-- **v1.1.0 Bug Fixes** — Phases 21-22 (in progress — gap closure)
+- ✅ **v1.1.0 Bug Fixes** — Phases 21-22 (shipped 2026-02-22)
 
 ## Phases
 
@@ -68,12 +68,12 @@
 
 </details>
 
-### v1.1.0 Bug Fixes (In Progress)
+### v1.1.0 Bug Fixes (Complete)
 
 **Milestone Goal:** Fix app responsiveness on first launch, feed reordering after rating, and pull-to-refresh scroll behavior before App Store release.
 
 - [x] **Phase 21: First-Launch Responsiveness** — App responds immediately on cold start without force-quit workaround — completed 2026-02-22
-- [ ] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed — gap closure in progress
+- [x] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed — completed 2026-02-22
 
 ## Phase Details
 
@@ -103,7 +103,7 @@ Plans:
 
 Plans:
 - [x] 22-01-PLAN.md — Fix filteredJokes to keep rated jokes at bottom, verify scroll-to-top — completed 2026-02-22
-- [ ] 22-02-PLAN.md — Gap closure: defer rated joke reorder until pull-to-refresh via sessionRatedJokeIds
+- [x] 22-02-PLAN.md — Gap closure: defer rated joke reorder until pull-to-refresh via sessionRatedJokeIds — completed 2026-02-22
 
 ## Progress
 
@@ -130,9 +130,9 @@ Plans:
 | 19. Analytics Foundation | v1.10 | 1/1 | Complete | 2026-02-21 |
 | 20. Event Instrumentation | v1.10 | 1/1 | Complete | 2026-02-22 |
 | 21. First-Launch Responsiveness | v1.1.0 BF | 1/1 | Complete | 2026-02-22 |
-| 22. Feed Refresh Behavior | v1.1.0 BF | 1/2 | In Progress | — |
+| 22. Feed Refresh Behavior | v1.1.0 BF | 2/2 | Complete | 2026-02-22 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-21 — Phase 22 gap closure plan added (deferred rated joke reorder)*
+*Last updated: 2026-02-22 — Phase 22 complete, v1.1.0 Bug Fixes milestone complete*
