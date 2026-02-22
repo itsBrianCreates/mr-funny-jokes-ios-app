@@ -7,6 +7,7 @@ struct JokeDetailSheet: View {
     let onShare: () -> Void
     let onCopy: () -> Void
     let onRate: (Int) -> Void
+    let onSave: () -> Void
 
     /// Tracks whether the joke ID was copied to clipboard
     @State private var isJokeIdCopied = false
@@ -52,12 +53,30 @@ struct JokeDetailSheet: View {
                     // Action buttons - iOS style
                     VStack(spacing: 12) {
                         Button {
+                            onSave()
+                            HapticManager.shared.lightTap()
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: joke.isSaved ? "person.fill" : "person")
+                                    .contentTransition(.symbolEffect(.replace))
+                                Text(joke.isSaved ? "Saved" : "Save")
+                                    .font(.body.weight(.semibold))
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 24)
+                            .padding(.vertical, 14)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(joke.isSaved ? .green : .blue)
+                        .animation(.easeInOut(duration: 0.2), value: joke.isSaved)
+
+                        Button {
                             onCopy()
                         } label: {
                             HStack {
                                 Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
                                     .contentTransition(.symbolEffect(.replace))
                                 Text(isCopied ? "Copied" : "Copy")
+                                    .font(.body.weight(.semibold))
                             }
                             .frame(maxWidth: .infinity, minHeight: 24)
                             .padding(.vertical, 14)
@@ -72,6 +91,7 @@ struct JokeDetailSheet: View {
                             HStack {
                                 Image(systemName: "square.and.arrow.up")
                                 Text("Share")
+                                    .font(.body.weight(.semibold))
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -244,7 +264,8 @@ struct JokeDetailSheet: View {
                 onDismiss: {},
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
         }
 }
@@ -265,7 +286,8 @@ struct JokeDetailSheet: View {
                 onDismiss: {},
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
         }
 }

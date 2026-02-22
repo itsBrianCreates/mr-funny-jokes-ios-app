@@ -8,6 +8,7 @@ struct RankedJokeCard: View {
     let onShare: () -> Void
     let onCopy: () -> Void
     let onRate: (Int) -> Void
+    let onSave: () -> Void
 
     @State private var showingSheet = false
 
@@ -108,7 +109,8 @@ struct RankedJokeCard: View {
                 onDismiss: { showingSheet = false },
                 onShare: onShare,
                 onCopy: onCopy,
-                onRate: onRate
+                onRate: onRate,
+                onSave: onSave
             )
         }
     }
@@ -172,7 +174,8 @@ struct RankBadge: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // #2 - Silver
@@ -191,7 +194,8 @@ struct RankBadge: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // #3 - Bronze
@@ -210,7 +214,8 @@ struct RankBadge: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // #10 - Regular
@@ -229,7 +234,8 @@ struct RankBadge: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
         }
         .padding()

@@ -50,12 +50,33 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 - ✓ Existing 1-5 ratings migrated: 4-5 → Hilarious, 1-2 → Horrible, 3s dropped — v1.1.0
 - ✓ All-Time Top 10 replaces Monthly Top 10 — v1.1.0
 - ✓ Cloud Function recomputes all-time rankings daily — v1.1.0
-- ✓ Me tab redesigned with Hilarious/Horrible segmented control matching Top 10 screen — v1.1.0
+- ✓ Me tab redesigned with Hilarious/Horrible segmented control matching Top 10 screen — v1.1.0 (superseded by save-based Me tab)
 - ✓ Feature branch `v1.1.0` created before any code changes — v1.1.0
+- ✓ Save button in joke detail sheet (person icon), grouped with Copy/Share below divider — v1.1.0
+- ✓ Saved state persists across app sessions via UserDefaults — v1.1.0
+- ✓ Save toggle (Save/Saved) with independent save and rate actions — v1.1.0
+- ✓ Rating decoupled from Me tab — only saving adds jokes to Me tab — v1.1.0
+- ✓ Rated jokes auto-migrated to saved on first launch — v1.1.0
+- ✓ Me tab shows saved jokes ordered newest-first with rating indicators — v1.1.0
+- ✓ Segmented control removed from Me tab — v1.1.0
+
+- ✓ FirebaseAnalytics SPM dependency linked to app target — v1.10
+- ✓ Analytics auto-initializes via existing FirebaseApp.configure() — v1.10
+- ✓ AnalyticsService singleton following existing service pattern — v1.10
+- ✓ Joke rated event logged with joke ID, character, and rating — v1.10
+- ✓ Joke shared/copied event logged with joke ID and method — v1.10
+- ✓ Character selected event logged with character ID — v1.10
+
+- ✓ App responds to taps immediately on first launch — no force-quit required — v1.1.0 BF
+- ✓ First-launch and subsequent launches feel equally responsive — v1.1.0 BF
+- ✓ Pull-to-refresh reorders rated jokes to bottom, unrated to top — v1.1.0 BF
+- ✓ Feed reordering persists across app close and reopen — v1.1.0 BF
+- ✓ Pull-to-refresh scrolls feed back to top — v1.1.0 BF
+- ✓ Impression-tiered feed ordering: unseen > seen-unrated > rated — v1.1.0 BF
 
 ### Active
 
-(No active requirements — define with next milestone)
+(No active milestone — planning next version)
 
 ### Out of Scope
 
@@ -77,17 +98,18 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 
 ## Context
 
-**Current State:** v1.1.0 shipped. Binary rating system (Hilarious/Horrible) and All-Time Top 10 leaderboard are live. App ready for App Store submission.
+**Current State:** v1.1.0 shipped internally. All internal milestones (v1.0 through v1.1.0 Bug Fixes) complete. Ready for App Store submission.
 
-**Tech Stack:** SwiftUI, Firebase Firestore, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
+**Tech Stack:** SwiftUI, Firebase Firestore, Firebase Analytics, Firebase Cloud Functions, WidgetKit, App Intents, UserNotifications
 
-**Codebase:** 8,150 lines of Swift across main app and widget extension. 433 jokes in Firestore.
+**Codebase:** ~9,500 lines of Swift across main app and widget extension. 433 jokes in Firestore. 22 phases, 35 plans across 7 milestones.
 
 **Known Issues:**
 - Backend collection named "weekly_rankings" but stores all-time data (cosmetic debt, accepted)
 - Direct "Hey Siri" voice command triggers iOS built-in jokes (Shortcuts app works reliably)
 - Local crontab entry needs manual removal (Cloud Functions now handle aggregation)
 - daily_jokes population is manual (consider automating via Cloud Function)
+- Debug builds show ~10s static launch screen from FirebaseApp.configure() — expected to be 1-2s in release builds
 
 ## Constraints
 
@@ -129,5 +151,25 @@ Users can instantly get a laugh from character-delivered jokes and share them wi
 | Keep GrainOMeterView.swift filename | Avoids Xcode project file modifications for a rename | ✓ Good |
 | Tap buttons instead of drag gesture for binary rating | Clearer UX for a two-option choice | ✓ Good |
 
+| No @MainActor on AnalyticsService | Analytics.logEvent() is thread-safe, no UI state | ✓ Good |
+| Event names use snake_case | Firebase Analytics convention (joke_rated, joke_shared, character_selected) | ✓ Good |
+| Rating param as String not Int | Human-readable values (hilarious/horrible) in Firebase Console | ✓ Good |
+| Analytics calls after state mutations, before async | Events fire reliably regardless of network status | ✓ Good |
+| No analytics in widget extension | Firebase SDK causes deadlock issue #13070 | ✓ Good |
+| Separate saving from rating | Rating = opinion for Top 10; saving = personal collection for Me tab | ✓ Good |
+| Save toggle (Save/Saved) over one-way save | Lets users remove jokes from Me tab without swipe-to-delete | ✓ Good |
+| Person icon for Save button | Matches Me tab navigation icon, reinforces "save to My collection" | ✓ Good |
+| Migrate rated jokes to saved on first launch | Preserves existing user collections during decoupling | ✓ Good |
+| Save button grouped with Copy/Share below divider | Visual consistency — all action buttons share same VStack with blue/green tint | ✓ Good |
+| Semibold font weight on action buttons | Unifies visual weight with rating buttons, improves contrast on tinted backgrounds | ✓ Good |
+
+| Hold splash until Firestore fetch completes | Main thread free at first user interaction; 5s max timer prevents infinite wait | ✓ Good |
+| Stored haptic generators with re-preparation | High-frequency haptic methods pre-warmed for instant first-launch response | ✓ Good |
+| Task.detached for analytics calls | Non-blocking fire-and-forget pattern for share/rate/copy UI responsiveness | ✓ Good |
+| Deferred ViewModel creation via DispatchQueue.main.async | Animated splash renders before heavy Firebase init | ✓ Good |
+| Impression-tiered feed ordering | Unseen > seen-unrated > rated with popularityScore tiebreaker — fresh content first | ✓ Good |
+| Session-deferred rating reorder via sessionRatedJokeIds | Rated jokes stay in place until pull-to-refresh; prevents disorienting mid-session reorder | ✓ Good |
+| onView callback on card tap, not scroll viewport | Detail-sheet-open is intentional viewing; scroll-viewport is passive impression | ✓ Good |
+
 ---
-*Last updated: 2026-02-18 after v1.1.0 milestone*
+*Last updated: 2026-02-22 after v1.1.0 Bug Fixes milestone completion*

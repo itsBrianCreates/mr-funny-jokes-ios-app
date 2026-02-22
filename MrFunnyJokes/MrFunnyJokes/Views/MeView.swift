@@ -3,31 +3,10 @@ import SwiftUI
 struct MeView: View {
     @ObservedObject var viewModel: JokeViewModel
     @State private var selectedJokeId: UUID?
-    @State private var selectedType: RankingType = .hilarious
 
     private var selectedJoke: Joke? {
         guard let id = selectedJokeId else { return nil }
         return viewModel.jokes.first { $0.id == id }
-    }
-
-    /// Jokes for the currently selected segment
-    private var currentJokes: [Joke] {
-        switch selectedType {
-        case .hilarious:
-            return viewModel.hilariousJokes
-        case .horrible:
-            return viewModel.horribleJokes
-        }
-    }
-
-    /// Count of jokes for a given ranking type
-    private func jokesCount(for type: RankingType) -> Int {
-        switch type {
-        case .hilarious:
-            return viewModel.hilariousJokes.count
-        case .horrible:
-            return viewModel.horribleJokes.count
-        }
     }
 
     /// The character associated with a joke, if any
@@ -37,10 +16,10 @@ struct MeView: View {
     }
 
     var body: some View {
-        if viewModel.ratedJokes.isEmpty {
+        if viewModel.savedJokes.isEmpty {
             emptyState
         } else {
-            segmentedContent
+            savedJokesList
         }
     }
 
@@ -50,14 +29,14 @@ struct MeView: View {
         VStack(spacing: 16) {
             Spacer()
 
-            Image(systemName: "star.slash")
+            Image(systemName: "person.slash")
                 .font(.system(size: 56))
                 .foregroundStyle(.tertiary)
 
-            Text("No Rated Jokes Yet")
+            Text("No Saved Jokes Yet")
                 .font(.title2.weight(.semibold))
 
-            Text("Start rating jokes to save your favorites here!")
+            Text("Tap Save on any joke to start your collection!")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -68,44 +47,23 @@ struct MeView: View {
         .padding()
     }
 
-    // MARK: - Segmented Content
+    // MARK: - Saved Jokes List
 
-    private var segmentedContent: some View {
+    private var savedJokesList: some View {
         List {
-            // Segmented control with count badges
-            Picker("Category", selection: $selectedType) {
-                ForEach(RankingType.allCases) { type in
-                    Text("\(type.emoji) \(type.rawValue) (\(jokesCount(for: type)))").tag(type)
-                }
-            }
-            .pickerStyle(.segmented)
-            .transaction { $0.animation = nil }
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
-            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 8, trailing: 16))
-
-            // Content for selected segment
-            if currentJokes.isEmpty {
-                EmptyStateView(type: selectedType)
-                    .frame(minHeight: 300)
+            ForEach(viewModel.savedJokes) { joke in
+                jokeCard(for: joke)
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-            } else {
-                ForEach(currentJokes) { joke in
-                    jokeCard(for: joke)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                        .swipeActions(edge: .trailing) {
-                            Button(role: .destructive) {
-                                viewModel.rateJoke(joke, rating: 0)
-                            } label: {
-                                Label("Remove", systemImage: "trash")
-                            }
-                            .tint(.red)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            viewModel.unsaveJoke(joke)
+                        } label: {
+                            Label("Unsave", systemImage: "person.badge.minus")
                         }
-                }
+                        .tint(.red)
+                    }
             }
         }
         .listStyle(.plain)
@@ -120,7 +78,8 @@ struct MeView: View {
                     onDismiss: { selectedJokeId = nil },
                     onShare: { viewModel.shareJoke(joke) },
                     onCopy: { viewModel.copyJoke(joke) },
-                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) }
+                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
+                    onSave: { viewModel.saveJoke(joke) }
                 )
             }
         }
@@ -150,6 +109,12 @@ struct MeView: View {
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                    Spacer()
+
+                    if let rating = joke.userRating {
+                        CompactRatingView(rating: rating)
+                    }
                 }
             }
             .padding()

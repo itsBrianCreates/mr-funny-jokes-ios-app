@@ -6,6 +6,7 @@ struct JokeOfTheDayView: View {
     let onShare: () -> Void
     let onCopy: () -> Void
     let onRate: (Int) -> Void
+    let onSave: () -> Void
 
     @State private var showingSheet = false
     @State private var isAppearing = false
@@ -133,7 +134,8 @@ struct JokeOfTheDayView: View {
                 onDismiss: { showingSheet = false },
                 onShare: onShare,
                 onCopy: onCopy,
-                onRate: onRate
+                onRate: onRate,
+                onSave: onSave
             )
         }
     }
@@ -153,7 +155,8 @@ struct JokeOfTheDayView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // Mr. Bad - Red theme
@@ -167,7 +170,8 @@ struct JokeOfTheDayView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // Mr. Sad - Blue theme
@@ -181,7 +185,8 @@ struct JokeOfTheDayView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // Mr. Potty - Brown theme
@@ -195,7 +200,8 @@ struct JokeOfTheDayView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
 
             // Mr. Love - Pink theme
@@ -209,7 +215,8 @@ struct JokeOfTheDayView: View {
                 isCopied: false,
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in }
+                onRate: { _ in },
+                onSave: {}
             )
         }
         .padding()

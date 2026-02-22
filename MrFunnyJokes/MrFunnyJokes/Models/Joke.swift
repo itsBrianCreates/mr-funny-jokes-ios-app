@@ -6,6 +6,7 @@ struct Joke: Identifiable, Codable, Equatable {
     let setup: String
     let punchline: String
     var userRating: Int?
+    var isSaved: Bool = false
 
     // Firestore-specific fields
     var firestoreId: String?
@@ -20,7 +21,7 @@ struct Joke: Identifiable, Codable, Equatable {
     var popularityScore: Double
 
     enum CodingKeys: String, CodingKey {
-        case id, category, setup, punchline, userRating
+        case id, category, setup, punchline, userRating, isSaved
         case firestoreId, character, tags, sfw, source
         case ratingCount, ratingAvg, likes, dislikes, popularityScore
     }
@@ -31,6 +32,7 @@ struct Joke: Identifiable, Codable, Equatable {
         setup: String,
         punchline: String,
         userRating: Int? = nil,
+        isSaved: Bool = false,
         firestoreId: String? = nil,
         character: String? = nil,
         tags: [String]? = nil,
@@ -47,6 +49,7 @@ struct Joke: Identifiable, Codable, Equatable {
         self.setup = setup
         self.punchline = punchline
         self.userRating = userRating
+        self.isSaved = isSaved
         self.firestoreId = firestoreId
         self.character = character
         self.tags = tags
@@ -67,6 +70,7 @@ struct Joke: Identifiable, Codable, Equatable {
         setup = try container.decode(String.self, forKey: .setup)
         punchline = try container.decode(String.self, forKey: .punchline)
         userRating = try container.decodeIfPresent(Int.self, forKey: .userRating)
+        isSaved = try container.decodeIfPresent(Bool.self, forKey: .isSaved) ?? false
 
         // Firestore fields with defaults for backward compatibility
         firestoreId = try container.decodeIfPresent(String.self, forKey: .firestoreId)
