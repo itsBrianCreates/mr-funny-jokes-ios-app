@@ -5,15 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Users can instantly get a laugh from character-delivered jokes and share them with friends
-**Current focus:** v1.1.0 Bug Fixes — first-launch responsiveness, feed reordering, pull-to-refresh
+**Current focus:** v1.1.0 Bug Fixes — feed reordering, pull-to-refresh
 
 ## Current Position
 
 **Milestone:** v1.1.0 Bug Fixes
-Phase: 21 of 22 (First-Launch Responsiveness) — plan 01 complete
+Phase: 21 of 22 (First-Launch Responsiveness) — complete
 Plan: 01 of 01
-Status: Phase 21 complete
-Last activity: 2026-02-22 — Completed 21-01-PLAN.md (first-launch responsiveness fix)
+Status: Phase 21 complete, ready to plan phase 22
+Last activity: 2026-02-22 — Phase 21 complete with iterative fixes (haptics, splash hold, analytics off main thread, deferred ViewModel)
 
 Progress: [=====     ] 50%
 
@@ -34,7 +34,7 @@ Progress: [=====     ] 50%
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
-| 21 | 01 | 2min | 2 | 2 |
+| 21 | 01 | 30min | 2+3 | 5 |
 
 ## Accumulated Context
 
@@ -42,13 +42,14 @@ Progress: [=====     ] 50%
 
 See PROJECT.md Key Decisions table for full log.
 
-- Phase 21: Keep rarely-used haptic methods on-demand; pre-warm FirestoreService via singleton access
+- Phase 21: Hold splash until Firestore fetch completes; move analytics to Task.detached; defer ViewModel creation for faster splash render
+- Debug builds show ~10s static launch screen from FirebaseApp.configure() — expected to be 1-2s in release builds
 
 ### Open Items
 
 - Remove local crontab entry (user action: `crontab -e` to remove aggregation line)
 - Consider automating daily_jokes population via Cloud Function
-- First-launch slowness observed on physical device — addressed in phase 21 (HapticManager warmUp + FirestoreService pre-init)
+- Validate first-launch performance via TestFlight build (debug builds not representative)
 
 ### Tech Debt
 
@@ -57,7 +58,7 @@ See PROJECT.md Key Decisions table for full log.
 ## Session Continuity
 
 **Last session:** 2026-02-22
-**Stopped at:** Completed 21-01-PLAN.md (first-launch responsiveness)
+**Stopped at:** Phase 21 complete
 **Resume file:** None
 
 **Next steps:** `/gsd:plan-phase 22` to plan feed reordering and pull-to-refresh fixes.
@@ -65,4 +66,4 @@ See PROJECT.md Key Decisions table for full log.
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-22 — Phase 21 plan 01 complete (first-launch responsiveness)*
+*Last updated: 2026-02-22 — Phase 21 complete (first-launch responsiveness)*

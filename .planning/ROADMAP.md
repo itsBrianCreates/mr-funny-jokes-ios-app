@@ -72,7 +72,7 @@
 
 **Milestone Goal:** Fix app responsiveness on first launch, feed reordering after rating, and pull-to-refresh scroll behavior before App Store release.
 
-- [ ] **Phase 21: First-Launch Responsiveness** — App responds immediately on cold start without force-quit workaround
+- [x] **Phase 21: First-Launch Responsiveness** — App responds immediately on cold start without force-quit workaround — completed 2026-02-22
 - [ ] **Phase 22: Feed Refresh Behavior** — Pull-to-refresh reorders rated jokes and returns to top of feed
 
 ## Phase Details
@@ -88,7 +88,7 @@
 **Plans**: 1 plan
 
 Plans:
-- [ ] 21-01-PLAN.md — Pre-warm haptic engines and Firebase during splash screen
+- [x] 21-01-PLAN.md — Pre-warm haptic engines, hold splash, analytics off main thread — completed 2026-02-22
 
 ### Phase 22: Feed Refresh Behavior
 **Goal**: Pull-to-refresh correctly reorders the feed and scrolls to the top, with reordering persisting across app sessions
@@ -127,10 +127,10 @@ Plans:
 | 18. Me Tab Saved Jokes | v1.1.0 | 2/2 | Complete | 2026-02-21 |
 | 19. Analytics Foundation | v1.10 | 1/1 | Complete | 2026-02-21 |
 | 20. Event Instrumentation | v1.10 | 1/1 | Complete | 2026-02-22 |
-| 21. First-Launch Responsiveness | v1.1.0 BF | 0/TBD | Not started | - |
+| 21. First-Launch Responsiveness | v1.1.0 BF | 1/1 | Complete | 2026-02-22 |
 | 22. Feed Refresh Behavior | v1.1.0 BF | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-22 — v1.1.0 Bug Fixes milestone roadmap created*
+*Last updated: 2026-02-22 — Phase 21 complete (first-launch responsiveness)*
