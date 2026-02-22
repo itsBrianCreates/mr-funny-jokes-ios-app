@@ -85,10 +85,10 @@
   1. User can tap a joke card and see the detail sheet appear without perceptible delay on first launch
   2. User can tap Share/Copy in the detail sheet and get immediate response on first launch
   3. First launch and subsequent launches feel equally responsive — no force-quit needed to "wake up" the app
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 21-01: TBD
+- [ ] 21-01-PLAN.md — Pre-warm haptic engines and Firebase during splash screen
 
 ### Phase 22: Feed Refresh Behavior
 **Goal**: Pull-to-refresh correctly reorders the feed and scrolls to the top, with reordering persisting across app sessions
