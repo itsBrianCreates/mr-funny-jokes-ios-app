@@ -339,13 +339,12 @@ final class JokeViewModel: ObservableObject {
                 return mutableJoke
             }
 
-            // We have cached content - show it immediately and fetch fresh in background
+            // Load cached content into feed (renders behind splash)
             jokes = sortJokesForFreshFeed(cachedWithRatings)
-            // Mark initial loading complete so UI can transition from splash
-            await completeInitialLoading()
 
-            // PHASE 3: Fetch fresh content from Firebase in background
-            // This updates the UI when ready but doesn't block the splash transition
+            // PHASE 3: Fetch fresh content from Firebase before dismissing splash
+            // Splash stays visible until fetch completes, so the main thread is free
+            // when the user can first interact. Max splash timer (5s) prevents infinite wait.
             await fetchInitialAPIContentBackground()
         } else {
             // No cache (first launch) - must wait for Firebase fetch
