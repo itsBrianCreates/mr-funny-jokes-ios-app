@@ -7,7 +7,7 @@
 - ✅ **v1.0.2 Bug Fixes** — Phase 10 (shipped 2026-02-02)
 - ✅ **v1.0.3 Seasonal Content & Scroll Fix** — Phases 11-12 (shipped 2026-02-15)
 - ✅ **v1.1.0 Rating Simplification, Save & Me Tab Rework** — Phases 13-18 (shipped 2026-02-21)
-- 🚧 **v1.10 Firebase Analytics** — Phases 19-20 (in progress)
+- ✅ **v1.10 Firebase Analytics** — Phases 19-20 (shipped 2026-02-22)
 
 ## Phases
 
@@ -59,12 +59,12 @@
 
 </details>
 
-### 🚧 v1.10 Firebase Analytics (In Progress)
+### ✅ v1.10 Firebase Analytics — SHIPPED 2026-02-22
 
 **Milestone Goal:** Integrate Firebase Analytics to track key user actions with lightweight instrumentation of core interactions.
 
 - [x] **Phase 19: Analytics Foundation** — Firebase Analytics dependency, configuration, and AnalyticsService singleton — completed 2026-02-21
-- [ ] **Phase 20: Event Instrumentation** — Wire analytics events into joke rating, sharing, and character selection flows
+- [x] **Phase 20: Event Instrumentation** — Wire analytics events into joke rating, sharing, and character selection flows — completed 2026-02-22
 
 ## Phase Details
 
@@ -94,7 +94,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 20-01-PLAN.md — Wire analytics events into rating, sharing/copying, and character selection flows
+- [x] 20-01-PLAN.md — Wire analytics events into rating, sharing/copying, and character selection flows — completed 2026-02-22
 
 ## Progress
 
@@ -122,9 +122,9 @@ Phases execute in numeric order: 19 → 20
 | 17. Save System & Rating Decoupling | v1.1.0 | 2/2 | Complete | 2026-02-20 |
 | 18. Me Tab Saved Jokes | v1.1.0 | 2/2 | Complete | 2026-02-21 |
 | 19. Analytics Foundation | v1.10 | 1/1 | Complete | 2026-02-21 |
-| 20. Event Instrumentation | v1.10 | 0/TBD | Not started | - |
+| 20. Event Instrumentation | v1.10 | 1/1 | Complete | 2026-02-22 |
 
 ---
 
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-02-21 — Phase 19 (Analytics Foundation) complete*
+*Last updated: 2026-02-22 — Phase 20 (Event Instrumentation) complete, milestone v1.10 shipped*
