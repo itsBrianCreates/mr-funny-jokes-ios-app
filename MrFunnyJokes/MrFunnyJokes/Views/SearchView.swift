@@ -135,7 +135,8 @@ struct SearchView: View {
                         onShare: { viewModel.shareJoke(joke) },
                         onCopy: { viewModel.copyJoke(joke) },
                         onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
-                        onSave: { viewModel.saveJoke(joke) }
+                        onSave: { viewModel.saveJoke(joke) },
+                        onView: {}
                     )
                 }
             }

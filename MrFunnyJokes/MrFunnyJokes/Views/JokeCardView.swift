@@ -7,6 +7,7 @@ struct JokeCardView: View {
     let onCopy: () -> Void
     let onRate: (Int) -> Void
     let onSave: () -> Void
+    let onView: () -> Void
 
     @State private var showingSheet = false
 
@@ -43,6 +44,7 @@ struct JokeCardView: View {
         Button {
             HapticManager.shared.mediumImpact()
             showingSheet = true
+            onView()
         } label: {
             VStack(alignment: .leading, spacing: 12) {
                 // Setup text (formatted for knock-knock jokes)
@@ -132,7 +134,8 @@ struct CharacterIndicatorView: View {
                 onShare: {},
                 onCopy: {},
                 onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onView: {}
             )
 
             JokeCardView(
@@ -147,7 +150,8 @@ struct CharacterIndicatorView: View {
                 onShare: {},
                 onCopy: {},
                 onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onView: {}
             )
 
             JokeCardView(
@@ -162,7 +166,8 @@ struct CharacterIndicatorView: View {
                 onShare: {},
                 onCopy: {},
                 onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onView: {}
             )
 
             // Card without character
@@ -176,7 +181,8 @@ struct CharacterIndicatorView: View {
                 onShare: {},
                 onCopy: {},
                 onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onView: {}
             )
         }
         .padding()
