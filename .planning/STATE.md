@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 **Milestone:** v1.1.0 Bug Fixes
-Phase: 21 of 22 (First-Launch Responsiveness) — ready to plan
-Plan: —
-Status: Ready to plan
-Last activity: 2026-02-22 — Roadmap created for v1.1.0 Bug Fixes (2 phases, 5 requirements)
+Phase: 21 of 22 (First-Launch Responsiveness) — plan 01 complete
+Plan: 01 of 01
+Status: Phase 21 complete
+Last activity: 2026-02-22 — Completed 21-01-PLAN.md (first-launch responsiveness fix)
 
-Progress: [          ] 0%
+Progress: [=====     ] 50%
 
 ## Shipped Milestones
 
@@ -32,7 +32,9 @@ Progress: [          ] 0%
 
 **Velocity:** (reset for new milestone)
 
-*Metrics reset per milestone. See MILESTONES.md for historical data.*
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 21 | 01 | 2min | 2 | 2 |
 
 ## Accumulated Context
 
@@ -40,11 +42,13 @@ Progress: [          ] 0%
 
 See PROJECT.md Key Decisions table for full log.
 
+- Phase 21: Keep rarely-used haptic methods on-demand; pre-warm FirestoreService via singleton access
+
 ### Open Items
 
 - Remove local crontab entry (user action: `crontab -e` to remove aggregation line)
 - Consider automating daily_jokes population via Cloud Function
-- First-launch slowness observed on physical device — likely Firebase SDK cold-start initialization
+- First-launch slowness observed on physical device — addressed in phase 21 (HapticManager warmUp + FirestoreService pre-init)
 
 ### Tech Debt
 
@@ -53,12 +57,12 @@ See PROJECT.md Key Decisions table for full log.
 ## Session Continuity
 
 **Last session:** 2026-02-22
-**Stopped at:** Roadmap created for v1.1.0 Bug Fixes milestone
+**Stopped at:** Completed 21-01-PLAN.md (first-launch responsiveness)
 **Resume file:** None
 
-**Next steps:** `/gsd:plan-phase 21` to plan first-launch responsiveness fix.
+**Next steps:** `/gsd:plan-phase 22` to plan feed reordering and pull-to-refresh fixes.
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-22 — v1.1.0 Bug Fixes roadmap created*
+*Last updated: 2026-02-22 — Phase 21 plan 01 complete (first-launch responsiveness)*
