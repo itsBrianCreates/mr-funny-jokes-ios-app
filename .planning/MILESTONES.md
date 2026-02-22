@@ -139,3 +139,31 @@
 
 ---
 
+
+## v1.10 Firebase Analytics (Shipped: 2026-02-22)
+
+**Delivered:** Firebase Analytics integration with lightweight instrumentation of core user interactions — rating, sharing, copying jokes and character selection.
+
+**Phases completed:** 19-20 (2 plans total)
+
+**Key accomplishments:**
+
+- FirebaseAnalytics SPM dependency linked with analytics auto-initialization via existing FirebaseApp.configure()
+- AnalyticsService singleton following existing service pattern (HapticManager-style)
+- 7 analytics call sites wired into JokeViewModel, CharacterDetailViewModel, and MrFunnyJokesApp
+- Fire-and-forget event pattern — calls placed after state mutations, before async Firestore sync
+- Events: joke_rated (with character + rating), joke_shared (with share/copy method), character_selected
+
+**Stats:**
+
+- 4 Swift files created/modified
+- 800 insertions, 31 deletions
+- 2 phases, 2 plans, 4 tasks
+- 2 days (2026-02-21 → 2026-02-22)
+
+**Git range:** `1a3e1ba` → `c330a58`
+
+**What's next:** Bug fix milestone based on user testing feedback.
+
+---
+
