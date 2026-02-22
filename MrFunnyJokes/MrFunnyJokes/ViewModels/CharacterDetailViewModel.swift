@@ -247,11 +247,9 @@ final class CharacterDetailViewModel: ObservableObject {
                 jokes[index].userRating = clampedRating
             }
             let ratingName = clampedRating == 5 ? "hilarious" : "horrible"
-            AnalyticsService.shared.logJokeRated(
-                jokeId: joke.firestoreId ?? joke.id.uuidString,
-                character: joke.character ?? "unknown",
-                rating: ratingName
-            )
+            let analyticsJokeId = joke.firestoreId ?? joke.id.uuidString
+            let analyticsCharacter = joke.character ?? "unknown"
+            Task.detached { AnalyticsService.shared.logJokeRated(jokeId: analyticsJokeId, character: analyticsCharacter, rating: ratingName) }
 
             // Sync rating to Firestore if we have a Firestore ID
             if let firestoreId = joke.firestoreId {
@@ -343,10 +341,8 @@ final class CharacterDetailViewModel: ObservableObject {
 
     func shareJoke(_ joke: Joke) {
         HapticManager.shared.success()
-        AnalyticsService.shared.logJokeShared(
-            jokeId: joke.firestoreId ?? joke.id.uuidString,
-            method: "share"
-        )
+        let jokeId = joke.firestoreId ?? joke.id.uuidString
+        Task.detached { AnalyticsService.shared.logJokeShared(jokeId: jokeId, method: "share") }
 
         let text = joke.formattedTextForSharing(characterName: character.name)
 
@@ -384,10 +380,8 @@ final class CharacterDetailViewModel: ObservableObject {
 
     func copyJoke(_ joke: Joke) {
         HapticManager.shared.success()
-        AnalyticsService.shared.logJokeShared(
-            jokeId: joke.firestoreId ?? joke.id.uuidString,
-            method: "copy"
-        )
+        let jokeId = joke.firestoreId ?? joke.id.uuidString
+        Task.detached { AnalyticsService.shared.logJokeShared(jokeId: jokeId, method: "copy") }
 
         let text = joke.formattedTextForSharing(characterName: character.name)
         UIPasteboard.general.string = text
