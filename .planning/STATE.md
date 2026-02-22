@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 **Milestone:** v1.1.0 Bug Fixes
-Phase: 21 of 22 (First-Launch Responsiveness) — complete
+Phase: 22 of 22 (Feed Refresh Behavior) — complete
 Plan: 01 of 01
-Status: Phase 21 complete, ready to plan phase 22
-Last activity: 2026-02-22 — Phase 21 complete with iterative fixes (haptics, splash hold, analytics off main thread, deferred ViewModel)
+Status: Phase 22 complete, milestone complete
+Last activity: 2026-02-22 — Phase 22 complete: rated jokes reordered to bottom, scroll-to-top verified
 
-Progress: [=====     ] 50%
+Progress: [==========] 100%
 
 ## Shipped Milestones
 
@@ -35,6 +35,7 @@ Progress: [=====     ] 50%
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 21 | 01 | 30min | 2+3 | 5 |
+| 22 | 01 | 3min | 2 | 1 |
 
 ## Accumulated Context
 
@@ -44,6 +45,7 @@ See PROJECT.md Key Decisions table for full log.
 
 - Phase 21: Hold splash until Firestore fetch completes; move analytics to Task.detached; defer ViewModel creation for faster splash render
 - Debug builds show ~10s static launch screen from FirebaseApp.configure() — expected to be 1-2s in release builds
+- Phase 22: Removed sessionRatedJokeIds; rated jokes stay visible at bottom via userRating-based sorting in filteredJokes
 
 ### Open Items
 
@@ -58,12 +60,12 @@ See PROJECT.md Key Decisions table for full log.
 ## Session Continuity
 
 **Last session:** 2026-02-22
-**Stopped at:** Phase 21 complete
+**Stopped at:** Phase 22 complete — milestone complete
 **Resume file:** None
 
-**Next steps:** `/gsd:plan-phase 22` to plan feed reordering and pull-to-refresh fixes.
+**Next steps:** All phases in v1.1.0 Bug Fixes milestone complete.
 
 ---
 
 *State initialized: 2026-01-24*
-*Last updated: 2026-02-22 — Phase 21 complete (first-launch responsiveness)*
+*Last updated: 2026-02-22 — Phase 22 complete (feed refresh behavior)*
