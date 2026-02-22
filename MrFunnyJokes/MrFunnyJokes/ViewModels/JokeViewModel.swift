@@ -45,6 +45,10 @@ final class JokeViewModel: ObservableObject {
     private var initialLoadTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
+    /// Jokes rated during this session — kept in their current freshness tier
+    /// so they don't jump to the bottom immediately. Cleared on pull-to-refresh.
+    private var sessionRatedJokeIds: Set<String> = []
+
     /// Number of jokes to fetch per batch
     private let batchSize = 10
     /// Number of jokes to fetch per category on initial load
@@ -59,17 +63,43 @@ final class JokeViewModel: ObservableObject {
             categoryFiltered = jokes
         }
 
-        // Step 2: Separate into unrated and rated groups
-        // Unrated jokes appear first, rated jokes appear at the bottom
-        let unrated = categoryFiltered.filter { $0.userRating == nil }
-        let rated = categoryFiltered.filter { $0.userRating != nil }
+        // Step 2: Tier by freshness using impression data
+        // Unseen jokes first, then seen-but-unrated, then rated
+        // Session-rated jokes stay in their pre-rating tier (unseen or seen-unrated)
+        let impressionIds = cachedImpressionIds ?? storage.getImpressionIdsFast()
+        let ratedIds = cachedRatedIds ?? storage.getRatedJokeIdsFast()
 
-        // Step 3: Sort each group by popularity score (descending)
-        let sortedUnrated = unrated.sorted { $0.popularityScore > $1.popularityScore }
+        var unseen: [Joke] = []
+        var seenUnrated: [Joke] = []
+        var rated: [Joke] = []
+
+        for joke in categoryFiltered {
+            let key = joke.firestoreId ?? joke.id.uuidString
+            let isSessionRated = sessionRatedJokeIds.contains(key)
+
+            // Session-rated jokes: treat as if they were NOT rated for tiering
+            // They stay in their current position until pull-to-refresh
+            let effectivelyRated = joke.userRating != nil && !isSessionRated
+            let hasImpression = impressionIds.contains(key)
+            let persistedRated = ratedIds.contains(key) && !isSessionRated
+
+            if effectivelyRated || persistedRated {
+                rated.append(joke)
+            } else if !hasImpression {
+                unseen.append(joke)
+            } else {
+                seenUnrated.append(joke)
+            }
+        }
+
+        // Step 3: Sort within each tier by popularity (descending)
+        // PopularityScore as tiebreaker preserves quality ordering within tiers
+        let sortedUnseen = unseen.sorted { $0.popularityScore > $1.popularityScore }
+        let sortedSeenUnrated = seenUnrated.sorted { $0.popularityScore > $1.popularityScore }
         let sortedRated = rated.sorted { $0.popularityScore > $1.popularityScore }
 
-        // Step 4: Combine with unrated first, rated at bottom
-        let combined = sortedUnrated + sortedRated
+        // Step 4: Combine tiers — unseen first, seen-unrated middle, rated at bottom
+        let combined = sortedUnseen + sortedSeenUnrated + sortedRated
 
         // MARK: - Seasonal Content Ranking
         // Step 5: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
@@ -302,6 +332,13 @@ final class JokeViewModel: ObservableObject {
     func markJokeImpression(_ joke: Joke) {
         storage.markImpression(firestoreId: joke.firestoreId)
         // Invalidate cache since impressions changed
+        invalidateSortCache()
+    }
+
+    /// Marks a joke as explicitly viewed (detail sheet opened)
+    /// Uses the same impression tracking as scroll-viewport marking
+    func markJokeViewed(_ joke: Joke) {
+        storage.markImpression(firestoreId: joke.firestoreId)
         invalidateSortCache()
     }
 
@@ -571,6 +608,9 @@ final class JokeViewModel: ObservableObject {
         isBackgroundLoadingComplete = false
         isRefreshing = true
 
+        // Clear session tracking so rated/viewed jokes reorder on refresh
+        sessionRatedJokeIds.removeAll()
+
         do {
             // Reset pagination to get fresh data
             firestoreService.resetPagination()
@@ -821,6 +861,8 @@ final class JokeViewModel: ObservableObject {
 
         if rating == 0 {
             storage.removeRating(for: joke.id, firestoreId: joke.firestoreId)
+            let sessionKey = joke.firestoreId ?? joke.id.uuidString
+            sessionRatedJokeIds.remove(sessionKey)
             if let index = jokeIndex {
                 jokes[index].userRating = nil
             }
@@ -831,6 +873,8 @@ final class JokeViewModel: ObservableObject {
             let analyticsCharacter = joke.character ?? "unknown"
             Task.detached { AnalyticsService.shared.logJokeRated(jokeId: analyticsJokeId, character: analyticsCharacter, rating: ratingName) }
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
+            let sessionKey = joke.firestoreId ?? joke.id.uuidString
+            sessionRatedJokeIds.insert(sessionKey)
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
             } else {
