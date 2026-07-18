@@ -194,6 +194,13 @@ final class JokeViewModel: ObservableObject {
             print("Failed to fetch joke of the day from Firebase: \(error)")
             // Fallback to local jokes if Firebase fetch fails
             guard !jokes.isEmpty else { return nil }
+            // Same off-season exclusion as FirestoreService.fetchRandomJoke()
+            if !SeasonalHelper.isChristmasSeason() {
+                let nonChristmas = jokes.filter { !$0.isChristmasJoke }
+                if !nonChristmas.isEmpty {
+                    return nonChristmas.randomElement()
+                }
+            }
             return jokes.randomElement()
         }
     }
