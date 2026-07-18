@@ -30,7 +30,6 @@
 		A10000000000000000000025 /* SkeletonFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* SkeletonFeedView.swift */; };
 		A10000000000000000000026 /* SkeletonJokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */; };
 		A10000000000000000000028 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* FirestoreService.swift */; };
-		C319A0032F09D100007A6AFF /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319A0042F09D100007A6AFF /* AnalyticsService.swift */; };
 		A10000000000000000000029 /* FirestoreModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* FirestoreModels.swift */; };
 		B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* SharedJokeOfTheDay.swift */; };
 		B10000000000000000000002 /* SharedStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* SharedStorageService.swift */; };
@@ -47,11 +46,12 @@
 		B10000000000000000000013 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
 		B10000000000000000000014 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
 		B10000000000000000000015 /* WidgetDataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000011 /* WidgetDataFetcher.swift */; };
+		C319A0022F09D100007A6AFF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C319A0012F09D100007A6AFF /* FirebaseAnalytics */; };
+		C319A0032F09D100007A6AFF /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319A0042F09D100007A6AFF /* AnalyticsService.swift */; };
 		C333E63D2EE10888007377F4 /* CharacterCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */; };
 		C333E63E2EE10888007377F4 /* CharacterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E63C2EE10888007377F4 /* CharacterDetailView.swift */; };
 		C333E63F2EE10888007377F4 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E6402EE10888007377F4 /* Character.swift */; };
 		C333E6412EE10888007377F4 /* CharacterDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C333E6422EE10888007377F4 /* CharacterDetailViewModel.swift */; };
-		C319A0022F09D100007A6AFF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C319A0012F09D100007A6AFF /* FirebaseAnalytics */; };
 		C340D9632EE0A55A007A6AFF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9622EE0A55A007A6AFF /* FirebaseCore */; };
 		C340D9652EE0A55A007A6AFF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C340D9642EE0A55A007A6AFF /* FirebaseFirestore */; };
 		C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C340D9662EE0A848007A6AFF /* GoogleService-Info.plist */; };
@@ -119,7 +119,6 @@
 		A20000000000000000000026 /* SkeletonJokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonJokeOfTheDayView.swift; sourceTree = "<group>"; };
 		A20000000000000000000027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000028 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
-		C319A0042F09D100007A6AFF /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		A20000000000000000000029 /* FirestoreModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreModels.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* MrFunnyJokes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MrFunnyJokes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20000000000000000000001 /* SharedJokeOfTheDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJokeOfTheDay.swift; sourceTree = "<group>"; };
@@ -134,6 +133,7 @@
 		B20000000000000000000010 /* SharedJoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJoke.swift; sourceTree = "<group>"; };
 		B20000000000000000000011 /* WidgetDataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataFetcher.swift; sourceTree = "<group>"; };
 		B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JokeOfTheDayWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C319A0042F09D100007A6AFF /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterCarouselView.swift; sourceTree = "<group>"; };
 		C333E63C2EE10888007377F4 /* CharacterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDetailView.swift; sourceTree = "<group>"; };
 		C333E6402EE10888007377F4 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
@@ -680,7 +680,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -710,7 +710,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -740,7 +740,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
@@ -767,7 +767,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";

@@ -2,11 +2,11 @@ import SwiftUI
 
 struct MeView: View {
     @ObservedObject var viewModel: JokeViewModel
-    @State private var selectedJokeId: UUID?
+    @State private var selectedFirestoreId: String?
 
     private var selectedJoke: Joke? {
-        guard let id = selectedJokeId else { return nil }
-        return viewModel.jokes.first { $0.id == id }
+        guard let id = selectedFirestoreId else { return nil }
+        return viewModel.jokes.first { $0.firestoreId == id }
     }
 
     /// The character associated with a joke, if any
@@ -68,14 +68,14 @@ struct MeView: View {
         }
         .listStyle(.plain)
         .sheet(isPresented: Binding(
-            get: { selectedJokeId != nil },
-            set: { if !$0 { selectedJokeId = nil } }
+            get: { selectedFirestoreId != nil },
+            set: { if !$0 { selectedFirestoreId = nil } }
         )) {
             if let joke = selectedJoke {
                 JokeDetailSheet(
                     joke: joke,
                     isCopied: viewModel.copiedJokeId == joke.id,
-                    onDismiss: { selectedJokeId = nil },
+                    onDismiss: { selectedFirestoreId = nil },
                     onShare: { viewModel.shareJoke(joke) },
                     onCopy: { viewModel.copyJoke(joke) },
                     onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
@@ -90,7 +90,7 @@ struct MeView: View {
     private func jokeCard(for joke: Joke) -> some View {
         Button {
             HapticManager.shared.mediumImpact()
-            selectedJokeId = joke.id
+            selectedFirestoreId = joke.firestoreId
         } label: {
             VStack(alignment: .leading, spacing: 10) {
                 Text(joke.setup)

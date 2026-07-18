@@ -54,7 +54,6 @@ struct JokeDetailSheet: View {
                     VStack(spacing: 12) {
                         Button {
                             onSave()
-                            HapticManager.shared.lightTap()
                         } label: {
                             HStack(spacing: 8) {
                                 Image(systemName: joke.isSaved ? "person.fill" : "person")
