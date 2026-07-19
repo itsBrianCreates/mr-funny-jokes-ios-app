@@ -11,6 +11,9 @@ struct SearchView: View {
     /// Cached firestoreIds of matching jokes (stable across refreshes)
     @State private var cachedResultIds: [String] = []
 
+    /// In-flight semantic ranking task, cancelled when a newer query arrives
+    @State private var searchTask: Task<Void, Never>?
+
     /// Publisher for debouncing search input
     private let searchTextPublisher = PassthroughSubject<String, Never>()
 
@@ -32,28 +35,26 @@ struct SearchView: View {
         return cachedResultIds.compactMap { jokesById[$0] }
     }
 
-    /// Performs the actual search and caches matching joke IDs
+    /// Performs a hybrid semantic + keyword search and caches matching joke IDs.
+    ///
+    /// Ranking runs off the main thread (embeddings + cosine similarity) via
+    /// `SemanticSearchService`; results are assigned back on the main actor.
     private func performSearch(query: String) {
-        guard !query.isEmpty else {
-            cachedResultIds = []
-            return
-        }
-
         let queryLower = query.lowercased().trimmingCharacters(in: .whitespaces)
+
+        searchTask?.cancel()
+
         guard !queryLower.isEmpty else {
             cachedResultIds = []
             return
         }
 
-        // Filter and sort jokes, then extract their firestoreIds
-        cachedResultIds = viewModel.jokes.filter { joke in
-            joke.setup.lowercased().contains(queryLower) ||
-            joke.punchline.lowercased().contains(queryLower) ||
-            joke.character?.lowercased().contains(queryLower) == true ||
-            (joke.tags?.contains { $0.lowercased().contains(queryLower) } ?? false)
+        let snapshot = viewModel.jokes
+        searchTask = Task { @MainActor in
+            let ids = await SemanticSearchService.shared.rankedResultIds(for: query, in: snapshot)
+            guard !Task.isCancelled else { return }
+            cachedResultIds = ids
         }
-        .sorted { $0.popularityScore > $1.popularityScore }
-        .compactMap { $0.firestoreId }
     }
 
     var body: some View {
@@ -66,15 +67,25 @@ struct SearchView: View {
                 resultsList
             }
         }
-        .searchable(text: $searchText, prompt: "Search jokes")
+        .searchable(text: $searchText, prompt: "Search jokes by topic or keyword")
+        .onAppear {
+            // Load the full catalog so search covers every joke (not just the
+            // initial feed), and pre-warm embeddings so the first query is fast.
+            viewModel.triggerBackgroundLoadIfNeeded()
+            let snapshot = viewModel.jokes
+            Task { await SemanticSearchService.shared.warmUp(with: snapshot) }
+        }
         .onChange(of: searchText) { _, newValue in
             searchTextPublisher.send(newValue)
         }
         .onChange(of: viewModel.jokes.count) { _, _ in
-            // Re-search when jokes array changes (e.g., after refresh)
+            // Re-search when jokes array changes (e.g., as the catalog streams
+            // in) and warm up embeddings for the newly added jokes.
             let newHash = viewModel.jokes.count
             if lastJokesHash != newHash {
                 lastJokesHash = newHash
+                let snapshot = viewModel.jokes
+                Task { await SemanticSearchService.shared.warmUp(with: snapshot) }
                 performSearch(query: debouncedSearchText)
             }
         }
@@ -111,6 +122,12 @@ struct SearchView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundStyle(.primary)
+
+            Text("Search by topic like \u{201C}food\u{201D} or \u{201C}sports\u{201D} \u{2014} not just exact words.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {

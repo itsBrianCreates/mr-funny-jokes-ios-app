@@ -75,6 +75,7 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 | Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns |
 | Scoped withAnimation over implicit .animation() | Prevents scroll container animation interference on iOS 18 |
 | YouTube promo as standalone LazyVStack item | Prevents scroll anchor shifts from conditional content in ForEach |
+| On-device semantic search (NLEmbedding) | Hybrid keyword + sentence-embedding ranking; no backend/API cost, offline & private, fits small client-side catalog |
 
 ---
 
@@ -251,3 +252,4 @@ Say "CodeStory" to generate social media drafts from your session notes.
 | `.planning/codebase/CONVENTIONS.md` | Detailed code patterns |
 | `scripts/add-jokes.js` | Joke batch insertion script |
 | `Utilities/SeasonalHelper.swift` | Season detection and `Joke.isChristmasJoke` extension |
+| `Services/SemanticSearchService.swift` | On-device hybrid (keyword + `NLEmbedding`) search ranking |
