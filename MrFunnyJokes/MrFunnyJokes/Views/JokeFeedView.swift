@@ -43,97 +43,84 @@ struct JokeFeedView: View {
         return viewModel.filteredJokes.filter { $0.id != jotd.id }
     }
 
+    /// Feed columns adapt to available width: one column on a closed iPhone,
+    /// two or more on wide windows (iPhone Duo inner display, landscape Max, Mirroring).
+    /// Width-based rather than size-class-based so it reflows during live resizing.
+    private let feedColumns = [GridItem(.adaptive(minimum: 340), spacing: 16, alignment: .top)]
+
+    /// Joke currently anchored at the top of the viewport. Keeps the reader's place
+    /// when the column count changes (fold/unfold, rotation, window resize).
+    @State private var scrollPosition = ScrollPosition(idType: UUID.self)
+
+    /// True while the header is in view, so a width change leaves the user at the top
+    /// instead of snapping to the first joke card.
+    @State private var isNearTop = true
+
+    /// Where the reader settled after their last scroll. Captured only when a scroll comes
+    /// to rest, because a resize rewrites `scrollPosition` from the stale raw offset before
+    /// the width-change handler runs.
+    @State private var readingAnchorId: UUID?
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 16) {
-                    // Invisible top anchor for reliable scroll-to-top
-                    Color.clear
-                        .frame(height: 0)
-                        .id(topAnchorID)
-
-                    // Offline indicator banner
-                    if viewModel.isOffline {
-                        OfflineBannerView()
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                    }
-
-                    // Character carousel (only when "All" is selected)
-                    if showCharacterCarousel {
-                        CharacterCarouselView(onCharacterTap: onCharacterTap)
-                    }
-
-                    // Joke of the Day hero section (only when "All" is selected)
-                    if showJokeOfTheDay, let jokeOfTheDay = viewModel.jokeOfTheDay {
-                        JokeOfTheDayView(
-                            joke: jokeOfTheDay,
-                            isCopied: viewModel.copiedJokeId == jokeOfTheDay.id,
-                            onShare: { viewModel.shareJoke(jokeOfTheDay) },
-                            onCopy: { viewModel.copyJoke(jokeOfTheDay) },
-                            onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) },
-                            onSave: { viewModel.saveJoke(jokeOfTheDay) }
-                        )
-                        .onAppear {
-                            viewModel.markJokeImpression(jokeOfTheDay)
-                        }
-                    }
-
-                    // All-Time Top 10 carousel (only when "All" is selected)
-                    if showAllTimeTopTen {
-                        AllTimeTopTenCarouselView(
-                            viewModel: rankingsViewModel,
-                            onCardTap: { type in
-                                allTimeTopTenDestination = type
+                LazyVGrid(columns: feedColumns, spacing: 16) {
+                    Section {
+                        // Regular joke feed
+                        ForEach(feedJokes) { joke in
+                            JokeCardView(
+                                joke: joke,
+                                isCopied: viewModel.copiedJokeId == joke.id,
+                                onShare: { viewModel.shareJoke(joke) },
+                                onCopy: { viewModel.copyJoke(joke) },
+                                onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
+                                onSave: { viewModel.saveJoke(joke) },
+                                onView: { viewModel.markJokeViewed(joke) }
+                            )
+                            .onAppear {
+                                // Track impression for feed freshness
+                                viewModel.markJokeImpression(joke)
+                                // Trigger infinite scroll loading when approaching end
+                                viewModel.loadMoreIfNeeded(currentItem: joke)
                             }
-                        )
-                    }
-
-                    // YouTube promo card (only when "All" is selected and not dismissed)
-                    if showYouTubePromo {
-                        YouTubePromoCardView(onDismiss: {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                youtubePromoDismissed = true
-                            }
-                        })
-                        .transition(.asymmetric(
-                            insertion: .opacity,
-                            removal: .opacity.combined(with: .scale(scale: 0.95))
-                        ))
-                    }
-
-                    // Regular joke feed
-                    ForEach(feedJokes) { joke in
-                        JokeCardView(
-                            joke: joke,
-                            isCopied: viewModel.copiedJokeId == joke.id,
-                            onShare: { viewModel.shareJoke(joke) },
-                            onCopy: { viewModel.copyJoke(joke) },
-                            onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
-                            onSave: { viewModel.saveJoke(joke) },
-                            onView: { viewModel.markJokeViewed(joke) }
-                        )
-                        .onAppear {
-                            // Track impression for feed freshness
-                            viewModel.markJokeImpression(joke)
-                            // Trigger infinite scroll loading when approaching end
-                            viewModel.loadMoreIfNeeded(currentItem: joke)
                         }
-                    }
-
-                    // Loading more indicator (skeleton cards at bottom)
-                    if viewModel.isLoadingMore {
-                        LoadingMoreView()
-                            .transition(.opacity)
-                    }
-
-                    // End of feed message (when no more jokes)
-                    if !viewModel.hasMoreJokes && !feedJokes.isEmpty {
-                        EndOfFeedView()
+                    } header: {
+                        feedHeader
+                    } footer: {
+                        feedFooter
                     }
                 }
+                .scrollTargetLayout()
                 .padding(.horizontal)
                 .padding(.top, 8)
                 .padding(.bottom, 16)
+            }
+            .scrollPosition($scrollPosition, anchor: .top)
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top < 200
+            } action: { _, nearTop in
+                isNearTop = nearTop
+            }
+            .onScrollPhaseChange { oldPhase, newPhase in
+                // Only user-driven scrolls move the anchor; resizes and programmatic
+                // scrolls settle through other phases and must not overwrite it.
+                guard newPhase == .idle,
+                      oldPhase == .interacting || oldPhase == .decelerating else { return }
+                readingAnchorId = isNearTop ? nil : scrollPosition.viewID(type: UUID.self)
+            }
+            .onGeometryChange(for: CGFloat.self) { geometry in
+                geometry.size.width
+            } action: { _ in
+                // The scroll view keeps its raw offset across a width change, which lands
+                // on a different joke once the column count changes. Re-anchor explicitly.
+                guard let anchorId = readingAnchorId else { return }
+                scrollPosition.scrollTo(id: anchorId, anchor: .top)
+                // Lazy rows above the anchor are only estimated on the first pass;
+                // repeat once the new layout has measured them.
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(50))
+                    scrollPosition.scrollTo(id: anchorId, anchor: .top)
+                }
             }
             .refreshable {
                 // Full reset per CONTEXT.md
@@ -159,6 +146,83 @@ struct JokeFeedView: View {
                     jokeViewModel: viewModel,
                     selectedType: type
                 )
+            }
+        }
+    }
+
+    /// Full-width content above the joke grid
+    @ViewBuilder
+    private var feedHeader: some View {
+        VStack(spacing: 16) {
+            // Invisible top anchor for reliable scroll-to-top
+            Color.clear
+                .frame(height: 0)
+                .id(topAnchorID)
+
+            // Offline indicator banner
+            if viewModel.isOffline {
+                OfflineBannerView()
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
+            // Character carousel (only when "All" is selected)
+            if showCharacterCarousel {
+                CharacterCarouselView(onCharacterTap: onCharacterTap)
+            }
+
+            // Joke of the Day hero section (only when "All" is selected)
+            if showJokeOfTheDay, let jokeOfTheDay = viewModel.jokeOfTheDay {
+                JokeOfTheDayView(
+                    joke: jokeOfTheDay,
+                    isCopied: viewModel.copiedJokeId == jokeOfTheDay.id,
+                    onShare: { viewModel.shareJoke(jokeOfTheDay) },
+                    onCopy: { viewModel.copyJoke(jokeOfTheDay) },
+                    onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) },
+                    onSave: { viewModel.saveJoke(jokeOfTheDay) }
+                )
+                .onAppear {
+                    viewModel.markJokeImpression(jokeOfTheDay)
+                }
+            }
+
+            // All-Time Top 10 carousel (only when "All" is selected)
+            if showAllTimeTopTen {
+                AllTimeTopTenCarouselView(
+                    viewModel: rankingsViewModel,
+                    onCardTap: { type in
+                        allTimeTopTenDestination = type
+                    }
+                )
+            }
+
+            // YouTube promo card (only when "All" is selected and not dismissed)
+            if showYouTubePromo {
+                YouTubePromoCardView(onDismiss: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        youtubePromoDismissed = true
+                    }
+                })
+                .transition(.asymmetric(
+                    insertion: .opacity,
+                    removal: .opacity.combined(with: .scale(scale: 0.95))
+                ))
+            }
+        }
+    }
+
+    /// Full-width content below the joke grid
+    @ViewBuilder
+    private var feedFooter: some View {
+        VStack(spacing: 16) {
+            // Loading more indicator (skeleton cards at bottom)
+            if viewModel.isLoadingMore {
+                LoadingMoreView()
+                    .transition(.opacity)
+            }
+
+            // End of feed message (when no more jokes)
+            if !viewModel.hasMoreJokes && !feedJokes.isEmpty {
+                EndOfFeedView()
             }
         }
     }

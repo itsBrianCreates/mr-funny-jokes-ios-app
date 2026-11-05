@@ -54,6 +54,9 @@ struct JokeCardView: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
+                // Pins the metadata row to the bottom when a grid row stretches the card
+                Spacer(minLength: 0)
+
                 // Character, category and rating row
                 HStack(spacing: 8) {
                     // Character indicator (if available)
@@ -76,6 +79,7 @@ struct JokeCardView: View {
                     }
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .top)
             .padding()
             .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         }
