@@ -2,6 +2,10 @@ import Foundation
 import FirebaseFirestore
 
 /// Service for fetching jokes and characters from Firebase Firestore
+/// - Note: @MainActor serializes access to the pagination cursors below. Without it,
+///         the background catalog load and infinite-scroll loadMore race on
+///         `lastDocument` and crash. Network I/O still runs off the main thread.
+@MainActor
 final class FirestoreService {
     static let shared = FirestoreService()
 
