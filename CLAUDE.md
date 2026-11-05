@@ -242,6 +242,7 @@ Say "CodeStory" to generate social media drafts from your session notes.
 - Demoted outside Nov 1 - Dec 31 via `SeasonalHelper.isChristmasSeason()`
 - Demotion applied in `filteredJokes` computed properties (both `JokeViewModel` and `CharacterDetailViewModel`)
 - Pattern: partition array into non-seasonal + seasonal, then concatenate
+- JOTD fallback pool (`fetchRandomJoke`) excludes Christmas jokes off-season — popularity_score earned in December keeps them in the top-50 pool year-round otherwise
 
 ### Key Files
 | File | Purpose |

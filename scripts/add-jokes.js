@@ -41,162 +41,354 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Christmas jokes
-// NOTE: Use \n between setup and punchline so the card preview works correctly
+// Jokes to add - Mixed batch (March 27 2026)
 const JOKES_TO_ADD = [
+  // --- mr_funny (6 jokes) ---
+  {
+    "character": "mr_funny",
+    "text": "What do you call a polite snake? A civil serpent!",
+    "type": "dad_joke",
+    "tags": ["animals", "wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "I used to play piano by ear, but now I use my hands!",
+    "type": "dad_joke",
+    "tags": ["music", "wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "Why do seagulls fly over the sea? Because if they flew over the bay, they'd be bagels!",
+    "type": "dad_joke",
+    "tags": ["animals", "food", "wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "What do you call fake spaghetti? An impasta!",
+    "type": "dad_joke",
+    "tags": ["food", "wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "Why did the giraffe refuse to play hide-and-seek? Because he was always spotted!",
+    "type": "dad_joke",
+    "tags": ["animals", "wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_funny",
+    "text": "I only know 25 letters of the alphabet. I don't know Y.",
+    "type": "dad_joke",
+    "tags": ["wordplay"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  // --- mr_potty (8 jokes) ---
+  {
+    "character": "mr_potty",
+    "text": "Poop jokes aren't my favorite kind of jokes… but they're a solid number two!",
+    "type": "potty_joke",
+    "tags": ["bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_potty",
+    "text": "What kind of dog lives in the toilet? A poo-dle!",
+    "type": "potty_joke",
+    "tags": ["animals", "bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_potty",
+    "text": "How many people does it take to make the bathroom smell? Just a phew!",
+    "type": "potty_joke",
+    "tags": ["bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_potty",
+    "text": "What is a bathroom fairy called? Stinker-bella!",
+    "type": "potty_joke",
+    "tags": ["bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_potty",
+    "text": "What does Superman call his bathroom? The Super Bowl!",
+    "type": "potty_joke",
+    "tags": ["bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_potty",
+    "text": "Why do ducks have feathers? To cover their butt quacks!",
+    "type": "potty_joke",
+    "tags": ["animals", "bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_potty",
+    "text": "What do you get when a king farts? Noble gas!",
+    "type": "potty_joke",
+    "tags": ["bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_potty",
+    "text": "Why do cops sit on the toilet all day? Because it's their duty!",
+    "type": "potty_joke",
+    "tags": ["bathroom"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  // --- mr_bad (6 jokes) ---
   {
     "character": "mr_bad",
-    "text": "Why did Santa have to go to the hospital?\nBecause of his poor elf!",
-    "type": "dad_joke",
-    "tags": ["holidays", "health", "wordplay"],
+    "text": "My parents raised me as an only child, which really pissed off my sister!",
+    "type": "dark_joke",
+    "tags": ["family"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
     "character": "mr_bad",
-    "text": "What did the soccer announcer who made the naughty list get from Santa Claus?\nCOOOOOOAAAALLLLLLL!",
-    "type": "dad_joke",
-    "tags": ["holidays", "sports", "wordplay"],
+    "text": "As I get older, I remember all the people I lost along the way. Maybe a career as a tour guide was not the right choice!",
+    "type": "dark_joke",
+    "tags": ["life"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Where does Santa stay on vacation?\nAt a ho-ho-ho-tel!",
-    "type": "dad_joke",
-    "tags": ["holidays", "travel", "wordplay"],
+    "character": "mr_bad",
+    "text": "The guy who stole my diary just died. My thoughts are with his family.",
+    "type": "dark_joke",
+    "tags": ["life"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What do you call Santa when he's on a break?\nA Santa pause!",
-    "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "character": "mr_bad",
+    "text": "I childproofed my house. Somehow they still got in!",
+    "type": "dark_joke",
+    "tags": ["family"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Which of Santa's reindeer has the best moves?\nDancer!",
-    "type": "dad_joke",
-    "tags": ["holidays", "animals", "wordplay"],
+    "character": "mr_bad",
+    "text": "My grief counselor died, but he was so good at his job that I don't even care!",
+    "type": "dark_joke",
+    "tags": ["life"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Where does Santa store his suit?\nIn his Claus-et!",
-    "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "character": "mr_bad",
+    "text": "My mother told me, \"One man's trash is another man's treasure.\" Terrible way to learn I'm adopted!",
+    "type": "dark_joke",
+    "tags": ["family"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  // --- mr_love (8 jokes) ---
+  {
+    "character": "mr_love",
+    "text": "If you were a vegetable, you'd be a cute-cumber!",
+    "type": "pickup_line",
+    "tags": ["romantic", "food"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What did the ocean say when Santa flew over?\nNothing. It just waved.",
-    "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "character": "mr_love",
+    "text": "Are you a campfire? Because you're hot and I want s'more!",
+    "type": "pickup_line",
+    "tags": ["romantic", "food"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Where do Santa's elves go swimming?\nThe North pool!",
-    "type": "dad_joke",
-    "tags": ["holidays", "sports", "wordplay"],
+    "character": "mr_love",
+    "text": "Are you a keyboard? Because you're just my type!",
+    "type": "pickup_line",
+    "tags": ["romantic", "technology"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "What kind of motorcycle does Santa drive?\nA Holly Davidson!",
-    "type": "dad_joke",
-    "tags": ["holidays", "travel", "wordplay"],
+    "character": "mr_love",
+    "text": "Are you a plot twist? Because I didn't see you coming!",
+    "type": "pickup_line",
+    "tags": ["romantic", "clever"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "Why does Santa have three gardens?\nSo he can \"ho ho ho\"!",
-    "type": "dad_joke",
-    "tags": ["holidays", "wordplay"],
+    "character": "mr_love",
+    "text": "If you were a burger at McDonald's, you'd be McGorgeous!",
+    "type": "pickup_line",
+    "tags": ["romantic", "food"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   },
   {
-    "character": "mr_funny",
-    "text": "How do elves respond when Santa takes attendance?\n\"Present!\"",
-    "type": "dad_joke",
-    "tags": ["holidays", "school", "wordplay"],
+    "character": "mr_love",
+    "text": "Are you the square root of -1? Because you can't be real!",
+    "type": "pickup_line",
+    "tags": ["romantic", "science"],
     "sfw": true,
     "source": "classic",
-    "likes": 0,
-    "dislikes": 0,
-    "rating_sum": 0,
-    "rating_count": 0,
-    "rating_avg": 0,
-    "popularity_score": 0
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_love",
+    "text": "Can I tie your shoes? I don't want you falling for anyone else!",
+    "type": "pickup_line",
+    "tags": ["romantic", "clever"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_love",
+    "text": "Your hands look heavy — can I hold them for you?",
+    "type": "pickup_line",
+    "tags": ["romantic", "sweet"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  // --- mr_sad (9 jokes) ---
+  {
+    "character": "mr_sad",
+    "text": "I'm terrified of elevators. I'm taking steps to avoid them.",
+    "type": "sad_joke",
+    "tags": ["life"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "Parallel lines have so much in common. It's a shame they'll never meet.",
+    "type": "sad_joke",
+    "tags": ["life"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "I threw a boomerang a few years ago. Now I live in constant fear.",
+    "type": "sad_joke",
+    "tags": ["life"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "I'm the human equivalent of a typo.",
+    "type": "sad_joke",
+    "tags": ["self_worth"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "I'm very familiar with paranormal activity. I keep getting ghosted!",
+    "type": "sad_joke",
+    "tags": ["relationships"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "Do mood swings count as exercise?",
+    "type": "sad_joke",
+    "tags": ["life"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "People say I'm creative and I couldn't agree more because I create most of my own problems!",
+    "type": "sad_joke",
+    "tags": ["self_worth"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "Every day is Friday when you're unemployed.",
+    "type": "sad_joke",
+    "tags": ["life"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "I said \"hello\" to darkness my old friend, and it told me that it doesn't want to be my friend.",
+    "type": "sad_joke",
+    "tags": ["life", "sadness"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
+  },
+  {
+    "character": "mr_sad",
+    "text": "I'm only posting on social media so everyone else can feel better about themselves. You're welcome.",
+    "type": "sad_joke",
+    "tags": ["technology", "self_worth"],
+    "sfw": true,
+    "source": "classic",
+    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
   }
 ];
 
