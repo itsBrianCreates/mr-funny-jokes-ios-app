@@ -8,6 +8,10 @@ struct JokeCardView: View {
     let onRate: (Int) -> Void
     let onSave: () -> Void
     let onView: () -> Void
+    /// When set, a tap hands the joke to the caller instead of opening this card's own sheet
+    var onSelect: (() -> Void)? = nil
+    /// Highlights the card while its joke is shown in a detail pane
+    var isSelected = false
 
     @State private var showingSheet = false
 
@@ -43,7 +47,11 @@ struct JokeCardView: View {
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
-            showingSheet = true
+            if let onSelect {
+                onSelect()
+            } else {
+                showingSheet = true
+            }
             onView()
         } label: {
             VStack(alignment: .leading, spacing: 12) {
@@ -82,6 +90,12 @@ struct JokeCardView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .padding()
             .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(Color.accessibleYellow, lineWidth: 2)
+                }
+            }
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showingSheet) {

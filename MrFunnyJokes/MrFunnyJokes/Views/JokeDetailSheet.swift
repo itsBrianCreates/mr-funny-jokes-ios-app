@@ -9,139 +9,16 @@ struct JokeDetailSheet: View {
     let onRate: (Int) -> Void
     let onSave: () -> Void
 
-    /// Tracks whether the joke ID was copied to clipboard
-    @State private var isJokeIdCopied = false
-
-    /// The character associated with this joke, if any
-    private var jokeCharacter: JokeCharacter? {
-        guard let characterName = joke.character else { return nil }
-        return JokeCharacter.find(byName: characterName)
-    }
-
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    // Setup and Punchline - formatted differently for knock-knock jokes
-                    if joke.category == .knockKnock {
-                        knockKnockContent
-                    } else {
-                        standardContent
-                    }
-
-                    // Character and Category
-                    HStack(spacing: 8) {
-                        // Character indicator (if available)
-                        if let character = jokeCharacter {
-                            CharacterIndicatorView(character: character)
-                        }
-
-                        // Category
-                        HStack(spacing: 4) {
-                            Image(systemName: joke.category.icon)
-                            Text(joke.category.rawValue)
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    }
-
-                    // Rating section
-                    BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
-
-                    Divider()
-
-                    // Action buttons - iOS style
-                    VStack(spacing: 12) {
-                        Button {
-                            onSave()
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: joke.isSaved ? "person.fill" : "person")
-                                    .contentTransition(.symbolEffect(.replace))
-                                Text(joke.isSaved ? "Saved" : "Save")
-                                    .font(.body.weight(.semibold))
-                            }
-                            .frame(maxWidth: .infinity, minHeight: 24)
-                            .padding(.vertical, 14)
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(joke.isSaved ? .green : .blue)
-                        .animation(.easeInOut(duration: 0.2), value: joke.isSaved)
-
-                        Button {
-                            onCopy()
-                        } label: {
-                            HStack {
-                                Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                                    .contentTransition(.symbolEffect(.replace))
-                                Text(isCopied ? "Copied" : "Copy")
-                                    .font(.body.weight(.semibold))
-                            }
-                            .frame(maxWidth: .infinity, minHeight: 24)
-                            .padding(.vertical, 14)
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(isCopied ? .green : .blue)
-                        .animation(.easeInOut(duration: 0.2), value: isCopied)
-
-                        Button {
-                            onShare()
-                        } label: {
-                            HStack {
-                                Image(systemName: "square.and.arrow.up")
-                                Text("Share")
-                                    .font(.body.weight(.semibold))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.blue)
-                    }
-
-                    // Joke ID for Firebase reference - tap to copy
-                    if let jokeId = joke.firestoreId {
-                        Button {
-                            UIPasteboard.general.string = jokeId
-                            isJokeIdCopied = true
-
-                            // Reset after 2 seconds
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                isJokeIdCopied = false
-                            }
-                        } label: {
-                            VStack(spacing: 4) {
-                                HStack(spacing: 4) {
-                                    Text(isJokeIdCopied ? "Copied!" : "Joke ID")
-                                    Image(systemName: isJokeIdCopied ? "checkmark.circle.fill" : "doc.on.doc")
-                                        .font(.caption2)
-                                        .contentTransition(.symbolEffect(.replace))
-                                }
-                                .font(.caption2)
-                                .foregroundColor(isJokeIdCopied ? .green : Color(.tertiaryLabel))
-
-                                Text(jokeId)
-                                    .font(.caption.monospaced())
-                                    .foregroundStyle(isJokeIdCopied ? .green : .secondary)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(isJokeIdCopied ? Color.green.opacity(0.1) : Color.clear)
-                            )
-                            .animation(.easeInOut(duration: 0.2), value: isJokeIdCopied)
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.top, 8)
-                    }
-
-                    Spacer(minLength: 20)
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-            }
+            JokeDetailContent(
+                joke: joke,
+                isCopied: isCopied,
+                onShare: onShare,
+                onCopy: onCopy,
+                onRate: onRate,
+                onSave: onSave
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -158,6 +35,153 @@ struct JokeDetailSheet: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .presentationBackground(.ultraThinMaterial)
+    }
+}
+
+// MARK: - Joke Detail Content
+
+/// Punchline, rating and actions for a joke. Shown inside `JokeDetailSheet` on compact
+/// widths and in the feed's detail pane on wide ones (iPhone Duo inner display).
+struct JokeDetailContent: View {
+    let joke: Joke
+    let isCopied: Bool
+    let onShare: () -> Void
+    let onCopy: () -> Void
+    let onRate: (Int) -> Void
+    let onSave: () -> Void
+
+    /// Tracks whether the joke ID was copied to clipboard
+    @State private var isJokeIdCopied = false
+
+    /// The character associated with this joke, if any
+    private var jokeCharacter: JokeCharacter? {
+        guard let characterName = joke.character else { return nil }
+        return JokeCharacter.find(byName: characterName)
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                // Setup and Punchline - formatted differently for knock-knock jokes
+                if joke.category == .knockKnock {
+                    knockKnockContent
+                } else {
+                    standardContent
+                }
+
+                // Character and Category
+                HStack(spacing: 8) {
+                    // Character indicator (if available)
+                    if let character = jokeCharacter {
+                        CharacterIndicatorView(character: character)
+                    }
+
+                    // Category
+                    HStack(spacing: 4) {
+                        Image(systemName: joke.category.icon)
+                        Text(joke.category.rawValue)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+
+                // Rating section
+                BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
+
+                Divider()
+
+                // Action buttons - iOS style
+                VStack(spacing: 12) {
+                    Button {
+                        onSave()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: joke.isSaved ? "person.fill" : "person")
+                                .contentTransition(.symbolEffect(.replace))
+                            Text(joke.isSaved ? "Saved" : "Save")
+                                .font(.body.weight(.semibold))
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 24)
+                        .padding(.vertical, 14)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(joke.isSaved ? .green : .blue)
+                    .animation(.easeInOut(duration: 0.2), value: joke.isSaved)
+
+                    Button {
+                        onCopy()
+                    } label: {
+                        HStack {
+                            Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+                                .contentTransition(.symbolEffect(.replace))
+                            Text(isCopied ? "Copied" : "Copy")
+                                .font(.body.weight(.semibold))
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 24)
+                        .padding(.vertical, 14)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(isCopied ? .green : .blue)
+                    .animation(.easeInOut(duration: 0.2), value: isCopied)
+
+                    Button {
+                        onShare()
+                    } label: {
+                        HStack {
+                            Image(systemName: "square.and.arrow.up")
+                            Text("Share")
+                                .font(.body.weight(.semibold))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.blue)
+                }
+
+                // Joke ID for Firebase reference - tap to copy
+                if let jokeId = joke.firestoreId {
+                    Button {
+                        UIPasteboard.general.string = jokeId
+                        isJokeIdCopied = true
+
+                        // Reset after 2 seconds
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            isJokeIdCopied = false
+                        }
+                    } label: {
+                        VStack(spacing: 4) {
+                            HStack(spacing: 4) {
+                                Text(isJokeIdCopied ? "Copied!" : "Joke ID")
+                                Image(systemName: isJokeIdCopied ? "checkmark.circle.fill" : "doc.on.doc")
+                                    .font(.caption2)
+                                    .contentTransition(.symbolEffect(.replace))
+                            }
+                            .font(.caption2)
+                            .foregroundColor(isJokeIdCopied ? .green : Color(.tertiaryLabel))
+
+                            Text(jokeId)
+                                .font(.caption.monospaced())
+                                .foregroundStyle(isJokeIdCopied ? .green : .secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(isJokeIdCopied ? Color.green.opacity(0.1) : Color.clear)
+                        )
+                        .animation(.easeInOut(duration: 0.2), value: isJokeIdCopied)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 8)
+                }
+
+                Spacer(minLength: 20)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+        }
     }
 
     // MARK: - Standard Joke Content

@@ -7,6 +7,8 @@ struct JokeOfTheDayView: View {
     let onCopy: () -> Void
     let onRate: (Int) -> Void
     let onSave: () -> Void
+    /// When set, a tap hands the joke to the caller instead of opening this view's own sheet
+    var onSelect: (() -> Void)? = nil
 
     @State private var showingSheet = false
     @State private var isAppearing = false
@@ -45,7 +47,11 @@ struct JokeOfTheDayView: View {
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
-            showingSheet = true
+            if let onSelect {
+                onSelect()
+            } else {
+                showingSheet = true
+            }
         } label: {
             VStack(alignment: .leading, spacing: 12) {
                 // Badge inside the card

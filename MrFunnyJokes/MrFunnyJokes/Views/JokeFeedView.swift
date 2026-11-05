@@ -61,84 +61,67 @@ struct JokeFeedView: View {
     /// the width-change handler runs.
     @State private var readingAnchorId: UUID?
 
+    /// At this width jokes open in a pane beside the feed instead of a sheet
+    /// (iPhone Duo inner display, landscape Max).
+    private let splitMinWidth: CGFloat = 700
+
+    @State private var containerWidth: CGFloat = 0
+
+    /// Joke shown in the detail pane or sheet. Stored as an ID so ratings and saves
+    /// always read fresh view-model data.
+    @State private var selectedJokeId: UUID?
+
+    private var isSplit: Bool {
+        containerWidth >= splitMinWidth
+    }
+
+    private var feedPaneWidth: CGFloat {
+        min(max(containerWidth * 0.42, 340), 440)
+    }
+
+    private var selectedJoke: Joke? {
+        guard let id = selectedJokeId else { return nil }
+        if let jotd = viewModel.jokeOfTheDay, jotd.id == id { return jotd }
+        return viewModel.jokes.first { $0.id == id }
+    }
+
+    /// Sheet for compact widths. The selection survives fold and unfold: unfolding hands
+    /// it to the pane, folding hands it back to the sheet.
+    private var compactSheetJoke: Binding<Joke?> {
+        Binding(
+            get: { isSplit ? nil : selectedJoke },
+            set: { joke in
+                if joke == nil, !isSplit { selectedJokeId = nil }
+            }
+        )
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
-            ScrollView {
-                LazyVGrid(columns: feedColumns, spacing: 16) {
-                    Section {
-                        // Regular joke feed
-                        ForEach(feedJokes) { joke in
-                            JokeCardView(
-                                joke: joke,
-                                isCopied: viewModel.copiedJokeId == joke.id,
-                                onShare: { viewModel.shareJoke(joke) },
-                                onCopy: { viewModel.copyJoke(joke) },
-                                onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
-                                onSave: { viewModel.saveJoke(joke) },
-                                onView: { viewModel.markJokeViewed(joke) }
-                            )
-                            .onAppear {
-                                // Track impression for feed freshness
-                                viewModel.markJokeImpression(joke)
-                                // Trigger infinite scroll loading when approaching end
-                                viewModel.loadMoreIfNeeded(currentItem: joke)
-                            }
-                        }
-                    } header: {
-                        feedHeader
-                    } footer: {
-                        feedFooter
-                    }
+            HStack(spacing: 0) {
+                feedScrollView(proxy: proxy)
+                    .frame(width: isSplit ? feedPaneWidth : nil)
+
+                if isSplit {
+                    Divider()
+                    detailPane
                 }
-                .scrollTargetLayout()
-                .padding(.horizontal)
-                .padding(.top, 8)
-                .padding(.bottom, 16)
-            }
-            .scrollPosition($scrollPosition, anchor: .top)
-            .onScrollGeometryChange(for: Bool.self) { geometry in
-                geometry.contentOffset.y + geometry.contentInsets.top < 200
-            } action: { _, nearTop in
-                isNearTop = nearTop
-            }
-            .onScrollPhaseChange { oldPhase, newPhase in
-                // Only user-driven scrolls move the anchor; resizes and programmatic
-                // scrolls settle through other phases and must not overwrite it.
-                guard newPhase == .idle,
-                      oldPhase == .interacting || oldPhase == .decelerating else { return }
-                readingAnchorId = isNearTop ? nil : scrollPosition.viewID(type: UUID.self)
             }
             .onGeometryChange(for: CGFloat.self) { geometry in
                 geometry.size.width
-            } action: { _ in
-                // The scroll view keeps its raw offset across a width change, which lands
-                // on a different joke once the column count changes. Re-anchor explicitly.
-                guard let anchorId = readingAnchorId else { return }
-                scrollPosition.scrollTo(id: anchorId, anchor: .top)
-                // Lazy rows above the anchor are only estimated on the first pass;
-                // repeat once the new layout has measured them.
-                Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(50))
-                    scrollPosition.scrollTo(id: anchorId, anchor: .top)
-                }
+            } action: { width in
+                containerWidth = width
             }
-            .refreshable {
-                // Full reset per CONTEXT.md
-                await viewModel.refresh()
-                // Scroll to top after refresh - delay needed for SwiftUI refresh animation to complete
-                try? await Task.sleep(for: .milliseconds(100))
-                withAnimation(.easeOut(duration: 0.2)) {
-                    proxy.scrollTo(topAnchorID, anchor: .top)
-                }
-            }
-            .onChange(of: viewModel.selectedCategory) {
-                // Scroll to top when filter changes
-                Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(50))
-                    withAnimation(.easeOut(duration: 0.25)) {
-                        proxy.scrollTo(topAnchorID, anchor: .top)
-                    }
-                }
+            .sheet(item: compactSheetJoke) { joke in
+                JokeDetailSheet(
+                    joke: joke,
+                    isCopied: viewModel.copiedJokeId == joke.id,
+                    onDismiss: { selectedJokeId = nil },
+                    onShare: { viewModel.shareJoke(joke) },
+                    onCopy: { viewModel.copyJoke(joke) },
+                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
+                    onSave: { viewModel.saveJoke(joke) }
+                )
             }
             .navigationDestination(item: $allTimeTopTenDestination) { type in
                 AllTimeTopTenDetailView(
@@ -147,6 +130,114 @@ struct JokeFeedView: View {
                     selectedType: type
                 )
             }
+        }
+    }
+
+    /// The scrolling feed: full-width header, joke grid, footer
+    private func feedScrollView(proxy: ScrollViewProxy) -> some View {
+        ScrollView {
+            LazyVGrid(columns: feedColumns, spacing: 16) {
+                Section {
+                    // Regular joke feed
+                    ForEach(feedJokes) { joke in
+                        JokeCardView(
+                            joke: joke,
+                            isCopied: viewModel.copiedJokeId == joke.id,
+                            onShare: { viewModel.shareJoke(joke) },
+                            onCopy: { viewModel.copyJoke(joke) },
+                            onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
+                            onSave: { viewModel.saveJoke(joke) },
+                            onView: { viewModel.markJokeViewed(joke) },
+                            onSelect: { selectedJokeId = joke.id },
+                            isSelected: isSplit && selectedJokeId == joke.id
+                        )
+                        .onAppear {
+                            // Track impression for feed freshness
+                            viewModel.markJokeImpression(joke)
+                            // Trigger infinite scroll loading when approaching end
+                            viewModel.loadMoreIfNeeded(currentItem: joke)
+                        }
+                    }
+                } header: {
+                    feedHeader
+                } footer: {
+                    feedFooter
+                }
+            }
+            .scrollTargetLayout()
+            .padding(.horizontal)
+            .padding(.top, 8)
+            .padding(.bottom, 16)
+        }
+        .scrollPosition($scrollPosition, anchor: .top)
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top < 200
+        } action: { _, nearTop in
+            isNearTop = nearTop
+        }
+        .onScrollPhaseChange { oldPhase, newPhase in
+            // Only user-driven scrolls move the anchor; resizes and programmatic
+            // scrolls settle through other phases and must not overwrite it.
+            guard newPhase == .idle,
+                  oldPhase == .interacting || oldPhase == .decelerating else { return }
+            readingAnchorId = isNearTop ? nil : scrollPosition.viewID(type: UUID.self)
+        }
+        .onGeometryChange(for: CGFloat.self) { geometry in
+            geometry.size.width
+        } action: { _ in
+            // The scroll view keeps its raw offset across a width change, which lands
+            // on a different joke once the column count changes. Re-anchor explicitly.
+            guard let anchorId = readingAnchorId else { return }
+            scrollPosition.scrollTo(id: anchorId, anchor: .top)
+            // Lazy rows above the anchor are only estimated on the first pass;
+            // repeat once the new layout has measured them.
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(50))
+                scrollPosition.scrollTo(id: anchorId, anchor: .top)
+            }
+        }
+        .refreshable {
+            // Full reset per CONTEXT.md
+            await viewModel.refresh()
+            // Scroll to top after refresh - delay needed for SwiftUI refresh animation to complete
+            try? await Task.sleep(for: .milliseconds(100))
+            withAnimation(.easeOut(duration: 0.2)) {
+                proxy.scrollTo(topAnchorID, anchor: .top)
+            }
+        }
+        .onChange(of: viewModel.selectedCategory) {
+            // Scroll to top when filter changes
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(50))
+                withAnimation(.easeOut(duration: 0.25)) {
+                    proxy.scrollTo(topAnchorID, anchor: .top)
+                }
+            }
+        }
+    }
+
+    /// The selected joke beside the feed on wide windows
+    @ViewBuilder
+    private var detailPane: some View {
+        if let joke = selectedJoke {
+            JokeDetailContent(
+                joke: joke,
+                isCopied: viewModel.copiedJokeId == joke.id,
+                onShare: { viewModel.shareJoke(joke) },
+                onCopy: { viewModel.copyJoke(joke) },
+                onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
+                onSave: { viewModel.saveJoke(joke) }
+            )
+            // New identity per joke resets its scroll position and copied-ID state
+            .id(joke.id)
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
+        } else {
+            ContentUnavailableView(
+                "Pick a Joke",
+                systemImage: "face.smiling",
+                description: Text("Tap any joke to see the punchline here.")
+            )
         }
     }
 
@@ -178,7 +269,8 @@ struct JokeFeedView: View {
                     onShare: { viewModel.shareJoke(jokeOfTheDay) },
                     onCopy: { viewModel.copyJoke(jokeOfTheDay) },
                     onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) },
-                    onSave: { viewModel.saveJoke(jokeOfTheDay) }
+                    onSave: { viewModel.saveJoke(jokeOfTheDay) },
+                    onSelect: { selectedJokeId = jokeOfTheDay.id }
                 )
                 .onAppear {
                     viewModel.markJokeImpression(jokeOfTheDay)
