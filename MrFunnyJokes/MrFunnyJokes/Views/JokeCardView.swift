@@ -61,9 +61,8 @@ struct JokeCardView: View {
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
-                // Pins the metadata row to the bottom when a grid row stretches the card
-                Spacer(minLength: 0)
+                    // Never give up lines to the flexible row below
+                    .fixedSize(horizontal: false, vertical: true)
 
                 // Character, category and rating row
                 HStack(spacing: 8) {
@@ -86,6 +85,9 @@ struct JokeCardView: View {
                         CompactRatingView(rating: rating)
                     }
                 }
+                // Sits at the bottom when a grid row stretches the card. A flexible frame
+                // rather than a Spacer, which would double the gap above this row.
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding()

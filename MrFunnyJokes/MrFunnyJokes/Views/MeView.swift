@@ -2,12 +2,8 @@ import SwiftUI
 
 struct MeView: View {
     @ObservedObject var viewModel: JokeViewModel
-    @State private var selectedFirestoreId: String?
-
-    private var selectedJoke: Joke? {
-        guard let id = selectedFirestoreId else { return nil }
-        return viewModel.jokes.first { $0.firestoreId == id }
-    }
+    /// Joke shown in the detail pane or sheet. An ID, so it always reads fresh data.
+    @State private var selectedJokeId: UUID?
 
     /// The character associated with a joke, if any
     private func jokeCharacter(for joke: Joke) -> JokeCharacter? {
@@ -19,7 +15,9 @@ struct MeView: View {
         if viewModel.savedJokes.isEmpty {
             emptyState
         } else {
-            savedJokesList
+            JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
+                savedJokesList(isSplit: isSplit)
+            }
         }
     }
 
@@ -49,10 +47,10 @@ struct MeView: View {
 
     // MARK: - Saved Jokes List
 
-    private var savedJokesList: some View {
+    private func savedJokesList(isSplit: Bool) -> some View {
         List {
             ForEach(viewModel.savedJokes) { joke in
-                jokeCard(for: joke)
+                jokeCard(for: joke, isSelected: isSplit && selectedJokeId == joke.id)
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
@@ -67,30 +65,14 @@ struct MeView: View {
             }
         }
         .listStyle(.plain)
-        .sheet(isPresented: Binding(
-            get: { selectedFirestoreId != nil },
-            set: { if !$0 { selectedFirestoreId = nil } }
-        )) {
-            if let joke = selectedJoke {
-                JokeDetailSheet(
-                    joke: joke,
-                    isCopied: viewModel.copiedJokeId == joke.id,
-                    onDismiss: { selectedFirestoreId = nil },
-                    onShare: { viewModel.shareJoke(joke) },
-                    onCopy: { viewModel.copyJoke(joke) },
-                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
-                    onSave: { viewModel.saveJoke(joke) }
-                )
-            }
-        }
     }
 
     // MARK: - Joke Card
 
-    private func jokeCard(for joke: Joke) -> some View {
+    private func jokeCard(for joke: Joke, isSelected: Bool) -> some View {
         Button {
             HapticManager.shared.mediumImpact()
-            selectedFirestoreId = joke.firestoreId
+            selectedJokeId = joke.id
         } label: {
             VStack(alignment: .leading, spacing: 10) {
                 Text(joke.setup)
@@ -119,6 +101,12 @@ struct MeView: View {
             }
             .padding()
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(Color.accessibleYellow, lineWidth: 2)
+                }
+            }
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(.plain)

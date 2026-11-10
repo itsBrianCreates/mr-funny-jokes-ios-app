@@ -25,6 +25,7 @@
 		A10000000000000000000020 /* JokeDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* JokeDetailSheet.swift */; };
 		A10000000000000000000021 /* JokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* JokeOfTheDayView.swift */; };
 		A10000000000000000000022 /* YouTubePromoCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* YouTubePromoCardView.swift */; };
+		A100000000000000000000F7 /* JokeListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F7 /* JokeListDetailView.swift */; };
 		A10000000000000000000023 /* ShimmerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* ShimmerModifier.swift */; };
 		A10000000000000000000024 /* SkeletonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* SkeletonCardView.swift */; };
 		A10000000000000000000025 /* SkeletonFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* SkeletonFeedView.swift */; };
@@ -113,6 +114,7 @@
 		A20000000000000000000020 /* JokeDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeDetailSheet.swift; sourceTree = "<group>"; };
 		A20000000000000000000021 /* JokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayView.swift; sourceTree = "<group>"; };
 		A20000000000000000000022 /* YouTubePromoCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePromoCardView.swift; sourceTree = "<group>"; };
+		A200000000000000000000F7 /* JokeListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeListDetailView.swift; sourceTree = "<group>"; };
 		A20000000000000000000023 /* ShimmerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerModifier.swift; sourceTree = "<group>"; };
 		A20000000000000000000024 /* SkeletonCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonCardView.swift; sourceTree = "<group>"; };
 		A20000000000000000000025 /* SkeletonFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonFeedView.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 				A20000000000000000000020 /* JokeDetailSheet.swift */,
 				A20000000000000000000021 /* JokeOfTheDayView.swift */,
 				A20000000000000000000022 /* YouTubePromoCardView.swift */,
+				A200000000000000000000F7 /* JokeListDetailView.swift */,
 				F20000000000000000000001 /* SplashScreenView.swift */,
 			);
 			path = Views;
@@ -509,6 +512,7 @@
 				A10000000000000000000021 /* JokeOfTheDayView.swift in Sources */,
 				C3DE8C122EEA7FE7009729AF /* SettingsView.swift in Sources */,
 				A10000000000000000000022 /* YouTubePromoCardView.swift in Sources */,
+				A100000000000000000000F7 /* JokeListDetailView.swift in Sources */,
 				A10000000000000000000023 /* ShimmerModifier.swift in Sources */,
 				A10000000000000000000024 /* SkeletonCardView.swift in Sources */,
 				A10000000000000000000025 /* SkeletonFeedView.swift in Sources */,

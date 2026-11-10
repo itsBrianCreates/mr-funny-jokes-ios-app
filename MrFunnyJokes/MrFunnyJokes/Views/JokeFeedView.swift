@@ -61,67 +61,14 @@ struct JokeFeedView: View {
     /// the width-change handler runs.
     @State private var readingAnchorId: UUID?
 
-    /// At this width jokes open in a pane beside the feed instead of a sheet
-    /// (iPhone Duo inner display, landscape Max).
-    private let splitMinWidth: CGFloat = 700
-
-    @State private var containerWidth: CGFloat = 0
-
     /// Joke shown in the detail pane or sheet. Stored as an ID so ratings and saves
     /// always read fresh view-model data.
     @State private var selectedJokeId: UUID?
 
-    private var isSplit: Bool {
-        containerWidth >= splitMinWidth
-    }
-
-    private var feedPaneWidth: CGFloat {
-        min(max(containerWidth * 0.42, 340), 440)
-    }
-
-    private var selectedJoke: Joke? {
-        guard let id = selectedJokeId else { return nil }
-        if let jotd = viewModel.jokeOfTheDay, jotd.id == id { return jotd }
-        return viewModel.jokes.first { $0.id == id }
-    }
-
-    /// Sheet for compact widths. The selection survives fold and unfold: unfolding hands
-    /// it to the pane, folding hands it back to the sheet.
-    private var compactSheetJoke: Binding<Joke?> {
-        Binding(
-            get: { isSplit ? nil : selectedJoke },
-            set: { joke in
-                if joke == nil, !isSplit { selectedJokeId = nil }
-            }
-        )
-    }
-
     var body: some View {
         ScrollViewReader { proxy in
-            HStack(spacing: 0) {
-                feedScrollView(proxy: proxy)
-                    .frame(width: isSplit ? feedPaneWidth : nil)
-
-                if isSplit {
-                    Divider()
-                    detailPane
-                }
-            }
-            .onGeometryChange(for: CGFloat.self) { geometry in
-                geometry.size.width
-            } action: { width in
-                containerWidth = width
-            }
-            .sheet(item: compactSheetJoke) { joke in
-                JokeDetailSheet(
-                    joke: joke,
-                    isCopied: viewModel.copiedJokeId == joke.id,
-                    onDismiss: { selectedJokeId = nil },
-                    onShare: { viewModel.shareJoke(joke) },
-                    onCopy: { viewModel.copyJoke(joke) },
-                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
-                    onSave: { viewModel.saveJoke(joke) }
-                )
+            JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
+                feedScrollView(proxy: proxy, isSplit: isSplit)
             }
             .navigationDestination(item: $allTimeTopTenDestination) { type in
                 AllTimeTopTenDetailView(
@@ -134,7 +81,7 @@ struct JokeFeedView: View {
     }
 
     /// The scrolling feed: full-width header, joke grid, footer
-    private func feedScrollView(proxy: ScrollViewProxy) -> some View {
+    private func feedScrollView(proxy: ScrollViewProxy, isSplit: Bool) -> some View {
         ScrollView {
             LazyVGrid(columns: feedColumns, spacing: 16) {
                 Section {
@@ -159,7 +106,7 @@ struct JokeFeedView: View {
                         }
                     }
                 } header: {
-                    feedHeader
+                    feedHeader(isSplit: isSplit)
                 } footer: {
                     feedFooter
                 }
@@ -216,34 +163,9 @@ struct JokeFeedView: View {
         }
     }
 
-    /// The selected joke beside the feed on wide windows
-    @ViewBuilder
-    private var detailPane: some View {
-        if let joke = selectedJoke {
-            JokeDetailContent(
-                joke: joke,
-                isCopied: viewModel.copiedJokeId == joke.id,
-                onShare: { viewModel.shareJoke(joke) },
-                onCopy: { viewModel.copyJoke(joke) },
-                onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
-                onSave: { viewModel.saveJoke(joke) }
-            )
-            // New identity per joke resets its scroll position and copied-ID state
-            .id(joke.id)
-            .frame(maxWidth: 600)
-            .frame(maxWidth: .infinity)
-        } else {
-            ContentUnavailableView(
-                "Pick a Joke",
-                systemImage: "face.smiling",
-                description: Text("Tap any joke to see the punchline here.")
-            )
-        }
-    }
-
     /// Full-width content above the joke grid
     @ViewBuilder
-    private var feedHeader: some View {
+    private func feedHeader(isSplit: Bool) -> some View {
         VStack(spacing: 16) {
             // Invisible top anchor for reliable scroll-to-top
             Color.clear
@@ -270,7 +192,8 @@ struct JokeFeedView: View {
                     onCopy: { viewModel.copyJoke(jokeOfTheDay) },
                     onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) },
                     onSave: { viewModel.saveJoke(jokeOfTheDay) },
-                    onSelect: { selectedJokeId = jokeOfTheDay.id }
+                    onSelect: { selectedJokeId = jokeOfTheDay.id },
+                    isSelected: isSplit && selectedJokeId == jokeOfTheDay.id
                 )
                 .onAppear {
                     viewModel.markJokeImpression(jokeOfTheDay)

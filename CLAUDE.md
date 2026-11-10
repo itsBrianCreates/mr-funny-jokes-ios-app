@@ -75,6 +75,10 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 | Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns |
 | Scoped withAnimation over implicit .animation() | Prevents scroll container animation interference on iOS 18 |
 | YouTube promo as standalone LazyVStack item | Prevents scroll anchor shifts from conditional content in ForEach |
+| `JokeListDetailView` for Home, Me, Search and character pages | One list-detail container, so jokes open the same way everywhere: sheet on compact widths, pane beside the list at 700pt+ (iPhone Duo inner display). Selection is a joke ID so it survives fold/unfold |
+| `\.isWideLayout` environment value set in `MainContentView` | Sheets can't measure the window they're presented over; the root measures once and every tab, pushed screen and sheet reads it |
+| Large-only sheet detent when `isWideLayout` | Wide windows are short (Duo inner display is 951×669pt); a medium sheet cuts off rating and actions |
+| Build with the iOS 27 SDK for iPhone Duo | A 26.x-SDK build runs letterboxed at phone size on the inner display |
 
 ---
 
@@ -162,6 +166,19 @@ func loadMore() async {
 ```
 
 **Rule:** Always use `withAnimation` at the mutation site in the ViewModel. Never put `.animation()` on scroll containers.
+
+### Stretched Grid Card Pitfall
+
+**Problem:** Cards in a `LazyVGrid` row stretch to the tallest card. Pinning a card's bottom row with a flexible frame lets that row steal height from the text above, which then truncates to one line. A `Spacer` avoids that but doubles the `VStack` spacing on every card.
+
+**Good:**
+```swift
+Text(joke.setup)
+    .fixedSize(horizontal: false, vertical: true)  // Text keeps all its lines
+
+metadataRow
+    .frame(maxHeight: .infinity, alignment: .bottom)  // Row takes what's left
+```
 
 ### Cross-ViewModel Communication
 

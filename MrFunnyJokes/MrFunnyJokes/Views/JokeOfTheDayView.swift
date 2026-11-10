@@ -9,6 +9,8 @@ struct JokeOfTheDayView: View {
     let onSave: () -> Void
     /// When set, a tap hands the joke to the caller instead of opening this view's own sheet
     var onSelect: (() -> Void)? = nil
+    /// Highlights the card while its joke is shown in a detail pane
+    var isSelected = false
 
     @State private var showingSheet = false
     @State private var isAppearing = false
@@ -119,10 +121,15 @@ struct JokeOfTheDayView: View {
                 }
             }
             .padding(16)
-            .background(cardBackground, in: RoundedRectangle(cornerRadius: 16))
+            .background {
+                // Glow on the card shape only, so the text inside stays crisp
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(cardBackground)
+                    .shadow(color: accentColor.opacity(isSelected ? 0.35 : 0), radius: 10, y: 2)
+            }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(accentColor, lineWidth: 2)
+                    .strokeBorder(accentColor, lineWidth: isSelected ? 3 : 2)
             )
         }
         .buttonStyle(.plain)
