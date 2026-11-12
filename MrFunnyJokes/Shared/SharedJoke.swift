@@ -10,7 +10,9 @@ struct SharedJoke: Codable, Identifiable {
     let type: String?       // Joke type (e.g., "knock_knock", "dad_joke")
 
     /// Full joke text combining setup and punchline
-    var text: String { "\(setup) \(punchline)" }
+    var text: String {
+        JokeTextParser.fullText(setup: setup, punchline: punchline, isKnockKnock: JokeTextParser.isKnockKnock(setup))
+    }
 
     init(id: String, setup: String, punchline: String, character: String? = nil, type: String? = nil) {
         self.id = id

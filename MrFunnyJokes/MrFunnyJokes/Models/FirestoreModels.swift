@@ -43,12 +43,11 @@ struct FirestoreJoke: Codable, Identifiable {
 
         // Detect knock-knock jokes by text content, regardless of stored type
         // This handles cases where jokes are stored with incorrect type values
-        if isKnockKnockJoke(text) {
+        if JokeTextParser.isKnockKnock(text) {
             category = .knockKnock
         }
 
-        // Parse the text - some jokes may have setup/punchline format
-        let (setup, punchline) = parseJokeText(text, category: category)
+        let (setup, punchline) = JokeTextParser.split(text, isKnockKnock: category == .knockKnock)
 
         return Joke(
             id: UUID(uuidString: id ?? "") ?? UUID(),
@@ -66,62 +65,6 @@ struct FirestoreJoke: Codable, Identifiable {
             dislikes: dislikes ?? 0,
             popularityScore: popularityScore ?? 0.0
         )
-    }
-
-    /// Parse joke text into setup and punchline
-    private func parseJokeText(_ text: String, category: JokeCategory) -> (setup: String, punchline: String) {
-        // Special handling for knock-knock jokes
-        if category == .knockKnock {
-            return parseKnockKnockJoke(text)
-        }
-
-        // Try to split on common delimiters
-        let delimiters = ["\n\n", "\n", " - ", "? ", "! "]
-
-        for delimiter in delimiters {
-            let parts = text.components(separatedBy: delimiter)
-            if parts.count >= 2 {
-                let setup = parts[0].trimmingCharacters(in: .whitespacesAndNewlines)
-                let punchline = parts.dropFirst().joined(separator: delimiter).trimmingCharacters(in: .whitespacesAndNewlines)
-                if !setup.isEmpty && !punchline.isEmpty {
-                    // For question delimiter, add it back
-                    if delimiter == "? " {
-                        return (setup + "?", punchline)
-                    }
-                    if delimiter == "! " {
-                        return (setup + "!", punchline)
-                    }
-                    return (setup, punchline)
-                }
-            }
-        }
-
-        // If no delimiter found, use the whole text as setup with empty punchline
-        return (text, "")
-    }
-
-    /// Checks if the joke text follows the knock-knock joke format
-    /// Returns true if the text starts with "knock" (case insensitive) and contains "who's there"
-    private func isKnockKnockJoke(_ text: String) -> Bool {
-        let lowercased = text.lowercased()
-        return lowercased.hasPrefix("knock") && lowercased.contains("who's there")
-    }
-
-    /// Parse knock-knock joke into setup and punchline
-    /// Input: "Knock, knock. Who's there? Nobel. Nobel who? Nobel … that's why I knocked."
-    /// Output: setup = "Knock, knock. Who's there? Nobel." punchline = "Nobel who? Nobel … that's why I knocked."
-    private func parseKnockKnockJoke(_ text: String) -> (setup: String, punchline: String) {
-        // Find the "[Name] who?" pattern to split setup and punchline
-        // This matches a word followed by " who?" (case insensitive)
-        if let whoRange = text.range(of: #"\b\w+\s+who\?"#, options: [.regularExpression, .caseInsensitive]) {
-            let setup = String(text[..<whoRange.lowerBound]).trimmingCharacters(in: .whitespaces)
-            let punchline = String(text[whoRange.lowerBound...]).trimmingCharacters(in: .whitespaces)
-
-            return (setup, punchline)
-        }
-
-        // Fallback: use the whole text as setup
-        return (text, "")
     }
 }
 

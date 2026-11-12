@@ -144,21 +144,14 @@ struct JokeDetailContent: View {
         VStack(alignment: .leading, spacing: 20) {
             tellerHeader
 
-            if joke.category == .knockKnock {
-                VStack(alignment: .leading, spacing: 12) {
-                    ForEach(formatKnockKnockSetup(), id: \.self) { line in
-                        Text(line)
-                            .font(.title2.weight(.medium))
-                    }
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(joke.setupLines, id: \.self) { line in
+                    Text(line)
+                        .font(.title2.weight(.medium))
                 }
-
-                punchlineText(lines: formatKnockKnockPunchline())
-            } else {
-                Text(joke.setup)
-                    .font(.title2.weight(.medium))
-
-                punchlineText(lines: [joke.punchline])
             }
+
+            punchlineText(lines: joke.punchlineLines)
 
             BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
 
@@ -340,70 +333,18 @@ struct JokeDetailContent: View {
     private var knockKnockContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Parse and format the setup (e.g., "Knock knock. Who's there? Lettuce.")
-            ForEach(formatKnockKnockSetup(), id: \.self) { line in
+            ForEach(joke.setupLines, id: \.self) { line in
                 Text(line)
                     .font(.title3.weight(.medium))
             }
 
             // Punchline (e.g., "Lettuce who? Lettuce in, it's cold out here!")
-            ForEach(formatKnockKnockPunchline(), id: \.self) { line in
+            ForEach(joke.punchlineLines, id: \.self) { line in
                 Text(line)
                     .font(.title3.weight(.bold))
                     .foregroundStyle(.primary)
             }
         }
-    }
-
-    private func formatKnockKnockSetup() -> [String] {
-        // Format knock-knock setup into lines
-        // Input: "Knock, knock. Who's there? Nobel."
-        // Output: ["Knock, knock. Who's there?", "Nobel."]
-        var lines: [String] = []
-
-        // Find "Who's there?" and split there
-        if let range = joke.setup.range(of: "Who's there?", options: .caseInsensitive) {
-            // First line: everything up to and including "Who's there?"
-            let firstLine = String(joke.setup[...range.upperBound])
-            lines.append(firstLine)
-
-            // Second line: the answer (e.g., "Nobel.")
-            let answer = String(joke.setup[range.upperBound...])
-                .trimmingCharacters(in: .whitespaces)
-            if !answer.isEmpty {
-                // Ensure proper capitalization and ending punctuation
-                var formattedAnswer = answer.prefix(1).uppercased() + answer.dropFirst()
-                if !formattedAnswer.hasSuffix(".") && !formattedAnswer.hasSuffix("!") {
-                    formattedAnswer += "."
-                }
-                lines.append(formattedAnswer)
-            }
-        } else {
-            // Fallback: return the setup as-is
-            lines.append(joke.setup)
-        }
-
-        return lines
-    }
-
-    private func formatKnockKnockPunchline() -> [String] {
-        var lines: [String] = []
-        let punchline = joke.punchline
-
-        // Look for "[name] who?" pattern
-        if let whoRange = punchline.range(of: " who?", options: .caseInsensitive) {
-            let questionPart = String(punchline[..<whoRange.upperBound])
-            let answerPart = String(punchline[whoRange.upperBound...]).trimmingCharacters(in: .whitespaces)
-
-            lines.append(questionPart)
-            if !answerPart.isEmpty {
-                lines.append(answerPart)
-            }
-        } else {
-            // Fallback: just return the punchline as-is
-            lines.append(punchline)
-        }
-
-        return lines
     }
 }
 
@@ -435,8 +376,8 @@ struct JokeDetailContent: View {
             JokeDetailSheet(
                 joke: Joke(
                     category: .knockKnock,
-                    setup: "Knock, knock. Who's there? Nobel.",
-                    punchline: "Nobel who? Nobel … that's why I knocked.",
+                    setup: "Knock, knock.\nWho's there?\nNobel.",
+                    punchline: "Nobel who?\nNo bell… that's why I knocked.",
                     userRating: 1,
                     firestoreId: "ABC123XYZ456example",
                     character: "Mr. Potty"

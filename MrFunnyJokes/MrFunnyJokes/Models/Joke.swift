@@ -96,59 +96,27 @@ struct Joke: Identifiable, Codable, Equatable {
 
     static let ratingEmojis = ["🫠", "😂"]
 
-    /// Formats the joke text for sharing, with special handling for knock-knock jokes
-    /// to display each part on its own line.
-    func formattedTextForSharing(characterName: String) -> String {
-        if category == .knockKnock {
-            return formatKnockKnockForSharing(characterName: characterName)
-        } else {
-            return "\(setup)\n\n\(punchline)\n\n— \(characterName)"
-        }
+    // MARK: - Display Text
+
+    /// What cards show: the setup only, never the punchline
+    var cardText: String {
+        JokeTextParser.teaser(setup: setup, punchline: punchline, isKnockKnock: category == .knockKnock)
     }
 
-    private func formatKnockKnockForSharing(characterName: String) -> String {
-        var lines: [String] = []
+    /// The setup, one line per part for knock-knock jokes
+    var setupLines: [String] {
+        category == .knockKnock ? JokeTextParser.knockKnockLines(setup) : [setup]
+    }
 
-        // Format setup: "Knock, knock. Who's there? Nobel." -> ["Knock, knock.", "Who's there?", "Nobel."]
-        if let range = setup.range(of: "Who's there?", options: .caseInsensitive) {
-            // Part before "Who's there?" (e.g., "Knock, knock.")
-            let knockPart = String(setup[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
-            if !knockPart.isEmpty {
-                lines.append(knockPart)
-            }
+    /// The punchline, one line per part for knock-knock jokes. Empty when there is none.
+    var punchlineLines: [String] {
+        let lines = category == .knockKnock ? JokeTextParser.knockKnockLines(punchline) : [punchline]
+        return lines.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
 
-            // "Who's there?"
-            lines.append("Who's there?")
-
-            // The answer (e.g., "Nobel.")
-            let answer = String(setup[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-            if !answer.isEmpty {
-                var formattedAnswer = answer.prefix(1).uppercased() + answer.dropFirst()
-                if !formattedAnswer.hasSuffix(".") && !formattedAnswer.hasSuffix("!") && !formattedAnswer.hasSuffix("?") {
-                    formattedAnswer += "."
-                }
-                lines.append(formattedAnswer)
-            }
-        } else {
-            lines.append(setup)
-        }
-
-        // Format punchline: "Nobel who? Nobel … that's why I knocked." -> ["Nobel who?", "Nobel … that's why I knocked."]
-        if let whoRange = punchline.range(of: " who?", options: .caseInsensitive) {
-            let questionPart = String(punchline[...whoRange.upperBound]).trimmingCharacters(in: .whitespaces)
-            let answerPart = String(punchline[whoRange.upperBound...]).trimmingCharacters(in: .whitespaces)
-
-            lines.append(questionPart)
-            if !answerPart.isEmpty {
-                lines.append(answerPart)
-            }
-        } else {
-            lines.append(punchline)
-        }
-
-        lines.append("")
-        lines.append("— \(characterName)")
-
-        return lines.joined(separator: "\n")
+    /// Formats the joke text for sharing and copying
+    func formattedTextForSharing(characterName: String) -> String {
+        let text = JokeTextParser.fullText(setup: setup, punchline: punchline, isKnockKnock: category == .knockKnock)
+        return "\(text)\n\n— \(characterName)"
     }
 }

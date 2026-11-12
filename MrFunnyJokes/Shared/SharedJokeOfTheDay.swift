@@ -21,6 +21,26 @@ struct SharedJokeOfTheDay: Codable {
         self.lastUpdated = lastUpdated
     }
 
+    /// What widgets and notifications show: the setup only, never the punchline
+    var cardText: String {
+        // An entry saved by an older version can hold the whole joke in `setup`
+        // with no punchline. Split it again so the widget doesn't give it away.
+        var parts = (setup: setup, punchline: punchline)
+        if punchline.isEmpty {
+            parts = JokeTextParser.split(setup)
+        }
+        return JokeTextParser.teaser(
+            setup: parts.setup,
+            punchline: parts.punchline,
+            isKnockKnock: JokeTextParser.isKnockKnock(parts.setup)
+        )
+    }
+
+    /// `cardText` on one flowing line, for slots too short for a three-line knock-knock
+    var compactCardText: String {
+        cardText.replacingOccurrences(of: "\n", with: " ")
+    }
+
     /// Default placeholder for when no data is available yet
     /// Shown when: JOTD is stale (>24h), network fetch fails, and fallback cache is empty
     static let placeholder = SharedJokeOfTheDay(

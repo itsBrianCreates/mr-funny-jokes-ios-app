@@ -248,7 +248,7 @@ struct CharacterJokeCardView: View {
         } label: {
             VStack(alignment: .leading, spacing: 12) {
                 // Setup text
-                Text(joke.setup)
+                Text(joke.cardText)
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)

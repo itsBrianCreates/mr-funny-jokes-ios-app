@@ -525,7 +525,12 @@ final class LocalStorageService: @unchecked Sendable {
 
             // Add new jokes, avoiding duplicates
             for joke in jokes where joke.category == category {
-                if !existingJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
+                // Same Firestore joke: replace in place, so a joke whose setup/punchline
+                // split changed doesn't linger next to its stale copy
+                if let firestoreId = joke.firestoreId,
+                   let index = existingJokes.firstIndex(where: { $0.firestoreId == firestoreId }) {
+                    existingJokes[index] = joke
+                } else if !existingJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
                     existingJokes.insert(joke, at: 0) // Insert at beginning (newest first)
                 }
             }

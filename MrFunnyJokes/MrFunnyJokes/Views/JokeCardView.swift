@@ -21,29 +21,6 @@ struct JokeCardView: View {
         return JokeCharacter.find(byName: characterName)
     }
 
-    /// Formats the card preview text, with special handling for knock-knock jokes
-    private var cardPreviewText: String {
-        if joke.category == .knockKnock {
-            return formatKnockKnockPreview(joke.setup)
-        }
-        return joke.setup
-    }
-
-    /// Formats knock-knock setup for card preview with line break
-    /// Input: "Knock, knock. Who's there? Nobel."
-    /// Output: "Knock, knock. Who's there?\nNobel."
-    private func formatKnockKnockPreview(_ setup: String) -> String {
-        // Find "Who's there?" and add a line break after it
-        if let range = setup.range(of: "Who's there?", options: .caseInsensitive) {
-            let beforeAnswer = String(setup[...range.upperBound])
-            let answer = String(setup[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-            if !answer.isEmpty {
-                return beforeAnswer + "\n" + answer
-            }
-        }
-        return setup
-    }
-
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
@@ -55,8 +32,8 @@ struct JokeCardView: View {
             onView()
         } label: {
             VStack(alignment: .leading, spacing: 12) {
-                // Setup text (formatted for knock-knock jokes)
-                Text(cardPreviewText)
+                // Setup only; the punchline waits for the tap
+                Text(joke.cardText)
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
@@ -161,8 +138,8 @@ struct CharacterIndicatorView: View {
             JokeCardView(
                 joke: Joke(
                     category: .knockKnock,
-                    setup: "Knock, knock. Who's there? Nobel.",
-                    punchline: "Nobel who? Nobel … that's why I knocked.",
+                    setup: "Knock, knock.\nWho's there?\nNobel.",
+                    punchline: "Nobel who?\nNo bell… that's why I knocked.",
                     userRating: 1,
                     character: "Mr. Potty"
                 ),
@@ -177,8 +154,8 @@ struct CharacterIndicatorView: View {
             JokeCardView(
                 joke: Joke(
                     category: .pickupLine,
-                    setup: "Are you a magician?",
-                    punchline: "Because whenever I look at you, everyone else disappears!",
+                    setup: "Do you believe in love at first sight,",
+                    punchline: "or should I walk by again?",
                     userRating: 5,
                     character: "Mr. Love"
                 ),

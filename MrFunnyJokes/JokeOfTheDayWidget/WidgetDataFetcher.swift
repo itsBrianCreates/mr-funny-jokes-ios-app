@@ -103,7 +103,7 @@ struct WidgetDataFetcher {
             let category = (fields["type"] as? [String: Any])?["stringValue"] as? String
 
             // Split text into setup and punchline
-            let (setup, punchline) = splitJokeText(text)
+            let (setup, punchline) = JokeTextParser.split(text, isKnockKnock: category == "knock_knock")
 
             return SharedJokeOfTheDay(
                 id: jokeId,
@@ -117,30 +117,5 @@ struct WidgetDataFetcher {
         } catch {
             return nil
         }
-    }
-
-    /// Split joke text into setup and punchline using common delimiters
-    private static func splitJokeText(_ text: String) -> (setup: String, punchline: String) {
-        // Try delimiters in order of preference
-        let delimiters = ["\n\n", " - ", "? ", "! "]
-
-        for delimiter in delimiters {
-            if let range = text.range(of: delimiter) {
-                let setup = String(text[..<range.lowerBound])
-                let punchline = String(text[range.upperBound...])
-
-                // For "? " and "! " delimiters, include the punctuation in setup
-                if delimiter == "? " {
-                    return (setup + "?", punchline)
-                } else if delimiter == "! " {
-                    return (setup + "!", punchline)
-                }
-
-                return (setup, punchline)
-            }
-        }
-
-        // No delimiter found - use entire text as setup, empty punchline
-        return (text, "")
     }
 }

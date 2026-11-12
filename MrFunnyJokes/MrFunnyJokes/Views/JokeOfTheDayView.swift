@@ -66,7 +66,7 @@ struct JokeOfTheDayView: View {
                     .background(accentColor, in: RoundedRectangle(cornerRadius: 6))
 
                 // Main joke text
-                Text(joke.setup)
+                Text(joke.cardText)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)

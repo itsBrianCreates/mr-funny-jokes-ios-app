@@ -45,6 +45,8 @@
 		B10000000000000000000011 /* JokeOfTheDayWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B10000000000000000000012 /* LockScreenWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000009 /* LockScreenWidgetViews.swift */; };
 		B10000000000000000000013 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
+		B10000000000000000000098 /* JokeTextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000099 /* JokeTextParser.swift */; };
+		B10000000000000000000099 /* JokeTextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000099 /* JokeTextParser.swift */; };
 		B10000000000000000000014 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
 		B10000000000000000000015 /* WidgetDataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000011 /* WidgetDataFetcher.swift */; };
 		C319A0022F09D100007A6AFF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C319A0012F09D100007A6AFF /* FirebaseAnalytics */; };
@@ -133,6 +135,7 @@
 		B20000000000000000000008 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		B20000000000000000000009 /* LockScreenWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidgetViews.swift; sourceTree = "<group>"; };
 		B20000000000000000000010 /* SharedJoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJoke.swift; sourceTree = "<group>"; };
+		B20000000000000000000099 /* JokeTextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeTextParser.swift; sourceTree = "<group>"; };
 		B20000000000000000000011 /* WidgetDataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataFetcher.swift; sourceTree = "<group>"; };
 		B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JokeOfTheDayWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C319A0042F09D100007A6AFF /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
@@ -323,6 +326,7 @@
 			isa = PBXGroup;
 			children = (
 				B20000000000000000000010 /* SharedJoke.swift */,
+				B20000000000000000000099 /* JokeTextParser.swift */,
 				B20000000000000000000001 /* SharedJokeOfTheDay.swift */,
 				B20000000000000000000002 /* SharedStorageService.swift */,
 			);
@@ -520,6 +524,7 @@
 				B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
 				B10000000000000000000013 /* SharedJoke.swift in Sources */,
+				B10000000000000000000098 /* JokeTextParser.swift in Sources */,
 				I10000000000000000000001 /* TellJokeIntent.swift in Sources */,
 				I10000000000000000000002 /* JokeSnippetView.swift in Sources */,
 				I10000000000000000000003 /* MrFunnyShortcutsProvider.swift in Sources */,
@@ -535,6 +540,7 @@
 				B10000000000000000000003 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000004 /* SharedStorageService.swift in Sources */,
 				B10000000000000000000014 /* SharedJoke.swift in Sources */,
+				B10000000000000000000099 /* JokeTextParser.swift in Sources */,
 				B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */,
 				B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */,
 				B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */,

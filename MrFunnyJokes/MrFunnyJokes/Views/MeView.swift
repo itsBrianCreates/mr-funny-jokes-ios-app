@@ -75,7 +75,7 @@ struct MeView: View {
             selectedJokeId = joke.id
         } label: {
             VStack(alignment: .leading, spacing: 10) {
-                Text(joke.setup)
+                Text(joke.cardText)
                     .font(.body.weight(.medium))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
