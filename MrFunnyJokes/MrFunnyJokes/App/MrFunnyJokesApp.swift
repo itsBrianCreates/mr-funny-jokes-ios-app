@@ -150,6 +150,7 @@ struct MainContentView: View {
     @State private var showingSettings = false
     @State private var scrollToJokeOfTheDay = false
     @State private var showingJokeOfTheDaySheet = false
+    @State private var windowWidth: CGFloat = 0
 
     enum AppTab: Hashable {
         case home
@@ -203,6 +204,13 @@ struct MainContentView: View {
                     onSave: { jokeViewModel.saveJoke(joke) }
                 )
             }
+        }
+        // Outermost so every tab, pushed screen and sheet sees it
+        .environment(\.isWideLayout, windowWidth >= AdaptiveLayout.wideMinWidth)
+        .onGeometryChange(for: CGFloat.self) { geometry in
+            geometry.size.width
+        } action: { width in
+            windowWidth = width
         }
     }
 

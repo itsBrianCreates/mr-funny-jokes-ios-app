@@ -25,6 +25,7 @@
 		A10000000000000000000020 /* JokeDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* JokeDetailSheet.swift */; };
 		A10000000000000000000021 /* JokeOfTheDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* JokeOfTheDayView.swift */; };
 		A10000000000000000000022 /* YouTubePromoCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* YouTubePromoCardView.swift */; };
+		A100000000000000000000F7 /* JokeListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F7 /* JokeListDetailView.swift */; };
 		A10000000000000000000023 /* ShimmerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* ShimmerModifier.swift */; };
 		A10000000000000000000024 /* SkeletonCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* SkeletonCardView.swift */; };
 		A10000000000000000000025 /* SkeletonFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* SkeletonFeedView.swift */; };
@@ -44,6 +45,8 @@
 		B10000000000000000000011 /* JokeOfTheDayWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B10000000000000000000012 /* LockScreenWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000009 /* LockScreenWidgetViews.swift */; };
 		B10000000000000000000013 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
+		B10000000000000000000098 /* JokeTextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000099 /* JokeTextParser.swift */; };
+		B10000000000000000000099 /* JokeTextParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000099 /* JokeTextParser.swift */; };
 		B10000000000000000000014 /* SharedJoke.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000010 /* SharedJoke.swift */; };
 		B10000000000000000000015 /* WidgetDataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000011 /* WidgetDataFetcher.swift */; };
 		C319A0022F09D100007A6AFF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C319A0012F09D100007A6AFF /* FirebaseAnalytics */; };
@@ -113,6 +116,7 @@
 		A20000000000000000000020 /* JokeDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeDetailSheet.swift; sourceTree = "<group>"; };
 		A20000000000000000000021 /* JokeOfTheDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeOfTheDayView.swift; sourceTree = "<group>"; };
 		A20000000000000000000022 /* YouTubePromoCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePromoCardView.swift; sourceTree = "<group>"; };
+		A200000000000000000000F7 /* JokeListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeListDetailView.swift; sourceTree = "<group>"; };
 		A20000000000000000000023 /* ShimmerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerModifier.swift; sourceTree = "<group>"; };
 		A20000000000000000000024 /* SkeletonCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonCardView.swift; sourceTree = "<group>"; };
 		A20000000000000000000025 /* SkeletonFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonFeedView.swift; sourceTree = "<group>"; };
@@ -131,6 +135,7 @@
 		B20000000000000000000008 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		B20000000000000000000009 /* LockScreenWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidgetViews.swift; sourceTree = "<group>"; };
 		B20000000000000000000010 /* SharedJoke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedJoke.swift; sourceTree = "<group>"; };
+		B20000000000000000000099 /* JokeTextParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeTextParser.swift; sourceTree = "<group>"; };
 		B20000000000000000000011 /* WidgetDataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataFetcher.swift; sourceTree = "<group>"; };
 		B30000000000000000000001 /* JokeOfTheDayWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JokeOfTheDayWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C319A0042F09D100007A6AFF /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
@@ -253,6 +258,7 @@
 				A20000000000000000000020 /* JokeDetailSheet.swift */,
 				A20000000000000000000021 /* JokeOfTheDayView.swift */,
 				A20000000000000000000022 /* YouTubePromoCardView.swift */,
+				A200000000000000000000F7 /* JokeListDetailView.swift */,
 				F20000000000000000000001 /* SplashScreenView.swift */,
 			);
 			path = Views;
@@ -320,6 +326,7 @@
 			isa = PBXGroup;
 			children = (
 				B20000000000000000000010 /* SharedJoke.swift */,
+				B20000000000000000000099 /* JokeTextParser.swift */,
 				B20000000000000000000001 /* SharedJokeOfTheDay.swift */,
 				B20000000000000000000002 /* SharedStorageService.swift */,
 			);
@@ -509,6 +516,7 @@
 				A10000000000000000000021 /* JokeOfTheDayView.swift in Sources */,
 				C3DE8C122EEA7FE7009729AF /* SettingsView.swift in Sources */,
 				A10000000000000000000022 /* YouTubePromoCardView.swift in Sources */,
+				A100000000000000000000F7 /* JokeListDetailView.swift in Sources */,
 				A10000000000000000000023 /* ShimmerModifier.swift in Sources */,
 				A10000000000000000000024 /* SkeletonCardView.swift in Sources */,
 				A10000000000000000000025 /* SkeletonFeedView.swift in Sources */,
@@ -516,6 +524,7 @@
 				B10000000000000000000001 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000002 /* SharedStorageService.swift in Sources */,
 				B10000000000000000000013 /* SharedJoke.swift in Sources */,
+				B10000000000000000000098 /* JokeTextParser.swift in Sources */,
 				I10000000000000000000001 /* TellJokeIntent.swift in Sources */,
 				I10000000000000000000002 /* JokeSnippetView.swift in Sources */,
 				I10000000000000000000003 /* MrFunnyShortcutsProvider.swift in Sources */,
@@ -531,6 +540,7 @@
 				B10000000000000000000003 /* SharedJokeOfTheDay.swift in Sources */,
 				B10000000000000000000004 /* SharedStorageService.swift in Sources */,
 				B10000000000000000000014 /* SharedJoke.swift in Sources */,
+				B10000000000000000000099 /* JokeTextParser.swift in Sources */,
 				B10000000000000000000005 /* JokeOfTheDayWidget.swift in Sources */,
 				B10000000000000000000006 /* JokeOfTheDayProvider.swift in Sources */,
 				B10000000000000000000007 /* JokeOfTheDayWidgetViews.swift in Sources */,
@@ -680,7 +690,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -694,7 +704,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -710,7 +720,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -724,7 +734,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -740,7 +750,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
@@ -750,7 +760,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -767,7 +777,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
@@ -777,7 +787,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

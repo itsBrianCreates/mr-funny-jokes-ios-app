@@ -18,26 +18,6 @@ struct RankedJokeCard: View {
         return JokeCharacter.find(byName: characterName)
     }
 
-    /// Formats the card preview text, with special handling for knock-knock jokes
-    private var cardPreviewText: String {
-        if rankedJoke.joke.category == .knockKnock {
-            return formatKnockKnockPreview(rankedJoke.joke.setup)
-        }
-        return rankedJoke.joke.setup
-    }
-
-    /// Formats knock-knock setup for card preview with line break
-    private func formatKnockKnockPreview(_ setup: String) -> String {
-        if let range = setup.range(of: "Who's there?", options: .caseInsensitive) {
-            let beforeAnswer = String(setup[...range.upperBound])
-            let answer = String(setup[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-            if !answer.isEmpty {
-                return beforeAnswer + "\n" + answer
-            }
-        }
-        return setup
-    }
-
     /// Badge color based on rank
     private var badgeColor: Color {
         switch rankedJoke.rank {
@@ -70,7 +50,7 @@ struct RankedJokeCard: View {
                 // Joke content
                 VStack(alignment: .leading, spacing: 10) {
                     // Setup text
-                    Text(cardPreviewText)
+                    Text(rankedJoke.joke.cardText)
                         .font(.body.weight(.medium))
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)

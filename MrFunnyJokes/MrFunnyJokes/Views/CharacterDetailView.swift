@@ -6,6 +6,9 @@ struct CharacterDetailView: View {
     @StateObject private var viewModel: CharacterDetailViewModel
     @Environment(\.dismiss) private var dismiss
 
+    /// Joke shown in the detail pane or sheet. An ID, so it always reads fresh data.
+    @State private var selectedJokeId: UUID?
+
     let character: JokeCharacter
 
     init(character: JokeCharacter) {
@@ -14,13 +17,17 @@ struct CharacterDetailView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                // Hero section with character info
-                heroSection
+        // Same pattern as Home, Me and Search: on wide windows (iPhone Duo inner display)
+        // the profile and jokes stay on the left and the picked joke opens on the right
+        JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    // Hero section with character info
+                    heroSection
 
-                // Filter and jokes section
-                jokesSection
+                    // Filter and jokes section
+                    jokesSection(isSplit: isSplit)
+                }
             }
         }
         .background(
@@ -86,7 +93,7 @@ struct CharacterDetailView: View {
 
     // MARK: - Jokes Section
 
-    private var jokesSection: some View {
+    private func jokesSection(isSplit: Bool) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header with filter (only show filter if character has multiple categories)
             HStack {
@@ -111,7 +118,7 @@ struct CharacterDetailView: View {
                 emptyStateView
             } else {
                 // Jokes list
-                jokesList
+                jokesList(isSplit: isSplit)
             }
         }
         .padding(.top, 8)
@@ -163,16 +170,14 @@ struct CharacterDetailView: View {
 
     // MARK: - Jokes List
 
-    private var jokesList: some View {
+    private func jokesList(isSplit: Bool) -> some View {
         LazyVStack(spacing: 12) {
             ForEach(viewModel.filteredJokes) { joke in
                 CharacterJokeCardView(
                     joke: joke,
-                    isCopied: viewModel.copiedJokeId == joke.id,
-                    onShare: { viewModel.shareJoke(joke) },
-                    onCopy: { viewModel.copyJoke(joke) },
-                    onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
-                    onSave: { viewModel.saveJoke(joke) }
+                    isSelected: isSplit && selectedJokeId == joke.id,
+                    accentColor: character.color,
+                    onSelect: { selectedJokeId = joke.id }
                 )
                 .onAppear {
                     viewModel.markJokeImpression(joke)
@@ -230,22 +235,20 @@ struct CharacterDetailView: View {
 /// Shows only category (not character) since character context is established
 struct CharacterJokeCardView: View {
     let joke: Joke
-    let isCopied: Bool
-    let onShare: () -> Void
-    let onCopy: () -> Void
-    let onRate: (Int) -> Void
-    let onSave: () -> Void
-
-    @State private var showingSheet = false
+    /// Highlights the card while its joke is shown in a detail pane
+    var isSelected = false
+    /// Outline color when selected: the character's own color
+    var accentColor: Color = .accessibleYellow
+    let onSelect: () -> Void
 
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
-            showingSheet = true
+            onSelect()
         } label: {
             VStack(alignment: .leading, spacing: 12) {
                 // Setup text
-                Text(joke.setup)
+                Text(joke.cardText)
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
@@ -269,20 +272,15 @@ struct CharacterJokeCardView: View {
             }
             .padding()
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(accentColor, lineWidth: 2)
+                }
+            }
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(.plain)
-        .sheet(isPresented: $showingSheet) {
-            JokeDetailSheet(
-                joke: joke,
-                isCopied: isCopied,
-                onDismiss: { showingSheet = false },
-                onShare: onShare,
-                onCopy: onCopy,
-                onRate: onRate,
-                onSave: onSave
-            )
-        }
     }
 }
 

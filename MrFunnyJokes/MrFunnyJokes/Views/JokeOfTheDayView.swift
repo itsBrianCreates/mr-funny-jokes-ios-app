@@ -7,6 +7,10 @@ struct JokeOfTheDayView: View {
     let onCopy: () -> Void
     let onRate: (Int) -> Void
     let onSave: () -> Void
+    /// When set, a tap hands the joke to the caller instead of opening this view's own sheet
+    var onSelect: (() -> Void)? = nil
+    /// Highlights the card while its joke is shown in a detail pane
+    var isSelected = false
 
     @State private var showingSheet = false
     @State private var isAppearing = false
@@ -45,7 +49,11 @@ struct JokeOfTheDayView: View {
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
-            showingSheet = true
+            if let onSelect {
+                onSelect()
+            } else {
+                showingSheet = true
+            }
         } label: {
             VStack(alignment: .leading, spacing: 12) {
                 // Badge inside the card
@@ -58,7 +66,7 @@ struct JokeOfTheDayView: View {
                     .background(accentColor, in: RoundedRectangle(cornerRadius: 6))
 
                 // Main joke text
-                Text(joke.setup)
+                Text(joke.cardText)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
@@ -113,10 +121,15 @@ struct JokeOfTheDayView: View {
                 }
             }
             .padding(16)
-            .background(cardBackground, in: RoundedRectangle(cornerRadius: 16))
+            .background {
+                // Glow on the card shape only, so the text inside stays crisp
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(cardBackground)
+                    .shadow(color: accentColor.opacity(isSelected ? 0.35 : 0), radius: 10, y: 2)
+            }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(accentColor, lineWidth: 2)
+                    .strokeBorder(accentColor, lineWidth: isSelected ? 3 : 2)
             )
         }
         .buttonStyle(.plain)

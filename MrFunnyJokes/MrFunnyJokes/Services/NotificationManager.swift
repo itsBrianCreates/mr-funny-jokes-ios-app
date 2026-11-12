@@ -217,7 +217,7 @@ final class NotificationManager: NSObject, ObservableObject {
 
             return (
                 title: "\(characterName) has a joke for you!",
-                body: joke.setup
+                body: joke.cardText
             )
         }
 

@@ -1,52 +1,89 @@
 import SwiftUI
 
-/// Detail view showing the All-Time Top 10 countdown with pill tabs for switching between Hilarious and Horrible
+/// Detail view showing the All-Time Top 10 countdown: a segmented control switches between
+/// Hilarious and Horrible on compact widths; wide windows show both lists side by side
 struct AllTimeTopTenDetailView: View {
     @ObservedObject var viewModel: AllTimeRankingsViewModel
     @ObservedObject var jokeViewModel: JokeViewModel
     @State var selectedType: RankingType
 
+    /// At this width both lists show side by side instead of behind a segmented control
+    /// (iPhone Duo inner display, landscape Max). Matches the feed's list-detail threshold.
+    private let sideBySideMinWidth: CGFloat = 700
+
+    @State private var containerWidth: CGFloat = 0
+
+    private var showsBothLists: Bool {
+        containerWidth >= sideBySideMinWidth
+    }
+
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
-                // Segmented control
-                Picker("Category", selection: $selectedType) {
-                    ForEach(RankingType.allCases) { type in
-                        Text("\(type.emoji) \(type.rawValue)").tag(type)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.top, 4)
-                .padding(.bottom, 8)
+            Group {
+                if showsBothLists {
+                    HStack(alignment: .top, spacing: 16) {
+                        ForEach(RankingType.allCases) { type in
+                            LazyVStack(spacing: 12) {
+                                Text("\(type.emoji) \(type.rawValue)")
+                                    .font(.title3.weight(.semibold))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.top, 4)
 
-                // Content
-                if viewModel.isLoading {
-                    LoadingView()
-                        .frame(minHeight: 300)
-                } else if viewModel.hasDataFor(type: selectedType) {
-                    ForEach(viewModel.getJokesForCountdown(type: selectedType)) { rankedJoke in
-                        RankedJokeCard(
-                            rankedJoke: rankedJoke,
-                            rankingType: selectedType,
-                            isCopied: jokeViewModel.copiedJokeId == rankedJoke.joke.id,
-                            onShare: { jokeViewModel.shareJoke(rankedJoke.joke) },
-                            onCopy: { jokeViewModel.copyJoke(rankedJoke.joke) },
-                            onRate: { rating in jokeViewModel.rateJoke(rankedJoke.joke, rating: rating) },
-                            onSave: { jokeViewModel.saveJoke(rankedJoke.joke) }
-                        )
+                                rankingList(for: type)
+                            }
+                        }
                     }
                 } else {
-                    EmptyStateView(type: selectedType)
-                        .frame(minHeight: 300)
-                }
+                    LazyVStack(spacing: 12) {
+                        // Segmented control
+                        Picker("Category", selection: $selectedType) {
+                            ForEach(RankingType.allCases) { type in
+                                Text("\(type.emoji) \(type.rawValue)").tag(type)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.top, 4)
+                        .padding(.bottom, 8)
 
-                // Bottom padding for scroll
-                Color.clear.frame(height: 20)
+                        rankingList(for: selectedType)
+                    }
+                }
             }
             .padding(.horizontal)
+            // Bottom padding for scroll
+            .padding(.bottom, 32)
+        }
+        .onGeometryChange(for: CGFloat.self) { geometry in
+            geometry.size.width
+        } action: { width in
+            containerWidth = width
         }
         .navigationTitle("All-Time Top 10")
         .navigationBarTitleDisplayMode(.large)
+    }
+
+    /// Countdown cards for one ranking, or its loading / empty state
+    @ViewBuilder
+    private func rankingList(for type: RankingType) -> some View {
+        if viewModel.isLoading {
+            LoadingView()
+                .frame(minHeight: 300)
+        } else if viewModel.hasDataFor(type: type) {
+            ForEach(viewModel.getJokesForCountdown(type: type)) { rankedJoke in
+                RankedJokeCard(
+                    rankedJoke: rankedJoke,
+                    rankingType: type,
+                    isCopied: jokeViewModel.copiedJokeId == rankedJoke.joke.id,
+                    onShare: { jokeViewModel.shareJoke(rankedJoke.joke) },
+                    onCopy: { jokeViewModel.copyJoke(rankedJoke.joke) },
+                    onRate: { rating in jokeViewModel.rateJoke(rankedJoke.joke, rating: rating) },
+                    onSave: { jokeViewModel.saveJoke(rankedJoke.joke) }
+                )
+            }
+        } else {
+            EmptyStateView(type: type)
+                .frame(minHeight: 300)
+        }
     }
 }
 

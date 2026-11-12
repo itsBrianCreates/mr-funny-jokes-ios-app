@@ -41,355 +41,114 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Mixed batch (March 27 2026)
+// Jokes to add - punchline-reveal batch, 100 jokes (November 2026)
+//
+// Every joke has a "setup" (shown on the card) and a "punchline" (shown on tap).
+// The script stores them as one `text` field with a blank line between the two,
+// which is what the app and widget split on. A setup may stop mid-sentence
+// ("Is it hot in here," / "or is it just you?"); the app adds the "…" itself.
+// Knock-knock: setup is the first three lines, punchline is "X who?" plus the answer.
 const JOKES_TO_ADD = [
-  // --- mr_funny (6 jokes) ---
-  {
-    "character": "mr_funny",
-    "text": "What do you call a polite snake? A civil serpent!",
-    "type": "dad_joke",
-    "tags": ["animals", "wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "I used to play piano by ear, but now I use my hands!",
-    "type": "dad_joke",
-    "tags": ["music", "wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "Why do seagulls fly over the sea? Because if they flew over the bay, they'd be bagels!",
-    "type": "dad_joke",
-    "tags": ["animals", "food", "wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "What do you call fake spaghetti? An impasta!",
-    "type": "dad_joke",
-    "tags": ["food", "wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "Why did the giraffe refuse to play hide-and-seek? Because he was always spotted!",
-    "type": "dad_joke",
-    "tags": ["animals", "wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_funny",
-    "text": "I only know 25 letters of the alphabet. I don't know Y.",
-    "type": "dad_joke",
-    "tags": ["wordplay"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  // --- mr_potty (8 jokes) ---
-  {
-    "character": "mr_potty",
-    "text": "Poop jokes aren't my favorite kind of jokes… but they're a solid number two!",
-    "type": "potty_joke",
-    "tags": ["bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_potty",
-    "text": "What kind of dog lives in the toilet? A poo-dle!",
-    "type": "potty_joke",
-    "tags": ["animals", "bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_potty",
-    "text": "How many people does it take to make the bathroom smell? Just a phew!",
-    "type": "potty_joke",
-    "tags": ["bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_potty",
-    "text": "What is a bathroom fairy called? Stinker-bella!",
-    "type": "potty_joke",
-    "tags": ["bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_potty",
-    "text": "What does Superman call his bathroom? The Super Bowl!",
-    "type": "potty_joke",
-    "tags": ["bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_potty",
-    "text": "Why do ducks have feathers? To cover their butt quacks!",
-    "type": "potty_joke",
-    "tags": ["animals", "bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_potty",
-    "text": "What do you get when a king farts? Noble gas!",
-    "type": "potty_joke",
-    "tags": ["bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_potty",
-    "text": "Why do cops sit on the toilet all day? Because it's their duty!",
-    "type": "potty_joke",
-    "tags": ["bathroom"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  // --- mr_bad (6 jokes) ---
-  {
-    "character": "mr_bad",
-    "text": "My parents raised me as an only child, which really pissed off my sister!",
-    "type": "dark_joke",
-    "tags": ["family"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_bad",
-    "text": "As I get older, I remember all the people I lost along the way. Maybe a career as a tour guide was not the right choice!",
-    "type": "dark_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_bad",
-    "text": "The guy who stole my diary just died. My thoughts are with his family.",
-    "type": "dark_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_bad",
-    "text": "I childproofed my house. Somehow they still got in!",
-    "type": "dark_joke",
-    "tags": ["family"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_bad",
-    "text": "My grief counselor died, but he was so good at his job that I don't even care!",
-    "type": "dark_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_bad",
-    "text": "My mother told me, \"One man's trash is another man's treasure.\" Terrible way to learn I'm adopted!",
-    "type": "dark_joke",
-    "tags": ["family"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  // --- mr_love (8 jokes) ---
-  {
-    "character": "mr_love",
-    "text": "If you were a vegetable, you'd be a cute-cumber!",
-    "type": "pickup_line",
-    "tags": ["romantic", "food"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_love",
-    "text": "Are you a campfire? Because you're hot and I want s'more!",
-    "type": "pickup_line",
-    "tags": ["romantic", "food"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_love",
-    "text": "Are you a keyboard? Because you're just my type!",
-    "type": "pickup_line",
-    "tags": ["romantic", "technology"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_love",
-    "text": "Are you a plot twist? Because I didn't see you coming!",
-    "type": "pickup_line",
-    "tags": ["romantic", "clever"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_love",
-    "text": "If you were a burger at McDonald's, you'd be McGorgeous!",
-    "type": "pickup_line",
-    "tags": ["romantic", "food"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_love",
-    "text": "Are you the square root of -1? Because you can't be real!",
-    "type": "pickup_line",
-    "tags": ["romantic", "science"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_love",
-    "text": "Can I tie your shoes? I don't want you falling for anyone else!",
-    "type": "pickup_line",
-    "tags": ["romantic", "clever"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_love",
-    "text": "Your hands look heavy — can I hold them for you?",
-    "type": "pickup_line",
-    "tags": ["romantic", "sweet"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  // --- mr_sad (9 jokes) ---
-  {
-    "character": "mr_sad",
-    "text": "I'm terrified of elevators. I'm taking steps to avoid them.",
-    "type": "sad_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "Parallel lines have so much in common. It's a shame they'll never meet.",
-    "type": "sad_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "I threw a boomerang a few years ago. Now I live in constant fear.",
-    "type": "sad_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "I'm the human equivalent of a typo.",
-    "type": "sad_joke",
-    "tags": ["self_worth"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "I'm very familiar with paranormal activity. I keep getting ghosted!",
-    "type": "sad_joke",
-    "tags": ["relationships"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "Do mood swings count as exercise?",
-    "type": "sad_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "People say I'm creative and I couldn't agree more because I create most of my own problems!",
-    "type": "sad_joke",
-    "tags": ["self_worth"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "Every day is Friday when you're unemployed.",
-    "type": "sad_joke",
-    "tags": ["life"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "I said \"hello\" to darkness my old friend, and it told me that it doesn't want to be my friend.",
-    "type": "sad_joke",
-    "tags": ["life", "sadness"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  },
-  {
-    "character": "mr_sad",
-    "text": "I'm only posting on social media so everyone else can feel better about themselves. You're welcome.",
-    "type": "sad_joke",
-    "tags": ["technology", "self_worth"],
-    "sfw": true,
-    "source": "classic",
-    "likes": 0, "dislikes": 0, "rating_sum": 0, "rating_count": 0, "rating_avg": 0, "popularity_score": 0
-  }
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["wordplay"], "setup": "What do you call a can opener that doesn't work?", "punchline": "A can't opener!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "health"], "setup": "Why did the cookie go to the doctor?", "punchline": "Because it felt crummy!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["wordplay"], "setup": "What did the left eye say to the right eye?", "punchline": "Between you and me, something smells!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["sports", "wordplay"], "setup": "What do you call a boomerang that won't come back?", "punchline": "A stick!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["wordplay"], "setup": "Why did the picture go to jail?", "punchline": "Because it was framed!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "sports", "food"], "setup": "What do you call a pig that does karate?", "punchline": "A pork chop!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["work", "wordplay"], "setup": "Why was the broom late?", "punchline": "It over-swept!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["travel", "wordplay"], "setup": "What did the traffic light say to the car?", "punchline": "Don't look! I'm about to change."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "school"], "setup": "Why are fish so smart?", "punchline": "Because they live in schools!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "wordplay"], "setup": "What do you call a sleeping bull?", "punchline": "A bulldozer!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "wordplay"], "setup": "How does a cucumber become a pickle?", "punchline": "It goes through a jarring experience!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "wordplay"], "setup": "What did one plate say to the other plate?", "punchline": "Dinner is on me!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["school", "food"], "setup": "Why did the student eat his homework?", "punchline": "Because the teacher said it was a piece of cake!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["science", "wordplay"], "setup": "What kind of tree fits in your hand?", "punchline": "A palm tree!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "wordplay"], "setup": "Why did the tomato turn red?", "punchline": "Because it saw the salad dressing!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "wordplay"], "setup": "Why do bees have sticky hair?", "punchline": "Because they use honeycombs!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["travel", "food", "wordplay"], "setup": "What do you call a train carrying bubblegum?", "punchline": "A chew-chew train!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["music", "school"], "setup": "Why did the music teacher need a ladder?", "punchline": "To reach the high notes!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "school", "wordplay"], "setup": "What do you call a dinosaur with an extensive vocabulary?", "punchline": "A thesaurus!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "food", "wordplay"], "setup": "Why don't oysters donate to charity?", "punchline": "Because they're shellfish!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "wordplay"], "setup": "What has ears but cannot hear?", "punchline": "A cornfield!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "work", "wordplay"], "setup": "I used to be a baker,", "punchline": "but I couldn't make enough dough."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "health", "wordplay"], "setup": "I'm on a seafood diet.", "punchline": "I see food and I eat it."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "wordplay"], "setup": "I would tell you a joke about pizza,", "punchline": "but it's a little cheesy."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["school", "wordplay"], "setup": "Why was six afraid of seven?", "punchline": "Because seven eight nine!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "wordplay"], "setup": "What do you call two birds in love?", "punchline": "Tweethearts!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["technology", "wordplay"], "setup": "Why was the computer cold?", "punchline": "It left its Windows open!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["work", "wordplay"], "setup": "What do lawyers wear to court?", "punchline": "Lawsuits!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "wordplay"], "setup": "Where do cows go on Friday night?", "punchline": "To the moo-vies!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "weather", "wordplay"], "setup": "What do you call a bear caught in the rain?", "punchline": "A drizzly bear!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "music", "wordplay"], "setup": "Why couldn't the pony sing?", "punchline": "Because she was a little hoarse!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["technology", "wordplay"], "setup": "How do trees get on the internet?", "punchline": "They log in!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["animals", "family", "wordplay"], "setup": "What did the buffalo say when his son left for college?", "punchline": "Bison!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["sports", "wordplay"], "setup": "Why did the coach go to the bank?", "punchline": "To get his quarterback!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["food", "wordplay"], "setup": "Why do melons have weddings?", "punchline": "Because they cantaloupe!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["sports", "wordplay"], "setup": "What kind of shoes do ninjas wear?", "punchline": "Sneakers!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["sports", "wordplay"], "setup": "I was wondering why the frisbee kept getting bigger.", "punchline": "Then it hit me."},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["food", "wordplay"], "setup": "Knock, knock.\nWho's there?\nLettuce.", "punchline": "Lettuce who?\nLettuce in, it's cold out here!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["wordplay"], "setup": "Knock, knock.\nWho's there?\nBoo.", "punchline": "Boo who?\nDon't cry, it's only a joke!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["wordplay"], "setup": "Knock, knock.\nWho's there?\nTank.", "punchline": "Tank who?\nYou're welcome!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["food", "wordplay"], "setup": "Knock, knock.\nWho's there?\nOlive.", "punchline": "Olive who?\nOlive you, and I miss you!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["health", "wordplay"], "setup": "Knock, knock.\nWho's there?\nAtch.", "punchline": "Atch who?\nBless you!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["wordplay"], "setup": "Knock, knock.\nWho's there?\nHarry.", "punchline": "Harry who?\nHarry up and answer the door!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["animals", "travel", "wordplay"], "setup": "Knock, knock.\nWho's there?\nAlpaca.", "punchline": "Alpaca who?\nAlpaca the suitcase, you load the car!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["food", "wordplay"], "setup": "Knock, knock.\nWho's there?\nCash.", "punchline": "Cash who?\nNo thanks, I prefer peanuts!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["food", "wordplay"], "setup": "Knock, knock.\nWho's there?\nIce cream.", "punchline": "Ice cream who?\nIce cream every time I see a spider!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["food", "wordplay"], "setup": "Knock, knock.\nWho's there?\nJustin.", "punchline": "Justin who?\nJustin time for dinner!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["school", "wordplay"], "setup": "Knock, knock.\nWho's there?\nBroken pencil.", "punchline": "Broken pencil who?\nNever mind, it's pointless."},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["food", "wordplay"], "setup": "Knock, knock.\nWho's there?\nFigs.", "punchline": "Figs who?\nFigs the doorbell, it's not working!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["wordplay"], "setup": "Knock, knock.\nWho's there?\nDishes.", "punchline": "Dishes who?\nDishes the police, open up!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["music", "wordplay"], "setup": "Knock, knock.\nWho's there?\nA little old lady.", "punchline": "A little old lady who?\nI didn't know you could yodel!"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "If you were a fruit,", "punchline": "you'd be a fine-apple."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["wordplay"], "setup": "Is your name Chapstick?", "punchline": "Because you're da balm!"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["health"], "setup": "Do you have a Band-Aid?", "punchline": "I just scraped my knee falling for you."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["animals", "wordplay"], "setup": "Are you a cat?", "punchline": "Because you're purr-fect."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["weather"], "setup": "Is it hot in here,", "punchline": "or is it just you?"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["work", "wordplay"], "setup": "Are you an electrician?", "punchline": "Because you're lighting up my day."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["sports", "wordplay"], "setup": "Do you play soccer?", "punchline": "Because you look like a keeper."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["science", "wordplay"], "setup": "Are you a volcano?", "punchline": "Because I lava you."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["wordplay"], "setup": "If beauty were time,", "punchline": "you'd be an eternity."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["science"], "setup": "Are you a star?", "punchline": "Because your beauty lights up the room."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["weather", "wordplay"], "setup": "I must be a snowflake,", "punchline": "because I've fallen for you."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["health", "wordplay"], "setup": "Are you my appendix?", "punchline": "Because I have a funny feeling I should take you out."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "You must be made of cheese,", "punchline": "because you're looking Gouda tonight."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "Are you a donut?", "punchline": "Because I find you a-dough-rable."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["weather", "health"], "setup": "Do you have a sunburn,", "punchline": "or are you always this hot?"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["wordplay"], "setup": "Is your name Ariel?", "punchline": "Because we mermaid for each other."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "Are you a banana?", "punchline": "Because I find you a-peeling."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["health"], "setup": "I'm no organ donor,", "punchline": "but I'd happily give you my heart."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["animals", "travel", "wordplay"], "setup": "Are you Australian?", "punchline": "Because you meet all of my koala-fications."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["animals", "wordplay"], "setup": "If you were a chicken,", "punchline": "you'd be impeccable."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["school", "wordplay"], "setup": "Are you a 90-degree angle?", "punchline": "Because you're looking right."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["wordplay"], "setup": "Is your name Waldo?", "punchline": "Because someone like you is hard to find."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["science", "wordplay"], "setup": "Do you like science?", "punchline": "Because I've got my ion you."},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["wordplay"], "setup": "What did one toilet say to the other?", "punchline": "You look a bit flushed!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["animals", "wordplay"], "setup": "Why did Tigger look in the toilet?", "punchline": "He was looking for Pooh!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["wordplay"], "setup": "Why couldn't the toilet paper cross the road?", "punchline": "It got stuck in a crack!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["wordplay"], "setup": "What's the best hand in bathroom poker?", "punchline": "A royal flush!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["animals", "travel", "wordplay"], "setup": "Where do bees go to the bathroom?", "punchline": "At the BP station!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["travel", "wordplay"], "setup": "What nationality are you when you're in the bathroom?", "punchline": "European!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["animals", "wordplay"], "setup": "What do you call a dinosaur that farts?", "punchline": "A blast from the past!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["school", "wordplay"], "setup": "Why did the fart miss graduation?", "punchline": "It got expelled!"},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["work"], "setup": "My boss says I have a preoccupation with vengeance.", "punchline": "We'll see about that."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["health"], "setup": "I told my doctor I broke my arm in two places.", "punchline": "He told me to stop going to those places."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["wordplay"], "setup": "I'd agree with you,", "punchline": "but then we'd both be wrong."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["family"], "setup": "I'm not arguing.", "punchline": "I'm just explaining why I'm right."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["science"], "setup": "Light travels faster than sound.", "punchline": "That's why some people seem bright until they speak."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["technology"], "setup": "I'm not lazy.", "punchline": "I'm on energy-saving mode."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["family"], "setup": "Some people bring joy wherever they go.", "punchline": "You bring it whenever you go."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["school"], "setup": "I'd explain it to you,", "punchline": "but I left my crayons at home."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["wordplay"], "setup": "Everyone has the right to be stupid.", "punchline": "You're just abusing the privilege."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["wordplay"], "setup": "I never forget a face,", "punchline": "but in your case I'll make an exception."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["food", "work"], "setup": "My wallet is like an onion.", "punchline": "Opening it makes me cry."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["weather", "wordplay"], "setup": "I tried to catch fog yesterday.", "punchline": "Mist."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["health"], "setup": "My bed and I love each other,", "punchline": "but my alarm clock keeps trying to break us up."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["work"], "setup": "I'm great at multitasking.", "punchline": "I can waste time, be unproductive, and procrastinate all at once."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["food", "health"], "setup": "I'm on a 30-day diet.", "punchline": "So far I've lost 15 days."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["work"], "setup": "I started out with nothing,", "punchline": "and I still have most of it."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["health"], "setup": "People ask why I'm always smiling.", "punchline": "It's because I have no idea what's going on."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["school"], "setup": "I asked the librarian for a book about hope.", "punchline": "She said it was checked out indefinitely."}
 ];
 
 /**
@@ -438,6 +197,43 @@ function initializeFirebase() {
   return getFirestore();
 }
 
+const VALID_CHARACTERS = ['mr_funny', 'mr_potty', 'mr_bad', 'mr_love', 'mr_sad'];
+const VALID_TYPES = ['dad_joke', 'knock_knock', 'pickup_line'];
+const VALID_TAGS = ['animals', 'food', 'work', 'school', 'sports', 'music', 'technology', 'science', 'health',
+  'weather', 'holidays', 'halloween', 'thanksgiving', 'christmas', 'family', 'travel', 'wordplay', 'religious'];
+
+/**
+ * Check each joke and build its stored text: setup, blank line, punchline.
+ * A joke without a punchline would show its whole text on the card, so it is rejected.
+ */
+function prepareJokes(jokes) {
+  const problems = [];
+  const prepared = jokes.map((joke, index) => {
+    const setup = (joke.setup || '').trim();
+    const punchline = (joke.punchline || '').trim();
+    const label = `#${index + 1} "${setup.substring(0, 30)}"`;
+    if (!setup || !punchline) problems.push(`${label}: needs both a setup and a punchline`);
+    if (/\n\s*\n/.test(setup) || /\n\s*\n/.test(punchline)) problems.push(`${label}: no blank lines inside setup or punchline`);
+    if (!VALID_CHARACTERS.includes(joke.character)) problems.push(`${label}: unknown character "${joke.character}"`);
+    if (!VALID_TYPES.includes(joke.type)) problems.push(`${label}: unknown type "${joke.type}"`);
+    const tags = joke.tags || [];
+    if (tags.length < 1 || tags.length > 3 || tags.some(tag => !VALID_TAGS.includes(tag))) problems.push(`${label}: needs 1-3 valid tags`);
+    if (joke.type === 'knock_knock' && setup.split('\n').length !== 3) problems.push(`${label}: knock-knock setup must be three lines`);
+    return { ...joke, text: `${setup}\n\n${punchline}` };
+  });
+  if (problems.length > 0) {
+    throw new Error(`Invalid jokes:\n  ${problems.join('\n  ')}`);
+  }
+  return prepared;
+}
+
+/**
+ * Normalize text for duplicate checks: case, punctuation and line breaks don't count
+ */
+function normalizeText(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
 /**
  * Fetch all existing joke texts for duplicate checking
  */
@@ -450,8 +246,7 @@ async function fetchExistingJokeTexts(db) {
   snapshot.forEach(doc => {
     const data = doc.data();
     if (data.text) {
-      // Normalize text for comparison (lowercase, trim whitespace)
-      existingTexts.add(data.text.toLowerCase().trim());
+      existingTexts.add(normalizeText(data.text));
     }
   });
 
@@ -467,10 +262,11 @@ function filterDuplicates(jokesToAdd, existingTexts) {
   const duplicates = [];
 
   for (const joke of jokesToAdd) {
-    const normalizedText = joke.text.toLowerCase().trim();
+    const normalizedText = normalizeText(joke.text);
     if (existingTexts.has(normalizedText)) {
       duplicates.push(joke);
     } else {
+      existingTexts.add(normalizedText); // also catches repeats within this batch
       newJokes.push(joke);
     }
   }
@@ -532,7 +328,7 @@ async function addJokes(db, jokes) {
         text: joke.text.substring(0, 50) + (joke.text.length > 50 ? '...' : '')
       });
 
-      log.info(`  Adding: ${newDocRef.id} - "${joke.text.substring(0, 40)}..."`);
+      log.info(`  Adding: ${newDocRef.id} - "${joke.text.replace(/\s+/g, ' ').substring(0, 60)}..."`);
     }
 
     if (!DRY_RUN) {
@@ -560,13 +356,14 @@ async function main() {
     // Initialize Firebase
     const db = initializeFirebase();
 
-    let jokesToAdd = JOKES_TO_ADD;
+    const preparedJokes = prepareJokes(JOKES_TO_ADD);
+    let jokesToAdd = preparedJokes;
     let duplicates = [];
 
     // Check for duplicates unless --force is used
     if (!FORCE) {
       const existingTexts = await fetchExistingJokeTexts(db);
-      const filtered = filterDuplicates(JOKES_TO_ADD, existingTexts);
+      const filtered = filterDuplicates(preparedJokes, existingTexts);
       jokesToAdd = filtered.newJokes;
       duplicates = filtered.duplicates;
 

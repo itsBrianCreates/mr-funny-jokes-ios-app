@@ -36,7 +36,7 @@ struct AccessoryRectangularView: View {
                     .lineLimit(1)
             }
             // Joke setup (truncates if needed)
-            Text(joke.setup)
+            Text(joke.compactCardText)
                 .font(.caption)
                 .lineLimit(2)
         }
@@ -56,10 +56,10 @@ struct AccessoryInlineView: View {
         ViewThatFits {
             // Full format: "Mr. Funny: Why did the..."
             if let name = characterDisplayName(for: joke.character) {
-                Text("\(name): \(joke.setup)")
+                Text("\(name): \(joke.compactCardText)")
             }
             // Fallback: just the setup
-            Text(joke.setup)
+            Text(joke.compactCardText)
         }
         .widgetURL(URL(string: "mrfunnyjokes://jotd"))
     }

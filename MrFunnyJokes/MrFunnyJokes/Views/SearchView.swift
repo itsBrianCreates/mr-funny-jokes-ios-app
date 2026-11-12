@@ -8,6 +8,9 @@ struct SearchView: View {
     @State private var animateIcon = false
     @State private var lastJokesHash: Int = 0
 
+    /// Joke shown in the detail pane or sheet. An ID, so it always reads fresh data.
+    @State private var selectedJokeId: UUID?
+
     /// Cached firestoreIds of matching jokes (stable across refreshes)
     @State private var cachedResultIds: [String] = []
 
@@ -63,7 +66,9 @@ struct SearchView: View {
             } else if searchResults.isEmpty {
                 noResultsState
             } else {
-                resultsList
+                JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
+                    resultsList(isSplit: isSplit)
+                }
             }
         }
         .searchable(text: $searchText, prompt: "Search jokes")
@@ -125,7 +130,7 @@ struct SearchView: View {
         ContentUnavailableView.search(text: searchText)
     }
 
-    private var resultsList: some View {
+    private func resultsList(isSplit: Bool) -> some View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 ForEach(searchResults) { joke in
@@ -136,7 +141,9 @@ struct SearchView: View {
                         onCopy: { viewModel.copyJoke(joke) },
                         onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
                         onSave: { viewModel.saveJoke(joke) },
-                        onView: {}
+                        onView: {},
+                        onSelect: { selectedJokeId = joke.id },
+                        isSelected: isSplit && selectedJokeId == joke.id
                     )
                 }
             }

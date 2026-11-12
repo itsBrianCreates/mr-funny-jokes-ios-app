@@ -8,6 +8,10 @@ struct JokeCardView: View {
     let onRate: (Int) -> Void
     let onSave: () -> Void
     let onView: () -> Void
+    /// When set, a tap hands the joke to the caller instead of opening this card's own sheet
+    var onSelect: (() -> Void)? = nil
+    /// Highlights the card while its joke is shown in a detail pane
+    var isSelected = false
 
     @State private var showingSheet = false
 
@@ -17,42 +21,25 @@ struct JokeCardView: View {
         return JokeCharacter.find(byName: characterName)
     }
 
-    /// Formats the card preview text, with special handling for knock-knock jokes
-    private var cardPreviewText: String {
-        if joke.category == .knockKnock {
-            return formatKnockKnockPreview(joke.setup)
-        }
-        return joke.setup
-    }
-
-    /// Formats knock-knock setup for card preview with line break
-    /// Input: "Knock, knock. Who's there? Nobel."
-    /// Output: "Knock, knock. Who's there?\nNobel."
-    private func formatKnockKnockPreview(_ setup: String) -> String {
-        // Find "Who's there?" and add a line break after it
-        if let range = setup.range(of: "Who's there?", options: .caseInsensitive) {
-            let beforeAnswer = String(setup[...range.upperBound])
-            let answer = String(setup[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-            if !answer.isEmpty {
-                return beforeAnswer + "\n" + answer
-            }
-        }
-        return setup
-    }
-
     var body: some View {
         Button {
             HapticManager.shared.mediumImpact()
-            showingSheet = true
+            if let onSelect {
+                onSelect()
+            } else {
+                showingSheet = true
+            }
             onView()
         } label: {
             VStack(alignment: .leading, spacing: 12) {
-                // Setup text (formatted for knock-knock jokes)
-                Text(cardPreviewText)
+                // Setup only; the punchline waits for the tap
+                Text(joke.cardText)
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    // Never give up lines to the flexible row below
+                    .fixedSize(horizontal: false, vertical: true)
 
                 // Character, category and rating row
                 HStack(spacing: 8) {
@@ -75,9 +62,19 @@ struct JokeCardView: View {
                         CompactRatingView(rating: rating)
                     }
                 }
+                // Sits at the bottom when a grid row stretches the card. A flexible frame
+                // rather than a Spacer, which would double the gap above this row.
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
+            .frame(maxHeight: .infinity, alignment: .top)
             .padding()
             .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(Color.accessibleYellow, lineWidth: 2)
+                }
+            }
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showingSheet) {
@@ -141,8 +138,8 @@ struct CharacterIndicatorView: View {
             JokeCardView(
                 joke: Joke(
                     category: .knockKnock,
-                    setup: "Knock, knock. Who's there? Nobel.",
-                    punchline: "Nobel who? Nobel … that's why I knocked.",
+                    setup: "Knock, knock.\nWho's there?\nNobel.",
+                    punchline: "Nobel who?\nNo bell… that's why I knocked.",
                     userRating: 1,
                     character: "Mr. Potty"
                 ),
@@ -157,8 +154,8 @@ struct CharacterIndicatorView: View {
             JokeCardView(
                 joke: Joke(
                     category: .pickupLine,
-                    setup: "Are you a magician?",
-                    punchline: "Because whenever I look at you, everyone else disappears!",
+                    setup: "Do you believe in love at first sight,",
+                    punchline: "or should I walk by again?",
                     userRating: 5,
                     character: "Mr. Love"
                 ),

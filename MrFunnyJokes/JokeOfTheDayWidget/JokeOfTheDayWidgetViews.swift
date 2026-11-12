@@ -47,16 +47,19 @@ struct SmallWidgetView: View {
                 .padding(.vertical, 3)
                 .background(accentColor, in: RoundedRectangle(cornerRadius: 4))
 
-            Spacer()
+            Spacer(minLength: 0)
 
             // Joke setup only (no punchline to encourage tap)
-            Text(joke.setup)
+            Text(joke.compactCardText)
                 .font(.footnote)
                 .fontWeight(.medium)
                 .lineLimit(4)
                 .multilineTextAlignment(.leading)
+                // Without priority the stack splits spare height three ways with the
+                // spacers and the text is cut to two lines
+                .layoutPriority(1)
 
-            Spacer()
+            Spacer(minLength: 0)
 
             // Character avatar with name
             HStack(spacing: 4) {
@@ -106,7 +109,7 @@ struct MediumWidgetView: View {
                 .background(accentColor, in: RoundedRectangle(cornerRadius: 4))
 
             // Joke setup only (no punchline to encourage tap)
-            Text(joke.setup)
+            Text(joke.compactCardText)
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .lineLimit(2)
@@ -164,11 +167,12 @@ struct LargeWidgetView: View {
             Spacer()
 
             // Joke setup only (no punchline to encourage tap)
-            Text(joke.setup)
+            Text(joke.cardText)
                 .font(.title3)
                 .fontWeight(.medium)
                 .lineLimit(6)
                 .multilineTextAlignment(.leading)
+                .layoutPriority(1)
 
             Spacer()
 
