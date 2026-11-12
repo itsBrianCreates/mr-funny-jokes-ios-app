@@ -12,55 +12,26 @@ extension Notification.Name {
 final class CharacterDetailViewModel: ObservableObject {
     @Published var jokes: [Joke] = []
     @Published var isLoading = false
-    @Published var isLoadingMore = false
-    @Published var hasMoreJokes = true
     @Published var selectedJokeType: JokeCategory? = nil
     @Published var copiedJokeId: UUID?
 
     let character: JokeCharacter
 
     private let firestoreService = FirestoreService.shared
+    private let catalog = JokeCatalogService.shared
     private let storage = LocalStorageService.shared
     private var copyTask: Task<Void, Never>?
-    private var loadMoreTask: Task<Void, Never>?
 
-    /// Number of jokes to fetch from Firestore per batch
-    private let fetchBatchSize = 50
+    // MARK: - Fresh Feed
 
-    // MARK: - Feed Algorithm (Freshness Sorting)
-
-    /// Sorts jokes for a fresh feed experience
-    /// Prioritizes: Unseen jokes > Seen but unrated > Already rated
-    /// Shuffles within each tier to maintain category variety
-    private func sortJokesForFreshFeed(_ jokes: [Joke]) -> [Joke] {
-        let impressionIds = storage.getImpressionIds()
-        let ratedIds = storage.getRatedJokeIds()
-
-        var unseenJokes: [Joke] = []
-        var seenUnratedJokes: [Joke] = []
-        var ratedJokes: [Joke] = []
-
-        for joke in jokes {
-            let key = joke.firestoreId ?? joke.id.uuidString
-            let hasImpression = impressionIds.contains(key)
-            let hasRating = ratedIds.contains(key)
-
-            if !hasImpression {
-                unseenJokes.append(joke)
-            } else if !hasRating {
-                seenUnratedJokes.append(joke)
-            } else {
-                ratedJokes.append(joke)
-            }
-        }
-
-        // Shuffle within each tier to maintain category variety
-        return unseenJokes.shuffled() + seenUnratedJokes.shuffled() + ratedJokes.shuffled()
-    }
-
-    /// Marks a joke as seen/impressed for feed freshness tracking
+    /// Marks a joke as seen (its card was on screen). Takes effect the next time a feed is built.
     func markJokeImpression(_ joke: Joke) {
         storage.markImpression(firestoreId: joke.firestoreId)
+    }
+
+    /// Marks a joke as opened (punchline revealed), same as opening it from the home feed
+    func markJokeViewed(_ joke: Joke) {
+        storage.markViewed(firestoreId: joke.firestoreId)
     }
 
     /// Filtered jokes based on selected joke type
@@ -95,122 +66,42 @@ final class CharacterDetailViewModel: ObservableObject {
 
     // MARK: - Load Jokes
 
-    /// Loads initial jokes for this character
+    /// Loads every joke this character tells, the ones this person hasn't seen first.
+    /// Seen-tracking is shared with the home feed, so a joke scrolled past there counts here too.
     func loadJokes() async {
-        guard !isLoading else { return }
+        // Once per visit: the order must not change when a sheet closes and the page reappears
+        guard !isLoading, jokes.isEmpty else { return }
         isLoading = true
 
-        do {
-            // Fetch initial batch of jokes for this character from Firestore
-            // Uses server-side pagination with composite index (character, popularity_score)
-            let characterJokes = try await firestoreService.fetchInitialJokesForCharacter(
-                characterId: character.id,
-                limit: fetchBatchSize
-            )
+        var catalogJokes = await catalog.loadFromDisk()
+        if catalogJokes.isEmpty {
+            // The home feed normally has the catalog downloaded long before a character page opens
+            do {
+                try await catalog.sync()
+                catalogJokes = catalog.jokes
+            } catch {
+                print("Error loading jokes for \(character.name): \(error)")
+            }
+        }
 
-            // Apply user ratings and save state
-            let jokesWithRatings = characterJokes.map { joke -> Joke in
+        // Apply user ratings and save state
+        let characterJokes = catalogJokes
+            .filter { $0.character == character.id }
+            .map { joke -> Joke in
                 var mutableJoke = joke
                 mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
                 mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
                 return mutableJoke
             }
 
-            // Sort for fresh feed experience (unseen > seen-unrated > rated)
-            jokes = sortJokesForFreshFeed(jokesWithRatings)
-
-            // hasMoreJokes is true if we got a full batch (might be more in database)
-            hasMoreJokes = characterJokes.count == fetchBatchSize
-        } catch {
-            print("Error loading jokes for \(character.name): \(error)")
-        }
+        jokes = JokeFeedOrdering.freshFirst(
+            characterJokes,
+            seenOrder: storage.getImpressionOrder(),
+            ratedIds: storage.getRatedJokeIds(),
+            viewedIds: storage.getViewedIdsFast()
+        )
 
         isLoading = false
-    }
-
-    /// Loads more jokes (for infinite scroll)
-    func loadMoreJokes() async {
-        guard !isLoadingMore && hasMoreJokes else { return }
-        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = true }
-        let startTime = Date()
-
-        do {
-            let existingIds = Set(jokes.compactMap { $0.firestoreId })
-
-            // Use character-specific pagination
-            // The Firestore query already filters by character field
-            let (characterJokes, hasMore) = try await firestoreService.fetchMoreJokesForCharacter(
-                characterId: character.id,
-                limit: fetchBatchSize
-            )
-
-            // If we got no results from Firestore, we've exhausted the database
-            if characterJokes.isEmpty {
-                hasMoreJokes = false
-            } else {
-                // Filter out duplicates
-                let uniqueNewJokes = characterJokes.filter { joke in
-                    guard let id = joke.firestoreId else { return true }
-                    return !existingIds.contains(id)
-                }
-
-                if !uniqueNewJokes.isEmpty {
-                    // Apply user ratings and save state
-                    let jokesWithRatings = uniqueNewJokes.map { joke -> Joke in
-                        var mutableJoke = joke
-                        mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
-                        mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
-                        return mutableJoke
-                    }
-
-                    jokes.append(contentsOf: jokesWithRatings)
-                }
-
-                hasMoreJokes = hasMore
-            }
-        } catch {
-            print("Error loading more jokes for \(character.name): \(error)")
-        }
-
-        // Ensure minimum loading time for smooth UX
-        await ensureMinimumLoadingTime(startTime: startTime)
-        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = false }
-    }
-
-    /// Ensures the loading indicator is shown for at least 400ms for better UX
-    private func ensureMinimumLoadingTime(startTime: Date) async {
-        let minimumLoadingDuration: TimeInterval = 0.4
-        let elapsed = Date().timeIntervalSince(startTime)
-        if elapsed < minimumLoadingDuration {
-            let remaining = minimumLoadingDuration - elapsed
-            try? await Task.sleep(for: .milliseconds(Int(remaining * 1000)))
-        }
-    }
-
-    /// Checks if more jokes should be loaded based on current scroll position
-    func loadMoreIfNeeded(currentItem: Joke) {
-        let thresholdIndex = filteredJokes.index(
-            filteredJokes.endIndex,
-            offsetBy: -3,
-            limitedBy: filteredJokes.startIndex
-        ) ?? filteredJokes.startIndex
-
-        guard let currentIndex = filteredJokes.firstIndex(where: { $0.id == currentItem.id }),
-              currentIndex >= thresholdIndex else {
-            return
-        }
-
-        loadMore()
-    }
-
-    /// Triggers loading more jokes with task management
-    func loadMore() {
-        guard !isLoadingMore && hasMoreJokes else { return }
-
-        loadMoreTask?.cancel()
-        loadMoreTask = Task {
-            await loadMoreJokes()
-        }
     }
 
     // MARK: - Joke Type Filter

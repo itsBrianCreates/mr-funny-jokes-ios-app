@@ -15,8 +15,12 @@ final class LocalStorageService: @unchecked Sendable {
     /// Maximum number of jokes to cache per category
     private let maxCachePerCategory = 50
 
-    /// Maximum number of impressions to track (FIFO when exceeded)
-    private let maxImpressions = 500
+    /// Maximum number of impressions to track (FIFO when exceeded).
+    /// Must stay well above the catalog size, or seen jokes come back as unseen.
+    private let maxImpressions = 5000
+
+    /// Jokes already marked as seen since the feed was last ordered
+    private var sessionImpressionIds: Set<String> = []
 
     // MARK: - In-Memory Cache (for fast access during startup)
 
@@ -419,16 +423,18 @@ final class LocalStorageService: @unchecked Sendable {
     // MARK: - Impressions (Feed Freshness Tracking)
 
     /// Mark a joke as seen/impressed using firestoreId
-    /// Used to prioritize unseen jokes in the feed
+    /// Used to prioritize unseen jokes in the feed. The list is ordered oldest-seen
+    /// first; seeing a joke again in a later session moves it to the end.
     func markImpression(firestoreId: String?) {
         guard let firestoreId = firestoreId else { return }
         queue.sync {
+            // Once per session is enough, and keeps scrolling free of disk writes
+            guard sessionImpressionIds.insert(firestoreId).inserted else { return }
+
             var impressions = loadImpressionsSync()
-
-            // Already tracked
-            if impressions.contains(firestoreId) { return }
-
-            // Add new impression
+            if let index = impressions.firstIndex(of: firestoreId) {
+                impressions.remove(at: index)
+            }
             impressions.append(firestoreId)
 
             // FIFO: Remove oldest if over limit
@@ -441,6 +447,16 @@ final class LocalStorageService: @unchecked Sendable {
             // Update in-memory cache
             cachedImpressionIds?.insert(firestoreId)
         }
+    }
+
+    /// Start a new feed session: jokes seen again from here on count as seen more recently
+    func beginImpressionSession() {
+        queue.sync { sessionImpressionIds.removeAll() }
+    }
+
+    /// Seen joke IDs, least recently seen first
+    func getImpressionOrder() -> [String] {
+        return queue.sync { loadImpressionsSync() }
     }
 
     /// Check if a joke has been seen/impressed

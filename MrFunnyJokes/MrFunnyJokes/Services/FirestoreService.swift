@@ -2,9 +2,7 @@ import Foundation
 import FirebaseFirestore
 
 /// Service for fetching jokes and characters from Firebase Firestore
-/// - Note: @MainActor serializes access to the pagination cursors below. Without it,
-///         the background catalog load and infinite-scroll loadMore race on
-///         `lastDocument` and crash. Network I/O still runs off the main thread.
+/// - Note: @MainActor keeps callers on one actor. Network I/O still runs off the main thread.
 @MainActor
 final class FirestoreService {
     static let shared = FirestoreService()
@@ -14,11 +12,6 @@ final class FirestoreService {
     private let charactersCollection = "characters"
     private let ratingEventsCollection = "rating_events"
     private let weeklyRankingsCollection = "weekly_rankings"
-
-    // Pagination
-    private var lastDocument: DocumentSnapshot?
-    private var lastDocumentsByCategory: [JokeCategory: DocumentSnapshot] = [:]
-    private var lastDocumentsByCharacter: [String: DocumentSnapshot] = [:]
 
     private init() {
         // Configure Firestore for optimal performance
@@ -33,170 +26,40 @@ final class FirestoreService {
         self.db = firestore
     }
 
-    // MARK: - Fetch Jokes
+    // MARK: - Fetch Catalog
 
-    /// Fetches initial jokes from Firestore
-    /// - Parameters:
-    ///   - limit: Number of jokes to fetch (default 20)
-    ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
-    /// - Returns: Array of Joke objects
-    func fetchInitialJokes(limit: Int = 20, forceRefresh: Bool = false) async throws -> [Joke] {
-        lastDocument = nil
-
-        let query = db.collection(jokesCollection)
-            .order(by: "popularity_score", descending: true)
-            .limit(to: limit)
-
-        let snapshot = forceRefresh
-            ? try await query.getDocuments(source: .server)
-            : try await query.getDocuments()
-        lastDocument = snapshot.documents.last
-
-        return snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
+    /// The newest `updated_at` in a catalog fetch, kept at Firestore's full precision so
+    /// the next "what changed since" query doesn't return the same document again
+    struct CatalogCursor: Codable, Equatable {
+        let seconds: Int64
+        let nanoseconds: Int32
     }
 
-    /// Fetches more jokes for infinite scroll
-    /// - Parameters:
-    ///   - limit: Number of jokes to fetch (default 10)
-    /// - Returns: Array of Joke objects
-    func fetchMoreJokes(limit: Int = 10) async throws -> [Joke] {
-        guard let lastDoc = lastDocument else {
-            return try await fetchInitialJokes(limit: limit)
+    /// Fetches the joke catalog: all of it, or only jokes added or edited after `cursor`.
+    /// - Returns: The jokes, and a cursor for the newest one (nil when none came back)
+    /// - Note: Always asks the server. A cache answer could be a partial catalog, and
+    ///         the caller would store it as the whole thing.
+    func fetchCatalog(updatedAfter cursor: CatalogCursor? = nil) async throws -> (jokes: [Joke], cursor: CatalogCursor?) {
+        var query: Query = db.collection(jokesCollection)
+        if let cursor {
+            let timestamp = Timestamp(seconds: cursor.seconds, nanoseconds: cursor.nanoseconds)
+            query = query.whereField("updated_at", isGreaterThan: timestamp)
         }
 
-        let query = db.collection(jokesCollection)
-            .order(by: "popularity_score", descending: true)
-            .start(afterDocument: lastDoc)
-            .limit(to: limit)
+        let snapshot = try await query.getDocuments(source: .server)
 
-        let snapshot = try await query.getDocuments()
-
-        if let newLastDoc = snapshot.documents.last {
-            lastDocument = newLastDoc
-        }
-
-        return snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
-    }
-
-    /// Fetches jokes by category
-    /// - Parameters:
-    ///   - category: The joke category to filter by
-    ///   - limit: Number of jokes to fetch (default 20)
-    ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
-    /// - Returns: Array of Joke objects
-    /// - Note: Fetches all jokes and filters client-side to ensure jokes with
-    ///         non-standard type values are still categorized correctly by toJoke()
-    func fetchJokes(category: JokeCategory, limit: Int = 20, forceRefresh: Bool = false) async throws -> [Joke] {
-        lastDocumentsByCategory[category] = nil
-
-        // Fetch more than needed since we filter client-side
-        // This ensures we get enough jokes of the desired category
-        let fetchMultiplier = 5
-        let fetchLimit = limit * fetchMultiplier
-
-        let query = db.collection(jokesCollection)
-            .order(by: "popularity_score", descending: true)
-            .limit(to: fetchLimit)
-
-        let snapshot = forceRefresh
-            ? try await query.getDocuments(source: .server)
-            : try await query.getDocuments()
-
-        // Convert all jokes (toJoke handles categorization based on content)
-        let allJokes = snapshot.documents.compactMap { document -> (joke: Joke, doc: DocumentSnapshot)? in
-            guard let joke = try? document.data(as: FirestoreJoke.self).toJoke() else {
-                return nil
+        var jokes: [Joke] = []
+        var newest: Timestamp?
+        for document in snapshot.documents {
+            guard let firestoreJoke = try? document.data(as: FirestoreJoke.self) else { continue }
+            jokes.append(firestoreJoke.toJoke())
+            if let updatedAt = firestoreJoke.updatedAt,
+               newest.map({ updatedAt.compare($0) == .orderedDescending }) ?? true {
+                newest = updatedAt
             }
-            return (joke, document)
         }
 
-        // Filter to only the requested category
-        let filteredJokes = allJokes.filter { $0.joke.category == category }
-
-        // Store the last document of the filtered results for pagination
-        if let lastFiltered = filteredJokes.last {
-            lastDocumentsByCategory[category] = lastFiltered.doc
-        }
-
-        // Return up to the requested limit
-        return Array(filteredJokes.prefix(limit).map { $0.joke })
-    }
-
-    /// Fetches more jokes for a specific category (pagination)
-    /// - Parameters:
-    ///   - category: The joke category to filter by
-    ///   - limit: Number of jokes to fetch (default 10)
-    /// - Returns: Array of Joke objects
-    func fetchMoreJokes(category: JokeCategory, limit: Int = 10) async throws -> [Joke] {
-        guard let lastDoc = lastDocumentsByCategory[category] else {
-            return try await fetchJokes(category: category, limit: limit)
-        }
-
-        // Fetch more than needed since we filter client-side
-        let fetchMultiplier = 5
-        let fetchLimit = limit * fetchMultiplier
-
-        let query = db.collection(jokesCollection)
-            .order(by: "popularity_score", descending: true)
-            .start(afterDocument: lastDoc)
-            .limit(to: fetchLimit)
-
-        let snapshot = try await query.getDocuments()
-
-        // Convert all jokes (toJoke handles categorization based on content)
-        let allJokes = snapshot.documents.compactMap { document -> (joke: Joke, doc: DocumentSnapshot)? in
-            guard let joke = try? document.data(as: FirestoreJoke.self).toJoke() else {
-                return nil
-            }
-            return (joke, document)
-        }
-
-        // Filter to only the requested category
-        let filteredJokes = allJokes.filter { $0.joke.category == category }
-
-        // Update pagination cursor to the last document we processed
-        // (even if it wasn't the desired category, to continue pagination)
-        if let newLastDoc = snapshot.documents.last {
-            lastDocumentsByCategory[category] = newLastDoc
-        }
-
-        return Array(filteredJokes.prefix(limit).map { $0.joke })
-    }
-
-    /// Fetches initial jokes for "All Jokes" feed (no category filtering)
-    /// - Parameters:
-    ///   - limit: Total number of jokes to fetch (default 24)
-    ///   - forceRefresh: If true, bypasses Firestore cache and fetches from server
-    /// - Returns: Array of Joke objects from all categories, shuffled
-    func fetchInitialJokesAllCategories(countPerCategory: Int = 8, forceRefresh: Bool = false) async throws -> [Joke] {
-        // Reset pagination for "All Jokes" feed
-        lastDocument = nil
-
-        // Calculate total limit based on countPerCategory * number of categories
-        let totalLimit = countPerCategory * JokeCategory.allCases.count
-
-        // Fetch ALL jokes without type filtering - every joke in the database
-        // should be eligible to appear in the "All Jokes" feed
-        let query = db.collection(jokesCollection)
-            .order(by: "popularity_score", descending: true)
-            .limit(to: totalLimit)
-
-        let snapshot = forceRefresh
-            ? try await query.getDocuments(source: .server)
-            : try await query.getDocuments()
-
-        lastDocument = snapshot.documents.last
-
-        let allJokes = snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
-
-        // Shuffle to mix categories for variety
-        return allJokes.shuffled()
+        return (jokes, newest.map { CatalogCursor(seconds: $0.seconds, nanoseconds: $0.nanoseconds) })
     }
 
     /// Fetches the Joke of the Day from the daily_jokes collection
@@ -324,88 +187,6 @@ final class FirestoreService {
         }
     }
 
-    /// Fetches jokes by character
-    /// - Parameters:
-    ///   - characterName: The character name to filter by
-    ///   - limit: Number of jokes to fetch (default 20)
-    /// - Returns: Array of Joke objects
-    func fetchJokes(byCharacter characterName: String, limit: Int = 20) async throws -> [Joke] {
-        let query = db.collection(jokesCollection)
-            .whereField("character", isEqualTo: characterName)
-            .order(by: "popularity_score", descending: true)
-            .limit(to: limit)
-
-        let snapshot = try await query.getDocuments()
-
-        return snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
-    }
-
-    // MARK: - Character Pagination
-
-    /// Fetches initial jokes for a character view with server-side pagination
-    /// - Parameters:
-    ///   - characterId: The character ID to fetch jokes for
-    ///   - limit: Number of jokes to fetch (default 50)
-    /// - Returns: Array of Joke objects sorted by popularity score
-    /// - Note: Requires composite index on (character, popularity_score) in Firestore.
-    ///         Create index at: Firebase Console > Firestore > Indexes > Add Index
-    ///         Collection: jokes, Fields: character (Ascending), popularity_score (Descending)
-    func fetchInitialJokesForCharacter(characterId: String, limit: Int = 50) async throws -> [Joke] {
-        // Reset pagination for this character
-        lastDocumentsByCharacter[characterId] = nil
-
-        let query = db.collection(jokesCollection)
-            .whereField("character", isEqualTo: characterId)
-            .order(by: "popularity_score", descending: true)
-            .limit(to: limit)
-
-        let snapshot = try await query.getDocuments()
-        lastDocumentsByCharacter[characterId] = snapshot.documents.last
-
-        return snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
-    }
-
-    /// Fetches more jokes for a character view (server-side pagination)
-    /// - Parameters:
-    ///   - characterId: The character ID for pagination tracking
-    ///   - limit: Number of jokes to fetch (default 50)
-    /// - Returns: Tuple of (jokes array, hasMoreInDatabase flag)
-    func fetchMoreJokesForCharacter(characterId: String, limit: Int = 50) async throws -> (jokes: [Joke], hasMore: Bool) {
-        guard let lastDoc = lastDocumentsByCharacter[characterId] else {
-            // No pagination cursor - fetch initial batch instead
-            let jokes = try await fetchInitialJokesForCharacter(characterId: characterId, limit: limit)
-            return (jokes, !jokes.isEmpty)
-        }
-
-        let query = db.collection(jokesCollection)
-            .whereField("character", isEqualTo: characterId)
-            .order(by: "popularity_score", descending: true)
-            .start(afterDocument: lastDoc)
-            .limit(to: limit)
-
-        let snapshot = try await query.getDocuments()
-
-        if let newLastDoc = snapshot.documents.last {
-            lastDocumentsByCharacter[characterId] = newLastDoc
-        }
-
-        let jokes = snapshot.documents.compactMap { document in
-            try? document.data(as: FirestoreJoke.self).toJoke()
-        }
-
-        // hasMore is true if we got a full batch (there might be more)
-        return (jokes, jokes.count == limit)
-    }
-
-    /// Resets pagination for a specific character
-    func resetCharacterPagination(characterId: String) {
-        lastDocumentsByCharacter[characterId] = nil
-    }
-
     // MARK: - Update Ratings
 
     /// Updates the rating for a joke in Firestore
@@ -528,15 +309,6 @@ final class FirestoreService {
         let week = easternCalendar.component(.weekOfYear, from: now)
 
         return String(format: "%d-W%02d", year, week)
-    }
-
-    // MARK: - Reset Pagination
-
-    /// Resets pagination state for fetching fresh data
-    func resetPagination() {
-        lastDocument = nil
-        lastDocumentsByCategory.removeAll()
-        lastDocumentsByCharacter.removeAll()
     }
 }
 

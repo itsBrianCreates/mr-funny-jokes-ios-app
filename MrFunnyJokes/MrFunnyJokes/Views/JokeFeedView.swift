@@ -101,8 +101,6 @@ struct JokeFeedView: View {
                         .onAppear {
                             // Track impression for feed freshness
                             viewModel.markJokeImpression(joke)
-                            // Trigger infinite scroll loading when approaching end
-                            viewModel.loadMoreIfNeeded(currentItem: joke)
                         }
                     }
                 } header: {
@@ -151,6 +149,11 @@ struct JokeFeedView: View {
             withAnimation(.easeOut(duration: 0.2)) {
                 proxy.scrollTo(topAnchorID, anchor: .top)
             }
+        }
+        .onChange(of: viewModel.feedGeneration) {
+            // A fresh feed (back after a long break) starts from the top, where the unseen jokes are
+            readingAnchorId = nil
+            scrollPosition.scrollTo(edge: .top)
         }
         .onChange(of: viewModel.selectedCategory) {
             // Scroll to top when filter changes
@@ -228,17 +231,9 @@ struct JokeFeedView: View {
     /// Full-width content below the joke grid
     @ViewBuilder
     private var feedFooter: some View {
-        VStack(spacing: 16) {
-            // Loading more indicator (skeleton cards at bottom)
-            if viewModel.isLoadingMore {
-                LoadingMoreView()
-                    .transition(.opacity)
-            }
-
-            // End of feed message (when no more jokes)
-            if !viewModel.hasMoreJokes && !feedJokes.isEmpty {
-                EndOfFeedView()
-            }
+        // The whole catalog is in the feed, so its end is the end
+        if !feedJokes.isEmpty {
+            EndOfFeedView()
         }
     }
 }
@@ -265,17 +260,6 @@ struct OfflineBannerView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
-    }
-}
-
-// MARK: - Loading More View (Skeleton cards at bottom)
-
-struct LoadingMoreView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            SkeletonCardView(lineCount: 2, lastLineWidth: 0.6)
-            SkeletonCardView(lineCount: 1, lastLineWidth: 0.8)
-        }
     }
 }
 

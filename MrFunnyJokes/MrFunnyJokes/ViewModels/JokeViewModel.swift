@@ -13,52 +13,35 @@ final class JokeViewModel: ObservableObject {
     /// Tracks initial app launch loading state for skeleton display
     @Published var isInitialLoading = true
 
-    /// Tracks if more jokes are being loaded (for infinite scroll)
-    @Published var isLoadingMore = false
-
     /// Network monitor for detecting actual connectivity status
     private let networkMonitor = NetworkMonitor.shared
 
     /// Indicates if we're currently offline based on actual network connectivity
     @Published private(set) var isOffline = false
 
-    /// Indicates if we've reached the end and no more jokes are available
-    @Published var hasMoreJokes = true
-
-    /// Tracks if background catalog loading is complete
-    @Published private(set) var isBackgroundLoadingComplete = false
-
-    /// Background loading task reference for cancellation
-    private var backgroundLoadTask: Task<Void, Never>?
-
-    /// Tracks if background load has been triggered (only once per session)
-    private var hasTriggeredBackgroundLoad = false
-
-    /// Batch size for background loading (larger than scroll loading for efficiency)
-    private let backgroundBatchSize = 50
+    /// Goes up each time the feed is put in a new order (launch, pull-to-refresh, coming
+    /// back after a while), so the feed view can return to the top
+    @Published private(set) var feedGeneration = 0
 
     private let storage = LocalStorageService.shared
     private let sharedStorage = SharedStorageService.shared
     private let firestoreService = FirestoreService.shared
+    private let catalog = JokeCatalogService.shared
     private var copyTask: Task<Void, Never>?
-    private var loadMoreTask: Task<Void, Never>?
     private var initialLoadTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
-    /// Jokes rated during this session — kept in their current freshness tier
-    /// so they don't jump to the bottom immediately. Cleared on pull-to-refresh.
-    private var sessionRatedJokeIds: Set<String> = []
+    /// When the view model was created; the splash gives up waiting 5s after this
+    private let launchedAt = Date()
 
-    /// Jokes viewed (detail sheet opened) during this session — kept in their
-    /// current freshness tier so they don't jump to the bottom immediately.
-    /// Cleared on pull-to-refresh.
-    private var sessionViewedJokeIds: Set<String> = []
+    /// When the app last went to the background
+    private var lastBackgroundedAt: Date?
 
-    /// Number of jokes to fetch per batch
-    private let batchSize = 10
-    /// Number of jokes to fetch per category on initial load
-    private let initialLoadPerCategory = 8
+    /// Coming back after this long counts as a new visit and gets a fresh feed
+    private let freshFeedInterval: TimeInterval = 30 * 60
 
+    /// The feed. `jokes` is already in fresh-first order (see `showFreshFeed`), and that
+    /// order holds until the next fresh feed so nothing moves while the person scrolls.
     var filteredJokes: [Joke] {
         // Step 1: Apply category filter if selected
         let categoryFiltered: [Joke]
@@ -68,55 +51,14 @@ final class JokeViewModel: ObservableObject {
             categoryFiltered = jokes
         }
 
-        // Step 2: Tier by freshness using impression data
-        // Unseen jokes first, then seen-but-unrated, then rated/viewed at bottom
-        // Session-rated jokes stay in their pre-rating tier (unseen or seen-unrated)
-        let impressionIds = cachedImpressionIds ?? storage.getImpressionIdsFast()
-        let ratedIds = cachedRatedIds ?? storage.getRatedJokeIdsFast()
-        let viewedIds = storage.getViewedIdsFast()
-
-        var unseen: [Joke] = []
-        var seenUnrated: [Joke] = []
-        var rated: [Joke] = []
-
-        for joke in categoryFiltered {
-            let key = joke.firestoreId ?? joke.id.uuidString
-            let isSessionRated = sessionRatedJokeIds.contains(key)
-
-            // Session-rated/viewed jokes: treat as if they were NOT rated/viewed for tiering
-            // They stay in their current position until pull-to-refresh
-            let isSessionViewed = sessionViewedJokeIds.contains(key)
-            let effectivelyRated = joke.userRating != nil && !isSessionRated
-            let hasImpression = impressionIds.contains(key)
-            let persistedRated = ratedIds.contains(key) && !isSessionRated
-            let isViewed = viewedIds.contains(key) && !isSessionViewed
-
-            if effectivelyRated || persistedRated || isViewed {
-                rated.append(joke)
-            } else if !hasImpression {
-                unseen.append(joke)
-            } else {
-                seenUnrated.append(joke)
-            }
-        }
-
-        // Step 3: Sort within each tier by popularity (descending)
-        // PopularityScore as tiebreaker preserves quality ordering within tiers
-        let sortedUnseen = unseen.sorted { $0.popularityScore > $1.popularityScore }
-        let sortedSeenUnrated = seenUnrated.sorted { $0.popularityScore > $1.popularityScore }
-        let sortedRated = rated.sorted { $0.popularityScore > $1.popularityScore }
-
-        // Step 4: Combine tiers — unseen first, seen-unrated middle, rated at bottom
-        let combined = sortedUnseen + sortedSeenUnrated + sortedRated
-
         // MARK: - Seasonal Content Ranking
-        // Step 5: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
+        // Step 2: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
         if !SeasonalHelper.isChristmasSeason() {
-            let nonChristmas = combined.filter { !$0.isChristmasJoke }
-            let christmas = combined.filter { $0.isChristmasJoke }
+            let nonChristmas = categoryFiltered.filter { !$0.isChristmasJoke }
+            let christmas = categoryFiltered.filter { $0.isChristmasJoke }
             return nonChristmas + christmas
         } else {
-            return combined
+            return categoryFiltered
         }
     }
 
@@ -234,6 +176,21 @@ final class JokeViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // A feed left in the background goes stale: coming back later should feel like a new visit
+        NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.lastBackgroundedAt = Date()
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.showFreshFeedIfBackFromLongBreak()
+            }
+            .store(in: &cancellables)
+
         // Set initial offline state
         isOffline = networkMonitor.isOffline
 
@@ -282,87 +239,102 @@ final class JokeViewModel: ObservableObject {
                 jokes.append(joke)
             }
         }
-
-        // Invalidate sort cache since ratings changed
-        invalidateSortCache()
     }
 
-    // MARK: - Feed Algorithm (Freshness Sorting)
+    // MARK: - Fresh Feed
 
-    /// Cached impression and rated IDs to avoid repeated lookups during sorting
-    private var cachedImpressionIds: Set<String>?
-    private var cachedRatedIds: Set<String>?
-
-    /// Invalidates the cached impression/rated IDs (call when new impressions or ratings are added)
-    private func invalidateSortCache() {
-        cachedImpressionIds = nil
-        cachedRatedIds = nil
-    }
-
-    /// Sorts jokes for a fresh feed experience
-    /// Prioritizes: Unseen jokes > Seen but unrated > Already rated
-    /// Shuffles within each tier to maintain category variety
-    private func sortJokesForFreshFeed(_ jokes: [Joke]) -> [Joke] {
-        // Use cached IDs if available, otherwise fetch and cache
-        let impressionIds: Set<String>
-        let ratedIds: Set<String>
-
-        if let cached = cachedImpressionIds {
-            impressionIds = cached
-        } else {
-            impressionIds = storage.getImpressionIdsFast()
-            cachedImpressionIds = impressionIds
-        }
-
-        if let cached = cachedRatedIds {
-            ratedIds = cached
-        } else {
-            ratedIds = storage.getRatedJokeIdsFast()
-            cachedRatedIds = ratedIds
-        }
-
-        var unseenJokes: [Joke] = []
-        var seenUnratedJokes: [Joke] = []
-        var ratedJokes: [Joke] = []
-
-        for joke in jokes {
-            let key = joke.firestoreId ?? joke.id.uuidString
-            let hasImpression = impressionIds.contains(key)
-            let hasRating = ratedIds.contains(key)
-
-            if !hasImpression {
-                unseenJokes.append(joke)
-            } else if !hasRating {
-                seenUnratedJokes.append(joke)
-            } else {
-                ratedJokes.append(joke)
-            }
-        }
-
-        // Shuffle within each tier to maintain category variety
-        return unseenJokes.shuffled() + seenUnratedJokes.shuffled() + ratedJokes.shuffled()
-    }
-
-    /// Marks a joke as seen/impressed for feed freshness tracking
+    /// Marks a joke as seen (its card was on screen). Takes effect in the next fresh feed.
     func markJokeImpression(_ joke: Joke) {
         storage.markImpression(firestoreId: joke.firestoreId)
-        // Invalidate cache since impressions changed
-        invalidateSortCache()
     }
 
-    /// Marks a joke as explicitly viewed (detail sheet opened)
-    /// Persists separately from scroll impressions so viewed jokes demote to bottom on restart
-    /// Session-deferred: joke stays in place until pull-to-refresh
+    /// Marks a joke as opened (punchline revealed). Takes effect in the next fresh feed,
+    /// where it drops below everything not yet opened.
     func markJokeViewed(_ joke: Joke) {
-        let key = joke.firestoreId ?? joke.id.uuidString
-        sessionViewedJokeIds.insert(key)
         storage.markViewed(firestoreId: joke.firestoreId)
-        invalidateSortCache()
+    }
+
+    /// Puts the feed in a new order: jokes this person hasn't seen first.
+    /// Only call when the person isn't mid-scroll (launch, pull-to-refresh, back after a while).
+    private func showFreshFeed(from catalogJokes: [Joke]) {
+        storage.beginImpressionSession()
+
+        let ordered = JokeFeedOrdering.freshFirst(
+            applyingUserState(to: catalogJokes),
+            seenOrder: storage.getImpressionOrder(),
+            ratedIds: storage.getRatedJokeIdsFast(),
+            viewedIds: storage.getViewedIdsFast()
+        )
+
+        jokes = ordered
+        feedGeneration += 1
+        updateSharedCaches(from: ordered)
+    }
+
+    /// Takes in catalog changes without moving anything the person may be looking at:
+    /// edited jokes update in place, new ones wait at the end for the next fresh feed.
+    private func mergeCatalogKeepingOrder(_ catalogJokes: [Joke]) {
+        var freshById: [String: Joke] = [:]
+        for joke in applyingUserState(to: catalogJokes) {
+            if let id = joke.firestoreId { freshById[id] = joke }
+        }
+
+        var merged: [Joke] = []
+        var shownIds = Set<String>()
+        for joke in jokes {
+            guard let id = joke.firestoreId else {
+                merged.append(joke)
+                continue
+            }
+            // A joke no longer in the catalog was deleted
+            if let fresh = freshById[id], shownIds.insert(id).inserted {
+                merged.append(fresh)
+            }
+        }
+        for joke in catalogJokes {
+            if let id = joke.firestoreId, !shownIds.contains(id), let fresh = freshById[id] {
+                merged.append(fresh)
+            }
+        }
+        jokes = merged
+    }
+
+    /// Ratings and saves live in local storage, not in the catalog
+    private func applyingUserState(to jokes: [Joke]) -> [Joke] {
+        jokes.map { joke in
+            var mutableJoke = joke
+            mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
+            mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
+            return mutableJoke
+        }
+    }
+
+    /// Brings the on-device catalog up to date.
+    /// - Returns: The catalog when it changed; nil when nothing changed or Firestore couldn't be reached
+    private func syncCatalog() async -> [Joke]? {
+        guard !networkMonitor.isOffline else { return nil }
+        do {
+            return try await catalog.sync() ? catalog.jokes : nil
+        } catch {
+            print("Catalog sync error: \(error)")
+            return nil
+        }
+    }
+
+    private func showFreshFeedIfBackFromLongBreak() {
+        guard let lastBackgroundedAt,
+              Date().timeIntervalSince(lastBackgroundedAt) >= freshFeedInterval,
+              !isInitialLoading else { return }
+        self.lastBackgroundedAt = nil
+
+        Task {
+            await refresh()
+        }
     }
 
     // MARK: - Initial Load
 
-    /// Load content on app start asynchronously - cache first, then API
+    /// Load content on app start: the catalog saved on the device first, then what changed since.
     /// This is fully async to avoid blocking the main thread during startup
     private func loadInitialContentAsync() async {
         // PHASE 0: Run one-time migrations (gated by UserDefaults flags)
@@ -373,40 +345,37 @@ final class JokeViewModel: ObservableObject {
         // PHASE 1: Preload memory cache for fast sorting (critical for performance)
         await storage.preloadMemoryCacheAsync()
 
-        // PHASE 2: Load cached jokes asynchronously (off main thread)
-        let cached = await storage.loadAllCachedJokesAsync()
+        // PHASE 2: Show the catalog saved on the device (renders behind splash)
+        let saved = await catalog.loadFromDisk()
 
-        if !cached.isEmpty {
-            // Ensure ratings and save state are applied from authoritative source (defensive - cache should have them,
-            // but re-apply for consistency with all other load paths: fetchInitialAPIContent,
-            // fetchInitialAPIContentBackground, refresh, performLoadMore)
-            let cachedWithRatings = cached.map { joke -> Joke in
-                var mutableJoke = joke
-                mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
-                mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
-                return mutableJoke
+        if !saved.isEmpty {
+            showFreshFeed(from: saved)
+
+            // PHASE 3: Pick up jokes added or edited since the last sync. Normally done
+            // long before the splash lifts, so new jokes lead the feed on this launch.
+            if let updated = await syncCatalog() {
+                let splashMayBeGone = Date().timeIntervalSince(launchedAt) > 4
+                if splashMayBeGone {
+                    mergeCatalogKeepingOrder(updated)
+                } else {
+                    showFreshFeed(from: updated)
+                }
             }
-
-            // Load cached content into feed (renders behind splash)
-            jokes = sortJokesForFreshFeed(cachedWithRatings)
-
-            // PHASE 3: Fetch fresh content from Firebase before dismissing splash
-            // Splash stays visible until fetch completes, so the main thread is free
-            // when the user can first interact. Max splash timer (5s) prevents infinite wait.
-            await fetchInitialAPIContentBackground()
+        } else if let downloaded = await syncCatalog() {
+            // First launch, or first launch after updating from a version without a catalog
+            showFreshFeed(from: downloaded)
+            // The small per-category cache older versions kept is no longer needed
+            storage.clearCache()
         } else {
-            // No cache (first launch) - must wait for Firebase fetch
-            await fetchInitialAPIContent()
+            // No catalog and no network: fall back to whatever an older version cached
+            let legacy = await storage.loadAllCachedJokesAsync()
+            if !legacy.isEmpty {
+                showFreshFeed(from: legacy)
+            }
         }
-    }
 
-    /// Legacy sync method - kept for refresh scenarios where we're already on main thread
-    private func loadLocalJokes() {
-        let cached = storage.loadAllCachedJokes()
-        jokes = sortJokesForFreshFeed(cached)
-
-        // Initialize joke of the day - check shared storage first for persistence
-        initializeJokeOfTheDay()
+        await initializeJokeOfTheDayAsync()
+        isInitialLoading = false
     }
 
     /// Initialize joke of the day from shared storage only (sync)
@@ -416,24 +385,6 @@ final class JokeViewModel: ObservableObject {
             // Use firestoreId for lookup if available, otherwise fall back to id
             jokeOfTheDayId = savedJoke.firestoreId ?? savedJoke.id
             cachedJokeOfTheDayData = savedJoke
-        }
-    }
-
-    /// Initialize joke of the day - checks storage first, fetches from Firebase if needed
-    /// This ensures the same joke persists for 24 hours across app and widget
-    private func initializeJokeOfTheDay() {
-        // First, check if we have a valid joke of the day saved from today
-        if !sharedStorage.needsUpdate(), let savedJoke = sharedStorage.loadJokeOfTheDay() {
-            // Use firestoreId for lookup - this properly matches Firebase jokes
-            jokeOfTheDayId = savedJoke.firestoreId ?? savedJoke.id
-            // Cache the full joke data for fallback reconstruction
-            cachedJokeOfTheDayData = savedJoke
-            return
-        }
-
-        // No saved joke for today - fetch from Firebase in background
-        Task {
-            await fetchAndSaveJokeOfTheDay()
         }
     }
 
@@ -493,381 +444,31 @@ final class JokeViewModel: ObservableObject {
         NotificationManager.shared.scheduleJokeOfTheDayNotification()
     }
 
-    /// Fetch initial content from Firestore (blocking - waits before completing initial load)
-    /// Used when there's no cached content available
-    private func fetchInitialAPIContent() async {
-        do {
-            // Fetch jokes from Firestore using concurrent category loading for faster results
-            let newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory)
+    // MARK: - Refresh
 
-            guard !Task.isCancelled else { return }
-
-            if !newJokes.isEmpty {
-                // Cache the new jokes by category
-                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
-                for (category, categoryJokes) in grouped {
-                    storage.saveCachedJokes(categoryJokes, for: category)
-                }
-
-                // Cache jokes for Siri access (offline support)
-                let sharedJokesForSiri = newJokes.map { joke in
-                    SharedJoke(
-                        id: joke.firestoreId ?? joke.id.uuidString,
-                        setup: joke.setup,
-                        punchline: joke.punchline,
-                        character: joke.character,
-                        type: joke.category.rawValue
-                    )
-                }
-                sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
-
-                // Populate widget fallback cache for offline graceful degradation
-                populateFallbackCache(from: newJokes)
-
-                // Apply user ratings and save state from local storage
-                let jokesWithRatings = newJokes.map { joke -> Joke in
-                    var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
-                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
-                    return mutableJoke
-                }
-
-                // Replace local/hardcoded jokes with Firebase jokes
-                // Firebase is now the primary data source (sorted for freshness)
-                jokes = sortJokesForFreshFeed(jokesWithRatings)
-
-                // Re-initialize joke of the day - fetches from Firebase if needed
-                await initializeJokeOfTheDayAsync()
-            }
-        } catch {
-            // Network error - use cached content as fallback
-            print("Firestore fetch error: \(error)")
-            // Ensure cached jokes are loaded if jokes array is empty
-            if jokes.isEmpty {
-                loadLocalJokes()
-            }
-        }
-
-        await completeInitialLoading()
-    }
-
-    /// Fetch initial content from Firestore in background (non-blocking)
-    /// Used after cache is already loaded - updates UI but doesn't block splash transition
-    private func fetchInitialAPIContentBackground() async {
-        do {
-            // Fetch jokes from Firestore using concurrent category loading for faster results
-            let newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory)
-
-            guard !Task.isCancelled else { return }
-
-            if !newJokes.isEmpty {
-                // Cache the new jokes by category
-                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
-                for (category, categoryJokes) in grouped {
-                    storage.saveCachedJokes(categoryJokes, for: category)
-                }
-
-                // Cache jokes for Siri access (offline support)
-                let sharedJokesForSiri = newJokes.map { joke in
-                    SharedJoke(
-                        id: joke.firestoreId ?? joke.id.uuidString,
-                        setup: joke.setup,
-                        punchline: joke.punchline,
-                        character: joke.character,
-                        type: joke.category.rawValue
-                    )
-                }
-                sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
-
-                // Populate widget fallback cache for offline graceful degradation
-                populateFallbackCache(from: newJokes)
-
-                // Apply user ratings and save state from local storage
-                let jokesWithRatings = newJokes.map { joke -> Joke in
-                    var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
-                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
-                    return mutableJoke
-                }
-
-                // Replace with Firebase jokes (sorted for freshness)
-                // This smoothly updates the UI if user is already viewing the feed
-                jokes = sortJokesForFreshFeed(jokesWithRatings)
-
-                // Re-initialize joke of the day - fetches from Firebase if needed
-                await initializeJokeOfTheDayAsync()
-            }
-        } catch {
-            // Network error - cached content is already loaded, so just log
-            print("Background Firestore fetch error: \(error)")
-        }
-
-        // If initial loading wasn't completed (no cache was available),
-        // complete it now that Firebase fetch is done
-        if isInitialLoading {
-            await completeInitialLoading()
-        }
-    }
-
-    private func completeInitialLoading() async {
-        // No artificial delay - let the UI become interactive as soon as data is ready
-        isInitialLoading = false
-    }
-
-    // MARK: - Refresh (Category Change)
-
-    /// Refreshes the joke feed when category changes
+    /// Pull-to-refresh, and coming back after a long break: pick up new jokes, then put
+    /// the feed in a new fresh-first order. Jokes seen since the last order drop down.
     func refresh() async {
         guard !isRefreshing else { return }
-
-        // Cancel background loading and reset state
-        backgroundLoadTask?.cancel()
-        hasTriggeredBackgroundLoad = false
-        isBackgroundLoadingComplete = false
         isRefreshing = true
 
-        // Clear session tracking so rated/viewed jokes reorder on refresh
-        sessionRatedJokeIds.removeAll()
-        sessionViewedJokeIds.removeAll()
+        _ = await syncCatalog()
 
-        do {
-            // Reset pagination to get fresh data
-            firestoreService.resetPagination()
-            hasMoreJokes = true
-
-            // Note: We don't clear cache here - it's replaced after successful fetch
-            // This preserves fallback data if the network request fails
-
-            // Fetch new jokes from Firestore
-            let newJokes: [Joke]
-            if let category = selectedCategory {
-                newJokes = try await firestoreService.fetchJokes(category: category, limit: batchSize)
-            } else {
-                newJokes = try await firestoreService.fetchInitialJokesAllCategories(countPerCategory: initialLoadPerCategory)
-            }
-
-            guard !Task.isCancelled else {
-                isRefreshing = false
-                return
-            }
-
-            if !newJokes.isEmpty {
-                // Replace cache with fresh jokes (not append)
-                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
-                for (category, categoryJokes) in grouped {
-                    storage.replaceCachedJokes(categoryJokes, for: category)
-                }
-
-                // Update Siri cache with fresh jokes
-                let sharedJokesForSiri = newJokes.map { joke in
-                    SharedJoke(
-                        id: joke.firestoreId ?? joke.id.uuidString,
-                        setup: joke.setup,
-                        punchline: joke.punchline,
-                        character: joke.character,
-                        type: joke.category.rawValue
-                    )
-                }
-                sharedStorage.saveCachedJokesForSiri(sharedJokesForSiri)
-
-                // Populate widget fallback cache for offline graceful degradation
-                populateFallbackCache(from: newJokes)
-
-                // Apply user ratings and save state
-                let jokesWithRatings = newJokes.map { joke -> Joke in
-                    var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
-                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
-                    return mutableJoke
-                }
-
-                // Replace with fresh Firebase jokes (sorted for freshness)
-                jokes = sortJokesForFreshFeed(jokesWithRatings)
-
-                // Re-initialize joke of the day - fetches from Firebase if needed
-                await initializeJokeOfTheDayAsync()
-            }
-        } catch {
-            print("Firestore refresh error: \(error)")
-            // Reload cached jokes as fallback on error
-            loadLocalJokes()
+        let source = catalog.jokes.isEmpty ? jokes : catalog.jokes
+        if !source.isEmpty {
+            showFreshFeed(from: source)
         }
+
+        // Fetches a new joke of the day if the saved one is from another day
+        await initializeJokeOfTheDayAsync()
 
         isRefreshing = false
-    }
-
-    // MARK: - Infinite Scroll (Load More)
-
-    /// Called when user scrolls near the bottom of the list
-    func loadMoreIfNeeded(currentItem: Joke) {
-        // Trigger background catalog loading on first scroll
-        triggerBackgroundLoadIfNeeded()
-
-        // Check if we're near the end of the list
-        let thresholdIndex = filteredJokes.index(filteredJokes.endIndex, offsetBy: -3, limitedBy: filteredJokes.startIndex) ?? filteredJokes.startIndex
-
-        guard let currentIndex = filteredJokes.firstIndex(where: { $0.id == currentItem.id }),
-              currentIndex >= thresholdIndex else {
-            return
-        }
-
-        loadMore()
-    }
-
-    // MARK: - Background Catalog Loading
-
-    /// Triggers background catalog loading if not already started
-    /// Called on first scroll, not app launch (per CONTEXT.md)
-    func triggerBackgroundLoadIfNeeded() {
-        guard !hasTriggeredBackgroundLoad && !isBackgroundLoadingComplete else { return }
-        hasTriggeredBackgroundLoad = true
-
-        backgroundLoadTask = Task { [weak self] in
-            await self?.loadFullCatalogInBackground()
-        }
-    }
-
-    /// Loads the full joke catalog silently in background
-    /// Designed for 500-2000 jokes per CONTEXT.md
-    private func loadFullCatalogInBackground() async {
-        // Load in batches to avoid memory spikes
-        while hasMoreJokes && !Task.isCancelled {
-            do {
-                let newJokes: [Joke]
-                if let category = selectedCategory {
-                    newJokes = try await firestoreService.fetchMoreJokes(category: category, limit: backgroundBatchSize)
-                } else {
-                    newJokes = try await firestoreService.fetchMoreJokes(limit: backgroundBatchSize)
-                }
-
-                guard !Task.isCancelled else { return }
-
-                if newJokes.isEmpty {
-                    break
-                }
-
-                // Apply user ratings and save state
-                let jokesWithRatings = newJokes.map { joke -> Joke in
-                    var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
-                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
-                    return mutableJoke
-                }
-
-                // Merge with existing jokes, avoiding duplicates
-                var updatedJokes = jokes
-                for joke in jokesWithRatings {
-                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                        updatedJokes.append(joke)
-                    }
-                }
-                jokes = updatedJokes
-
-                // Small delay between batches to avoid overwhelming
-                try? await Task.sleep(for: .milliseconds(100))
-            } catch {
-                // Silent failure per CONTEXT.md - just stop loading
-                break
-            }
-        }
-
-        isBackgroundLoadingComplete = true
-    }
-
-    /// Load more jokes (for infinite scroll)
-    func loadMore() {
-        guard !isLoadingMore && !isRefreshing && hasMoreJokes else { return }
-
-        loadMoreTask?.cancel()
-        loadMoreTask = Task {
-            await performLoadMore()
-        }
-    }
-
-    /// Tracks consecutive empty fetches to detect end of data
-    private var consecutiveEmptyFetches = 0
-    private let maxEmptyFetches = 3
-
-    private func performLoadMore() async {
-        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = true }
-        let startTime = Date()
-
-        do {
-            // Fetch more jokes from Firestore
-            let newJokes: [Joke]
-            if let category = selectedCategory {
-                newJokes = try await firestoreService.fetchMoreJokes(category: category, limit: batchSize)
-            } else {
-                newJokes = try await firestoreService.fetchMoreJokes(limit: batchSize)
-            }
-
-            guard !Task.isCancelled else {
-                isLoadingMore = false
-                return
-            }
-
-            if newJokes.isEmpty {
-                // Track consecutive empty fetches
-                // For category filtering, we may need multiple fetches to find matching jokes
-                consecutiveEmptyFetches += 1
-                if consecutiveEmptyFetches >= maxEmptyFetches {
-                    // After 3 consecutive empty fetches, assume no more jokes
-                    hasMoreJokes = false
-                }
-            } else {
-                // Reset empty fetch counter on successful fetch
-                consecutiveEmptyFetches = 0
-
-                // Cache them
-                let grouped = Dictionary(grouping: newJokes, by: { $0.category })
-                for (category, categoryJokes) in grouped {
-                    storage.saveCachedJokes(categoryJokes, for: category)
-                }
-
-                // Apply user ratings and save state
-                let jokesWithRatings = newJokes.map { joke -> Joke in
-                    var mutableJoke = joke
-                    mutableJoke.userRating = storage.getRating(for: joke.id, firestoreId: joke.firestoreId)
-                    mutableJoke.isSaved = storage.isJokeSaved(firestoreId: joke.firestoreId ?? joke.id.uuidString)
-                    return mutableJoke
-                }
-
-                // Add to end of list, avoiding duplicates
-                var updatedJokes = jokes
-                for joke in jokesWithRatings {
-                    if !updatedJokes.contains(where: { $0.setup == joke.setup && $0.punchline == joke.punchline }) {
-                        updatedJokes.append(joke)
-                    }
-                }
-                jokes = updatedJokes
-            }
-        } catch {
-            print("Firestore load more error: \(error)")
-            // Network error during load more - no action needed, user can retry
-        }
-
-        // Ensure skeleton is visible for at least a short time
-        await ensureMinimumLoadingTime(startTime: startTime)
-        withAnimation(.easeInOut(duration: 0.3)) { self.isLoadingMore = false }
-    }
-
-    /// Ensures the loading indicator is shown for at least 400ms for better UX
-    private func ensureMinimumLoadingTime(startTime: Date) async {
-        let minimumLoadingDuration: TimeInterval = 0.4
-        let elapsed = Date().timeIntervalSince(startTime)
-        if elapsed < minimumLoadingDuration {
-            let remaining = minimumLoadingDuration - elapsed
-            try? await Task.sleep(for: .milliseconds(Int(remaining * 1000)))
-        }
     }
 
     // MARK: - Ratings
 
     func rateJoke(_ joke: Joke, rating: Int) {
         HapticManager.shared.selection()
-
-        // Invalidate sort cache since ratings are changing
-        invalidateSortCache()
 
         // Find joke index using firestoreId (stable) or fallback to UUID
         // This handles cases where jokes array was refreshed and UUIDs changed
@@ -880,8 +481,6 @@ final class JokeViewModel: ObservableObject {
 
         if rating == 0 {
             storage.removeRating(for: joke.id, firestoreId: joke.firestoreId)
-            let sessionKey = joke.firestoreId ?? joke.id.uuidString
-            sessionRatedJokeIds.remove(sessionKey)
             if let index = jokeIndex {
                 jokes[index].userRating = nil
             }
@@ -892,8 +491,6 @@ final class JokeViewModel: ObservableObject {
             let analyticsCharacter = joke.character ?? "unknown"
             Task.detached { AnalyticsService.shared.logJokeRated(jokeId: analyticsJokeId, character: analyticsCharacter, rating: ratingName) }
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
-            let sessionKey = joke.firestoreId ?? joke.id.uuidString
-            sessionRatedJokeIds.insert(sessionKey)
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
             } else {
@@ -1136,25 +733,28 @@ final class JokeViewModel: ObservableObject {
 
     // MARK: - Category Selection
 
+    /// Filters the feed. The whole catalog is already in memory, so nothing is fetched.
     func selectCategory(_ category: JokeCategory?) {
         HapticManager.shared.lightTap()
         selectedCategory = category
-        hasMoreJokes = true // Reset when changing categories
-        consecutiveEmptyFetches = 0 // Reset empty fetch counter
-        firestoreService.resetPagination() // Reset Firestore pagination
-
-        // Fetch jokes for the selected category
-        Task {
-            await refresh()
-        }
     }
 
-    // MARK: - Widget Fallback Cache
+    // MARK: - Siri and Widget Caches
 
-    /// Populate widget fallback cache with jokes for offline graceful degradation
-    /// Called after jokes are fetched from Firestore to ensure widgets have backup content
-    private func populateFallbackCache(from jokes: [Joke]) {
-        // Convert to SharedJokeOfTheDay format, taking up to 20 jokes
+    /// Hands Siri and the widget a batch from the top of the feed, so they also lead
+    /// with jokes this person hasn't seen. Both read these when they can't reach Firestore.
+    private func updateSharedCaches(from jokes: [Joke]) {
+        let sharedJokesForSiri = jokes.prefix(100).map { joke in
+            SharedJoke(
+                id: joke.firestoreId ?? joke.id.uuidString,
+                setup: joke.setup,
+                punchline: joke.punchline,
+                character: joke.character,
+                type: joke.category.rawValue
+            )
+        }
+        sharedStorage.saveCachedJokesForSiri(Array(sharedJokesForSiri))
+
         let fallbackJokes = jokes.prefix(20).map { joke in
             SharedJokeOfTheDay(
                 id: joke.id.uuidString,
@@ -1166,8 +766,6 @@ final class JokeViewModel: ObservableObject {
                 lastUpdated: Date()
             )
         }
-
         sharedStorage.saveFallbackJokes(Array(fallbackJokes))
     }
-
 }

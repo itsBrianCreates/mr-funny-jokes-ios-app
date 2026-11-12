@@ -67,9 +67,10 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 | Widget uses REST API, not Firebase SDK | SDK causes deadlock issue #13070 |
 | Widget deep link: `mrfunnyjokes://jotd` | URL scheme for navigation from widget |
 | Cloud Functions for aggregation | Replaced local cron scripts |
-| Client-side category filtering | Firestore query misses non-standard type values |
-| Background load on first scroll | Preserves app launch performance |
-| Session-rated visibility | Rated jokes stay visible until pull-to-refresh |
+| Client-side category filtering | Firestore query misses non-standard type values. The whole catalog is in memory, so picking a category fetches nothing |
+| Whole catalog on the device (`JokeCatalogService`) | Feeds are built from a local copy of every joke, not a "top N by `popularity_score`" query. That query returned the same jokes every launch (the score is 0 on every document). First sync downloads everything; later syncs fetch only documents whose `updated_at` moved; a full re-download runs weekly to drop deleted jokes. Any script that edits a joke must bump `updated_at` or installed apps won't see the edit for up to a week |
+| Fresh-first order, fixed per visit (`JokeFeedOrdering`) | Home and character feeds share one order: unseen jokes added in the last 30 days, other unseen, scrolled past but never opened, then opened or rated (the last two least recently seen first). Computed once at launch, pull-to-refresh, or return after 30+ minutes in the background, never while scrolling, so cards don't move under the reader. Seen/opened/rated jokes drop down on the next visit |
+| `Joke.id` derived from the Firestore ID | Same UUID every time a joke is decoded, so selection and scroll anchors survive a catalog sync |
 | Node.js 20 for Cloud Functions | Required by firebase-functions v7 |
 | @AppStorage for promo dismissal | Simple persistent state without extra infrastructure |
 | Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns |
