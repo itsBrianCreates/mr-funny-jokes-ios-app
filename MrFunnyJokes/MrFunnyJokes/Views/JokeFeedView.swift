@@ -8,6 +8,9 @@ struct JokeFeedView: View {
     /// State for navigating to All-Time Top 10 detail view
     @State private var allTimeTopTenDestination: RankingType?
 
+    /// State for navigating to the in-season topic page
+    @State private var seasonalTopicDestination: JokeTopic?
+
     /// Persistent state for YouTube promo dismissal
     @AppStorage("youtubePromoDismissed") private var youtubePromoDismissed = false
 
@@ -76,6 +79,9 @@ struct JokeFeedView: View {
                     jokeViewModel: viewModel,
                     selectedType: type
                 )
+            }
+            .navigationDestination(item: $seasonalTopicDestination) { topic in
+                TopicDetailView(viewModel: viewModel, topic: topic)
             }
         }
     }
@@ -151,9 +157,17 @@ struct JokeFeedView: View {
             }
         }
         .onChange(of: viewModel.feedGeneration) {
-            // A fresh feed (back after a long break) starts from the top, where the unseen jokes are
+            // A fresh feed (back after a long break) starts from the top, where the unseen jokes are.
+            // Through the top anchor, not `scrollPosition.scrollTo(edge:)`: that lands on the
+            // grid's own origin, which shifts the feed sideways by its padding.
             readingAnchorId = nil
-            scrollPosition.scrollTo(edge: .top)
+            // Let go of the joke the scroll view was pinned to first, or it follows that
+            // joke to wherever the new order put it
+            scrollPosition = ScrollPosition(idType: UUID.self)
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(50))
+                proxy.scrollTo(topAnchorID, anchor: .top)
+            }
         }
         .onChange(of: viewModel.selectedCategory) {
             // Scroll to top when filter changes
@@ -200,6 +214,15 @@ struct JokeFeedView: View {
                 )
                 .onAppear {
                     viewModel.markJokeImpression(jokeOfTheDay)
+                }
+            }
+
+            // Shortcut to the topic that's in season (only when "All" is selected)
+            if viewModel.selectedCategory == nil,
+               let seasonal = JokeTopic.inSeason(in: viewModel.jokes) {
+                SeasonalTopicCardView(topic: seasonal.topic, count: seasonal.count) {
+                    AnalyticsService.shared.logTopicSelected(topicId: seasonal.topic.id, source: "home")
+                    seasonalTopicDestination = seasonal.topic
                 }
             }
 

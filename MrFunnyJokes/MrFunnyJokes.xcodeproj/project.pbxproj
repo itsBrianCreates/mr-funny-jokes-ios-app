@@ -12,6 +12,9 @@
 		A10000000000000000000004 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* Preview Assets.xcassets */; };
 		A10000000000000000000005 /* Joke.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* Joke.swift */; };
 		A10000000000000000000006 /* JokeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* JokeCategory.swift */; };
+		A100000000000000000000F3 /* JokeTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F3 /* JokeTopic.swift */; };
+		A100000000000000000000F4 /* TopicBrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F4 /* TopicBrowseView.swift */; };
+		A100000000000000000000F5 /* TopicDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F5 /* TopicDetailView.swift */; };
 		A10000000000000000000007 /* JokeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* JokeCardView.swift */; };
 		A10000000000000000000008 /* JokeFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* JokeFeedView.swift */; };
 		A10000000000000000000010 /* JokeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* JokeViewModel.swift */; };
@@ -105,6 +108,9 @@
 		A20000000000000000000004 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A20000000000000000000005 /* Joke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joke.swift; sourceTree = "<group>"; };
 		A20000000000000000000006 /* JokeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeCategory.swift; sourceTree = "<group>"; };
+		A200000000000000000000F3 /* JokeTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeTopic.swift; sourceTree = "<group>"; };
+		A200000000000000000000F4 /* TopicBrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicBrowseView.swift; sourceTree = "<group>"; };
+		A200000000000000000000F5 /* TopicDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailView.swift; sourceTree = "<group>"; };
 		A20000000000000000000007 /* JokeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeCardView.swift; sourceTree = "<group>"; };
 		A20000000000000000000008 /* JokeFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeFeedView.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* JokeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeViewModel.swift; sourceTree = "<group>"; };
@@ -241,6 +247,7 @@
 				C333E6402EE10888007377F4 /* Character.swift */,
 				A20000000000000000000005 /* Joke.swift */,
 				A20000000000000000000006 /* JokeCategory.swift */,
+				A200000000000000000000F3 /* JokeTopic.swift */,
 				A20000000000000000000029 /* FirestoreModels.swift */,
 			);
 			path = Models;
@@ -259,6 +266,8 @@
 				A20000000000000000000016 /* GrainOMeterView.swift */,
 				A20000000000000000000017 /* MeView.swift */,
 				A20000000000000000000019 /* SearchView.swift */,
+				A200000000000000000000F4 /* TopicBrowseView.swift */,
+				A200000000000000000000F5 /* TopicDetailView.swift */,
 				A20000000000000000000020 /* JokeDetailSheet.swift */,
 				A20000000000000000000021 /* JokeOfTheDayView.swift */,
 				A20000000000000000000022 /* YouTubePromoCardView.swift */,
@@ -496,6 +505,9 @@
 				A10000000000000000000001 /* MrFunnyJokesApp.swift in Sources */,
 				A10000000000000000000005 /* Joke.swift in Sources */,
 				A10000000000000000000006 /* JokeCategory.swift in Sources */,
+				A100000000000000000000F3 /* JokeTopic.swift in Sources */,
+				A100000000000000000000F4 /* TopicBrowseView.swift in Sources */,
+				A100000000000000000000F5 /* TopicDetailView.swift in Sources */,
 				A10000000000000000000007 /* JokeCardView.swift in Sources */,
 				C353057B2EEDF96100C81E13 /* AllTimeTopTenDetailView.swift in Sources */,
 				C353057C2EEDF96100C81E13 /* AllTimeTopTenCarouselView.swift in Sources */,

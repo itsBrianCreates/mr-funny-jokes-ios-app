@@ -104,16 +104,10 @@ final class FirestoreService {
             try? document.data(as: FirestoreJoke.self).toJoke()
         }
 
-        // Christmas jokes accumulate popularity_score during December, so the
+        // Holiday jokes accumulate popularity_score during their season, so the
         // top-50 pool stays full of them year-round — exclude them off-season
-        if !SeasonalHelper.isChristmasSeason() {
-            let nonChristmas = jokes.filter { !$0.isChristmasJoke }
-            if !nonChristmas.isEmpty {
-                return nonChristmas.randomElement()
-            }
-        }
-
-        return jokes.randomElement()
+        let inSeason = jokes.filter { !$0.isOutOfSeason() }
+        return (inSeason.isEmpty ? jokes : inSeason).randomElement()
     }
 
     /// Fetches a joke by its Firestore document ID

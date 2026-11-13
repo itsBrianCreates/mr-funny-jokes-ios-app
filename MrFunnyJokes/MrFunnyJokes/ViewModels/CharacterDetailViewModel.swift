@@ -44,14 +44,11 @@ final class CharacterDetailViewModel: ObservableObject {
         }
 
         // MARK: - Seasonal Content Ranking
-        // Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
-        if !SeasonalHelper.isChristmasSeason() {
-            let nonChristmas = categoryFiltered.filter { !$0.isChristmasJoke }
-            let christmas = categoryFiltered.filter { $0.isChristmasJoke }
-            return nonChristmas + christmas
-        } else {
-            return categoryFiltered
-        }
+        // Holiday jokes outside their season (see `Joke.isOutOfSeason`) go to the bottom
+        let now = Date()
+        let inSeason = categoryFiltered.filter { !$0.isOutOfSeason(on: now) }
+        let outOfSeason = categoryFiltered.filter { $0.isOutOfSeason(on: now) }
+        return inSeason + outOfSeason
     }
 
     /// Available joke types for this character (based on character's allowed categories)

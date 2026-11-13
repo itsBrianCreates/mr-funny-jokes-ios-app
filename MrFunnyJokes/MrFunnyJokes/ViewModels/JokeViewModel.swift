@@ -52,14 +52,11 @@ final class JokeViewModel: ObservableObject {
         }
 
         // MARK: - Seasonal Content Ranking
-        // Step 2: Apply seasonal demotion for Christmas jokes outside Nov 1 - Dec 31
-        if !SeasonalHelper.isChristmasSeason() {
-            let nonChristmas = categoryFiltered.filter { !$0.isChristmasJoke }
-            let christmas = categoryFiltered.filter { $0.isChristmasJoke }
-            return nonChristmas + christmas
-        } else {
-            return categoryFiltered
-        }
+        // Step 2: Holiday jokes outside their season (see `Joke.isOutOfSeason`) go to the bottom
+        let now = Date()
+        let inSeason = categoryFiltered.filter { !$0.isOutOfSeason(on: now) }
+        let outOfSeason = categoryFiltered.filter { $0.isOutOfSeason(on: now) }
+        return inSeason + outOfSeason
     }
 
     // Jokes that have been saved by the user (sorted by most recently saved)
@@ -137,13 +134,8 @@ final class JokeViewModel: ObservableObject {
             // Fallback to local jokes if Firebase fetch fails
             guard !jokes.isEmpty else { return nil }
             // Same off-season exclusion as FirestoreService.fetchRandomJoke()
-            if !SeasonalHelper.isChristmasSeason() {
-                let nonChristmas = jokes.filter { !$0.isChristmasJoke }
-                if !nonChristmas.isEmpty {
-                    return nonChristmas.randomElement()
-                }
-            }
-            return jokes.randomElement()
+            let inSeason = jokes.filter { !$0.isOutOfSeason() }
+            return (inSeason.isEmpty ? jokes : inSeason).randomElement()
         }
     }
 
@@ -252,6 +244,17 @@ final class JokeViewModel: ObservableObject {
     /// where it drops below everything not yet opened.
     func markJokeViewed(_ joke: Joke) {
         storage.markViewed(firestoreId: joke.firestoreId)
+    }
+
+    /// A topic's jokes, the ones this person hasn't seen first. Uses what has been seen
+    /// up to now, so jokes scrolled past on Home earlier in this visit drop down here.
+    func freshFirstJokes(in topic: JokeTopic) -> [Joke] {
+        JokeFeedOrdering.freshFirst(
+            jokes.filter { topic.contains($0) },
+            seenOrder: storage.getImpressionOrder(),
+            ratedIds: storage.getRatedJokeIdsFast(),
+            viewedIds: storage.getViewedIdsFast()
+        )
     }
 
     /// Puts the feed in a new order: jokes this person hasn't seen first.

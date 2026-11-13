@@ -11,6 +11,9 @@ struct SearchView: View {
     /// Joke shown in the detail pane or sheet. An ID, so it always reads fresh data.
     @State private var selectedJokeId: UUID?
 
+    /// Topic page pushed from the browse grid
+    @State private var selectedTopic: JokeTopic?
+
     /// Cached firestoreIds of matching jokes (stable across refreshes)
     @State private var cachedResultIds: [String] = []
 
@@ -62,7 +65,16 @@ struct SearchView: View {
     var body: some View {
         Group {
             if searchText.isEmpty {
-                emptyState
+                let topics = JokeTopic.browsable(in: viewModel.jokes)
+                if topics.isEmpty {
+                    // Catalog not loaded yet
+                    emptyState
+                } else {
+                    TopicBrowseView(topics: topics) { topic in
+                        AnalyticsService.shared.logTopicSelected(topicId: topic.id, source: "search")
+                        selectedTopic = topic
+                    }
+                }
             } else if searchResults.isEmpty {
                 noResultsState
             } else {
@@ -71,7 +83,11 @@ struct SearchView: View {
                 }
             }
         }
-        .searchable(text: $searchText, prompt: "Search jokes")
+        // Always shown: the browse grid scrolls, and the default drawer hides until pulled down
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search jokes")
+        .navigationDestination(item: $selectedTopic) { topic in
+            TopicDetailView(viewModel: viewModel, topic: topic)
+        }
         .onChange(of: searchText) { _, newValue in
             searchTextPublisher.send(newValue)
         }
