@@ -5,6 +5,41 @@ struct TopicDetailView: View {
     @ObservedObject var viewModel: JokeViewModel
     let topic: JokeTopic
 
+    var body: some View {
+        JokeCollectionPage(
+            viewModel: viewModel,
+            title: "\(topic.emoji) \(topic.name)",
+            destination: .topic(topic),
+            loadJokes: { viewModel.freshFirstJokes(in: topic) }
+        )
+    }
+}
+
+/// Every joke of one type (dad jokes, knock-knocks, pickup lines), unseen first
+struct JokeTypeDetailView: View {
+    @ObservedObject var viewModel: JokeViewModel
+    let category: JokeCategory
+
+    var body: some View {
+        JokeCollectionPage(
+            viewModel: viewModel,
+            title: category.rawValue,
+            destination: .jokeType(category),
+            loadJokes: { viewModel.freshFirstJokes(ofType: category) }
+        )
+    }
+}
+
+// MARK: - Joke Collection Page
+
+/// A pushed page listing a set of jokes, opened from the topic grid or a chip on a joke
+private struct JokeCollectionPage: View {
+    @ObservedObject var viewModel: JokeViewModel
+    let title: String
+    /// What this page is, so jokes opened here don't link back to it
+    let destination: JokeDestination
+    let loadJokes: () -> [Joke]
+
     /// Joke shown in the detail pane or sheet. An ID, so it always reads fresh data.
     @State private var selectedJokeId: UUID?
 
@@ -48,12 +83,13 @@ struct TopicDetailView: View {
                 .padding(.bottom, 16)
             }
         }
-        .navigationTitle("\(topic.emoji) \(topic.name)")
+        .environment(\.currentJokeDestination, destination)
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.large)
         .onAppear {
             // Once per visit: closing a joke's sheet must not reshuffle the page
             guard orderedJokeIds == nil else { return }
-            orderedJokeIds = viewModel.freshFirstJokes(in: topic).map { $0.firestoreId ?? $0.id.uuidString }
+            orderedJokeIds = loadJokes().map { $0.firestoreId ?? $0.id.uuidString }
         }
     }
 }

@@ -8,8 +8,7 @@ struct JokeFeedView: View {
     /// State for navigating to All-Time Top 10 detail view
     @State private var allTimeTopTenDestination: RankingType?
 
-    /// State for navigating to the in-season topic page
-    @State private var seasonalTopicDestination: JokeTopic?
+    @Environment(\.openJokes) private var openJokes
 
     /// Persistent state for YouTube promo dismissal
     @AppStorage("youtubePromoDismissed") private var youtubePromoDismissed = false
@@ -79,9 +78,6 @@ struct JokeFeedView: View {
                     jokeViewModel: viewModel,
                     selectedType: type
                 )
-            }
-            .navigationDestination(item: $seasonalTopicDestination) { topic in
-                TopicDetailView(viewModel: viewModel, topic: topic)
             }
         }
     }
@@ -222,7 +218,7 @@ struct JokeFeedView: View {
                let seasonal = JokeTopic.inSeason(in: viewModel.jokes) {
                 SeasonalTopicCardView(topic: seasonal.topic, count: seasonal.count) {
                     AnalyticsService.shared.logTopicSelected(topicId: seasonal.topic.id, source: "home")
-                    seasonalTopicDestination = seasonal.topic
+                    openJokes?(.topic(seasonal.topic))
                 }
             }
 

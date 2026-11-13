@@ -147,6 +147,8 @@ struct MainContentView: View {
     @ObservedObject var jokeViewModel: JokeViewModel
     @State private var selectedTab: AppTab = .home
     @State private var navigationPath = NavigationPath()
+    @State private var meNavigationPath = NavigationPath()
+    @State private var searchNavigationPath = NavigationPath()
     @State private var showingSettings = false
     @State private var scrollToJokeOfTheDay = false
     @State private var showingJokeOfTheDaySheet = false
@@ -205,6 +207,13 @@ struct MainContentView: View {
                 )
             }
         }
+        // Sheets presented from here (widget deep link) open joke pages on Home.
+        // Each tab's stack replaces this with its own.
+        .environment(\.openJokes, OpenJokesAction { destination in
+            selectedTab = .home
+            navigationPath.append(destination)
+        })
+        .environment(\.topicJokeCounts, topicJokeCounts)
         // Outermost so every tab, pushed screen and sheet sees it
         .environment(\.isWideLayout, windowWidth >= AdaptiveLayout.wideMinWidth)
         .onGeometryChange(for: CGFloat.self) { geometry in
@@ -212,6 +221,17 @@ struct MainContentView: View {
         } action: { width in
             windowWidth = width
         }
+    }
+
+    // MARK: - Topics
+
+    /// Joke counts for the topics that have a page, for "More like this" chips
+    private var topicJokeCounts: [String: Int] {
+        var counts: [String: Int] = [:]
+        for entry in JokeTopic.browsable(in: jokeViewModel.jokes) {
+            counts[entry.topic.id] = entry.count
+        }
+        return counts
     }
 
     // MARK: - Deep Linking
@@ -266,7 +286,9 @@ struct MainContentView: View {
             .navigationDestination(for: JokeCharacter.self) { character in
                 CharacterDetailView(character: character)
             }
+            .jokeDestinations(viewModel: jokeViewModel)
         }
+        .environment(\.openJokes, OpenJokesAction { navigationPath.append($0) })
     }
 
     private var filterMenu: some View {
@@ -298,7 +320,7 @@ struct MainContentView: View {
     // MARK: - Me Tab
 
     private var meTab: some View {
-        NavigationStack {
+        NavigationStack(path: $meNavigationPath) {
             MeView(viewModel: jokeViewModel)
                 .navigationTitle("My Jokes")
                 .navigationBarTitleDisplayMode(.large)
@@ -313,16 +335,20 @@ struct MainContentView: View {
                         }
                     }
                 }
+                .jokeDestinations(viewModel: jokeViewModel)
         }
+        .environment(\.openJokes, OpenJokesAction { meNavigationPath.append($0) })
     }
 
     // MARK: - Search Tab
 
     private var searchTab: some View {
-        NavigationStack {
+        NavigationStack(path: $searchNavigationPath) {
             SearchView(viewModel: jokeViewModel)
                 .navigationTitle("Search")
                 .navigationBarTitleDisplayMode(.large)
+                .jokeDestinations(viewModel: jokeViewModel)
         }
+        .environment(\.openJokes, OpenJokesAction { searchNavigationPath.append($0) })
     }
 }

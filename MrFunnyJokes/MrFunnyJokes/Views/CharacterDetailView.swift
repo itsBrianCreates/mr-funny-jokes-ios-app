@@ -44,6 +44,8 @@ struct CharacterDetailView: View {
             )
             .ignoresSafeArea()
         )
+        // Jokes opened here show this character as plain text, not a link back to this page
+        .environment(\.currentJokeDestination, .character(character))
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task {

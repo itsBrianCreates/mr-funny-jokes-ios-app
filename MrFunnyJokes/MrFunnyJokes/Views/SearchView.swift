@@ -11,8 +11,7 @@ struct SearchView: View {
     /// Joke shown in the detail pane or sheet. An ID, so it always reads fresh data.
     @State private var selectedJokeId: UUID?
 
-    /// Topic page pushed from the browse grid
-    @State private var selectedTopic: JokeTopic?
+    @Environment(\.openJokes) private var openJokes
 
     /// Cached firestoreIds of matching jokes (stable across refreshes)
     @State private var cachedResultIds: [String] = []
@@ -72,7 +71,7 @@ struct SearchView: View {
                 } else {
                     TopicBrowseView(topics: topics) { topic in
                         AnalyticsService.shared.logTopicSelected(topicId: topic.id, source: "search")
-                        selectedTopic = topic
+                        openJokes?(.topic(topic))
                     }
                 }
             } else if searchResults.isEmpty {
@@ -85,9 +84,6 @@ struct SearchView: View {
         }
         // Always shown: the browse grid scrolls, and the default drawer hides until pulled down
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search jokes")
-        .navigationDestination(item: $selectedTopic) { topic in
-            TopicDetailView(viewModel: viewModel, topic: topic)
-        }
         .onChange(of: searchText) { _, newValue in
             searchTextPublisher.send(newValue)
         }

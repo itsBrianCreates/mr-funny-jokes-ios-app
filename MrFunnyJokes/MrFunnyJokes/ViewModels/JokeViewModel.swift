@@ -249,12 +249,27 @@ final class JokeViewModel: ObservableObject {
     /// A topic's jokes, the ones this person hasn't seen first. Uses what has been seen
     /// up to now, so jokes scrolled past on Home earlier in this visit drop down here.
     func freshFirstJokes(in topic: JokeTopic) -> [Joke] {
-        JokeFeedOrdering.freshFirst(
-            jokes.filter { topic.contains($0) },
+        freshFirst(jokes.filter { topic.contains($0) })
+    }
+
+    /// Every joke of one type, the ones this person hasn't seen first
+    func freshFirstJokes(ofType category: JokeCategory) -> [Joke] {
+        freshFirst(jokes.filter { $0.category == category })
+    }
+
+    private func freshFirst(_ subset: [Joke]) -> [Joke] {
+        let ordered = JokeFeedOrdering.freshFirst(
+            subset,
             seenOrder: storage.getImpressionOrder(),
             ratedIds: storage.getRatedJokeIdsFast(),
             viewedIds: storage.getViewedIdsFast()
         )
+
+        // Holiday jokes outside their season go last, so Food doesn't open on Halloween
+        // jokes in November. On a holiday's own page every joke is in the same boat,
+        // so the order is unchanged.
+        let now = Date()
+        return ordered.filter { !$0.isOutOfSeason(on: now) } + ordered.filter { $0.isOutOfSeason(on: now) }
     }
 
     /// Puts the feed in a new order: jokes this person hasn't seen first.
@@ -271,7 +286,9 @@ final class JokeViewModel: ObservableObject {
 
         jokes = ordered
         feedGeneration += 1
-        updateSharedCaches(from: ordered)
+        // Siri and the widget shouldn't tell a Halloween joke in November either
+        let now = Date()
+        updateSharedCaches(from: ordered.filter { !$0.isOutOfSeason(on: now) })
     }
 
     /// Takes in catalog changes without moving anything the person may be looking at:
