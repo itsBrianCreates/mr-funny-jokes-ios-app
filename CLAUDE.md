@@ -67,9 +67,14 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 | Widget uses REST API, not Firebase SDK | SDK causes deadlock issue #13070 |
 | Widget deep link: `mrfunnyjokes://jotd` | URL scheme for navigation from widget |
 | Cloud Functions for aggregation | Replaced local cron scripts |
-| Client-side category filtering | Firestore query misses non-standard type values |
-| Background load on first scroll | Preserves app launch performance |
-| Session-rated visibility | Rated jokes stay visible until pull-to-refresh |
+| Client-side category filtering | Firestore query misses non-standard type values. The whole catalog is in memory, so picking a category fetches nothing |
+| Whole catalog on the device (`JokeCatalogService`) | Feeds are built from a local copy of every joke, not a "top N by `popularity_score`" query. That query returned the same jokes every launch (the score is 0 on every document). First sync downloads everything; later syncs fetch only documents whose `updated_at` moved; a full re-download runs weekly to drop deleted jokes. Any script that edits a joke must bump `updated_at` or installed apps won't see the edit for up to a week |
+| Fresh-first order, fixed per visit (`JokeFeedOrdering`) | Home and character feeds share one order: unseen jokes added in the last 30 days, other unseen, scrolled past but never opened, then opened or rated (the last two least recently seen first). Computed once at launch, pull-to-refresh, or return after 30+ minutes in the background, never while scrolling, so cards don't move under the reader. Seen/opened/rated jokes drop down on the next visit |
+| Topics live in the Search tab (`JokeTopic`, `TopicBrowseView`) | Browsing by subject is a grid shown on the Search tab until the person types; the Home filter stays joke-type only. A topic is a curated group of one or more tags and appears only once it has 15 jokes, so the list stays short (13 today) and thin topics show up by themselves when the catalog fills them. `wordplay` is not a topic: most jokes carry it. The in-season topic also gets a one-row shortcut on Home |
+| One row of chips on the opened joke (`JokeLinksRow`) | Teller, joke type and up to two topics, each a chip that opens more jokes like it. One rule: a capsule is tappable. The page you're already on shows as plain text; a teller with one joke type (Mr. Love) shows no type chip. Chips look ~30pt tall but have a 44pt tap area. Chips that don't fit move into a native "…" menu, so the row is always one line. Never on cards: the whole card is the button, and a topic there can give the punchline away |
+| Joke pages open through `\.openJokes` and `JokeDestination` | Every tab's `NavigationStack` is path-based, registers the pages once with `.jokeDestinations(viewModel:)`, and supplies its own open action, so a character, joke-type or topic page opens in the current tab on top of any page. `JokeDetailSheet` wraps the action to close the sheet first. Pages set `\.currentJokeDestination` so jokes there don't link back to them |
+| Search field pinned with `.navigationBarDrawer(displayMode: .always)` | The browse grid scrolls, and the default drawer hides the field until pulled down |
+| `Joke.id` derived from the Firestore ID | Same UUID every time a joke is decoded, so selection and scroll anchors survive a catalog sync |
 | Node.js 20 for Cloud Functions | Required by firebase-functions v7 |
 | @AppStorage for promo dismissal | Simple persistent state without extra infrastructure |
 | Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns |
@@ -253,14 +258,16 @@ Say "CodeStory" to generate social media drafts from your session notes.
 `dad_joke`, `knock_knock`, `pickup_line`
 
 ### Valid Tags
-`animals`, `food`, `work`, `school`, `sports`, `music`, `technology`, `science`, `health`, `weather`, `holidays`, `halloween`, `thanksgiving`, `christmas`, `family`, `travel`, `wordplay`, `religious`
+`animals`, `food`, `work`, `school`, `sports`, `music`, `technology`, `science`, `health`, `weather`, `nature`, `holidays`, `halloween`, `thanksgiving`, `christmas`, `family`, `travel`, `romantic`, `movies`, `wordplay`, `religious`
+
+Tags decide which topic a joke shows under in the Search tab (see `JokeTopic.all`). A joke tagged only `wordplay` appears under no topic. `scripts/normalize-tags.js` merges stray tags into these, in place
 
 ### Seasonal Content
-- Christmas jokes identified by `tags: ["christmas"]` (only this tag — not "holidays")
-- Demoted outside Nov 1 - Dec 31 via `SeasonalHelper.isChristmasSeason()`
-- Demotion applied in `filteredJokes` computed properties (both `JokeViewModel` and `CharacterDetailViewModel`)
-- Pattern: partition array into non-seasonal + seasonal, then concatenate
-- JOTD fallback pool (`fetchRandomJoke`) excludes Christmas jokes off-season — popularity_score earned in December keeps them in the top-50 pool year-round otherwise
+- Holiday jokes are identified by tag: `christmas`, `thanksgiving`, `halloween` (only these — not "holidays")
+- Feed seasons (`SeasonalHelper`): Christmas Nov 1 - Dec 31, Thanksgiving Nov 1 - Thanksgiving Day, Halloween Oct 1 - Oct 31. Outside its season a holiday joke sinks to the bottom of feeds (`Joke.isOutOfSeason`, applied in `filteredJokes` of both `JokeViewModel` and `CharacterDetailViewModel`) and is left out of the JOTD fallback pool
+- Home card and top of the topic grid (`JokeTopic.isInSeason`): Halloween Oct 1 - Oct 31, Thanksgiving Nov 1 - Thanksgiving Day, Christmas from the day after Thanksgiving through Dec 31. The windows don't overlap, so only one holiday is featured at a time. A holiday needs 15 jokes to get a card
+- Thanksgiving is computed as the fourth Thursday of November
+- Pattern: partition array into in-season + out-of-season, then concatenate
 
 ### Joke Text Format
 - Stored `text` = setup + blank line + punchline. `scripts/add-jokes.js` takes `setup` and `punchline` and builds it; a joke with no punchline is rejected

@@ -44,6 +44,8 @@ struct CharacterDetailView: View {
             )
             .ignoresSafeArea()
         )
+        // Jokes opened here show this character as plain text, not a link back to this page
+        .environment(\.currentJokeDestination, .character(character))
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task {
@@ -177,18 +179,14 @@ struct CharacterDetailView: View {
                     joke: joke,
                     isSelected: isSplit && selectedJokeId == joke.id,
                     accentColor: character.color,
-                    onSelect: { selectedJokeId = joke.id }
+                    onSelect: {
+                        viewModel.markJokeViewed(joke)
+                        selectedJokeId = joke.id
+                    }
                 )
                 .onAppear {
                     viewModel.markJokeImpression(joke)
-                    viewModel.loadMoreIfNeeded(currentItem: joke)
                 }
-            }
-
-            // Loading more indicator with skeleton cards (matches main feed UX)
-            if viewModel.isLoadingMore {
-                CharacterLoadingMoreView()
-                    .transition(.opacity)
             }
         }
         .padding(.horizontal, 20)
@@ -281,18 +279,6 @@ struct CharacterJokeCardView: View {
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Character Loading More View
-
-/// Skeleton loading view for infinite scroll in character detail
-struct CharacterLoadingMoreView: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            SkeletonCardView(lineCount: 2, lastLineWidth: 0.6)
-            SkeletonCardView(lineCount: 1, lastLineWidth: 0.8)
-        }
     }
 }
 

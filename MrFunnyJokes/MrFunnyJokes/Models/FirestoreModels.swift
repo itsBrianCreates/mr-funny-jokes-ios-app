@@ -13,6 +13,7 @@ struct FirestoreJoke: Codable, Identifiable {
     let sfw: Bool?
     let source: String?
     let createdAt: Date?
+    let updatedAt: Timestamp?
     let ratingCount: Int?
     let ratingSum: Int?
     let ratingAvg: Double?
@@ -29,6 +30,7 @@ struct FirestoreJoke: Codable, Identifiable {
         case sfw
         case source
         case createdAt = "created_at"
+        case updatedAt = "updated_at"
         case ratingCount = "rating_count"
         case ratingSum = "rating_sum"
         case ratingAvg = "rating_avg"
@@ -50,7 +52,7 @@ struct FirestoreJoke: Codable, Identifiable {
         let (setup, punchline) = JokeTextParser.split(text, isKnockKnock: category == .knockKnock)
 
         return Joke(
-            id: UUID(uuidString: id ?? "") ?? UUID(),
+            id: id.map(Joke.stableID(forFirestoreId:)) ?? UUID(),
             category: category,
             setup: setup,
             punchline: punchline,
@@ -63,7 +65,8 @@ struct FirestoreJoke: Codable, Identifiable {
             ratingAvg: ratingAvg ?? 0.0,
             likes: likes ?? 0,
             dislikes: dislikes ?? 0,
-            popularityScore: popularityScore ?? 0.0
+            popularityScore: popularityScore ?? 0.0,
+            createdAt: createdAt
         )
     }
 }

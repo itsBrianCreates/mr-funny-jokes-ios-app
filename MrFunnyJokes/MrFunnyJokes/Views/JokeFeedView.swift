@@ -8,6 +8,8 @@ struct JokeFeedView: View {
     /// State for navigating to All-Time Top 10 detail view
     @State private var allTimeTopTenDestination: RankingType?
 
+    @Environment(\.openJokes) private var openJokes
+
     /// Persistent state for YouTube promo dismissal
     @AppStorage("youtubePromoDismissed") private var youtubePromoDismissed = false
 
@@ -101,8 +103,6 @@ struct JokeFeedView: View {
                         .onAppear {
                             // Track impression for feed freshness
                             viewModel.markJokeImpression(joke)
-                            // Trigger infinite scroll loading when approaching end
-                            viewModel.loadMoreIfNeeded(currentItem: joke)
                         }
                     }
                 } header: {
@@ -149,6 +149,19 @@ struct JokeFeedView: View {
             // Scroll to top after refresh - delay needed for SwiftUI refresh animation to complete
             try? await Task.sleep(for: .milliseconds(100))
             withAnimation(.easeOut(duration: 0.2)) {
+                proxy.scrollTo(topAnchorID, anchor: .top)
+            }
+        }
+        .onChange(of: viewModel.feedGeneration) {
+            // A fresh feed (back after a long break) starts from the top, where the unseen jokes are.
+            // Through the top anchor, not `scrollPosition.scrollTo(edge:)`: that lands on the
+            // grid's own origin, which shifts the feed sideways by its padding.
+            readingAnchorId = nil
+            // Let go of the joke the scroll view was pinned to first, or it follows that
+            // joke to wherever the new order put it
+            scrollPosition = ScrollPosition(idType: UUID.self)
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(50))
                 proxy.scrollTo(topAnchorID, anchor: .top)
             }
         }
@@ -200,6 +213,15 @@ struct JokeFeedView: View {
                 }
             }
 
+            // Shortcut to the topic that's in season (only when "All" is selected)
+            if viewModel.selectedCategory == nil,
+               let seasonal = JokeTopic.inSeason(in: viewModel.jokes) {
+                SeasonalTopicCardView(topic: seasonal.topic, count: seasonal.count) {
+                    AnalyticsService.shared.logTopicSelected(topicId: seasonal.topic.id, source: "home")
+                    openJokes?(.topic(seasonal.topic))
+                }
+            }
+
             // All-Time Top 10 carousel (only when "All" is selected)
             if showAllTimeTopTen {
                 AllTimeTopTenCarouselView(
@@ -228,17 +250,9 @@ struct JokeFeedView: View {
     /// Full-width content below the joke grid
     @ViewBuilder
     private var feedFooter: some View {
-        VStack(spacing: 16) {
-            // Loading more indicator (skeleton cards at bottom)
-            if viewModel.isLoadingMore {
-                LoadingMoreView()
-                    .transition(.opacity)
-            }
-
-            // End of feed message (when no more jokes)
-            if !viewModel.hasMoreJokes && !feedJokes.isEmpty {
-                EndOfFeedView()
-            }
+        // The whole catalog is in the feed, so its end is the end
+        if !feedJokes.isEmpty {
+            EndOfFeedView()
         }
     }
 }
@@ -265,17 +279,6 @@ struct OfflineBannerView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
-    }
-}
-
-// MARK: - Loading More View (Skeleton cards at bottom)
-
-struct LoadingMoreView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            SkeletonCardView(lineCount: 2, lastLineWidth: 0.6)
-            SkeletonCardView(lineCount: 1, lastLineWidth: 0.8)
-        }
     }
 }
 

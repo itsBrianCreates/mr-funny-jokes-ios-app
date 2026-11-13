@@ -38,4 +38,12 @@ final class AnalyticsService {
             "character_id": characterId
         ])
     }
+
+    /// Log when a user opens a topic, and from where ("search" or "home")
+    func logTopicSelected(topicId: String, source: String) {
+        Analytics.logEvent("topic_selected", parameters: [
+            "topic_id": topicId,
+            "source": source
+        ])
+    }
 }
