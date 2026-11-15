@@ -10,6 +10,17 @@ struct JokeDetailSheet: View {
     let onSave: () -> Void
 
     @Environment(\.isWideLayout) private var isWideLayout
+    @Environment(\.openJokes) private var openJokes
+
+    /// Tapping a chip in the sheet closes the sheet first; the page is pushed on the
+    /// screen underneath
+    private var openJokesClosingSheet: OpenJokesAction? {
+        guard let openJokes else { return nil }
+        return OpenJokesAction { destination in
+            onDismiss()
+            openJokes(destination)
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -21,6 +32,7 @@ struct JokeDetailSheet: View {
                 onRate: onRate,
                 onSave: onSave
             )
+            .environment(\.openJokes, openJokesClosingSheet)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -108,15 +120,8 @@ struct JokeDetailContent: View {
                 standardContent
             }
 
-            // Character and Category
-            HStack(spacing: 8) {
-                // Character indicator (if available)
-                if let character = jokeCharacter {
-                    CharacterIndicatorView(character: character)
-                }
-
-                categoryLabel
-            }
+            // Teller, joke type and topics: each chip opens more jokes like this one
+            JokeLinksRow(joke: joke)
 
             // Rating section
             BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
@@ -168,7 +173,7 @@ struct JokeDetailContent: View {
         .padding(.bottom, 24)
     }
 
-    /// Who's telling the joke: avatar, name and category
+    /// Who's telling the joke: their picture, then the chips for teller, type and topics
     private var tellerHeader: some View {
         HStack(spacing: 12) {
             if let character = jokeCharacter {
@@ -183,14 +188,8 @@ struct JokeDetailContent: View {
                     )
             }
 
-            VStack(alignment: .leading, spacing: 2) {
-                if let character = jokeCharacter {
-                    Text(character.name)
-                        .font(.headline)
-                }
-
-                categoryLabel
-            }
+            // The picture beside it already shows who's telling the joke
+            JokeLinksRow(joke: joke, showsCharacterAvatar: false)
         }
     }
 
@@ -210,15 +209,6 @@ struct JokeDetailContent: View {
     }
 
     // MARK: - Shared Pieces
-
-    private var categoryLabel: some View {
-        HStack(spacing: 4) {
-            Image(systemName: joke.category.icon)
-            Text(joke.category.rawValue)
-        }
-        .font(.caption)
-        .foregroundStyle(.secondary)
-    }
 
     /// Save, Copy and Share. Stacked in the compact sheet, side by side when wide.
     @ViewBuilder
