@@ -5,7 +5,13 @@ struct TopicBrowseView: View {
     let topics: [(topic: JokeTopic, count: Int)]
     let onSelect: (JokeTopic) -> Void
 
-    private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
+    /// Grows with Dynamic Type, so large text gets one wide column instead of
+    /// two columns of cut-off names
+    @ScaledMetric(relativeTo: .headline) private var minimumTileWidth: CGFloat = 150
+
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: minimumTileWidth), spacing: 12)]
+    }
 
     var body: some View {
         ScrollView {
@@ -50,8 +56,9 @@ private struct TopicTile: View {
                     Text(topic.name)
                         .font(.headline)
                         .foregroundStyle(.primary)
-                        .lineLimit(1)
+                        .lineLimit(2)
                         .minimumScaleFactor(0.8)
+                        .multilineTextAlignment(.leading)
 
                     Text("\(count) jokes")
                         .font(.subheadline)
