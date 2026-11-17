@@ -52,8 +52,9 @@ struct RootView: View {
     /// Minimum time to show splash (reduced for faster perceived startup)
     private let minimumSplashDuration: Double = 1.0
 
-    /// Maximum time to show splash before forcing transition (prevents infinite freeze)
-    private let maximumSplashDuration: Double = 5.0
+    /// Maximum time to show splash before forcing transition (prevents infinite freeze).
+    /// A safety net only: `JokeViewModel` stops waiting on the network 1.5s after launch.
+    private let maximumSplashDuration: Double = 3.0
 
     var body: some View {
         ZStack {

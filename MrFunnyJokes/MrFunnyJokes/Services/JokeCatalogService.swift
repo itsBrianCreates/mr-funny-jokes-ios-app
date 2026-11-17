@@ -55,6 +55,22 @@ final class JokeCatalogService {
         return jokes
     }
 
+    // MARK: - Starter Jokes
+
+    /// A few jokes shipped inside the app (`StarterJokes.json`), so a first launch has
+    /// something to read while the catalog downloads. They are real catalog jokes with
+    /// their Firestore IDs, so ratings and saves carry over once the catalog arrives.
+    func starterJokes() -> [Joke] {
+        guard let url = Bundle.main.url(forResource: "StarterJokes", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let starter = try? JSONDecoder().decode(StarterFile.self, from: data) else { return [] }
+        return starter.jokes
+    }
+
+    private struct StarterFile: Decodable {
+        var jokes: [Joke]
+    }
+
     // MARK: - Syncing
 
     /// Brings the catalog up to date with Firestore.

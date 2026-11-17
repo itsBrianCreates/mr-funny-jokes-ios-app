@@ -37,9 +37,20 @@ struct JokeFeedView: View {
     }
 
 
+    /// Nothing to show yet and jokes are on the way: placeholder cards stand in for the
+    /// feed, and everything that depends on the jokes waits, so the feed appears in one step
+    private var showsSkeleton: Bool {
+        viewModel.isLoadingFirstFeed
+    }
+
+    /// Placeholder cards for the skeleton: (lines of text, width of the last line)
+    private let skeletonCards: [(lineCount: Int, lastLineWidth: CGFloat)] = [
+        (2, 0.6), (1, 0.85), (3, 0.5), (2, 0.7), (2, 0.4)
+    ]
+
     /// Filtered jokes excluding the Joke of the Day to avoid duplicates
     private var feedJokes: [Joke] {
-        guard showJokeOfTheDay, let jotd = viewModel.jokeOfTheDay else {
+        guard showJokeOfTheDay, !viewModel.isLoadingJokeOfTheDay, let jotd = viewModel.jokeOfTheDay else {
             return viewModel.filteredJokes
         }
         return viewModel.filteredJokes.filter { $0.id != jotd.id }
@@ -87,7 +98,18 @@ struct JokeFeedView: View {
         ScrollView {
             LazyVGrid(columns: feedColumns, spacing: 16) {
                 Section {
-                    // Regular joke feed
+                    if showsSkeleton {
+                        ForEach(skeletonCards.indices, id: \.self) { index in
+                            SkeletonCardView(
+                                lineCount: skeletonCards[index].lineCount,
+                                lastLineWidth: skeletonCards[index].lastLineWidth
+                            )
+                        }
+                        .transition(.opacity)
+                        .accessibilityHidden(true)
+                    }
+
+                    // Regular joke feed (empty while the skeleton shows)
                     ForEach(feedJokes) { joke in
                         JokeCardView(
                             joke: joke,
@@ -116,6 +138,7 @@ struct JokeFeedView: View {
             .padding(.top, 8)
             .padding(.bottom, 16)
         }
+        .scrollDisabled(showsSkeleton)
         .scrollPosition($scrollPosition, anchor: .top)
         .onScrollGeometryChange(for: Bool.self) { geometry in
             geometry.contentOffset.y + geometry.contentInsets.top < 200
@@ -152,7 +175,10 @@ struct JokeFeedView: View {
                 proxy.scrollTo(topAnchorID, anchor: .top)
             }
         }
-        .onChange(of: viewModel.feedGeneration) {
+        .onChange(of: viewModel.feedGeneration) { oldGeneration, _ in
+            // The first feed of a launch arrives with the list still at the top; scrolling
+            // to the anchor anyway nudges the whole page up by the grid's top padding
+            guard oldGeneration > 0 else { return }
             // A fresh feed (back after a long break) starts from the top, where the unseen jokes are.
             // Through the top anchor, not `scrollPosition.scrollTo(edge:)`: that lands on the
             // grid's own origin, which shifts the feed sideways by its padding.
@@ -197,7 +223,12 @@ struct JokeFeedView: View {
             }
 
             // Joke of the Day hero section (only when "All" is selected)
-            if showJokeOfTheDay, let jokeOfTheDay = viewModel.jokeOfTheDay {
+            // A placeholder holds its place until today's joke is known
+            if showJokeOfTheDay, showsSkeleton || viewModel.isLoadingJokeOfTheDay {
+                SkeletonJokeOfTheDayView()
+                    .transition(.opacity)
+                    .accessibilityHidden(true)
+            } else if showJokeOfTheDay, let jokeOfTheDay = viewModel.jokeOfTheDay {
                 JokeOfTheDayView(
                     joke: jokeOfTheDay,
                     isCopied: viewModel.copiedJokeId == jokeOfTheDay.id,
@@ -214,7 +245,7 @@ struct JokeFeedView: View {
             }
 
             // Shortcut to the topic that's in season (only when "All" is selected)
-            if viewModel.selectedCategory == nil,
+            if viewModel.selectedCategory == nil, !viewModel.isStarterFeed,
                let seasonal = JokeTopic.inSeason(in: viewModel.jokes) {
                 SeasonalTopicCardView(topic: seasonal.topic, count: seasonal.count) {
                     AnalyticsService.shared.logTopicSelected(topicId: seasonal.topic.id, source: "home")
@@ -223,7 +254,7 @@ struct JokeFeedView: View {
             }
 
             // All-Time Top 10 carousel (only when "All" is selected)
-            if showAllTimeTopTen {
+            if showAllTimeTopTen, !showsSkeleton {
                 AllTimeTopTenCarouselView(
                     viewModel: rankingsViewModel,
                     onCardTap: { type in
@@ -233,7 +264,7 @@ struct JokeFeedView: View {
             }
 
             // YouTube promo card (only when "All" is selected and not dismissed)
-            if showYouTubePromo {
+            if showYouTubePromo, !showsSkeleton {
                 YouTubePromoCardView(onDismiss: {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         youtubePromoDismissed = true
@@ -250,8 +281,15 @@ struct JokeFeedView: View {
     /// Full-width content below the joke grid
     @ViewBuilder
     private var feedFooter: some View {
-        // The whole catalog is in the feed, so its end is the end
-        if !feedJokes.isEmpty {
+        if showsSkeleton {
+            EmptyView()
+        } else if viewModel.isDownloadingCatalog {
+            // First launch: only the starter jokes are in the feed so far
+            ProgressView("Loading more jokes…")
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+        } else if !feedJokes.isEmpty {
+            // The whole catalog is in the feed, so its end is the end
             EndOfFeedView()
         }
     }

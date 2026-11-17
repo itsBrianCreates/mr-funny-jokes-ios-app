@@ -80,6 +80,10 @@ final class CharacterDetailViewModel: ObservableObject {
                 print("Error loading jokes for \(character.name): \(error)")
             }
         }
+        if catalogJokes.isEmpty {
+            // First launch with no connection: the starter jokes beat an empty page
+            catalogJokes = catalog.starterJokes()
+        }
 
         // Apply user ratings and save state
         let characterJokes = catalogJokes
