@@ -76,3 +76,11 @@ scripts/migration-log-*.json
 # Cloud Functions
 functions/node_modules/
 functions/.npm-cache/
+
+# App Store screenshots (large images); the captioning tool is kept
+AppStoreScreenshots/*
+!AppStoreScreenshots/tools/
+
+# Session notes and one-off prompts
+socialmedia-*.md
+ios27-readiness-prompt.md
