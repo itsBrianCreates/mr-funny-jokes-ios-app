@@ -41,7 +41,7 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Mr. Love pickup lines (63) batch (November 2026)
+// Jokes to add - Thanksgiving batch (45) (November 2026)
 //
 // Every joke has a "setup" (shown on the card) and a "punchline" (shown on tap).
 // The script stores them as one `text` field with a blank line between the two,
@@ -49,69 +49,62 @@ const log = {
 // ("Is it hot in here," / "or is it just you?"); the app adds the "…" itself.
 // Knock-knock: setup is the first three lines, punchline is "X who?" plus the answer.
 const JOKES_TO_ADD = [
-  {"character": "mr_love", "type": "pickup_line", "tags": ["animals", "wordplay"], "setup": "Are you a bee?", "punchline": "Because I think you're un-bee-lievable."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["animals", "wordplay"], "setup": "Are you an owl?", "punchline": "Because owl always be here for you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["animals", "wordplay"], "setup": "Are you an otter?", "punchline": "Because you're otter this world."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["animals", "wordplay"], "setup": "Are you a bear?", "punchline": "Because I can't bear to be away from you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["animals"], "setup": "If you were a penguin,", "punchline": "I'd bring you the best pebble on the beach."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["animals"], "setup": "If you were a dog,", "punchline": "you'd win best in show."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "Are you a pizza?", "punchline": "Because you've stolen a pizza my heart."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "Are you an olive?", "punchline": "Because olive you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "Are you a muffin?", "punchline": "Because I've got muffin but love for you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "Do you like tacos?", "punchline": "Because I'd love to taco 'bout our future."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "wordplay"], "setup": "You must be tea,", "punchline": "because you suit me to a tea."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food"], "setup": "Are you maple syrup?", "punchline": "Because you're sweet and I'm stuck on you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food"], "setup": "Are you a cherry?", "punchline": "Because you're the cherry on top of my day."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["food", "romantic"], "setup": "I don't share my fries with just anyone,", "punchline": "but for you I'd hand over the whole basket."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["science", "wordplay"], "setup": "Are you a carbon sample?", "punchline": "Because I'd love to date you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["science", "wordplay"], "setup": "Are you made of oxygen and neon?", "punchline": "Because you're the ONe."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["science"], "setup": "Are you gravity?", "punchline": "Because I'm drawn to you no matter where I stand."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["science"], "setup": "Are you a comet?", "punchline": "Because someone like you only comes around once in a lifetime."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["science"], "setup": "Are you the moon?", "punchline": "Because you brighten even my darkest nights."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["technology", "wordplay"], "setup": "Are you Bluetooth?", "punchline": "Because I feel like we're paired."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["technology"], "setup": "Are you a screenshot?", "punchline": "Because I want to save this moment."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["technology"], "setup": "Are you a notification?", "punchline": "Because my heart lights up every time you pop up."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["technology", "romantic"], "setup": "Are you a good morning text?", "punchline": "Because you just made my whole day."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["school", "wordplay"], "setup": "Are you a highlighter?", "punchline": "Because you're the bright spot of my day."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["school", "wordplay"], "setup": "You must be a ruler,", "punchline": "because you measure up to everything I hoped for."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["school", "science"], "setup": "My feelings for you are like pi:", "punchline": "they go on forever."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["sports", "wordplay"], "setup": "Do you play baseball?", "punchline": "Because you're a real catch."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["sports", "wordplay"], "setup": "Do you bowl?", "punchline": "Because you've bowled me over."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["sports"], "setup": "In tennis, love means nothing.", "punchline": "With you, it means everything."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["sports"], "setup": "If charm were a sport,", "punchline": "you'd take home the gold."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["music"], "setup": "Are you a song?", "punchline": "Because I can't get you out of my head."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["music", "wordplay"], "setup": "Are you a guitar?", "punchline": "Because you're tugging at my heartstrings."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["music", "wordplay"], "setup": "Are you a drummer?", "punchline": "Because my heart skips a beat whenever you're near."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["travel"], "setup": "Are you a compass?", "punchline": "Because I'd be lost without you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["travel"], "setup": "Are you a vacation?", "punchline": "Because I've been needing you all year."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["travel"], "setup": "Are you a window seat?", "punchline": "Because you're exactly what I was hoping for."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["weather"], "setup": "Are you a rainbow?", "punchline": "Because you bring color to my cloudiest days."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["nature"], "setup": "Are you a sunflower?", "punchline": "Because I keep turning toward you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["nature"], "setup": "Are you a four-leaf clover?", "punchline": "Because I feel lucky just finding you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["nature", "wordplay"], "setup": "Are you a garden?", "punchline": "Because I'm really digging you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["work"], "setup": "Are you the weekend?", "punchline": "Because I look forward to you all week."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["work", "food"], "setup": "Are you a coffee break?", "punchline": "Because you're the best part of my workday."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["movies", "wordplay"], "setup": "Are you a sequel?", "punchline": "Because I'd love to see you again."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["movies"], "setup": "Are you the end credits?", "punchline": "Because I'd stay until the very end for you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["movies", "food"], "setup": "Are you popcorn?", "punchline": "Because the movie's no good without you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["movies"], "setup": "If life were a movie,", "punchline": "you'd be my favorite scene."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["health"], "setup": "You must be vitamin D,", "punchline": "because you're my daily dose of sunshine."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["health"], "setup": "Is your smile contagious?", "punchline": "Because I caught it the second you walked in."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["family"], "setup": "I told my mom about you.", "punchline": "She's already setting an extra place at dinner."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["family", "food"], "setup": "Are you my grandma's cooking?", "punchline": "Because nothing else compares."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas"], "setup": "If you were a Christmas tree,", "punchline": "you'd be the one in Rockefeller Center."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas"], "setup": "I must be on the nice list,", "punchline": "because Santa brought me you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas"], "setup": "Are you Christmas morning?", "punchline": "Because I've been waiting for you all year."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas"], "setup": "Is that mistletoe above us,", "punchline": "or am I just hoping?"},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "wordplay"], "setup": "Are you a string of Christmas lights?", "punchline": "Because my heart's all tangled up in you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "wordplay"], "setup": "You must be a snow globe,", "punchline": "because you've shaken up my whole world."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "food"], "setup": "Are you hot cocoa?", "punchline": "Because you make winter my favorite season."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "food"], "setup": "Are you a gingerbread cookie?", "punchline": "Because you're sweet with just a little spice."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["romantic"], "setup": "Are you a puzzle piece?", "punchline": "Because I think you're what's been missing."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["romantic"], "setup": "You must be my favorite sweater,", "punchline": "because you feel like home."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["romantic"], "setup": "I'm not usually superstitious,", "punchline": "but I think you're my lucky charm."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["romantic"], "setup": "Got a minute?", "punchline": "I'd like to spend a few thousand more with you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["romantic", "wordplay"], "setup": "Excuse me, I think you dropped something:", "punchline": "my jaw."}
+  // Mr. Funny
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals", "food"], "setup": "What do you call a running turkey?", "punchline": "Fast food!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What did the turkey say before it was roasted?", "punchline": "\"Boy, I'm stuffed!\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "religious", "wordplay"], "setup": "Why can't you take a turkey to church?", "punchline": "They use fowl language."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "technology"], "setup": "What sound does a turkey's phone make?", "punchline": "Wing, wing, wing!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals", "food"], "setup": "What do you get when you cross a turkey with a centipede?", "punchline": "Drumsticks for everyone!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "music", "wordplay"], "setup": "What kind of music did the Pilgrims like?", "punchline": "Plymouth Rock!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "wordplay"], "setup": "If April showers bring May flowers, what do May flowers bring?", "punchline": "Pilgrims!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Why do turkeys always go \"gobble, gobble\"?", "punchline": "Because they never learned table manners."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "family", "wordplay"], "setup": "What did the mother turkey say to her misbehaving kids?", "punchline": "\"If your father could see you now, he'd turn over in his gravy!\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "wordplay"], "setup": "What should you wear to Thanksgiving dinner?", "punchline": "A har-vest!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "What do sweet potatoes wear to bed?", "punchline": "Their yammies!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "health"], "setup": "Why did the pumpkin pie go to the dentist?", "punchline": "It needed a filling!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "school", "wordplay"], "setup": "What do you get when you divide the circumference of a pumpkin by its diameter?", "punchline": "Pumpkin pi!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "What did the turkey say to the turkey hunter?", "punchline": "\"Quack, quack!\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals", "wordplay"], "setup": "Why did the police arrest the turkey?", "punchline": "They suspected fowl play."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "music"], "setup": "What's the best dance to do on Thanksgiving?", "punchline": "The turkey trot!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What smells the best at Thanksgiving dinner?", "punchline": "Your nose!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "travel", "wordplay"], "setup": "How did the Mayflower show that it liked America?", "punchline": "It hugged the shore!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What did the gravy say to the mashed potatoes?", "punchline": "\"Don't worry, I've got you covered.\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "I was going to bring sweet potatoes to Thanksgiving, but I sat on them.", "punchline": "Now I'm bringing squash."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Which side of a turkey has the most feathers?", "punchline": "The outside!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "What role do green beans play at Thanksgiving dinner?", "punchline": "The casse-role!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "What did the corn say when it got a compliment?", "punchline": "\"Aw, shucks!\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "How do you keep a turkey in suspense?", "punchline": "I'll tell you after dinner."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "weather", "wordplay"], "setup": "What do you call it when it rains turkeys?", "punchline": "Fowl weather!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Can a turkey jump higher than a house?", "punchline": "Of course. A house can't jump!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What's the best way to stuff a turkey?", "punchline": "Take him out for pizza and ice cream!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "family"], "setup": "My dad said he'd carve the turkey this year.", "punchline": "So far it's a pretty good statue.", "source": "original"},
+
+  // Mr. Funny knock-knocks
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nTamara.", "punchline": "Tamara who?\nTamara we'll eat all the leftovers!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nHarry.", "punchline": "Harry who?\nHarry up, the turkey's getting cold!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nDewey.", "punchline": "Dewey who?\nDewey have to wait much longer to eat?"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nLuke.", "punchline": "Luke who?\nLuke at all that food!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nPhillip.", "punchline": "Phillip who?\nPhillip your plate and dig in!"},
+
+  // Mr. Potty
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Why did the turkey run to the bathroom?", "punchline": "He really had to gobble-gobble-go!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["thanksgiving", "food", "family"], "setup": "What's the loudest part of Thanksgiving dinner?", "punchline": "About an hour after the green beans.", "source": "original"},
+
+  // Mr. Bad
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "What are turkeys thankful for on Thanksgiving?", "punchline": "Vegetarians."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["thanksgiving", "family"], "setup": "Thanksgiving is when the family gets together to remember what they have in common.", "punchline": "Mostly grudges.", "source": "original"},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["thanksgiving", "family", "food"], "setup": "I asked for a small slice of pie.", "punchline": "My aunt said, \"Well, that would be a first.\"", "source": "original"},
+
+  // Mr. Sad
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["thanksgiving"], "setup": "I'm so thankful for my friends this Thanksgiving.", "punchline": "Both of them canceled.", "source": "original"},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "I cooked Thanksgiving dinner for twelve this year.", "punchline": "It's just me. The leftovers should last until Christmas.", "source": "original"},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["thanksgiving", "family"], "setup": "We went around the table saying what we're thankful for.", "punchline": "They skipped me.", "source": "original"},
+
+  // Mr. Love
+  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "food"], "setup": "Are you gravy?", "punchline": "Because you make everything better.", "source": "original"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "food"], "setup": "Are you Thanksgiving leftovers?", "punchline": "Because I'll be thinking about you all week.", "source": "original"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "food"], "setup": "If you were a side dish,", "punchline": "you'd be the main course.", "source": "original"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "romantic"], "setup": "I'm thankful for a lot this year,", "punchline": "but you're at the top of the list.", "source": "original"},
 ];
 
 /**
