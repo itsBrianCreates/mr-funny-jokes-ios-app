@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A10000000000000000000001 /* MrFunnyJokesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* MrFunnyJokesApp.swift */; };
 		A10000000000000000000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* Assets.xcassets */; };
+		A10000000000000000000F01 /* StarterJokes.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000F01 /* StarterJokes.json */; };
 		A10000000000000000000004 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* Preview Assets.xcassets */; };
 		A10000000000000000000005 /* Joke.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* Joke.swift */; };
 		A10000000000000000000006 /* JokeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* JokeCategory.swift */; };
@@ -106,6 +107,7 @@
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* MrFunnyJokesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrFunnyJokesApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000000000000000000F01 /* StarterJokes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = StarterJokes.json; sourceTree = "<group>"; };
 		A20000000000000000000004 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A20000000000000000000005 /* Joke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joke.swift; sourceTree = "<group>"; };
 		A20000000000000000000006 /* JokeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeCategory.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				A50000000000000000000009 /* Utilities */,
 				A50000000000000000000010 /* Resources */,
 				A20000000000000000000003 /* Assets.xcassets */,
+				A20000000000000000000F01 /* StarterJokes.json */,
 				A50000000000000000000011 /* Preview Content */,
 			);
 			path = MrFunnyJokes;
@@ -484,6 +487,7 @@
 			files = (
 				A10000000000000000000004 /* Preview Assets.xcassets in Resources */,
 				A10000000000000000000003 /* Assets.xcassets in Resources */,
+				A10000000000000000000F01 /* StarterJokes.json in Resources */,
 				C340D9672EE0A848007A6AFF /* GoogleService-Info.plist in Resources */,
 				D10000000000000000000001 /* LaunchScreen.storyboard in Resources */,
 				E10000000000000000000001 /* PrivacyInfo.xcprivacy in Resources */,

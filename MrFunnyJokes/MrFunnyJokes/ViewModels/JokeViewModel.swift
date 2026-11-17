@@ -10,8 +10,28 @@ final class JokeViewModel: ObservableObject {
     @Published var isRefreshing = false
     @Published var copiedJokeId: UUID?
 
-    /// Tracks initial app launch loading state for skeleton display
+    /// True until Home is ready to be seen; the splash waits on it. Never waits on the
+    /// network for longer than `launchNetworkBudget`.
     @Published var isInitialLoading = true
+
+    /// True on a first launch until the whole catalog has downloaded. Until then the feed
+    /// holds only the starter jokes shipped with the app, so its end isn't the end.
+    @Published private(set) var isDownloadingCatalog = false
+
+    /// True when the feed on screen began as the starter jokes. Whatever depends on the
+    /// whole catalog and would push cards down when it arrives (the in-season shortcut)
+    /// waits for the next fresh feed.
+    @Published private(set) var isStarterFeed = false
+
+    /// True until this launch knows today's joke of the day. Home holds its place with
+    /// a placeholder so the cards below don't get pushed down when it arrives.
+    @Published private(set) var isLoadingJokeOfTheDay = true
+
+    /// True when there is nothing to show yet and jokes are on the way (only if the
+    /// starter jokes are missing). Home shows its skeleton instead of an empty feed.
+    var isLoadingFirstFeed: Bool {
+        jokes.isEmpty && (isInitialLoading || isDownloadingCatalog)
+    }
 
     /// Network monitor for detecting actual connectivity status
     private let networkMonitor = NetworkMonitor.shared
@@ -31,8 +51,12 @@ final class JokeViewModel: ObservableObject {
     private var initialLoadTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
-    /// When the view model was created; the splash gives up waiting 5s after this
+    /// When the view model was created
     private let launchedAt = Date()
+
+    /// How long after launch Home waits for the network before it shows what's on the
+    /// device. On a normal connection the answers arrive sooner, behind the splash.
+    private let launchNetworkBudget: TimeInterval = 1.5
 
     /// When the app last went to the background
     private var lastBackgroundedAt: Date?
@@ -132,11 +156,15 @@ final class JokeViewModel: ObservableObject {
         } catch {
             print("Failed to fetch joke of the day from Firebase: \(error)")
             // Fallback to local jokes if Firebase fetch fails
-            guard !jokes.isEmpty else { return nil }
-            // Same off-season exclusion as FirestoreService.fetchRandomJoke()
-            let inSeason = jokes.filter { !$0.isOutOfSeason() }
-            return (inSeason.isEmpty ? jokes : inSeason).randomElement()
+            return randomInSeasonJoke(from: jokes)
         }
+    }
+
+    /// A joke to stand in as joke of the day when Firestore can't name one.
+    /// Same off-season exclusion as `FirestoreService.fetchRandomJoke()`.
+    private func randomInSeasonJoke(from jokes: [Joke]) -> Joke? {
+        let inSeason = jokes.filter { !$0.isOutOfSeason() }
+        return (inSeason.isEmpty ? jokes : inSeason).randomElement()
     }
 
     init() {
@@ -147,6 +175,7 @@ final class JokeViewModel: ObservableObject {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self?.isOffline = !isConnected
                 }
+                if isConnected { self?.downloadCatalogIfMissing() }
             }
             .store(in: &cancellables)
 
@@ -180,6 +209,7 @@ final class JokeViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.showFreshFeedIfBackFromLongBreak()
+                self?.downloadCatalogIfMissing()
             }
             .store(in: &cancellables)
 
@@ -285,6 +315,7 @@ final class JokeViewModel: ObservableObject {
         )
 
         jokes = ordered
+        isStarterFeed = false
         feedGeneration += 1
         // Siri and the widget shouldn't tell a Halloween joke in November either
         let now = Date()
@@ -292,7 +323,7 @@ final class JokeViewModel: ObservableObject {
     }
 
     /// Takes in catalog changes without moving anything the person may be looking at:
-    /// edited jokes update in place, new ones wait at the end for the next fresh feed.
+    /// edited jokes update in place, new ones go after everything already in the feed.
     private func mergeCatalogKeepingOrder(_ catalogJokes: [Joke]) {
         var freshById: [String: Joke] = [:]
         for joke in applyingUserState(to: catalogJokes) {
@@ -311,12 +342,12 @@ final class JokeViewModel: ObservableObject {
                 merged.append(fresh)
             }
         }
-        for joke in catalogJokes {
-            if let id = joke.firestoreId, !shownIds.contains(id), let fresh = freshById[id] {
-                merged.append(fresh)
-            }
+        // The rest are below anything on screen, so they can take their fresh-first order now
+        let added = catalogJokes.compactMap { joke -> Joke? in
+            guard let id = joke.firestoreId, shownIds.insert(id).inserted else { return nil }
+            return freshById[id]
         }
-        jokes = merged
+        jokes = merged + freshFirst(added)
     }
 
     /// Ratings and saves live in local storage, not in the catalog
@@ -354,7 +385,9 @@ final class JokeViewModel: ObservableObject {
 
     // MARK: - Initial Load
 
-    /// Load content on app start: the catalog saved on the device first, then what changed since.
+    /// Load content on app start: what's on the device first, then what the network has.
+    /// Home never waits on the network for more than `launchNetworkBudget`: a first launch
+    /// opens on the starter jokes shipped with the app, a later one on the saved catalog.
     /// This is fully async to avoid blocking the main thread during startup
     private func loadInitialContentAsync() async {
         // PHASE 0: Run one-time migrations (gated by UserDefaults flags)
@@ -365,37 +398,95 @@ final class JokeViewModel: ObservableObject {
         // PHASE 1: Preload memory cache for fast sorting (critical for performance)
         await storage.preloadMemoryCacheAsync()
 
-        // PHASE 2: Show the catalog saved on the device (renders behind splash)
-        let saved = await catalog.loadFromDisk()
-
-        if !saved.isEmpty {
-            showFreshFeed(from: saved)
-
-            // PHASE 3: Pick up jokes added or edited since the last sync. Normally done
-            // long before the splash lifts, so new jokes lead the feed on this launch.
-            if let updated = await syncCatalog() {
-                let splashMayBeGone = Date().timeIntervalSince(launchedAt) > 4
-                if splashMayBeGone {
-                    mergeCatalogKeepingOrder(updated)
-                } else {
-                    showFreshFeed(from: updated)
-                }
-            }
-        } else if let downloaded = await syncCatalog() {
-            // First launch, or first launch after updating from a version without a catalog
-            showFreshFeed(from: downloaded)
-            // The small per-category cache older versions kept is no longer needed
-            storage.clearCache()
-        } else {
-            // No catalog and no network: fall back to whatever an older version cached
+        // PHASE 2: Show what's on the device (renders behind splash)
+        var local = await catalog.loadFromDisk()
+        let hasSavedCatalog = !local.isEmpty
+        if !hasSavedCatalog {
+            // First launch, or first launch after updating from a version without a catalog:
+            // whatever an older version cached, else the starter jokes
             let legacy = await storage.loadAllCachedJokesAsync()
-            if !legacy.isEmpty {
-                showFreshFeed(from: legacy)
-            }
+            local = legacy.isEmpty ? catalog.starterJokes() : legacy
+            isDownloadingCatalog = true
+        }
+        if !local.isEmpty {
+            showFreshFeed(from: local)
+            isStarterFeed = !hasSavedCatalog
         }
 
-        await initializeJokeOfTheDayAsync()
+        // PHASE 3: Ask for the catalog (all of it on a first launch, what changed since the
+        // last sync otherwise) and today's joke of the day, and give both a moment to answer
+        let sync = Task { await self.syncCatalog() != nil }
+        let jokeOfTheDay = Task {
+            await self.initializeJokeOfTheDayAsync()
+            withAnimation(.easeOut(duration: 0.25)) { self.isLoadingJokeOfTheDay = false }
+        }
+        let deadline = launchedAt.addingTimeInterval(launchNetworkBudget)
+
+        let catalogChanged = await result(of: sync, by: deadline)
+        if catalogChanged == true {
+            // Still behind the splash, so the whole feed can take its fresh-first order
+            showFreshFeed(from: catalog.jokes)
+        }
+        if catalogChanged != nil {
+            finishFirstDownload(succeeded: catalogChanged == true && !hasSavedCatalog)
+        }
+        _ = await result(of: jokeOfTheDay, by: deadline)
+
         isInitialLoading = false
+
+        // PHASE 4: Slow connection, and the person may be reading by now. The catalog
+        // goes in without moving any card already in the feed.
+        if catalogChanged == nil {
+            let changed = await sync.value
+            if changed { takeInLateCatalog() }
+            finishFirstDownload(succeeded: changed && !hasSavedCatalog)
+        }
+    }
+
+    /// Adds a catalog that arrived after Home was shown, without moving any card in the feed
+    private func takeInLateCatalog() {
+        if jokes.isEmpty {
+            withAnimation(.easeOut(duration: 0.25)) { showFreshFeed(from: catalog.jokes) }
+        } else {
+            mergeCatalogKeepingOrder(catalog.jokes)
+        }
+    }
+
+    /// A first launch whose download failed (no connection, or it dropped) is left with the
+    /// starter jokes. Tries again when the connection comes back or the app is reopened,
+    /// instead of leaving it to the next launch.
+    private func downloadCatalogIfMissing() {
+        guard !isInitialLoading, !isDownloadingCatalog, !isRefreshing,
+              catalog.jokes.isEmpty, !networkMonitor.isOffline else { return }
+        isDownloadingCatalog = true
+
+        Task {
+            let downloaded = await syncCatalog() != nil
+            if downloaded { takeInLateCatalog() }
+            finishFirstDownload(succeeded: downloaded)
+        }
+    }
+
+    private func finishFirstDownload(succeeded: Bool) {
+        isDownloadingCatalog = false
+        // The small per-category cache older versions kept is no longer needed
+        if succeeded { storage.clearCache() }
+    }
+
+    /// What `task` returned, or nil if it hasn't finished by `deadline` (it keeps running)
+    private func result<T: Sendable>(of task: Task<T, Never>, by deadline: Date) async -> T? {
+        // Not a task group: a group waits for all its children before returning,
+        // and waiting on `task.value` can't be cancelled
+        let (answers, continuation) = AsyncStream<T?>.makeStream()
+        Task { continuation.yield(await task.value) }
+        Task {
+            try? await Task.sleep(for: .seconds(max(0, deadline.timeIntervalSinceNow)))
+            continuation.yield(nil)
+        }
+        for await answer in answers {
+            return answer
+        }
+        return nil
     }
 
     /// Initialize joke of the day from shared storage only (sync)

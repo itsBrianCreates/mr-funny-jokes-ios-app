@@ -1,0 +1,624 @@
+{
+ "jokes": [
+  {
+   "category": "Dad Jokes",
+   "character": "mr_sad",
+   "createdAt": 791072272.026,
+   "dislikes": 0,
+   "firestoreId": "vYRVPgoUDDHbjMCb4yIh",
+   "id": "E3F3DCB7-BBB3-555F-5A4F-6002E47EEB86",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "I gave her a shoulder to crayon.",
+   "ratingAvg": 4.3125,
+   "ratingCount": 16,
+   "setup": "Whenever my artist girlfriend is sad I let her draw things on my body.",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay",
+    "romantic"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_sad",
+   "createdAt": 787096232.463,
+   "dislikes": 0,
+   "firestoreId": "vZnedmI512L4B6K5MsvG",
+   "id": "E5D65264-B788-11F0-14E2-654865026F26",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "because my real ladder left when I was 5.",
+   "ratingAvg": 4.333333333333333,
+   "ratingCount": 12,
+   "setup": "I have a stepladder…",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "family",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_potty",
+   "createdAt": 787100893.917,
+   "dislikes": 0,
+   "firestoreId": "Rx4thMicHogwQ9HfHBXu",
+   "id": "FA7F6CCF-DEA8-078E-6687-E727C243DA6F",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Uranus.",
+   "ratingAvg": 4,
+   "ratingCount": 11,
+   "setup": "Where do astronauts poop in space?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "science",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 786604619.8110001,
+   "dislikes": 0,
+   "firestoreId": "z22qaPKGv1G65yyykA1o",
+   "id": "1AF4E6D0-D7EA-D6A2-E8B9-FBE091531876",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "but now I use my hands.",
+   "ratingAvg": 4,
+   "ratingCount": 8,
+   "setup": "I used to play piano by ear,",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "music"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_bad",
+   "createdAt": 786431741.9030001,
+   "dislikes": 0,
+   "firestoreId": "rKOH11oLxWFvPLI6HwAK",
+   "id": "0C519F08-D3DF-D772-BCE2-C4D5C2CF68A6",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Only for 20 seconds though, and only once.",
+   "ratingAvg": 4,
+   "ratingCount": 6,
+   "setup": "I have a fish that can breakdance!",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "animals"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_bad",
+   "createdAt": 786431741.9030001,
+   "dislikes": 0,
+   "firestoreId": "OEnxPTNdkJ4j7T7YVunr",
+   "id": "3DB33FF1-9004-0C79-4417-1A0C0546E76E",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "and a lifetime ban from the zoo.",
+   "ratingAvg": 4.8,
+   "ratingCount": 5,
+   "setup": "My grandfather has the heart of a lion",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "family",
+    "animals"
+   ]
+  },
+  {
+   "category": "Pick Up Lines",
+   "character": "mr_love",
+   "createdAt": 791064593.513,
+   "dislikes": 0,
+   "firestoreId": "w7311z3MGbnNpviGM6ll",
+   "id": "3178E990-3B33-8535-27E3-075F9D2D7086",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Because you have everything I've been searching for.",
+   "ratingAvg": 5,
+   "ratingCount": 5,
+   "setup": "Is your name Google?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "technology",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 791533755.425,
+   "dislikes": 0,
+   "firestoreId": "xr3yEyRMNjhWfFbwjyR5",
+   "id": "7FCE0E47-7434-C540-4B25-8FD2D92114DA",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Chex!",
+   "ratingAvg": 4,
+   "ratingCount": 5,
+   "setup": "What did the cereal bring to the bank?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "food",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Pick Up Lines",
+   "character": "mr_love",
+   "createdAt": 786822335.092,
+   "dislikes": 0,
+   "firestoreId": "qP2MjZlugVV8tMNlw6P0",
+   "id": "05F3595E-BC5C-B42A-97BF-4BA4E8A2AEF2",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "and I'm the 1 you're missing.",
+   "ratingAvg": 4.75,
+   "ratingCount": 4,
+   "setup": "On a scale from 1 to 10, you're a 9,",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 792907570.927,
+   "dislikes": 0,
+   "firestoreId": "trsXc5Dilxtd3Gwswedm",
+   "id": "F05DB733-E439-A8EA-21C2-B0C9E8FFAB40",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Chicken sees a salad!",
+   "ratingAvg": 4.25,
+   "ratingCount": 4,
+   "setup": "What do you say when a chicken is looking at salad?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "animals",
+    "food",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_bad",
+   "createdAt": 787001814.606,
+   "dislikes": 0,
+   "firestoreId": "Ctm7bhZtTVMeCGdFsmwg",
+   "id": "B56CB4E7-6DC0-0811-02D7-990E11D020F9",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "To draw blood!",
+   "ratingAvg": 5,
+   "ratingCount": 3,
+   "setup": "Why do nurses use red crayons?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "health",
+    "work"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_bad",
+   "createdAt": 796361611.856,
+   "dislikes": 0,
+   "firestoreId": "LqbzvpDy4jVqKGhf0Wot",
+   "id": "9C0F4400-BB49-5DBE-F148-E3560E01A595",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "but he was so good at his job that I don't even care!",
+   "ratingAvg": 5,
+   "ratingCount": 3,
+   "setup": "My grief counselor died,",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "life"
+   ]
+  },
+  {
+   "category": "Pick Up Lines",
+   "character": "mr_love",
+   "createdAt": 786822335.092,
+   "dislikes": 0,
+   "firestoreId": "XebeuDcLkgyhNKMk4VNZ",
+   "id": "9DED18C8-FE2D-3F43-3B95-197F7766970B",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "you'd be fine print.",
+   "ratingAvg": 4.333333333333333,
+   "ratingCount": 3,
+   "setup": "If you were words on a page,",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_bad",
+   "createdAt": 787127278.668,
+   "dislikes": 0,
+   "firestoreId": "cR2arVivd7aKOOnqmXne",
+   "id": "0B19ABA4-D785-8A1C-8AC9-ABF585A8033D",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Somehow the kids still got in.",
+   "ratingAvg": 4,
+   "ratingCount": 3,
+   "setup": "I childproofed the house.",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "family",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_potty",
+   "createdAt": 787100893.917,
+   "dislikes": 0,
+   "firestoreId": "kcZhKBppmjazpY9o5If5",
+   "id": "45F3686A-6EBE-8855-F284-3C8433C2BDB2",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Then I had the biggest vowel movement ever.",
+   "ratingAvg": 4.666666666666667,
+   "ratingCount": 3,
+   "setup": "I ate four cans of alphabet soup yesterday.",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "food",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_sad",
+   "createdAt": 787126909.401,
+   "dislikes": 0,
+   "firestoreId": "lI3TYMhi1nCFPcSF8dpQ",
+   "id": "52C14F27-99D9-BDC6-3080-C7B5E76653C4",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "It was really going through some things.",
+   "ratingAvg": 5,
+   "ratingCount": 3,
+   "setup": "Did you hear about the sad ghost?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 793083619.4660001,
+   "dislikes": 0,
+   "firestoreId": "pIwLSMxLyaWRezfIjMT7",
+   "id": "E4FADEE1-317A-E679-B1E8-0AB890FB461D",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "He said nothing!",
+   "ratingAvg": 4.666666666666667,
+   "ratingCount": 3,
+   "setup": "I asked my dog what's two minus two.",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "animals",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_sad",
+   "createdAt": 787126909.401,
+   "dislikes": 0,
+   "firestoreId": "0zrNjTXSU3i88rak5YhA",
+   "id": "4B134D16-8DD5-E0AF-144F-786FB3FB87AA",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "I just can't find a happy medium.",
+   "ratingAvg": 4.5,
+   "ratingCount": 2,
+   "setup": "It's so hard to find a psychic that's not sad…",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_potty",
+   "createdAt": 796361611.856,
+   "dislikes": 0,
+   "firestoreId": "1TCozocF2C3dYbNGg5dM",
+   "id": "2F8290B2-C0C0-3D99-4FB0-5E7F9E633B5A",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Noble gas!",
+   "ratingAvg": 5,
+   "ratingCount": 2,
+   "setup": "What do you get when a king farts?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "bathroom"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_potty",
+   "createdAt": 796236135.27,
+   "dislikes": 0,
+   "firestoreId": "9EfWQg646oUWaWIu1YJf",
+   "id": "5F346430-4B2B-2C57-B39D-3536C7B1D0F4",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "A salad shooter!",
+   "ratingAvg": 5,
+   "ratingCount": 2,
+   "setup": "What do you call a vegetarian with diarrhea?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "food",
+    "health"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_bad",
+   "createdAt": 787095305.9760001,
+   "dislikes": 0,
+   "firestoreId": "CRozSxdtIGYjF7aMXr1Y",
+   "id": "012A5C90-8203-CCDF-8A9C-176F7B6ADD90",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "When it leaves you and never comes back.",
+   "ratingAvg": 4,
+   "ratingCount": 2,
+   "setup": "When does a joke become a dad joke?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "family",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Pick Up Lines",
+   "character": "mr_love",
+   "createdAt": 791064768.8369999,
+   "dislikes": 0,
+   "firestoreId": "dmDGzWdlQueoficADvTU",
+   "id": "F258E8CD-ACC8-1DA8-F29F-2DA441125E9D",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Cause you're adding meaning to my life.",
+   "ratingAvg": 5,
+   "ratingCount": 2,
+   "setup": "Are you a dictionary?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "school",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 792897622.506,
+   "dislikes": 0,
+   "firestoreId": "oO8kroSLXcRaCEeHosUN",
+   "id": "D735DD29-82AF-AC07-87F1-7A2EE92E7C77",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "At the quack of dawn!",
+   "ratingAvg": 5,
+   "ratingCount": 2,
+   "setup": "What time do ducks wake up?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "animals",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Pick Up Lines",
+   "character": "mr_love",
+   "createdAt": 791064768.8369999,
+   "dislikes": 0,
+   "firestoreId": "rK1IPXR83tBDQDDNLFwc",
+   "id": "15315A48-9D0F-97CC-71FA-50132889D052",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Because without you, I'd die.",
+   "ratingAvg": 4,
+   "ratingCount": 2,
+   "setup": "Are you my phone charger?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "technology",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 791533755.425,
+   "dislikes": 0,
+   "firestoreId": "rU46WwjUyQ4Hpak3S76M",
+   "id": "79B9DA42-8DE7-DF9A-3152-EA2FE6DE75F9",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Mon-keys!",
+   "ratingAvg": 5,
+   "ratingCount": 2,
+   "setup": "What keys unlock a banana?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "animals",
+    "food",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_potty",
+   "createdAt": 792907446.2390001,
+   "dislikes": 0,
+   "firestoreId": "t5TfCzm1TFotFjrgRjW0",
+   "id": "8D2B86B5-5DC9-24DA-4D3A-2904BB9ACE4D",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "The P is silent!",
+   "ratingAvg": 5,
+   "ratingCount": 2,
+   "setup": "Why can't you hear a pterodactyl go to the bathroom?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "animals",
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 793083116.8570001,
+   "dislikes": 0,
+   "firestoreId": "tvkXN3goWJ9mlhK58dJ0",
+   "id": "BED7AE81-CF7C-3EBD-D5EC-2FD5367B5B5F",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Nothing, it just waved!",
+   "ratingAvg": 5,
+   "ratingCount": 2,
+   "setup": "What did the ocean say to the beach?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 791533164.0550001,
+   "dislikes": 0,
+   "firestoreId": "vx1MayHr4VHyugdsTInm",
+   "id": "3E437F3D-8496-B1D2-5227-6CB4FD7D89F0",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "but it's tearable.",
+   "ratingAvg": 4.5,
+   "ratingCount": 2,
+   "setup": "I have a joke about paper,",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 786605903.7839999,
+   "dislikes": 0,
+   "firestoreId": "7vO5Npwf7t28ZxyNrkmb",
+   "id": "AE1A6BF1-2DBA-DAA6-46C9-24D0118C2B6F",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "Igloos it together.",
+   "ratingAvg": 4,
+   "ratingCount": 1,
+   "setup": "How does a penguin build its house?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "animals"
+   ]
+  },
+  {
+   "category": "Dad Jokes",
+   "character": "mr_funny",
+   "createdAt": 816196718.9070001,
+   "dislikes": 0,
+   "firestoreId": "Rda6RDQZs1SH2mPSNOFi",
+   "id": "AF921697-0255-32B9-34F9-90EE3FE5B380",
+   "isSaved": false,
+   "likes": 0,
+   "popularityScore": 0,
+   "punchline": "A can't opener!",
+   "ratingAvg": 5,
+   "ratingCount": 1,
+   "setup": "What do you call a can opener that doesn't work?",
+   "sfw": true,
+   "source": "classic",
+   "tags": [
+    "wordplay"
+   ]
+  }
+ ]
+}

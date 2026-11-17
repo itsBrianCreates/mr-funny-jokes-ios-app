@@ -1,23 +1,24 @@
 import SwiftUI
 
 // MARK: - Skeleton Joke of the Day View
-// Placeholder view that matches the exact structure of JokeOfTheDayView.
+// Placeholder view that matches the structure and height of JokeOfTheDayView with a
+// two-line setup, so the cards below barely move when the real joke takes its place.
 // Uses the brand yellow light background to maintain visual consistency
 // with the actual hero card.
 
 struct SkeletonJokeOfTheDayView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             // Header badge placeholder - matches "JOKE OF THE DAY" text
             badgePlaceholder
 
-            // Setup text placeholder - larger font (.title2) = taller lines
+            // Setup text placeholder - two lines of .title3
             setupTextPlaceholder
 
-            // Category and rating row placeholder
+            // Character and rating row placeholder
             metadataRowPlaceholder
         }
-        .padding(20)
+        .padding(16)
         .background(.brandYellowLight, in: RoundedRectangle(cornerRadius: 20))
         .shimmer()
     }
@@ -27,18 +28,18 @@ struct SkeletonJokeOfTheDayView: View {
 
     private var badgePlaceholder: some View {
         SkeletonShape(
-            width: 110,
-            height: 12,
-            cornerRadius: 3
+            width: 130,
+            height: 28,
+            cornerRadius: 6
         )
         .opacity(0.6)  // Slightly more subtle to match caption style
     }
 
     // MARK: - Setup Text Placeholder
-    // Matches .title2.weight(.semibold) - larger text (~22pt)
+    // Matches two lines of .title3.weight(.semibold) (~25pt line height)
 
     private var setupTextPlaceholder: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             SkeletonShape(height: 22, cornerRadius: 4)
             GeometryReader { geo in
                 SkeletonShape(
@@ -52,13 +53,13 @@ struct SkeletonJokeOfTheDayView: View {
     }
 
     // MARK: - Metadata Row Placeholder
-    // Matches category icon + text and optional rating emoji
+    // Matches the character avatar and name, and the rating prompt
 
     private var metadataRowPlaceholder: some View {
         HStack {
-            // Category icon + text placeholder
-            HStack(spacing: 4) {
-                SkeletonShape(width: 14, height: 14, cornerRadius: 3)
+            // Avatar + name placeholder
+            HStack(spacing: 12) {
+                SkeletonShape(width: 44, height: 44, cornerRadius: 22)
                 SkeletonShape(width: 80, height: 12, cornerRadius: 3)
             }
 
