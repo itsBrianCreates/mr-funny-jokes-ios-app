@@ -176,6 +176,7 @@ struct MainContentView: View {
             }
         }
         .tint(.accessibleYellow)
+        .reviewPrompt()
         .onOpenURL { url in
             handleDeepLink(url)
         }
@@ -254,6 +255,16 @@ struct MainContentView: View {
             selectedTab = .me
         case "search":
             selectedTab = .search
+        case "topic":
+            // mrfunnyjokes://topic/<topicId>: the topic's page on the Search tab,
+            // as if it had been tapped in Browse. An unknown ID just opens Search.
+            selectedTab = .search
+            let topicId = url.pathComponents.dropFirst().first
+            if let topic = JokeTopic.all.first(where: { $0.id == topicId }) {
+                AnalyticsService.shared.logTopicSelected(topicId: topic.id, source: "deep_link")
+                // Replaces the path, so opening links twice doesn't stack pages
+                searchNavigationPath = NavigationPath([JokeDestination.topic(topic)])
+            }
         default:
             selectedTab = .home
         }
