@@ -56,14 +56,19 @@ extension View {
     /// Registers the pages `JokeDestination` can open. Apply once inside each `NavigationStack`.
     func jokeDestinations(viewModel: JokeViewModel) -> some View {
         navigationDestination(for: JokeDestination.self) { destination in
-            switch destination {
-            case .character(let character):
-                CharacterDetailView(character: character)
-            case .jokeType(let category):
-                JokeTypeDetailView(viewModel: viewModel, category: category)
-            case .topic(let topic):
-                TopicDetailView(viewModel: viewModel, topic: topic)
+            Group {
+                switch destination {
+                case .character(let character):
+                    CharacterDetailView(character: character)
+                case .jokeType(let category):
+                    JokeTypeDetailView(viewModel: viewModel, category: category)
+                case .topic(let topic):
+                    TopicDetailView(viewModel: viewModel, topic: topic)
+                }
             }
+            // A deep link can swap the page at the same depth (topic A for topic B).
+            // Without its own identity the new page keeps the old one's joke list.
+            .id(destination)
         }
     }
 }

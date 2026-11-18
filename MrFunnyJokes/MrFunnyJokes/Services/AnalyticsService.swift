@@ -39,11 +39,22 @@ final class AnalyticsService {
         ])
     }
 
-    /// Log when a user opens a topic, and from where ("search" or "home")
+    /// Log when a user opens a topic, and from where ("search", "home" or "deep_link")
     func logTopicSelected(topicId: String, source: String) {
         Analytics.logEvent("topic_selected", parameters: [
             "topic_id": topicId,
             "source": source
+        ])
+    }
+
+    // MARK: - Review Events
+
+    /// Log when we ask iOS to show the App Store rating prompt.
+    /// iOS decides whether it actually appears, so this counts asks, not prompts seen.
+    func logReviewPrompted(appVersion: String, positiveRatings: Int) {
+        Analytics.logEvent("review_prompted", parameters: [
+            "app_version": appVersion,
+            "positive_ratings": positiveRatings
         ])
     }
 }
