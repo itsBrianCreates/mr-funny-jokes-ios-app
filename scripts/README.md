@@ -41,6 +41,14 @@ node migrate-joke-ids.js --dry-run
 
 Simulates the full migration without making any actual changes.
 
+### Remove Duplicate Jokes
+```bash
+node remove-duplicate-jokes.js            # Dry run: prints what it would do
+node remove-duplicate-jokes.js --apply    # Backs up, then merges and deletes
+```
+
+Merges each group of duplicate jokes listed in the script into one copy: keeps a starter joke if the group has one, otherwise the most-rated copy. It moves rating events onto the kept copy, adds the other copies' likes and ratings to it, merges tags, bumps `updated_at`, and deletes the rest. The backup goes to `jokes-backup-duplicates-<timestamp>.json`. Safe to run again: groups already down to one copy are skipped.
+
 ## What the Migration Does
 
 1. **Backup**: Creates a timestamped JSON backup of all jokes
