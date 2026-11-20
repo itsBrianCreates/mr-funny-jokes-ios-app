@@ -41,7 +41,7 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Thanksgiving batch (45) (November 2026)
+// Jokes to add - Christmas batch (39) (November 2026)
 //
 // Every joke has a "setup" (shown on the card) and a "punchline" (shown on tap).
 // The script stores them as one `text` field with a blank line between the two,
@@ -50,61 +50,50 @@ const log = {
 // Knock-knock: setup is the first three lines, punchline is "X who?" plus the answer.
 const JOKES_TO_ADD = [
   // Mr. Funny
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals", "food"], "setup": "What do you call a running turkey?", "punchline": "Fast food!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What did the turkey say before it was roasted?", "punchline": "\"Boy, I'm stuffed!\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "religious", "wordplay"], "setup": "Why can't you take a turkey to church?", "punchline": "They use fowl language."},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "technology"], "setup": "What sound does a turkey's phone make?", "punchline": "Wing, wing, wing!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals", "food"], "setup": "What do you get when you cross a turkey with a centipede?", "punchline": "Drumsticks for everyone!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "music", "wordplay"], "setup": "What kind of music did the Pilgrims like?", "punchline": "Plymouth Rock!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "wordplay"], "setup": "If April showers bring May flowers, what do May flowers bring?", "punchline": "Pilgrims!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Why do turkeys always go \"gobble, gobble\"?", "punchline": "Because they never learned table manners."},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "family", "wordplay"], "setup": "What did the mother turkey say to her misbehaving kids?", "punchline": "\"If your father could see you now, he'd turn over in his gravy!\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "wordplay"], "setup": "What should you wear to Thanksgiving dinner?", "punchline": "A har-vest!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "What do sweet potatoes wear to bed?", "punchline": "Their yammies!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "health"], "setup": "Why did the pumpkin pie go to the dentist?", "punchline": "It needed a filling!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "school", "wordplay"], "setup": "What do you get when you divide the circumference of a pumpkin by its diameter?", "punchline": "Pumpkin pi!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "What did the turkey say to the turkey hunter?", "punchline": "\"Quack, quack!\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals", "wordplay"], "setup": "Why did the police arrest the turkey?", "punchline": "They suspected fowl play."},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "music"], "setup": "What's the best dance to do on Thanksgiving?", "punchline": "The turkey trot!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What smells the best at Thanksgiving dinner?", "punchline": "Your nose!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "travel", "wordplay"], "setup": "How did the Mayflower show that it liked America?", "punchline": "It hugged the shore!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What did the gravy say to the mashed potatoes?", "punchline": "\"Don't worry, I've got you covered.\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "I was going to bring sweet potatoes to Thanksgiving, but I sat on them.", "punchline": "Now I'm bringing squash."},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Which side of a turkey has the most feathers?", "punchline": "The outside!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "What role do green beans play at Thanksgiving dinner?", "punchline": "The casse-role!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food", "wordplay"], "setup": "What did the corn say when it got a compliment?", "punchline": "\"Aw, shucks!\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "How do you keep a turkey in suspense?", "punchline": "I'll tell you after dinner."},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "weather", "wordplay"], "setup": "What do you call it when it rains turkeys?", "punchline": "Fowl weather!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Can a turkey jump higher than a house?", "punchline": "Of course. A house can't jump!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "What's the best way to stuff a turkey?", "punchline": "Take him out for pizza and ice cream!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["thanksgiving", "family"], "setup": "My dad said he'd carve the turkey this year.", "punchline": "So far it's a pretty good statue.", "source": "original"},
-
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "What do you call a cat on the beach at Christmas?", "punchline": "Sandy Claws!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "food", "wordplay"], "setup": "What's the most popular wine at Christmas dinner?", "punchline": "\"But I don't like Brussels sprouts!\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "weather"], "setup": "What did one snowman say to the other snowman?", "punchline": "\"Do you smell carrots?\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "school", "wordplay"], "setup": "What do Santa's elves do after school?", "punchline": "Their gnome-work!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "How does Christmas Day end?", "punchline": "With the letter Y!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "school", "wordplay"], "setup": "What do you call Santa's little helpers?", "punchline": "Subordinate clauses."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "family", "weather"], "setup": "What do snowmen call their kids?", "punchline": "Chill-dren!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "What did the stamp say to the Christmas card?", "punchline": "\"Stick with me and we'll go places!\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "health"], "setup": "What do you get if you eat the Christmas decorations?", "punchline": "Tinsel-itis!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "What do reindeer hang on their Christmas trees?", "punchline": "Horn-aments!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "Why are Advent calendars so hard to find in late December?", "punchline": "Their days are numbered!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas"], "setup": "What did the Christmas tree say to the ornament?", "punchline": "\"Quit hanging around!\""},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "What's green, covered in tinsel, and goes \"ribbit\"?", "punchline": "Mistle-toad!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "food"], "setup": "How do you make a slow reindeer fast?", "punchline": "Stop feeding it!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas"], "setup": "What do you call an elf wearing earmuffs?", "punchline": "Anything you want — he can't hear you!"},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "How does Santa keep track of every fireplace he visits?", "punchline": "He keeps a log."},
+  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "Who delivers presents to baby sharks at Christmas?", "punchline": "Santa Jaws!"},
   // Mr. Funny knock-knocks
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nTamara.", "punchline": "Tamara who?\nTamara we'll eat all the leftovers!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nHarry.", "punchline": "Harry who?\nHarry up, the turkey's getting cold!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nDewey.", "punchline": "Dewey who?\nDewey have to wait much longer to eat?"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nLuke.", "punchline": "Luke who?\nLuke at all that food!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["thanksgiving", "food"], "setup": "Knock, knock.\nWho's there?\nPhillip.", "punchline": "Phillip who?\nPhillip your plate and dig in!"},
-
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas"], "setup": "Knock, knock.\nWho's there?\nMary.", "punchline": "Mary who?\nMary Christmas!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "animals"], "setup": "Knock, knock.\nWho's there?\nOlive.", "punchline": "Olive who?\nOlive the other reindeer!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "weather"], "setup": "Knock, knock.\nWho's there?\nYule.", "punchline": "Yule who?\nYule be sorry if you don't let me in — it's freezing out here!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas"], "setup": "Knock, knock.\nWho's there?\nElf.", "punchline": "Elf who?\nElf me wrap these presents!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "music"], "setup": "Knock, knock.\nWho's there?\nHannah.", "punchline": "Hannah who?\nHannah partridge in a pear tree!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "weather"], "setup": "Knock, knock.\nWho's there?\nSnow.", "punchline": "Snow who?\nSnow time to chat — Santa's on his way!"},
+  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas"], "setup": "Knock, knock.\nWho's there?\nHolly.", "punchline": "Holly who?\nHolly-days are here — open up!"},
   // Mr. Potty
-  {"character": "mr_potty", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "Why did the turkey run to the bathroom?", "punchline": "He really had to gobble-gobble-go!"},
-  {"character": "mr_potty", "type": "dad_joke", "tags": ["thanksgiving", "food", "family"], "setup": "What's the loudest part of Thanksgiving dinner?", "punchline": "About an hour after the green beans.", "source": "original"},
-
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["christmas", "weather"], "setup": "Why was the snowman digging through the bag of carrots?", "punchline": "He was picking his nose!"},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["christmas", "music", "food"], "setup": "What's the worst carol to hear after Christmas dinner?", "punchline": "\"Jingle Smells.\""},
+  {"character": "mr_potty", "type": "dad_joke", "tags": ["christmas", "food", "health"], "setup": "What do you call Santa after he eats every cookie on Christmas Eve?", "punchline": "Santa Claus-tipated."},
   // Mr. Bad
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["thanksgiving", "animals"], "setup": "What are turkeys thankful for on Thanksgiving?", "punchline": "Vegetarians."},
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["thanksgiving", "family"], "setup": "Thanksgiving is when the family gets together to remember what they have in common.", "punchline": "Mostly grudges.", "source": "original"},
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["thanksgiving", "family", "food"], "setup": "I asked for a small slice of pie.", "punchline": "My aunt said, \"Well, that would be a first.\"", "source": "original"},
-
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "health", "wordplay"], "setup": "What did Santa say to the guy smoking on his roof?", "punchline": "\"Put that out — it's bad for my elf.\""},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas"], "setup": "What do you get for being on the naughty list?", "punchline": "Coal. Which, with today's heating bills, is honestly a great gift."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "work"], "setup": "Why is Christmas just like a day at the office?", "punchline": "You do all the work, and the fat guy in the suit gets all the credit."},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "thanksgiving", "animals", "food"], "setup": "What did the turkey say when it heard about Christmas dinner?", "punchline": "\"Seriously? I just survived Thanksgiving!\""},
   // Mr. Sad
-  {"character": "mr_sad", "type": "dad_joke", "tags": ["thanksgiving"], "setup": "I'm so thankful for my friends this Thanksgiving.", "punchline": "Both of them canceled.", "source": "original"},
-  {"character": "mr_sad", "type": "dad_joke", "tags": ["thanksgiving", "food"], "setup": "I cooked Thanksgiving dinner for twelve this year.", "punchline": "It's just me. The leftovers should last until Christmas.", "source": "original"},
-  {"character": "mr_sad", "type": "dad_joke", "tags": ["thanksgiving", "family"], "setup": "We went around the table saying what we're thankful for.", "punchline": "They skipped me.", "source": "original"},
-
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "weather"], "setup": "Why was the snowman so quiet at the Christmas party?", "punchline": "He knew he'd be gone by spring."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "family"], "setup": "My kids got me a \"World's Best Dad\" mug for Christmas.", "punchline": "The sticker said 75% off."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas"], "setup": "Why did the Christmas tree feel so empty on December 26th?", "punchline": "Everyone just took the presents and left."},
+  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "food"], "setup": "Every year I leave out milk and cookies for Santa.", "punchline": "Every year the cookies disappear, and so does any sign of my presents."},
   // Mr. Love
-  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "food"], "setup": "Are you gravy?", "punchline": "Because you make everything better.", "source": "original"},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "food"], "setup": "Are you Thanksgiving leftovers?", "punchline": "Because I'll be thinking about you all week.", "source": "original"},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "food"], "setup": "If you were a side dish,", "punchline": "you'd be the main course.", "source": "original"},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["thanksgiving", "romantic"], "setup": "I'm thankful for a lot this year,", "punchline": "but you're at the top of the list.", "source": "original"},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic"], "setup": "Let's skip the mistletoe.", "punchline": "I don't need an excuse to kiss you."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic"], "setup": "You're at the top of my Christmas list,", "punchline": "and I've checked it twice."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic"], "setup": "Do you hear that?", "punchline": "My heart just grew three sizes."},
+  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic", "weather"], "setup": "Are you a snowflake?", "punchline": "Because there's no one else quite like you."}
 ];
 
 /**
