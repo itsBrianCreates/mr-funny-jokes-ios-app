@@ -602,6 +602,7 @@ final class JokeViewModel: ObservableObject {
             let analyticsCharacter = joke.character ?? "unknown"
             Task.detached { AnalyticsService.shared.logJokeRated(jokeId: analyticsJokeId, character: analyticsCharacter, rating: ratingName) }
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
+            let previousRating = jokeIndex.map { jokes[$0].userRating } ?? joke.userRating
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
             } else {
@@ -610,6 +611,11 @@ final class JokeViewModel: ObservableObject {
                 var mutableJoke = joke
                 mutableJoke.userRating = clampedRating
                 jokes.append(mutableJoke)
+            }
+
+            // A joke newly rated Hilarious counts toward asking for an App Store rating
+            if ReviewPromptService.isPositive(clampedRating), !ReviewPromptService.isPositive(previousRating) {
+                ReviewPromptService.shared.recordPositiveRating()
             }
 
             // Sync rating to Firestore if we have a Firestore ID

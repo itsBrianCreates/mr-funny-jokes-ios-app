@@ -135,8 +135,14 @@ final class CharacterDetailViewModel: ObservableObject {
         } else {
             let clampedRating = min(max(rating, 1), 5)
             storage.saveRating(for: joke.id, firestoreId: joke.firestoreId, rating: clampedRating)
+            let previousRating = jokeIndex.map { jokes[$0].userRating } ?? joke.userRating
             if let index = jokeIndex {
                 jokes[index].userRating = clampedRating
+            }
+
+            // A joke newly rated Hilarious counts toward asking for an App Store rating
+            if ReviewPromptService.isPositive(clampedRating), !ReviewPromptService.isPositive(previousRating) {
+                ReviewPromptService.shared.recordPositiveRating()
             }
             let ratingName = clampedRating == 5 ? "hilarious" : "horrible"
             let analyticsJokeId = joke.firestoreId ?? joke.id.uuidString

@@ -87,9 +87,27 @@ private struct JokeCollectionPage: View {
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.large)
         .onAppear {
-            // Once per visit: closing a joke's sheet must not reshuffle the page
-            guard orderedJokeIds == nil else { return }
-            orderedJokeIds = loadJokes().map { $0.firestoreId ?? $0.id.uuidString }
+            updateOrder()
+        }
+        // A deep link can open this page before the catalog has loaded
+        .onChange(of: viewModel.jokes.count) {
+            updateOrder()
+        }
+    }
+
+    /// Sets the page's order once per visit: closing a joke's sheet must not reshuffle it.
+    /// Jokes that arrive later are added at the end, so no card moves.
+    private func updateOrder() {
+        let ids = loadJokes().map { $0.firestoreId ?? $0.id.uuidString }
+        guard let current = orderedJokeIds, !current.isEmpty else {
+            orderedJokeIds = ids
+            return
+        }
+
+        let known = Set(current)
+        let added = ids.filter { !known.contains($0) }
+        if !added.isEmpty {
+            orderedJokeIds = current + added
         }
     }
 }

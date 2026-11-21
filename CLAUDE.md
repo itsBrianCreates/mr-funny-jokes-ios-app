@@ -66,6 +66,8 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 |----------|-----------|
 | Widget uses REST API, not Firebase SDK | SDK causes deadlock issue #13070 |
 | Widget deep link: `mrfunnyjokes://jotd` | URL scheme for navigation from widget |
+| Topic deep link: `mrfunnyjokes://topic/<topicId>` | Switches to Search and sets `searchNavigationPath` to that topic's `JokeDestination`, the same page as tapping it in Browse. Pushed joke pages carry `.id(destination)` so swapping one topic for another at the same depth doesn't keep the old list, and a page opened before the catalog loads fills in when it lands (new jokes are added at the end) |
+| App Store rating ask (`ReviewPromptService`) | Asked with `\.requestReview` right after a joke is newly rated Hilarious, once 3 such ratings have been given across launches. Never on the first launch, never while anything is presented (it waits for the sheet to close), once per app version. State is in `UserDefaults` (`reviewPrompt*` keys). iOS may still show nothing, so `review_prompted` counts asks |
 | Cloud Functions for aggregation | Replaced local cron scripts |
 | Client-side category filtering | Firestore query misses non-standard type values. The whole catalog is in memory, so picking a category fetches nothing |
 | Whole catalog on the device (`JokeCatalogService`) | Feeds are built from a local copy of every joke, not a "top N by `popularity_score`" query. That query returned the same jokes every launch (the score is 0 on every document). First sync downloads everything; later syncs fetch only documents whose `updated_at` moved; a full re-download runs weekly to drop deleted jokes. Any script that edits a joke must bump `updated_at` or installed apps won't see the edit for up to a week |
@@ -263,6 +265,19 @@ Say "CodeStory" to generate social media drafts from your session notes.
 `animals`, `food`, `work`, `school`, `sports`, `music`, `technology`, `science`, `health`, `weather`, `nature`, `holidays`, `halloween`, `thanksgiving`, `christmas`, `family`, `travel`, `romantic`, `movies`, `wordplay`, `religious`
 
 Tags decide which topic a joke shows under in the Search tab (see `JokeTopic.all`). A joke tagged only `wordplay` appears under no topic. `scripts/normalize-tags.js` merges stray tags into these, in place
+
+### Deep Links
+URL scheme `mrfunnyjokes://`, handled in `MainContentView.handleDeepLink`:
+
+| Link | Opens |
+|------|-------|
+| `mrfunnyjokes://jotd` | Home, with the joke of the day sheet (widgets use this) |
+| `mrfunnyjokes://home` | Home tab |
+| `mrfunnyjokes://me` | Me tab |
+| `mrfunnyjokes://search` | Search tab |
+| `mrfunnyjokes://topic/<topicId>` | That topic's page on the Search tab, e.g. `topic/christmas`, `topic/thanksgiving`. IDs are `JokeTopic.all` ids. An unknown ID just opens Search |
+
+Test in the simulator: `xcrun simctl openurl booted "mrfunnyjokes://topic/christmas"`
 
 ### Seasonal Content
 - Holiday jokes are identified by tag: `christmas`, `thanksgiving`, `halloween` (only these — not "holidays")

@@ -14,6 +14,7 @@
 		A10000000000000000000005 /* Joke.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* Joke.swift */; };
 		A10000000000000000000006 /* JokeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* JokeCategory.swift */; };
 		A100000000000000000000F3 /* JokeTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F3 /* JokeTopic.swift */; };
+		A100000000000000000000F8 /* ReviewPromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F8 /* ReviewPromptService.swift */; };
 		A100000000000000000000F4 /* TopicBrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F4 /* TopicBrowseView.swift */; };
 		A100000000000000000000F5 /* TopicDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F5 /* TopicDetailView.swift */; };
 		A100000000000000000000F6 /* JokeLinksRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000000000000F6 /* JokeLinksRow.swift */; };
@@ -112,6 +113,7 @@
 		A20000000000000000000005 /* Joke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joke.swift; sourceTree = "<group>"; };
 		A20000000000000000000006 /* JokeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeCategory.swift; sourceTree = "<group>"; };
 		A200000000000000000000F3 /* JokeTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeTopic.swift; sourceTree = "<group>"; };
+		A200000000000000000000F8 /* ReviewPromptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPromptService.swift; sourceTree = "<group>"; };
 		A200000000000000000000F4 /* TopicBrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicBrowseView.swift; sourceTree = "<group>"; };
 		A200000000000000000000F5 /* TopicDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailView.swift; sourceTree = "<group>"; };
 		A200000000000000000000F6 /* JokeLinksRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeLinksRow.swift; sourceTree = "<group>"; };
@@ -301,6 +303,7 @@
 				A20000000000000000000012 /* LocalStorageService.swift */,
 				A20000000000000000000028 /* FirestoreService.swift */,
 				A200000000000000000000F2 /* JokeCatalogService.swift */,
+				A200000000000000000000F8 /* ReviewPromptService.swift */,
 				F20000000000000000000002 /* NetworkMonitor.swift */,
 			);
 			path = Services;
@@ -513,6 +516,7 @@
 				A10000000000000000000005 /* Joke.swift in Sources */,
 				A10000000000000000000006 /* JokeCategory.swift in Sources */,
 				A100000000000000000000F3 /* JokeTopic.swift in Sources */,
+				A100000000000000000000F8 /* ReviewPromptService.swift in Sources */,
 				A100000000000000000000F4 /* TopicBrowseView.swift in Sources */,
 				A100000000000000000000F5 /* TopicDetailView.swift in Sources */,
 				A100000000000000000000F6 /* JokeLinksRow.swift in Sources */,
@@ -718,7 +722,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -732,7 +736,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -748,7 +752,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -762,7 +766,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -778,7 +782,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
@@ -788,7 +792,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -805,7 +809,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
@@ -815,7 +819,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
