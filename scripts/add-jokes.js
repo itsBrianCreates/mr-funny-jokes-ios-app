@@ -83,7 +83,7 @@ const JOKES_TO_ADD = [
   {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "health", "wordplay"], "setup": "What did Santa say to the guy smoking on his roof?", "punchline": "\"Put that out — it's bad for my elf.\""},
   {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas"], "setup": "What do you get for being on the naughty list?", "punchline": "Coal. Which, with today's heating bills, is honestly a great gift."},
   {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "work"], "setup": "Why is Christmas just like a day at the office?", "punchline": "You do all the work, and the fat guy in the suit gets all the credit."},
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "thanksgiving", "animals", "food"], "setup": "What did the turkey say when it heard about Christmas dinner?", "punchline": "\"Seriously? I just survived Thanksgiving!\""},
+  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "animals", "food"], "setup": "What did the turkey say when it heard about Christmas dinner?", "punchline": "\"Seriously? I just survived Thanksgiving!\""},
   // Mr. Sad
   {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "weather"], "setup": "Why was the snowman so quiet at the Christmas party?", "punchline": "He knew he'd be gone by spring."},
   {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "family"], "setup": "My kids got me a \"World's Best Dad\" mug for Christmas.", "punchline": "The sticker said 75% off."},
