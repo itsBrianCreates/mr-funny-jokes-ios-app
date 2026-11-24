@@ -87,7 +87,7 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 | Joke pages open through `\.openJokes` and `JokeDestination` | Every tab's `NavigationStack` is path-based, registers the pages once with `.jokeDestinations(viewModel:)`, and supplies its own open action, so a character, joke-type or topic page opens in the current tab on top of any page. `JokeDetailSheet` wraps the action to close the sheet first. Pages set `\.currentJokeDestination` so jokes there don't link back to them |
 | Search field pinned with `.navigationBarDrawer(displayMode: .always)` | The browse grid scrolls, and the default drawer hides the field until pulled down |
 | `Joke.id` derived from the Firestore ID | Same UUID every time a joke is decoded, so selection and scroll anchors survive a catalog sync |
-| Node.js 20 for Cloud Functions | Required by firebase-functions v7 |
+| Node.js 22 for Cloud Functions | Node.js 20 was retired by Google on 2026-10-30; nothing deploys on it |
 | @AppStorage for promo dismissal | Simple persistent state without extra infrastructure |
 | Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns |
 | Scoped withAnimation over implicit .animation() | Prevents scroll container animation interference on iOS 18 |

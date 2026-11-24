@@ -56,10 +56,32 @@ function jokeIdFromPath(path) {
 function splitJoke(text, type) {
   const clean = String(text || "").replace(/\r\n/g, "\n").trim();
   const parts = clean.split(/\n[ \t]*\n\s*/);
-  const setup = (parts[0] || "").trim();
-  const punchline = parts.slice(1).join("\n").trim();
+  let setup = (parts[0] || "").trim();
+  let punchline = parts.slice(1).join("\n").trim();
   const isKnockKnock = type === "knock_knock" || /^knock/i.test(clean);
   const lines = (part) => part.split("\n").map((line) => line.trim()).filter(Boolean);
+
+  // Older knock-knocks have no blank line, and many are a single line. The
+  // punchline starts at the last "... who?", which never matches "Who's there?"
+  if (isKnockKnock && !punchline) {
+    const whos = [...clean.matchAll(/[^.?!\n]*\bwho\?/gi)];
+    const last = whos[whos.length - 1];
+    if (last && last.index > 0) {
+      const sentences = (part) => (part.match(/[^.?!\n]+[.?!]*/g) || []).map((s) => s.trim()).filter(Boolean);
+      const who = last[0].trim();
+      const answer = clean.slice(last.index + last[0].length).replace(/\s*\n\s*/g, " ").trim();
+      const setupLines = sentences(clean.slice(0, last.index));
+      const punchlineLines = [who, answer].filter(Boolean);
+      return {
+        setup: setupLines.join("\n"),
+        punchline: punchlineLines.join("\n"),
+        isKnockKnock,
+        setupLines,
+        punchlineLines,
+      };
+    }
+  }
+
   return { setup, punchline, isKnockKnock, setupLines: lines(setup), punchlineLines: lines(punchline) };
 }
 
