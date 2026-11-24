@@ -250,7 +250,7 @@ struct JokeFullScreenView: View {
                 .interpolation(.high)
                 .scaledToFill()
                 .frame(width: side, height: side)
-                .mask { portraitMask }
+                .mask { portraitMask(side: side) }
                 .opacity(jokeCoversPortrait ? 0.16 : 1)
                 .offset(x: side * 0.08, y: side * 0.04)
                 .ignoresSafeArea()
@@ -263,11 +263,11 @@ struct JokeFullScreenView: View {
     /// The portrait is a square photo on the character's color. On the color it only
     /// needs its top and left edges faded; on near black it becomes a soft spotlight.
     @ViewBuilder
-    private var portraitMask: some View {
+    private func portraitMask(side: CGFloat) -> some View {
         if isDark {
             RadialGradient(
-                stops: [.init(color: .black, location: 0.55), .init(color: .clear, location: 1)],
-                center: .center, startRadius: 0, endRadius: 230
+                stops: [.init(color: .black, location: 0.5), .init(color: .clear, location: 1)],
+                center: .center, startRadius: 0, endRadius: side * 0.5
             )
         } else {
             PortraitEdgeFade()

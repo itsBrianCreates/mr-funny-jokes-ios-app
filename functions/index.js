@@ -258,3 +258,10 @@ exports.triggerAggregation = onRequest(async (req, res) => {
     });
   }
 });
+
+// ============================================
+// HTTP FUNCTION: mrfunnyjokes.app website
+// Served through Firebase Hosting rewrites ("/" and "/j/**")
+// ============================================
+const { createHandler: createJokePageHandler } = require("./joke-page");
+exports.jokePage = onRequest({ memory: "256MiB", maxInstances: 10 }, createJokePageHandler(db));
