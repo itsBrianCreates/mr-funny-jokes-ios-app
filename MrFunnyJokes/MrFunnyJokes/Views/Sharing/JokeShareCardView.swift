@@ -102,6 +102,9 @@ struct JokeShareCardView: View {
     let joke: Joke
     let style: ShareCardStyle
     let format: ShareCardFormat
+    /// Corner radius in export units. The exported image is square-cornered (0);
+    /// previews round the card, and the Light border has to follow that curve.
+    var cornerRadius: CGFloat = 0
 
     static let siteName = "mrfunnyjokes.app"
 
@@ -162,7 +165,7 @@ struct JokeShareCardView: View {
             .padding(insets)
 
             if let border = colors.border {
-                Rectangle()
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(border, lineWidth: 14)
             }
         }
@@ -236,12 +239,18 @@ struct ShareCardPreview: View {
     let format: ShareCardFormat
     let width: CGFloat
 
+    /// In export units, so it scales with the preview
+    static let cornerRadius: CGFloat = 64
+
     var body: some View {
         let scale = width / format.size.width
-        JokeShareCardView(joke: joke, style: style, format: format)
+        let shape = RoundedRectangle(cornerRadius: Self.cornerRadius * scale, style: .continuous)
+        JokeShareCardView(joke: joke, style: style, format: format, cornerRadius: Self.cornerRadius)
             .scaleEffect(scale, anchor: .topLeading)
             .frame(width: width, height: format.size.height * scale, alignment: .topLeading)
-            .clipShape(RoundedRectangle(cornerRadius: 64 * scale, style: .continuous))
+            .clipShape(shape)
+            // A hairline so the Dark card's edges show against a dark screen
+            .overlay(shape.strokeBorder(.white.opacity(0.18), lineWidth: 1))
             .accessibilityElement()
             .accessibilityLabel("Share image preview, \(style.title) style")
     }
