@@ -33,11 +33,14 @@ struct LaughButton: View {
                 ZStack {
                     if isOn {
                         Text("😂")
-                            .font(.system(size: 24))
+                            .font(.system(size: StackedActionLabel.iconHeight))
                             .transition(.scale(scale: 0.4).combined(with: .opacity))
                     } else {
                         Image(systemName: "face.smiling")
-                            .font(.system(size: 22, weight: .medium))
+                            .resizable()
+                            .scaledToFit()
+                            .fontWeight(.medium)
+                            .frame(width: StackedActionLabel.iconHeight, height: StackedActionLabel.iconHeight)
                             .transition(.opacity)
                     }
                 }
@@ -135,10 +138,18 @@ struct StackedActionLabel: View {
     let label: String
     var tint: Color = .primary
 
+    /// Height every icon in the row is drawn at, the laughing face included
+    static let iconHeight: CGFloat = 23
+
     var body: some View {
         VStack(spacing: 4) {
+            // Sized by height, not point size: the share arrow is a tall glyph and
+            // drew larger than the face beside it at the same point size
             Image(systemName: systemImage)
-                .font(.system(size: 21, weight: .medium))
+                .resizable()
+                .scaledToFit()
+                .fontWeight(.medium)
+                .frame(width: Self.iconHeight - 2, height: Self.iconHeight)
                 .frame(height: 28)
             Text(label)
                 .font(.caption.weight(.semibold))

@@ -75,7 +75,22 @@ struct JokeOfTheDayView: View {
 
     private var jokeSection: some View {
         VStack(alignment: .leading, spacing: 18) {
+            // Text on the left so the card scans down one edge; the teller's picture on the right
             HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Joke of the Day")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(.primary)
+
+                    // Darker than .secondary, which is too faint on the tinted card
+                    Text(byline)
+                        .font(.footnote)
+                        .foregroundStyle(.primary.opacity(0.65))
+                }
+                .lineLimit(1)
+
+                Spacer(minLength: 0)
+
                 if let character = jokeCharacter {
                     Image(character.imageName)
                         .resizable()
@@ -84,19 +99,6 @@ struct JokeOfTheDayView: View {
                         .clipShape(Circle())
                         .accessibilityHidden(true)
                 }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Joke of the Day")
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(.primary)
-
-                    Text(byline)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-                .lineLimit(1)
-
-                Spacer(minLength: 0)
             }
 
             // Setup only; the punchline waits for the tap
