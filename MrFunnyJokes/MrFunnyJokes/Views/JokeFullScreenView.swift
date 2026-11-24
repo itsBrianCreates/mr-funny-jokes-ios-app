@@ -131,37 +131,22 @@ struct JokeFullScreenView: View {
     /// The same two lines as the Home card: what this is, then who and when.
     /// Any other joke just names its teller.
     private var labels: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                if isJokeOfTheDay {
-                    Text("Joke of the Day")
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(colors.text)
-                    Text([joke.teller?.name, JokeOfTheDayView.todayString].compactMap { $0 }.joined(separator: " · "))
-                        .font(.footnote)
-                        .foregroundStyle(colors.text.opacity(0.65))
-                } else if let teller = joke.teller {
-                    Text(teller.name)
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(colors.text)
-                }
-            }
-            .lineLimit(1)
-            .accessibilityElement(children: .combine)
-
-            Spacer(minLength: 0)
-
-            // The teller's picture, where the Home card has it
-            if let teller = joke.teller {
-                Image(teller.imageName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 44, height: 44)
-                    .clipShape(Circle())
-                    .overlay(Circle().strokeBorder(colors.text.opacity(0.15), lineWidth: 1))
-                    .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 2) {
+            if isJokeOfTheDay {
+                Text("Joke of the Day")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(colors.text)
+                Text([joke.teller?.name, JokeOfTheDayView.todayString].compactMap { $0 }.joined(separator: " · "))
+                    .font(.footnote)
+                    .foregroundStyle(colors.text.opacity(0.65))
+            } else if let teller = joke.teller {
+                Text(teller.name)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(colors.text)
             }
         }
+        .lineLimit(1)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Joke
