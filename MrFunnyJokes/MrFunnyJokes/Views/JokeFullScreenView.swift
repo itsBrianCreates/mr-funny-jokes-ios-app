@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A joke on the whole screen, in its teller's color. It opens on the setup; a tap
+/// A joke on the whole screen, in its teller's color, with nothing behind the words. It opens on the setup; a tap
 /// anywhere pops the punchline in. Knock-knock jokes play out as a chat.
 ///
 /// Opened from the Joke of the Day card, the widget, the daily notification and
@@ -25,8 +25,6 @@ struct JokeFullScreenView: View {
     @State private var reveal: JokeReveal = .setup
     @State private var showingStylePicker = false
     @State private var pickerSurface: JokeShareService.Surface = .moreMenu
-    /// True when the joke is long enough to run over the portrait
-    @State private var jokeCoversPortrait = false
     @State private var hintPulse = false
 
     private var joke: Joke {
@@ -49,26 +47,9 @@ struct JokeFullScreenView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .bottomTrailing) {
+            ZStack {
                 colors.background
                     .ignoresSafeArea()
-
-                portrait(in: geometry.size)
-
-                // A dark scrim under Laugh, Share and Styles, so they read in white
-                // over the portrait and over any character's color
-                LinearGradient(
-                    stops: [
-                        .init(color: .black.opacity(0), location: 0),
-                        .init(color: .black.opacity(0.45), location: 0.55),
-                        .init(color: .black.opacity(0.7), location: 1)
-                    ],
-                    startPoint: .top, endPoint: .bottom
-                )
-                .frame(height: 210)
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
 
                 VStack(alignment: .leading, spacing: 0) {
                     topBar
@@ -150,55 +131,56 @@ struct JokeFullScreenView: View {
     /// The same two lines as the Home card: what this is, then who and when.
     /// Any other joke just names its teller.
     private var labels: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            if isJokeOfTheDay {
-                Text("Joke of the Day")
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(colors.text)
-                Text([joke.teller?.name, JokeOfTheDayView.todayString].compactMap { $0 }.joined(separator: " · "))
-                    .font(.footnote)
-                    .foregroundStyle(colors.text.opacity(0.65))
-            } else if let teller = joke.teller {
-                Text(teller.name)
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(colors.text)
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                if isJokeOfTheDay {
+                    Text("Joke of the Day")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(colors.text)
+                    Text([joke.teller?.name, JokeOfTheDayView.todayString].compactMap { $0 }.joined(separator: " · "))
+                        .font(.footnote)
+                        .foregroundStyle(colors.text.opacity(0.65))
+                } else if let teller = joke.teller {
+                    Text(teller.name)
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(colors.text)
+                }
+            }
+            .lineLimit(1)
+            .accessibilityElement(children: .combine)
+
+            Spacer(minLength: 0)
+
+            // The teller's picture, where the Home card has it
+            if let teller = joke.teller {
+                Image(teller.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 44, height: 44)
+                    .clipShape(Circle())
+                    .overlay(Circle().strokeBorder(colors.text.opacity(0.15), lineWidth: 1))
+                    .accessibilityHidden(true)
             }
         }
-        .lineLimit(1)
-        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Joke
 
-    /// The joke at the largest type that fits. It first tries to stay clear of the
-    /// portrait; a long joke runs over it (the portrait dims) and, past that, scrolls.
+    /// The joke at the largest type that fits; one too long for the screen scrolls
     private func jokeArea(in size: CGSize) -> some View {
-        let clearance = isWideLayout ? 0 : portraitSide(in: size) * 0.6
-        let clearSizes = LargestThatFits<JokeArtwork>.ladder(from: typeSize, downTo: typeSize * 0.7)
-        let coveringSizes = LargestThatFits<JokeArtwork>.ladder(from: typeSize * 0.86, downTo: typeSize * 0.52)
-
+        let smallest = typeSize * 0.52
         return ViewThatFits(in: .vertical) {
-            ForEach(clearSizes, id: \.self) { size in
+            ForEach(LargestThatFits<JokeArtwork>.ladder(from: typeSize, downTo: smallest), id: \.self) { size in
                 artwork(size: size)
-                    .padding(.bottom, clearance)
-                    .preference(key: CoversPortraitKey.self, value: false)
-            }
-            ForEach(coveringSizes, id: \.self) { size in
-                artwork(size: size)
-                    .preference(key: CoversPortraitKey.self, value: !isWideLayout)
             }
             ScrollView {
-                artwork(size: typeSize * 0.52)
+                artwork(size: smallest)
                     .padding(.bottom, 16)
             }
             .scrollIndicators(.hidden)
-            .preference(key: CoversPortraitKey.self, value: !isWideLayout)
         }
-        // Wide windows: the joke keeps to the left, the portrait to the right
-        .frame(maxWidth: isWideLayout ? size.width * 0.56 : .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .onPreferenceChange(CoversPortraitKey.self) { covers in
-            jokeCoversPortrait = covers
-        }
+        // Wide windows: keep lines a readable length
+        .frame(maxWidth: isWideLayout ? size.width * 0.7 : .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     private func artwork(size: CGFloat) -> some View {
@@ -208,7 +190,7 @@ struct JokeFullScreenView: View {
             size: size,
             reveal: joke.hasPunchline ? reveal : .all,
             showsAvatars: true,
-            pillShadow: true
+            pillShadow: false
         )
         .overlay(alignment: .bottomLeading) {
             if !isFullyRevealed && reveal == .setup {
@@ -220,7 +202,7 @@ struct JokeFullScreenView: View {
     /// Sits where the punchline is about to appear
     private var tapHint: some View {
         Label("Tap for the punchline", systemImage: "hand.tap.fill")
-            .font(.subheadline.weight(.bold))
+            .font(.title3.weight(.bold))
             .foregroundStyle(colors.text)
             .opacity(reduceMotion ? 0.75 : (hintPulse ? 0.9 : 0.45))
             .transition(.opacity)
@@ -247,47 +229,6 @@ struct JokeFullScreenView: View {
         }
     }
 
-    // MARK: - Portrait
-
-    private func portraitSide(in size: CGSize) -> CGFloat {
-        isWideLayout
-            ? min(size.height * 0.92, size.width * 0.44)
-            : min(size.width * 0.95, size.height * 0.46, 430)
-    }
-
-    @ViewBuilder
-    private func portrait(in size: CGSize) -> some View {
-        if let teller = joke.teller {
-            let side = portraitSide(in: size)
-            Image(teller.imageName)
-                .resizable()
-                .interpolation(.high)
-                .scaledToFill()
-                .frame(width: side, height: side)
-                .mask { portraitMask(side: side) }
-                .opacity(jokeCoversPortrait ? 0.16 : 1)
-                .offset(x: side * 0.08, y: side * 0.04)
-                .ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.25), value: jokeCoversPortrait)
-                .allowsHitTesting(false)
-                .accessibilityHidden(true)
-        }
-    }
-
-    /// The portrait is a square photo on the character's color. On the color it only
-    /// needs its top and left edges faded; on near black it becomes a soft spotlight.
-    @ViewBuilder
-    private func portraitMask(side: CGFloat) -> some View {
-        if isDark {
-            RadialGradient(
-                stops: [.init(color: .black, location: 0.5), .init(color: .clear, location: 1)],
-                center: .center, startRadius: 0, endRadius: side * 0.5
-            )
-        } else {
-            PortraitEdgeFade()
-        }
-    }
-
     // MARK: - Laugh, Share, Styles
 
     private var actionRow: some View {
@@ -296,7 +237,7 @@ struct JokeFullScreenView: View {
             LaughButton(
                 isOn: joke.userRating == 5,
                 label: JokeEngagement.compact(counts.laughs),
-                tint: .white
+                tint: colors.text
             ) { isOn in
                 viewModel.laugh(joke, isOn: isOn, surface: surface.rawValue)
             }
@@ -307,7 +248,7 @@ struct JokeFullScreenView: View {
                 StackedActionLabel(
                     systemImage: "square.and.arrow.up",
                     label: JokeEngagement.compact(counts.shares),
-                    tint: .white
+                    tint: colors.text
                 )
             }
             .buttonStyle(.plain)
@@ -317,7 +258,7 @@ struct JokeFullScreenView: View {
                 pickerSurface = .stylePicker
                 showingStylePicker = true
             } label: {
-                StackedActionLabel(systemImage: "square.on.square", label: "Styles", tint: .white)
+                StackedActionLabel(systemImage: "square.on.square", label: "Styles", tint: colors.text)
             }
             .buttonStyle(.plain)
         }
@@ -353,12 +294,5 @@ extension EnvironmentValues {
     var openFullScreenJoke: OpenFullScreenJokeAction? {
         get { self[OpenFullScreenJokeKey.self] }
         set { self[OpenFullScreenJokeKey.self] = newValue }
-    }
-}
-
-private struct CoversPortraitKey: PreferenceKey {
-    static let defaultValue = false
-    static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = value || nextValue()
     }
 }

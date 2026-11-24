@@ -239,8 +239,9 @@ extension LargestThatFits {
     static func ladder(from base: CGFloat, downTo smallest: CGFloat) -> [CGFloat] {
         var sizes: [CGFloat] = []
         var size = base
-        while size > smallest {
-            sizes.append(size.rounded())
+        // Rounded sizes can land on the same number; ViewThatFits traps on a repeated ID
+        while size.rounded() > smallest.rounded() {
+            if sizes.last != size.rounded() { sizes.append(size.rounded()) }
             size *= 0.88
         }
         sizes.append(smallest.rounded())
