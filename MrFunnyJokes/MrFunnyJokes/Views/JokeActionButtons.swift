@@ -6,7 +6,7 @@ import SwiftUI
 /// of laughing faces floating up. Tapping again takes the laugh back.
 struct LaughButton: View {
     let isOn: Bool
-    /// "Laugh", or the count once it is worth showing
+    /// The laugh count
     let label: String
     var tint: Color = .primary
     /// Called with the new state
@@ -60,7 +60,7 @@ struct LaughButton: View {
         .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: isOn)
         .animation(.default, value: label)
         .accessibilityLabel("Laugh")
-        .accessibilityValue(isOn ? "On, \(label)" : label)
+        .accessibilityValue(isOn ? "On, \(label) laughs" : "\(label) laughs")
         .accessibilityAddTraits(isOn ? .isSelected : [])
     }
 }
@@ -185,8 +185,8 @@ struct JokeMoreMenuItems: View {
         @State private var isOn = false
         var body: some View {
             HStack {
-                LaughButton(isOn: isOn, label: isOn ? "1.2K" : "Laugh") { isOn = $0 }
-                StackedActionLabel(systemImage: "square.and.arrow.up", label: "Share")
+                LaughButton(isOn: isOn, label: isOn ? "1" : "0") { isOn = $0 }
+                StackedActionLabel(systemImage: "square.and.arrow.up", label: "0")
                 StackedActionLabel(systemImage: "ellipsis", label: "More")
             }
             .padding(.top, 120)

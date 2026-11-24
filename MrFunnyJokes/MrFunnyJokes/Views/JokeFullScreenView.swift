@@ -281,7 +281,7 @@ struct JokeFullScreenView: View {
         return HStack(spacing: 0) {
             LaughButton(
                 isOn: joke.userRating == 5,
-                label: JokeEngagement.laughLabel(counts.laughs),
+                label: JokeEngagement.compact(counts.laughs),
                 tint: colors.text
             ) { isOn in
                 viewModel.laugh(joke, isOn: isOn, surface: surface.rawValue)
@@ -292,7 +292,7 @@ struct JokeFullScreenView: View {
             } label: {
                 StackedActionLabel(
                     systemImage: "square.and.arrow.up",
-                    label: JokeEngagement.shareLabel(counts.shares),
+                    label: JokeEngagement.compact(counts.shares),
                     tint: colors.text
                 )
             }

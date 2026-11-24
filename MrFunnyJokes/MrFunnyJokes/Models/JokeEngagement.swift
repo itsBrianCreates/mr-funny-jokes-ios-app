@@ -1,21 +1,8 @@
 import Foundation
 
-/// Laugh and share counts: when they are worth showing, and how they read.
+/// Laugh and share counts and how they read. Counts always show, zero included.
 enum JokeEngagement {
-    /// A count stays hidden (the button reads "Laugh" / "Share") until it passes these.
-    /// Tune both here.
-    static let laughCountThreshold = 25
-    static let shareCountThreshold = 10
-
-    static func laughLabel(_ count: Int) -> String {
-        count >= laughCountThreshold ? compact(count) : "Laugh"
-    }
-
-    static func shareLabel(_ count: Int) -> String {
-        count >= shareCountThreshold ? compact(count) : "Share"
-    }
-
-    /// 348, 1.2K, 15K, 2.4M
+    /// 0, 348, 1.2K, 15K, 2.4M
     static func compact(_ count: Int) -> String {
         switch count {
         case ..<1_000:
