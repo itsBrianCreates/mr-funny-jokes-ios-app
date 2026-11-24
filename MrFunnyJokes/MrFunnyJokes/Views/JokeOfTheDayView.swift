@@ -25,13 +25,13 @@ struct JokeOfTheDayView: View {
     private var jokeCharacter: JokeCharacter? { joke.teller }
 
     /// "Tuesday, Nov 24"
-    private var todayString: String {
+    static var todayString: String {
         Date().formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
     }
 
     /// The teller, then the date
     private var byline: String {
-        [jokeCharacter?.name, todayString].compactMap { $0 }.joined(separator: " · ")
+        [jokeCharacter?.name, Self.todayString].compactMap { $0 }.joined(separator: " · ")
     }
 
     /// Background color - uses character's themed background if available

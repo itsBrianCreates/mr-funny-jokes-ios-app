@@ -55,13 +55,20 @@ struct JokeFullScreenView: View {
 
                 portrait(in: geometry.size)
 
-                // Keeps Laugh and Share readable where they cross the portrait
-                LinearGradient(colors: [colors.background.opacity(0), colors.background.opacity(0.92)],
-                               startPoint: .top, endPoint: .bottom)
-                    .frame(height: 150)
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+                // A dark scrim under Laugh, Share and Styles, so they read in white
+                // over the portrait and over any character's color
+                LinearGradient(
+                    stops: [
+                        .init(color: .black.opacity(0), location: 0),
+                        .init(color: .black.opacity(0.45), location: 0.55),
+                        .init(color: .black.opacity(0.7), location: 1)
+                    ],
+                    startPoint: .top, endPoint: .bottom
+                )
+                .frame(height: 210)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
 
                 VStack(alignment: .leading, spacing: 0) {
                     topBar
@@ -140,17 +147,24 @@ struct JokeFullScreenView: View {
             .background(colors.text.opacity(0.12), in: Circle())
     }
 
+    /// The same two lines as the Home card: what this is, then who and when.
+    /// Any other joke just names its teller.
     private var labels: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 2) {
             if isJokeOfTheDay {
                 Text("Joke of the Day")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(colors.text.opacity(0.75))
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(colors.text)
+                Text([joke.teller?.name, JokeOfTheDayView.todayString].compactMap { $0 }.joined(separator: " · "))
+                    .font(.footnote)
+                    .foregroundStyle(colors.text.opacity(0.65))
+            } else if let teller = joke.teller {
+                Text(teller.name)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(colors.text)
             }
-            Text([joke.teller?.name, joke.typeLabel].compactMap { $0 }.joined(separator: " · "))
-                .font(.headline.weight(.heavy))
-                .foregroundStyle(colors.text)
         }
+        .lineLimit(1)
         .accessibilityElement(children: .combine)
     }
 
@@ -282,7 +296,7 @@ struct JokeFullScreenView: View {
             LaughButton(
                 isOn: joke.userRating == 5,
                 label: JokeEngagement.compact(counts.laughs),
-                tint: colors.text
+                tint: .white
             ) { isOn in
                 viewModel.laugh(joke, isOn: isOn, surface: surface.rawValue)
             }
@@ -293,7 +307,7 @@ struct JokeFullScreenView: View {
                 StackedActionLabel(
                     systemImage: "square.and.arrow.up",
                     label: JokeEngagement.compact(counts.shares),
-                    tint: colors.text
+                    tint: .white
                 )
             }
             .buttonStyle(.plain)
@@ -303,7 +317,7 @@ struct JokeFullScreenView: View {
                 pickerSurface = .stylePicker
                 showingStylePicker = true
             } label: {
-                StackedActionLabel(systemImage: "square.on.square", label: "Styles", tint: colors.text)
+                StackedActionLabel(systemImage: "square.on.square", label: "Styles", tint: .white)
             }
             .buttonStyle(.plain)
         }
