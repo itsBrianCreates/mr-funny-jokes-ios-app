@@ -30,6 +30,42 @@ final class AnalyticsService {
         ])
     }
 
+    /// Log when Laugh is turned on. Surface is "home_card" or "full_screen".
+    func logJokeLaughed(jokeId: String, character: String, surface: String) {
+        Analytics.logEvent("joke_laughed", parameters: [
+            "joke_id": jokeId,
+            "character": character,
+            "surface": surface
+        ])
+    }
+
+    /// Log when a share sheet is opened for a joke's card image and link.
+    /// Surface is "home_card", "full_screen", "more_menu", "style_picker" or "joke_sheet".
+    func logShareStarted(jokeId: String, surface: String) {
+        Analytics.logEvent("share_started", parameters: [
+            "joke_id": jokeId,
+            "surface": surface
+        ])
+    }
+
+    /// Log when a share sheet finishes with a share.
+    /// Destination is the share sheet's activity type (e.g. "com.apple.UIKit.activity.Message").
+    func logShareCompleted(jokeId: String, style: String, format: String, destination: String) {
+        Analytics.logEvent("share_completed", parameters: [
+            "joke_id": jokeId,
+            "style": style,
+            "format": format,
+            "destination": destination
+        ])
+    }
+
+    /// Log when the app is opened from a shared joke link (mrfunnyjokes.app/j/<id>)
+    func logShareLinkOpened(jokeId: String) {
+        Analytics.logEvent("share_link_opened", parameters: [
+            "joke_id": jokeId
+        ])
+    }
+
     // MARK: - Navigation Events
 
     /// Log when a user selects a character from the home screen

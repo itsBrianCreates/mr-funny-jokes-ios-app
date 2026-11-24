@@ -79,6 +79,15 @@
 		I10000000000000000000001 /* TellJokeIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000001 /* TellJokeIntent.swift */; };
 		I10000000000000000000002 /* JokeSnippetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000002 /* JokeSnippetView.swift */; };
 		I10000000000000000000003 /* MrFunnyShortcutsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = I20000000000000000000003 /* MrFunnyShortcutsProvider.swift */; };
+		A10000000000000000000140 /* JokeEngagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000140 /* JokeEngagement.swift */; };
+		A10000000000000000000141 /* JokePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000141 /* JokePalette.swift */; };
+		A10000000000000000000142 /* ShareCardDebugRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000142 /* ShareCardDebugRenderer.swift */; };
+		A10000000000000000000143 /* JokeShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000143 /* JokeShareService.swift */; };
+		A10000000000000000000144 /* JokeActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000144 /* JokeActionButtons.swift */; };
+		A10000000000000000000145 /* JokeFullScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000145 /* JokeFullScreenView.swift */; };
+		A10000000000000000000146 /* JokeArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000146 /* JokeArtwork.swift */; };
+		A10000000000000000000147 /* JokeShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000147 /* JokeShareCardView.swift */; };
+		A10000000000000000000148 /* ShareStylePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000148 /* ShareStylePickerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -173,6 +182,15 @@
 		I20000000000000000000001 /* TellJokeIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TellJokeIntent.swift; sourceTree = "<group>"; };
 		I20000000000000000000002 /* JokeSnippetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeSnippetView.swift; sourceTree = "<group>"; };
 		I20000000000000000000003 /* MrFunnyShortcutsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrFunnyShortcutsProvider.swift; sourceTree = "<group>"; };
+		A20000000000000000000140 /* JokeEngagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeEngagement.swift; sourceTree = "<group>"; };
+		A20000000000000000000141 /* JokePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokePalette.swift; sourceTree = "<group>"; };
+		A20000000000000000000142 /* ShareCardDebugRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardDebugRenderer.swift; sourceTree = "<group>"; };
+		A20000000000000000000143 /* JokeShareService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeShareService.swift; sourceTree = "<group>"; };
+		A20000000000000000000144 /* JokeActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeActionButtons.swift; sourceTree = "<group>"; };
+		A20000000000000000000145 /* JokeFullScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeFullScreenView.swift; sourceTree = "<group>"; };
+		A20000000000000000000146 /* JokeArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeArtwork.swift; sourceTree = "<group>"; };
+		A20000000000000000000147 /* JokeShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokeShareCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000148 /* ShareStylePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareStylePickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,6 +269,7 @@
 		A50000000000000000000005 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				A20000000000000000000140 /* JokeEngagement.swift */,
 				C333E6402EE10888007377F4 /* Character.swift */,
 				A20000000000000000000005 /* Joke.swift */,
 				A20000000000000000000006 /* JokeCategory.swift */,
@@ -263,6 +282,9 @@
 		A50000000000000000000006 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A20000000000000000000144 /* JokeActionButtons.swift */,
+				A20000000000000000000145 /* JokeFullScreenView.swift */,
+				A50000000000000000000140 /* Sharing */,
 				C353057A2EEDF96100C81E13 /* AllTimeTopTen */,
 				C3DE8C112EEA7FE7009729AF /* SettingsView.swift */,
 				C333E63B2EE10888007377F4 /* CharacterCarouselView.swift */,
@@ -298,6 +320,7 @@
 		A50000000000000000000008 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A20000000000000000000143 /* JokeShareService.swift */,
 				C319A0042F09D100007A6AFF /* AnalyticsService.swift */,
 				C3DE8C132EEA805B009729AF /* NotificationManager.swift */,
 				A20000000000000000000012 /* LocalStorageService.swift */,
@@ -312,6 +335,8 @@
 		A50000000000000000000009 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				A20000000000000000000141 /* JokePalette.swift */,
+				A20000000000000000000142 /* ShareCardDebugRenderer.swift */,
 				A20000000000000000000013 /* Color+Extensions.swift */,
 				A20000000000000000000014 /* HapticManager.swift */,
 				A20000000000000000000015 /* SeasonalHelper.swift */,
@@ -397,6 +422,16 @@
 				I20000000000000000000003 /* MrFunnyShortcutsProvider.swift */,
 			);
 			path = Intents;
+			sourceTree = "<group>";
+		};
+		A50000000000000000000140 /* Sharing */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000146 /* JokeArtwork.swift */,
+				A20000000000000000000147 /* JokeShareCardView.swift */,
+				A20000000000000000000148 /* ShareStylePickerView.swift */,
+			);
+			path = Sharing;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -512,6 +547,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A10000000000000000000140 /* JokeEngagement.swift in Sources */,
+				A10000000000000000000141 /* JokePalette.swift in Sources */,
+				A10000000000000000000142 /* ShareCardDebugRenderer.swift in Sources */,
+				A10000000000000000000143 /* JokeShareService.swift in Sources */,
+				A10000000000000000000144 /* JokeActionButtons.swift in Sources */,
+				A10000000000000000000145 /* JokeFullScreenView.swift in Sources */,
+				A10000000000000000000146 /* JokeArtwork.swift in Sources */,
+				A10000000000000000000147 /* JokeShareCardView.swift in Sources */,
+				A10000000000000000000148 /* ShareStylePickerView.swift in Sources */,
 				A10000000000000000000001 /* MrFunnyJokesApp.swift in Sources */,
 				A10000000000000000000005 /* Joke.swift in Sources */,
 				A10000000000000000000006 /* JokeCategory.swift in Sources */,
@@ -722,7 +766,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -736,7 +780,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -752,7 +796,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MrFunnyJokes/MrFunnyJokes.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_ASSET_PATHS = "\"MrFunnyJokes/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -766,7 +810,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -782,7 +826,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
@@ -792,7 +836,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -809,7 +853,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = JokeOfTheDayWidget/JokeOfTheDayWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JokeOfTheDayWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Joke of the Day";
@@ -819,7 +863,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.1;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mrfunnyjokes.app.JokeOfTheDayWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

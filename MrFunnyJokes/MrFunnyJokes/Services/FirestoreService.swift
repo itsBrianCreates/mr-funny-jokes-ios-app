@@ -231,6 +231,33 @@ final class FirestoreService {
         ])
     }
 
+    /// Moves a joke's `likes` (its laugh count) up or down by one.
+    /// Not a content edit, so `updated_at` is left alone.
+    func adjustJokeLikes(jokeId: String, by delta: Int) async throws {
+        guard delta != 0 else { return }
+        try await db.collection(jokesCollection).document(jokeId).updateData([
+            "likes": FieldValue.increment(Int64(delta))
+        ])
+    }
+
+    /// Counts one completed share of a joke
+    func incrementJokeShares(jokeId: String) async throws {
+        try await db.collection(jokesCollection).document(jokeId).updateData([
+            "shares": FieldValue.increment(Int64(1))
+        ])
+    }
+
+    /// A joke's laugh and share counts as they are right now.
+    /// The on-device catalog only picks up count changes with its weekly full sync.
+    func fetchJokeCounts(jokeId: String) async throws -> JokeCounts? {
+        let document = try await db.collection(jokesCollection).document(jokeId).getDocument(source: .server)
+        guard let data = document.data() else { return nil }
+        return JokeCounts(
+            laughs: max((data["likes"] as? Int) ?? 0, 0),
+            shares: max((data["shares"] as? Int) ?? 0, 0)
+        )
+    }
+
     // MARK: - Rating Events & Rankings
 
     /// Logs a rating event for weekly rankings aggregation

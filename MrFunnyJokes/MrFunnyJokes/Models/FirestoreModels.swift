@@ -19,6 +19,7 @@ struct FirestoreJoke: Codable, Identifiable {
     let ratingAvg: Double?
     let likes: Int?
     let dislikes: Int?
+    let shares: Int?
     let popularityScore: Double?
 
     enum CodingKeys: String, CodingKey {
@@ -36,6 +37,7 @@ struct FirestoreJoke: Codable, Identifiable {
         case ratingAvg = "rating_avg"
         case likes
         case dislikes
+        case shares
         case popularityScore = "popularity_score"
     }
 
@@ -65,6 +67,7 @@ struct FirestoreJoke: Codable, Identifiable {
             ratingAvg: ratingAvg ?? 0.0,
             likes: likes ?? 0,
             dislikes: dislikes ?? 0,
+            shares: shares ?? 0,
             popularityScore: popularityScore ?? 0.0,
             createdAt: createdAt
         )

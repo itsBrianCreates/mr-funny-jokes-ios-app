@@ -1,25 +1,26 @@
 import SwiftUI
 
+/// The Joke of the Day on Home: the setup, who's telling it, and a row to laugh,
+/// share or do more. Tapping the joke opens it full screen for the punchline.
 struct JokeOfTheDayView: View {
     let joke: Joke
-    let isCopied: Bool
+    /// Laugh and share counts. Shown only once they pass `JokeEngagement`'s thresholds.
+    var counts = JokeCounts(laughs: 0, shares: 0)
+    /// Opens the joke full screen
+    let onOpen: () -> Void
+    /// Called with the new Laugh state
+    let onLaugh: (Bool) -> Void
     let onShare: () -> Void
     let onCopy: () -> Void
-    let onRate: (Int) -> Void
     let onSave: () -> Void
-    /// When set, a tap hands the joke to the caller instead of opening this view's own sheet
-    var onSelect: (() -> Void)? = nil
-    /// Highlights the card while its joke is shown in a detail pane
-    var isSelected = false
+    /// The Horrible rating, under More
+    let onNotFunny: () -> Void
 
-    @State private var showingSheet = false
+    @State private var showingStylePicker = false
     @State private var isAppearing = false
 
     /// The character associated with this joke, if any
-    private var jokeCharacter: JokeCharacter? {
-        guard let characterName = joke.character else { return nil }
-        return JokeCharacter.find(byName: characterName)
-    }
+    private var jokeCharacter: JokeCharacter? { joke.teller }
 
     /// Today's date formatted
     private var todayString: String {
@@ -35,104 +36,40 @@ struct JokeOfTheDayView: View {
 
     /// Background color - uses character's themed background if available
     private var cardBackground: Color {
-        jokeCharacter?.backgroundColor ?? defaultBackground
-    }
-
-    /// Default background when no character is assigned
-    private var defaultBackground: Color {
-        Color(
+        jokeCharacter?.backgroundColor ?? Color(
             light: Color(red: 1.0, green: 0.98, blue: 0.94),  // Warm cream
             dark: Color(red: 0.18, green: 0.16, blue: 0.10)   // Warm dark
         )
     }
 
+    private var hint: String {
+        joke.hasPunchline ? "Tap to see the punchline" : "Tap to open"
+    }
+
     var body: some View {
-        Button {
-            HapticManager.shared.mediumImpact()
-            if let onSelect {
-                onSelect()
-            } else {
-                showingSheet = true
+        VStack(spacing: 0) {
+            Button {
+                HapticManager.shared.mediumImpact()
+                onOpen()
+            } label: {
+                jokeSection
             }
-        } label: {
-            VStack(alignment: .leading, spacing: 12) {
-                // Badge inside the card
-                Text("JOKE OF THE DAY")
-                    .font(.caption.weight(.bold))
-                    .tracking(0.5)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(accentColor, in: RoundedRectangle(cornerRadius: 6))
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
+            .accessibilityHint(hint)
 
-                // Main joke text
-                Text(joke.cardText)
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.primary)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            Divider()
+                .padding(.horizontal, 16)
 
-                // Bottom section with character info
-                HStack(spacing: 12) {
-                    // Character avatar (larger)
-                    if let character = jokeCharacter {
-                        Image(character.imageName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 44, height: 44)
-                            .clipShape(Circle())
-                            .overlay(
-                                Circle()
-                                    .strokeBorder(accentColor, lineWidth: 2)
-                            )
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(character.name)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(.primary)
-
-                            Text(todayString)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    } else {
-                        // Fallback if no character
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(joke.category.rawValue)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(.primary)
-
-                            Text(todayString)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    Spacer()
-
-                    // Rating indicator or "Tap to rate"
-                    if let rating = joke.userRating {
-                        CompactRatingView(rating: rating)
-                    } else {
-                        Text("Tap to rate")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .padding(16)
-            .background {
-                // Glow on the card shape only, so the text inside stays crisp
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(cardBackground)
-                    .shadow(color: accentColor.opacity(isSelected ? 0.35 : 0), radius: 10, y: 2)
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(accentColor, lineWidth: isSelected ? 3 : 2)
-            )
+            actionRow
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
         }
-        .buttonStyle(.plain)
+        .background(cardBackground, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(accentColor, lineWidth: 2)
+        )
         .scaleEffect(isAppearing ? 1 : 0.95)
         .opacity(isAppearing ? 1 : 0)
         .onAppear {
@@ -140,16 +77,103 @@ struct JokeOfTheDayView: View {
                 isAppearing = true
             }
         }
-        .sheet(isPresented: $showingSheet) {
-            JokeDetailSheet(
-                joke: joke,
-                isCopied: isCopied,
-                onDismiss: { showingSheet = false },
-                onShare: onShare,
-                onCopy: onCopy,
-                onRate: onRate,
-                onSave: onSave
+        .fullScreenCover(isPresented: $showingStylePicker) {
+            ShareStylePickerView(joke: joke)
+        }
+    }
+
+    // MARK: - Joke
+
+    private var jokeSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center) {
+                Text("JOKE OF THE DAY")
+                    .font(.caption.weight(.heavy))
+                    .tracking(0.5)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(accentColor, in: RoundedRectangle(cornerRadius: 6))
+
+                Spacer(minLength: 8)
+
+                Text(todayString)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+
+            // Setup only; the punchline waits for the tap
+            Text(joke.cardText)
+                .font(.title2.weight(.heavy))
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 12) {
+                if let character = jokeCharacter {
+                    Image(character.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 40, height: 40)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .strokeBorder(accentColor, lineWidth: 2)
+                        )
+                        .accessibilityHidden(true)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(jokeCharacter?.name ?? joke.category.rawValue)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+
+                    Text(hint)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                }
+
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(16)
+        .contentShape(Rectangle())
+    }
+
+    // MARK: - Laugh, Share, More
+
+    private var actionRow: some View {
+        HStack(spacing: 0) {
+            LaughButton(
+                isOn: joke.userRating == 5,
+                label: JokeEngagement.laughLabel(counts.laughs),
+                onToggle: onLaugh
             )
+
+            Button(action: onShare) {
+                StackedActionLabel(
+                    systemImage: "square.and.arrow.up",
+                    label: JokeEngagement.shareLabel(counts.shares)
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Share")
+
+            Menu {
+                JokeMoreMenuItems(
+                    joke: joke,
+                    onCreateImage: { showingStylePicker = true },
+                    onCopy: onCopy,
+                    onSave: onSave,
+                    onNotFunny: onNotFunny
+                )
+            } label: {
+                StackedActionLabel(systemImage: "ellipsis", label: "More")
+            }
+            .buttonStyle(.plain)
         }
     }
 }
@@ -165,11 +189,12 @@ struct JokeOfTheDayView: View {
                     punchline: "Because they make up everything!",
                     character: "Mr. Funny"
                 ),
-                isCopied: false,
+                onOpen: {},
+                onLaugh: { _ in },
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onNotFunny: {}
             )
 
             // Mr. Bad - Red theme
@@ -180,11 +205,12 @@ struct JokeOfTheDayView: View {
                     punchline: "But 99% of you won't get it.",
                     character: "Mr. Bad"
                 ),
-                isCopied: false,
+                onOpen: {},
+                onLaugh: { _ in },
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onNotFunny: {}
             )
 
             // Mr. Sad - Blue theme
@@ -195,11 +221,12 @@ struct JokeOfTheDayView: View {
                     punchline: "She looked surprised.",
                     character: "Mr. Sad"
                 ),
-                isCopied: false,
+                onOpen: {},
+                onLaugh: { _ in },
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onNotFunny: {}
             )
 
             // Mr. Potty - Brown theme
@@ -210,11 +237,12 @@ struct JokeOfTheDayView: View {
                     punchline: "To get to the bottom!",
                     character: "Mr. Potty"
                 ),
-                isCopied: false,
+                onOpen: {},
+                onLaugh: { _ in },
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onNotFunny: {}
             )
 
             // Mr. Love - Pink theme
@@ -225,11 +253,12 @@ struct JokeOfTheDayView: View {
                     punchline: "Because whenever I look at you, everyone else disappears!",
                     character: "Mr. Love"
                 ),
-                isCopied: false,
+                onOpen: {},
+                onLaugh: { _ in },
                 onShare: {},
                 onCopy: {},
-                onRate: { _ in },
-                onSave: {}
+                onSave: {},
+                onNotFunny: {}
             )
         }
         .padding()
