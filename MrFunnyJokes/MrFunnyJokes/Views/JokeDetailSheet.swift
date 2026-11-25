@@ -154,13 +154,13 @@ struct JokeDetailContent: View {
 
             Divider()
 
-            // Share and Styles on top, Save and Copy under them
+            // Share and Styles on top, Save and Copy under them, all as tall as the rating buttons
             VStack(spacing: 12) {
                 HStack(spacing: 10) {
-                    shareButtons(verticalPadding: 14)
+                    shareButtons(verticalPadding: 7)
                 }
                 HStack(spacing: 10) {
-                    saveAndCopyButtons(verticalPadding: 12)
+                    saveAndCopyButtons(verticalPadding: 7)
                 }
             }
 
