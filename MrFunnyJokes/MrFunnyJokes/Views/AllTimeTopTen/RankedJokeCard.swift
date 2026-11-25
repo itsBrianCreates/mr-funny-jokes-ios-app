@@ -82,6 +82,7 @@ struct RankedJokeCard: View {
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(.plain)
+        .jokeCardMenu(joke: rankedJoke.joke, onCopy: onCopy, onSave: onSave)
         .sheet(isPresented: $showingSheet) {
             JokeDetailSheet(
                 joke: rankedJoke.joke,

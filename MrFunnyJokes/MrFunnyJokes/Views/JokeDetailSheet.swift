@@ -72,6 +72,7 @@ struct JokeDetailContent: View {
 
     /// Tracks whether the joke ID was copied to clipboard
     @State private var isJokeIdCopied = false
+    @State private var showingStylePicker = false
 
     @Environment(\.isWideLayout) private var isWideLayout
 
@@ -128,9 +129,14 @@ struct JokeDetailContent: View {
 
             Divider()
 
-            // Action buttons - iOS style
+            // Share and Styles on top, Save and Copy under them
             VStack(spacing: 12) {
-                actionButtons(verticalPadding: 14)
+                HStack(spacing: 10) {
+                    shareButtons(verticalPadding: 14)
+                }
+                HStack(spacing: 10) {
+                    saveAndCopyButtons(verticalPadding: 12)
+                }
             }
 
             jokeIdButton
@@ -161,7 +167,8 @@ struct JokeDetailContent: View {
             BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
 
             HStack(spacing: 10) {
-                actionButtons(verticalPadding: 8)
+                saveAndCopyButtons(verticalPadding: 8)
+                shareButtons(verticalPadding: 8)
             }
 
             jokeIdButton
@@ -210,9 +217,46 @@ struct JokeDetailContent: View {
 
     // MARK: - Shared Pieces
 
-    /// Save, Copy and Share. Stacked in the compact sheet, side by side when wide.
+    /// Share goes out in one tap with the style used last; Styles opens the
+    /// picker to see the image and change how it looks first.
     @ViewBuilder
-    private func actionButtons(verticalPadding: CGFloat) -> some View {
+    private func shareButtons(verticalPadding: CGFloat) -> some View {
+        Button {
+            onShare()
+        } label: {
+            HStack {
+                Image(systemName: "square.and.arrow.up")
+                Text("Share")
+                    .font(.body.weight(.semibold))
+            }
+            .frame(maxWidth: .infinity, minHeight: 24)
+            .padding(.vertical, verticalPadding)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.blue)
+
+        Button {
+            HapticManager.shared.lightTap()
+            showingStylePicker = true
+        } label: {
+            HStack {
+                Image(systemName: "square.on.square")
+                Text("Styles")
+                    .font(.body.weight(.semibold))
+            }
+            .frame(minHeight: 24)
+            .padding(.vertical, verticalPadding)
+            .padding(.horizontal, 4)
+        }
+        .buttonStyle(.bordered)
+        .tint(.blue)
+        .fullScreenCover(isPresented: $showingStylePicker) {
+            ShareStylePickerView(joke: joke, surface: .stylePicker)
+        }
+    }
+
+    @ViewBuilder
+    private func saveAndCopyButtons(verticalPadding: CGFloat) -> some View {
         Button {
             onSave()
         } label: {
@@ -244,20 +288,6 @@ struct JokeDetailContent: View {
         .buttonStyle(.bordered)
         .tint(isCopied ? .green : .blue)
         .animation(.easeInOut(duration: 0.2), value: isCopied)
-
-        Button {
-            onShare()
-        } label: {
-            HStack {
-                Image(systemName: "square.and.arrow.up")
-                Text("Share")
-                    .font(.body.weight(.semibold))
-            }
-            .frame(maxWidth: .infinity, minHeight: 24)
-            .padding(.vertical, verticalPadding)
-        }
-        .buttonStyle(.bordered)
-        .tint(.blue)
     }
 
     /// Joke ID for Firebase reference - tap to copy

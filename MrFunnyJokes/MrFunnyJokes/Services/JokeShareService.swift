@@ -19,6 +19,7 @@ final class JokeShareService {
         case moreMenu = "more_menu"
         case stylePicker = "style_picker"
         case jokeSheet = "joke_sheet"
+        case cardMenu = "card_menu"
     }
 
     static let siteURL = URL(string: "https://mrfunnyjokes.app")!

@@ -77,6 +77,7 @@ struct JokeCardView: View {
             }
         }
         .buttonStyle(.plain)
+        .jokeCardMenu(joke: joke, onCopy: onCopy, onSave: onSave)
         .sheet(isPresented: $showingSheet) {
             JokeDetailSheet(
                 joke: joke,

@@ -182,7 +182,9 @@ struct CharacterDetailView: View {
                     onSelect: {
                         viewModel.markJokeViewed(joke)
                         selectedJokeId = joke.id
-                    }
+                    },
+                    onCopy: { viewModel.copyJoke(joke) },
+                    onSave: { viewModel.saveJoke(joke) }
                 )
                 .onAppear {
                     viewModel.markJokeImpression(joke)
@@ -238,6 +240,8 @@ struct CharacterJokeCardView: View {
     /// Outline color when selected: the character's own color
     var accentColor: Color = .accessibleYellow
     let onSelect: () -> Void
+    let onCopy: () -> Void
+    let onSave: () -> Void
 
     var body: some View {
         Button {
@@ -279,6 +283,7 @@ struct CharacterJokeCardView: View {
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(.plain)
+        .jokeCardMenu(joke: joke, onCopy: onCopy, onSave: onSave)
     }
 }
 

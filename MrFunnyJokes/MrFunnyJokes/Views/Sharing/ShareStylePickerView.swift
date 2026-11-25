@@ -45,7 +45,10 @@ struct ShareStylePickerView: View {
             }
         }
         .background(background.ignoresSafeArea())
-        .preferredColorScheme(.dark)
+        // Not preferredColorScheme: that also turns the sheet underneath dark, and
+        // it stays dark after this screen closes
+        .environment(\.colorScheme, .dark)
+        .statusBarHidden()
         .onChange(of: style) { _, newStyle in
             HapticManager.shared.selection()
             ShareCardPreferences.style = newStyle

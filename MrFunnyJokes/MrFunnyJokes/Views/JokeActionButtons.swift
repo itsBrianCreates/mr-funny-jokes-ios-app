@@ -191,6 +191,58 @@ struct JokeMoreMenuItems: View {
     }
 }
 
+// MARK: - Card Menu
+
+/// Press and hold a joke card: share its image, pick a style, open it full screen,
+/// copy or save, without opening the joke sheet first.
+private struct JokeCardMenu: ViewModifier {
+    let joke: Joke
+    let onCopy: () -> Void
+    let onSave: () -> Void
+
+    @Environment(\.openFullScreenJoke) private var openFullScreenJoke
+    @State private var showingStylePicker = false
+
+    func body(content: Content) -> some View {
+        content
+            .contextMenu {
+                Button {
+                    JokeShareService.shared.share(joke, from: .cardMenu)
+                } label: {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                Button {
+                    showingStylePicker = true
+                } label: {
+                    Label("Styles", systemImage: "square.on.square")
+                }
+                if let openFullScreenJoke {
+                    Button {
+                        openFullScreenJoke(joke)
+                    } label: {
+                        Label("Open full screen", systemImage: "arrow.up.left.and.arrow.down.right")
+                    }
+                }
+                Divider()
+                Button(action: onCopy) {
+                    Label("Copy joke", systemImage: "doc.on.doc")
+                }
+                Button(action: onSave) {
+                    Label(joke.isSaved ? "Saved" : "Save", systemImage: joke.isSaved ? "person.fill.checkmark" : "person")
+                }
+            }
+            .fullScreenCover(isPresented: $showingStylePicker) {
+                ShareStylePickerView(joke: joke, surface: .cardMenu)
+            }
+    }
+}
+
+extension View {
+    func jokeCardMenu(joke: Joke, onCopy: @escaping () -> Void, onSave: @escaping () -> Void) -> some View {
+        modifier(JokeCardMenu(joke: joke, onCopy: onCopy, onSave: onSave))
+    }
+}
+
 #Preview {
     struct Demo: View {
         @State private var isOn = false
