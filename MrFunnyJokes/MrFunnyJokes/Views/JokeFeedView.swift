@@ -9,6 +9,7 @@ struct JokeFeedView: View {
     @State private var allTimeTopTenDestination: RankingType?
 
     @Environment(\.openJokes) private var openJokes
+    @Environment(\.openFullScreenJoke) private var openFullScreenJoke
 
     /// Persistent state for YouTube promo dismissal
     @AppStorage("youtubePromoDismissed") private var youtubePromoDismissed = false
@@ -231,13 +232,13 @@ struct JokeFeedView: View {
             } else if showJokeOfTheDay, let jokeOfTheDay = viewModel.jokeOfTheDay {
                 JokeOfTheDayView(
                     joke: jokeOfTheDay,
-                    isCopied: viewModel.copiedJokeId == jokeOfTheDay.id,
-                    onShare: { viewModel.shareJoke(jokeOfTheDay) },
+                    counts: viewModel.counts(for: jokeOfTheDay),
+                    onOpen: { openFullScreenJoke?(jokeOfTheDay, isJokeOfTheDay: true) },
+                    onLaugh: { isOn in viewModel.laugh(jokeOfTheDay, isOn: isOn, surface: "home_card") },
+                    onShare: { viewModel.shareJoke(jokeOfTheDay, from: .homeCard) },
                     onCopy: { viewModel.copyJoke(jokeOfTheDay) },
-                    onRate: { rating in viewModel.rateJoke(jokeOfTheDay, rating: rating) },
                     onSave: { viewModel.saveJoke(jokeOfTheDay) },
-                    onSelect: { selectedJokeId = jokeOfTheDay.id },
-                    isSelected: isSplit && selectedJokeId == jokeOfTheDay.id
+                    onNotFunny: { viewModel.rateJoke(jokeOfTheDay, rating: jokeOfTheDay.userRating == 1 ? 0 : 1) }
                 )
                 .onAppear {
                     viewModel.markJokeImpression(jokeOfTheDay)

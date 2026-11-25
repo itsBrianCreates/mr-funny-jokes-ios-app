@@ -65,7 +65,15 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 | Decision | Rationale |
 |----------|-----------|
 | Widget uses REST API, not Firebase SDK | SDK causes deadlock issue #13070 |
-| Widget deep link: `mrfunnyjokes://jotd` | URL scheme for navigation from widget |
+| Widget deep link: `mrfunnyjokes://jotd` | URL scheme for navigation from widget. Opens today's joke in `JokeFullScreenView` |
+| Joke of the Day card (`JokeOfTheDayView`) | The teller's picture beside "Joke of the Day" and the teller and date, the setup in `.title2` semibold, then Laugh / Share / More. No border, no divider, no "tap" hint. Tapping the joke opens it full screen through `\.openFullScreenJoke` (one `fullScreenCover` owned by `MainContentView`); the buttons act in place. Horrible lives under More as "Not funny" |
+| Laugh is the Hilarious rating (`LaughButton`) | No new data model: on is `rateJoke(5)`, off clears the rating. A rating change that adds or removes a laugh moves the joke's `likes` by one (`JokeEngagement.likesDelta`, applied in both view models). Before 1.4 nothing wrote `likes`; `scripts/backfill-laughs.js` carried the earlier Hilarious votes over from `rating_events`, one per device (run 2026-11-25) |
+| Counts always show (`JokeEngagement`) | Laugh and Share show their number under the icon, zero included, shortened like 1.2K (`JokeEngagement.compact`). Counts are read live for the Joke of the Day and any joke opened full screen (`JokeViewModel.liveCounts`), kept apart from `jokes` so a catalog merge can't put stale counts back. Count writes never bump `updated_at` |
+| Full screen joke (`JokeFullScreenView`) | The teller's color edge to edge in light mode; near black in dark, with the color kept for the punchline. No portrait or avatar: the header is the Home card's two lines of text. Opens on the setup, a tap anywhere reveals the punchline. Laugh / Share / Styles sit on the flat color at the bottom. Opened from the card, the widget, the daily notification and shared links. Status bar hidden, pull down to close |
+| One joke layout for screen and image (`JokeArtwork`) | Setup in heavy rounded type and the punchline in a tilted pill; knock-knock jokes become chat bubbles, chosen from the joke type. Every measurement hangs off one type size and `LargestThatFits` steps that size down until the joke fits, so a one-liner is a poster and a long joke still fits. Unrevealed parts keep their space, so nothing moves on reveal. A long punchline loses its tilt |
+| Share cards (`JokeShareCardView`) | Styles Bold, Light, Dark, Big face in the teller's colors (`JokePalette`); Square 1080x1080 and Story 1080x1920 (text kept clear of the top 270 and bottom 300). Laid out at export size and rendered with `ImageRenderer`; `ShareCardPreview` scales the same view down. Footer is the teller and `mrfunnyjokes.app`, never the app name. Last style and format are remembered (`ShareCardPreferences`) |
+| Every Share sends an image and a link (`JokeShareService`) | The card image plus `https://mrfunnyjokes.app/j/<firestoreId>`, from the Joke of the Day, the full screen view, the style picker and the joke sheet. Copy stays plain text. A completed share sheet or a Copy adds one to the joke's `shares` (`countShare`); a cancelled sheet adds nothing |
+| Share links are Universal Links | `applinks:mrfunnyjokes.app` (Associated Domains) for `/j/*`. With the app, the link opens that joke full screen; without it, a web page built on request by the `jokePage` Cloud Function behind Firebase Hosting (`functions/joke-page.js`, `hosting/public`) with a "Get the app" button (`ct=share_card`). An unknown ID opens Home, or the home page on the web |
 | Topic deep link: `mrfunnyjokes://topic/<topicId>` | Switches to Search and sets `searchNavigationPath` to that topic's `JokeDestination`, the same page as tapping it in Browse. Pushed joke pages carry `.id(destination)` so swapping one topic for another at the same depth doesn't keep the old list, and a page opened before the catalog loads fills in when it lands (new jokes are added at the end) |
 | App Store rating ask (`ReviewPromptService`) | Asked with `\.requestReview` right after a joke is newly rated Hilarious, once 3 such ratings have been given across launches. Never on the first launch, never while anything is presented (it waits for the sheet to close), once per app version. State is in `UserDefaults` (`reviewPrompt*` keys). iOS may still show nothing, so `review_prompted` counts asks |
 | Cloud Functions for aggregation | Replaced local cron scripts |
@@ -79,7 +87,7 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 | Joke pages open through `\.openJokes` and `JokeDestination` | Every tab's `NavigationStack` is path-based, registers the pages once with `.jokeDestinations(viewModel:)`, and supplies its own open action, so a character, joke-type or topic page opens in the current tab on top of any page. `JokeDetailSheet` wraps the action to close the sheet first. Pages set `\.currentJokeDestination` so jokes there don't link back to them |
 | Search field pinned with `.navigationBarDrawer(displayMode: .always)` | The browse grid scrolls, and the default drawer hides the field until pulled down |
 | `Joke.id` derived from the Firestore ID | Same UUID every time a joke is decoded, so selection and scroll anchors survive a catalog sync |
-| Node.js 20 for Cloud Functions | Required by firebase-functions v7 |
+| Node.js 22 for Cloud Functions | Node.js 20 was retired by Google on 2026-10-30; nothing deploys on it |
 | @AppStorage for promo dismissal | Simple persistent state without extra infrastructure |
 | Seasonal demotion at filteredJokes level | Applied after all other filters; clean separation of concerns |
 | Scoped withAnimation over implicit .animation() | Prevents scroll container animation interference on iOS 18 |
@@ -271,13 +279,28 @@ URL scheme `mrfunnyjokes://`, handled in `MainContentView.handleDeepLink`:
 
 | Link | Opens |
 |------|-------|
-| `mrfunnyjokes://jotd` | Home, with the joke of the day sheet (widgets use this) |
+| `mrfunnyjokes://jotd` | Home, with the joke of the day full screen (widgets use this) |
+| `mrfunnyjokes://joke/<jokeId>` | That joke full screen, the same as a shared link. An unknown ID opens Home |
+| `https://mrfunnyjokes.app/j/<jokeId>` | Universal Link in shared jokes. Same as above; logs `share_link_opened` |
 | `mrfunnyjokes://home` | Home tab |
 | `mrfunnyjokes://me` | Me tab |
 | `mrfunnyjokes://search` | Search tab |
 | `mrfunnyjokes://topic/<topicId>` | That topic's page on the Search tab, e.g. `topic/christmas`, `topic/thanksgiving`. IDs are `JokeTopic.all` ids. An unknown ID just opens Search |
 
-Test in the simulator: `xcrun simctl openurl booted "mrfunnyjokes://topic/christmas"`
+Test in the simulator: `xcrun simctl openurl booted "mrfunnyjokes://topic/christmas"`. A Universal Link only opens the app once `mrfunnyjokes.app` is serving the association file; until then test the joke page with `mrfunnyjokes://joke/<jokeId>`.
+
+### Sharing Analytics
+| Event | Parameters |
+|-------|------------|
+| `joke_laughed` | `joke_id`, `character`, `surface` (`home_card`, `full_screen`) |
+| `share_started` | `joke_id`, `surface` (`home_card`, `full_screen`, `more_menu`, `style_picker`, `joke_sheet`) |
+| `share_completed` | `joke_id`, `style` (`bold`, `light`, `dark`, `big_face`), `format` (`square`, `story`), `destination` (the share sheet's activity type) |
+| `share_link_opened` | `joke_id` |
+
+### Checking Share Cards
+Debug builds write every style and format for a spread of joke shapes (short, long, one-liner, mid-sentence, knock-knock) to the app's `Documents/ShareCards`:
+
+`xcrun simctl launch booted com.mrfunnyjokes.app -renderShareCards`
 
 ### Seasonal Content
 - Holiday jokes are identified by tag: `christmas`, `thanksgiving`, `halloween` (only these — not "holidays")
@@ -300,4 +323,6 @@ Test in the simulator: `xcrun simctl openurl booted "mrfunnyjokes://topic/christ
 | `.planning/STATE.md` | Current milestone and phase status |
 | `.planning/codebase/CONVENTIONS.md` | Detailed code patterns |
 | `scripts/add-jokes.js` | Joke batch insertion script |
+| `functions/joke-page.js` | The mrfunnyjokes.app joke and home pages |
+| `hosting/public/.well-known/apple-app-site-association` | Which links open the app (`/j/*`) |
 | `Utilities/SeasonalHelper.swift` | Season detection and `Joke.isChristmasJoke` extension |

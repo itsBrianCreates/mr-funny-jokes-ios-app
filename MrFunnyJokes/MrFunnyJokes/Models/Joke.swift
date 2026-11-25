@@ -19,6 +19,8 @@ struct Joke: Identifiable, Codable, Equatable {
     var ratingAvg: Double
     var likes: Int
     var dislikes: Int
+    /// Completed shares, counted by the app
+    var shares: Int
     var popularityScore: Double
     /// When the joke was added to the catalog. Nil for jokes cached by older versions.
     var createdAt: Date?
@@ -26,7 +28,7 @@ struct Joke: Identifiable, Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id, category, setup, punchline, userRating, isSaved
         case firestoreId, character, tags, sfw, source
-        case ratingCount, ratingAvg, likes, dislikes, popularityScore, createdAt
+        case ratingCount, ratingAvg, likes, dislikes, shares, popularityScore, createdAt
     }
 
     init(
@@ -45,6 +47,7 @@ struct Joke: Identifiable, Codable, Equatable {
         ratingAvg: Double = 0.0,
         likes: Int = 0,
         dislikes: Int = 0,
+        shares: Int = 0,
         popularityScore: Double = 0.0,
         createdAt: Date? = nil
     ) {
@@ -63,6 +66,7 @@ struct Joke: Identifiable, Codable, Equatable {
         self.ratingAvg = ratingAvg
         self.likes = likes
         self.dislikes = dislikes
+        self.shares = shares
         self.popularityScore = popularityScore
         self.createdAt = createdAt
     }
@@ -87,6 +91,7 @@ struct Joke: Identifiable, Codable, Equatable {
         ratingAvg = try container.decodeIfPresent(Double.self, forKey: .ratingAvg) ?? 0.0
         likes = try container.decodeIfPresent(Int.self, forKey: .likes) ?? 0
         dislikes = try container.decodeIfPresent(Int.self, forKey: .dislikes) ?? 0
+        shares = try container.decodeIfPresent(Int.self, forKey: .shares) ?? 0
         popularityScore = try container.decodeIfPresent(Double.self, forKey: .popularityScore) ?? 0.0
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
     }

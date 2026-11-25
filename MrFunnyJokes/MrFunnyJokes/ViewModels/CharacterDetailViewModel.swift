@@ -127,6 +127,15 @@ final class CharacterDetailViewModel: ObservableObject {
             return $0.id == joke.id
         })
 
+        // A rating that adds or removes a laugh moves the joke's laugh count
+        let likesDelta = JokeEngagement.likesDelta(
+            previousRating: jokeIndex.map { jokes[$0].userRating } ?? joke.userRating,
+            newRating: rating == 0 ? nil : min(max(rating, 1), 5)
+        )
+        if likesDelta != 0, let firestoreId = joke.firestoreId {
+            Task { try? await firestoreService.adjustJokeLikes(jokeId: firestoreId, by: likesDelta) }
+        }
+
         if rating == 0 {
             storage.removeRating(for: joke.id, firestoreId: joke.firestoreId)
             if let index = jokeIndex {
@@ -237,43 +246,11 @@ final class CharacterDetailViewModel: ObservableObject {
 
     // MARK: - Sharing
 
+    /// Shares the joke's card image and its link (mrfunnyjokes.app/j/<id>)
     func shareJoke(_ joke: Joke) {
-        HapticManager.shared.success()
         let jokeId = joke.firestoreId ?? joke.id.uuidString
         Task.detached { AnalyticsService.shared.logJokeShared(jokeId: jokeId, method: "share") }
-
-        let text = joke.formattedTextForSharing(characterName: character.name)
-
-        let activityVC = UIActivityViewController(
-            activityItems: [text],
-            applicationActivities: nil
-        )
-
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }),
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }),
-              let rootVC = window.rootViewController else {
-            return
-        }
-
-        var topVC = rootVC
-        while let presented = topVC.presentedViewController {
-            topVC = presented
-        }
-
-        if let popover = activityVC.popoverPresentationController {
-            popover.sourceView = topVC.view
-            popover.sourceRect = CGRect(
-                x: topVC.view.bounds.midX,
-                y: topVC.view.bounds.midY,
-                width: 0,
-                height: 0
-            )
-            popover.permittedArrowDirections = []
-        }
-
-        topVC.present(activityVC, animated: true)
+        JokeShareService.shared.share(joke, from: .jokeSheet)
     }
 
     func copyJoke(_ joke: Joke) {
@@ -283,6 +260,7 @@ final class CharacterDetailViewModel: ObservableObject {
 
         let text = joke.formattedTextForSharing(characterName: character.name)
         UIPasteboard.general.string = text
+        JokeShareService.shared.countShare(of: joke)
 
         copiedJokeId = joke.id
 

@@ -41,7 +41,7 @@ const log = {
   divider: () => console.log('='.repeat(70))
 };
 
-// Jokes to add - Christmas batch (39) (November 2026)
+// Jokes to add - Christmas batch (45) (November 2026)
 //
 // Every joke has a "setup" (shown on the card) and a "punchline" (shown on tap).
 // The script stores them as one `text` field with a blank line between the two,
@@ -49,51 +49,51 @@ const log = {
 // ("Is it hot in here," / "or is it just you?"); the app adds the "…" itself.
 // Knock-knock: setup is the first three lines, punchline is "X who?" plus the answer.
 const JOKES_TO_ADD = [
-  // Mr. Funny
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "What do you call a cat on the beach at Christmas?", "punchline": "Sandy Claws!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "food", "wordplay"], "setup": "What's the most popular wine at Christmas dinner?", "punchline": "\"But I don't like Brussels sprouts!\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "weather"], "setup": "What did one snowman say to the other snowman?", "punchline": "\"Do you smell carrots?\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "school", "wordplay"], "setup": "What do Santa's elves do after school?", "punchline": "Their gnome-work!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "How does Christmas Day end?", "punchline": "With the letter Y!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "school", "wordplay"], "setup": "What do you call Santa's little helpers?", "punchline": "Subordinate clauses."},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "family", "weather"], "setup": "What do snowmen call their kids?", "punchline": "Chill-dren!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "What did the stamp say to the Christmas card?", "punchline": "\"Stick with me and we'll go places!\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "health"], "setup": "What do you get if you eat the Christmas decorations?", "punchline": "Tinsel-itis!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "What do reindeer hang on their Christmas trees?", "punchline": "Horn-aments!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "Why are Advent calendars so hard to find in late December?", "punchline": "Their days are numbered!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas"], "setup": "What did the Christmas tree say to the ornament?", "punchline": "\"Quit hanging around!\""},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "What's green, covered in tinsel, and goes \"ribbit\"?", "punchline": "Mistle-toad!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "food"], "setup": "How do you make a slow reindeer fast?", "punchline": "Stop feeding it!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas"], "setup": "What do you call an elf wearing earmuffs?", "punchline": "Anything you want — he can't hear you!"},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "wordplay"], "setup": "How does Santa keep track of every fireplace he visits?", "punchline": "He keeps a log."},
-  {"character": "mr_funny", "type": "dad_joke", "tags": ["christmas", "animals", "wordplay"], "setup": "Who delivers presents to baby sharks at Christmas?", "punchline": "Santa Jaws!"},
-  // Mr. Funny knock-knocks
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas"], "setup": "Knock, knock.\nWho's there?\nMary.", "punchline": "Mary who?\nMary Christmas!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "animals"], "setup": "Knock, knock.\nWho's there?\nOlive.", "punchline": "Olive who?\nOlive the other reindeer!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "weather"], "setup": "Knock, knock.\nWho's there?\nYule.", "punchline": "Yule who?\nYule be sorry if you don't let me in — it's freezing out here!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas"], "setup": "Knock, knock.\nWho's there?\nElf.", "punchline": "Elf who?\nElf me wrap these presents!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "music"], "setup": "Knock, knock.\nWho's there?\nHannah.", "punchline": "Hannah who?\nHannah partridge in a pear tree!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas", "weather"], "setup": "Knock, knock.\nWho's there?\nSnow.", "punchline": "Snow who?\nSnow time to chat — Santa's on his way!"},
-  {"character": "mr_funny", "type": "knock_knock", "tags": ["christmas"], "setup": "Knock, knock.\nWho's there?\nHolly.", "punchline": "Holly who?\nHolly-days are here — open up!"},
-  // Mr. Potty
-  {"character": "mr_potty", "type": "dad_joke", "tags": ["christmas", "weather"], "setup": "Why was the snowman digging through the bag of carrots?", "punchline": "He was picking his nose!"},
-  {"character": "mr_potty", "type": "dad_joke", "tags": ["christmas", "music", "food"], "setup": "What's the worst carol to hear after Christmas dinner?", "punchline": "\"Jingle Smells.\""},
-  {"character": "mr_potty", "type": "dad_joke", "tags": ["christmas", "food", "health"], "setup": "What do you call Santa after he eats every cookie on Christmas Eve?", "punchline": "Santa Claus-tipated."},
-  // Mr. Bad
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "health", "wordplay"], "setup": "What did Santa say to the guy smoking on his roof?", "punchline": "\"Put that out — it's bad for my elf.\""},
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas"], "setup": "What do you get for being on the naughty list?", "punchline": "Coal. Which, with today's heating bills, is honestly a great gift."},
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "work"], "setup": "Why is Christmas just like a day at the office?", "punchline": "You do all the work, and the fat guy in the suit gets all the credit."},
-  {"character": "mr_bad", "type": "dad_joke", "tags": ["christmas", "animals", "food"], "setup": "What did the turkey say when it heard about Christmas dinner?", "punchline": "\"Seriously? I just survived Thanksgiving!\""},
-  // Mr. Sad
-  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "weather"], "setup": "Why was the snowman so quiet at the Christmas party?", "punchline": "He knew he'd be gone by spring."},
-  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "family"], "setup": "My kids got me a \"World's Best Dad\" mug for Christmas.", "punchline": "The sticker said 75% off."},
-  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas"], "setup": "Why did the Christmas tree feel so empty on December 26th?", "punchline": "Everyone just took the presents and left."},
-  {"character": "mr_sad", "type": "dad_joke", "tags": ["christmas", "food"], "setup": "Every year I leave out milk and cookies for Santa.", "punchline": "Every year the cookies disappear, and so does any sign of my presents."},
-  // Mr. Love
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic"], "setup": "Let's skip the mistletoe.", "punchline": "I don't need an excuse to kiss you."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic"], "setup": "You're at the top of my Christmas list,", "punchline": "and I've checked it twice."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic"], "setup": "Do you hear that?", "punchline": "My heart just grew three sizes."},
-  {"character": "mr_love", "type": "pickup_line", "tags": ["christmas", "romantic", "weather"], "setup": "Are you a snowflake?", "punchline": "Because there's no one else quite like you."}
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","wordplay"],"setup":"What happened to the man who stole an Advent calendar?","punchline":"He got 25 days!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas"],"setup":"What goes \"Oh, oh, oh\"?","punchline":"Santa walking backwards!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","travel","wordplay"],"setup":"What do you call Santa when he ends up at the South Pole?","punchline":"A lost Claus!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","movies","wordplay"],"setup":"What do you call a Christmas tree that only shows up in action movies?","punchline":"Spruce Willis!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","technology","wordplay"],"setup":"What do you get when you cross a Christmas tree with an iPad?","punchline":"A pineapple!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","wordplay"],"setup":"What's another name for an artificial Christmas tree?","punchline":"Faux fir!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas"],"setup":"What looks like half a Christmas tree?","punchline":"The other half!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","work","wordplay"],"setup":"What did the Christmas tree do after its bank closed?","punchline":"It started its own branch!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","health","wordplay"],"setup":"What do Christmas trees get when they go numb?","punchline":"Pines and needles!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","wordplay"],"setup":"What do Christmas trees wear to the pool?","punchline":"Trunks!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","animals","wordplay"],"setup":"What do angry mice send each other in December?","punchline":"Cross-mouse cards!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","sports","wordplay"],"setup":"How did Scrooge win the football game?","punchline":"The Ghost of Christmas passed!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","wordplay"],"setup":"What kind of cars do elves drive?","punchline":"Toy-otas!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","wordplay"],"setup":"Why did the elf sleep in the fireplace?","punchline":"He wanted to sleep like a log!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","wordplay"],"setup":"What do elves keep inside their pointy shoes?","punchline":"Their mistle-toes!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","weather"],"setup":"What did the snowflake say to the fallen leaf?","punchline":"\"You're so last season.\""},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","religious","movies"],"setup":"What movie do the Three Wise Men watch every Christmas?","punchline":"A Star Is Born."},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","weather","wordplay"],"setup":"What did Santa say when he got back to the North Pole?","punchline":"\"There's snow place like home!\""},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","food","wordplay"],"setup":"Why was the candy cane so expensive?","punchline":"It was in mint condition!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","animals"],"setup":"Can you name all of Santa's reindeer?","punchline":"No need. They already have names!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","music","technology"],"setup":"Why does Santa use Spotify?","punchline":"He loves anything that comes Wrapped."},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","animals"],"setup":"Why do reindeer wear bells?","punchline":"Because their horns don't work!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","food","wordplay"],"setup":"What did the salt say to the pepper at Christmas dinner?","punchline":"\"Seasoning's greetings!\""},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","weather","animals"],"setup":"What did Santa ask Rudolph about the weather?","punchline":"\"Is it going to rain, dear?\""},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","food","wordplay"],"setup":"What does Santa eat for breakfast?","punchline":"Mistle-toast!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","technology","wordplay"],"setup":"What do elves post on Instagram?","punchline":"Elf-ies!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","travel","wordplay"],"setup":"What did Santa do when his sleigh broke down?","punchline":"He got it mistle-towed!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","animals","wordplay"],"setup":"How does Rudolph know when Christmas is coming?","punchline":"He checks his calen-deer!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","animals","wordplay"],"setup":"What did the beaver say to the Christmas tree?","punchline":"\"Nice gnawing you!\""},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","sports","wordplay"],"setup":"What's an elf's favorite sport?","punchline":"North Pole vaulting!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","animals","wordplay"],"setup":"Where does a reindeer go when it loses its tail?","punchline":"A re-tail store!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","wordplay"],"setup":"What do you get when you cross Santa with a detective?","punchline":"Santa Clues!"},
+  {"character":"mr_funny","type":"dad_joke","tags":["christmas","weather","wordplay"],"setup":"Where do Santa and the elves keep their money?","punchline":"In a snowbank!"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas","music"],"setup":"Knock, knock.\nWho's there?\nDexter.","punchline":"Dexter who?\nDexter halls with boughs of holly!"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas"],"setup":"Knock, knock.\nWho's there?\nAlaska.","punchline":"Alaska who?\nAlaska Santa for a new bike!"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas","music"],"setup":"Knock, knock.\nWho's there?\nHonda.","punchline":"Honda who?\nHonda first day of Christmas, my true love gave to me…"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas"],"setup":"Knock, knock.\nWho's there?\nHo ho.","punchline":"Ho ho who?\nYour Santa impression needs a little work."},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas"],"setup":"Knock, knock.\nWho's there?\nDoughnut.","punchline":"Doughnut who?\nDoughnut open till Christmas!"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas"],"setup":"Knock, knock.\nWho's there?\nIrish.","punchline":"Irish who?\nIrish you a Merry Christmas!"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas","animals"],"setup":"Knock, knock.\nWho's there?\nRabbit.","punchline":"Rabbit who?\nRabbit up carefully — it's a present!"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas"],"setup":"Knock, knock.\nWho's there?\nCoal.","punchline":"Coal who?\nCoal me if you hear Santa coming!"},
+  {"character":"mr_funny","type":"knock_knock","tags":["christmas"],"setup":"Knock, knock.\nWho's there?\nNoah.","punchline":"Noah who?\nNoah good Christmas joke?"},
+  {"character":"mr_potty","type":"knock_knock","tags":["christmas"],"setup":"Knock, knock.\nWho's there?\nCentipede.","punchline":"Centipede who?\nCentipede on the Christmas tree!"},
+  {"character":"mr_bad","type":"dad_joke","tags":["christmas","work"],"setup":"What does Santa do when his elves misbehave?","punchline":"He gives them the sack."},
+  {"character":"mr_bad","type":"dad_joke","tags":["christmas"],"setup":"What do you get if Santa comes down the chimney while the fire is lit?","punchline":"Crisp Kringle."},
 ];
 
 /**

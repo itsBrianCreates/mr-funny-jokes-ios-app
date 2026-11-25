@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["4SDGX26HQP.com.mrfunnyjokes.app"],
+        "components": [
+          { "/": "/j/*", "comment": "A shared joke opens in the app" }
+        ]
+      }
+    ]
+  }
+}

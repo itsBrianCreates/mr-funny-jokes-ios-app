@@ -77,6 +77,9 @@ struct RootView: View {
         .onAppear {
             startSplashTimer()
             startMaximumSplashTimer()
+            #if DEBUG
+            ShareCardDebugRenderer.renderIfRequested()
+            #endif
             // Pre-warm haptic engines on a background thread
             Task.detached { HapticManager.shared.warmUp() }
             // Defer ViewModel creation so the animated splash renders first.
@@ -152,8 +155,12 @@ struct MainContentView: View {
     @State private var searchNavigationPath = NavigationPath()
     @State private var showingSettings = false
     @State private var scrollToJokeOfTheDay = false
-    @State private var showingJokeOfTheDaySheet = false
+    /// The joke shown full screen: the Joke of the Day (card, widget, notification)
+    /// or a joke opened from a shared link
+    @State private var fullScreenJoke: FullScreenJoke?
     @State private var windowWidth: CGFloat = 0
+
+    @Environment(\.colorScheme) private var colorScheme
 
     enum AppTab: Hashable {
         case home
@@ -188,28 +195,27 @@ struct MainContentView: View {
             navigationPath = NavigationPath()
         }
         .onReceive(NotificationCenter.default.publisher(for: .didTapJokeOfTheDayNotification)) { _ in
-            // Navigate to home tab when notification is tapped
+            // The daily notification opens today's joke full screen, over Home
             selectedTab = .home
             navigationPath = NavigationPath()
             scrollToJokeOfTheDay = true
+            presentJokeOfTheDay()
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
-        .sheet(isPresented: $showingJokeOfTheDaySheet) {
-            if let joke = jokeViewModel.jokeOfTheDay {
-                JokeDetailSheet(
-                    joke: joke,
-                    isCopied: jokeViewModel.copiedJokeId == joke.id,
-                    onDismiss: { showingJokeOfTheDaySheet = false },
-                    onShare: { jokeViewModel.shareJoke(joke) },
-                    onCopy: { jokeViewModel.copyJoke(joke) },
-                    onRate: { rating in jokeViewModel.rateJoke(joke, rating: rating) },
-                    onSave: { jokeViewModel.saveJoke(joke) }
-                )
-            }
+        .fullScreenCover(item: $fullScreenJoke) { presented in
+            JokeFullScreenView(
+                viewModel: jokeViewModel,
+                openedJoke: presented.joke,
+                isJokeOfTheDay: presented.isJokeOfTheDay,
+                isDark: colorScheme == .dark
+            )
         }
-        // Sheets presented from here (widget deep link) open joke pages on Home.
+        .environment(\.openFullScreenJoke, OpenFullScreenJokeAction { joke, isJokeOfTheDay in
+            fullScreenJoke = FullScreenJoke(joke: joke, isJokeOfTheDay: isJokeOfTheDay)
+        })
+        // Sheets presented from here open joke pages on Home.
         // Each tab's stack replaces this with its own.
         .environment(\.openJokes, OpenJokesAction { destination in
             selectedTab = .home
@@ -239,15 +245,30 @@ struct MainContentView: View {
     // MARK: - Deep Linking
 
     private func handleDeepLink(_ url: URL) {
+        // Universal Link from a shared joke: https://mrfunnyjokes.app/j/<jokeId>
+        if url.scheme == "https" || url.scheme == "http" {
+            let parts = url.pathComponents.filter { $0 != "/" }
+            if url.host?.hasSuffix("mrfunnyjokes.app") == true, parts.count == 2, parts[0] == "j" {
+                openSharedJoke(id: parts[1])
+            } else {
+                selectedTab = .home
+            }
+            return
+        }
+
         guard url.scheme == "mrfunnyjokes" else { return }
 
         switch url.host {
         case "jotd":
-            // Widget tap: navigate to home and show joke of the day detail sheet
+            // Widget tap: Home, with today's joke full screen
             selectedTab = .home
-            // Small delay to ensure view is ready before presenting sheet
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                showingJokeOfTheDaySheet = true
+            presentJokeOfTheDay()
+        case "joke":
+            // mrfunnyjokes://joke/<jokeId>: the same joke page a shared link opens
+            if let id = url.pathComponents.dropFirst().first {
+                openSharedJoke(id: id)
+            } else {
+                selectedTab = .home
             }
         case "home":
             selectedTab = .home
@@ -267,6 +288,36 @@ struct MainContentView: View {
             }
         default:
             selectedTab = .home
+        }
+    }
+
+    /// Shows today's joke full screen. On a cold launch (widget, notification) the
+    /// joke may still be loading, so this waits a moment for it.
+    private func presentJokeOfTheDay() {
+        Task { @MainActor in
+            for _ in 0..<30 {
+                if let joke = jokeViewModel.jokeOfTheDay, !jokeViewModel.isLoadingJokeOfTheDay {
+                    fullScreenJoke = FullScreenJoke(joke: joke, isJokeOfTheDay: true)
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            if let joke = jokeViewModel.jokeOfTheDay {
+                fullScreenJoke = FullScreenJoke(joke: joke, isJokeOfTheDay: true)
+            }
+        }
+    }
+
+    /// Opens the joke a shared link points at, full screen. An unknown ID opens Home.
+    private func openSharedJoke(id: String) {
+        selectedTab = .home
+        AnalyticsService.shared.logShareLinkOpened(jokeId: id)
+        Task { @MainActor in
+            guard let joke = await jokeViewModel.jokeForLink(firestoreId: id) else { return }
+            fullScreenJoke = FullScreenJoke(
+                joke: joke,
+                isJokeOfTheDay: joke.firestoreId == jokeViewModel.jokeOfTheDay?.firestoreId
+            )
         }
     }
 

@@ -197,6 +197,18 @@ final class JokeViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // A finished share bumps the joke's share count on screen
+        NotificationCenter.default.publisher(for: .jokeShareDidComplete)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                guard let self, let id = notification.userInfo?["firestoreId"] as? String else { return }
+                let joke = self.jokes.first { $0.firestoreId == id } ?? self.jokeOfTheDay ?? self.linkedJoke
+                var counts = self.liveCounts[id] ?? JokeCounts(laughs: joke?.likes ?? 0, shares: joke?.shares ?? 0)
+                counts.shares += 1
+                self.liveCounts[id] = counts
+            }
+            .store(in: &cancellables)
+
         // A feed left in the background goes stale: coming back later should feel like a new visit
         NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
             .receive(on: DispatchQueue.main)
@@ -508,6 +520,7 @@ final class JokeViewModel: ObservableObject {
             jokeOfTheDayId = savedJoke.firestoreId ?? savedJoke.id
             // Cache the full joke data for fallback reconstruction
             cachedJokeOfTheDayData = savedJoke
+            if let jokeOfTheDay { refreshCounts(for: jokeOfTheDay) }
             return
         }
 
@@ -525,6 +538,7 @@ final class JokeViewModel: ObservableObject {
         // Save and sync to widget
         jokeOfTheDayId = jokeIdentifier
         saveJokeOfTheDayToWidget(newJoke)
+        liveCounts[jokeIdentifier] = JokeCounts(laughs: newJoke.likes, shares: newJoke.shares)
 
         // Also cache the data locally for fallback
         cachedJokeOfTheDayData = SharedJokeOfTheDay(
@@ -576,6 +590,76 @@ final class JokeViewModel: ObservableObject {
         isRefreshing = false
     }
 
+    // MARK: - Laughs and Counts
+
+    /// Laugh and share counts fetched or changed this session, by Firestore ID.
+    /// Kept apart from `jokes` so a catalog merge can't put stale counts back.
+    @Published private(set) var liveCounts: [String: JokeCounts] = [:]
+
+    /// A joke opened from a shared link that isn't in the catalog on this device yet
+    @Published private(set) var linkedJoke: Joke?
+
+    func counts(for joke: Joke) -> JokeCounts {
+        if let id = joke.firestoreId, let live = liveCounts[id] { return live }
+        return JokeCounts(laughs: joke.likes, shares: joke.shares)
+    }
+
+    /// Reads a joke's current counts from Firestore. Called for the Joke of the Day
+    /// and whenever a joke is opened full screen.
+    func refreshCounts(for joke: Joke) {
+        guard let id = joke.firestoreId, !networkMonitor.isOffline else { return }
+        Task {
+            guard let fresh = try? await firestoreService.fetchJokeCounts(jokeId: id) else { return }
+            liveCounts[id] = fresh
+        }
+    }
+
+    /// Laugh is the Hilarious rating; turning it off clears the rating.
+    func laugh(_ joke: Joke, isOn: Bool, surface: String) {
+        if isOn {
+            let jokeId = joke.firestoreId ?? joke.id.uuidString
+            let character = joke.character ?? "unknown"
+            Task.detached { AnalyticsService.shared.logJokeLaughed(jokeId: jokeId, character: character, surface: surface) }
+        }
+        rateJoke(joke, rating: isOn ? 5 : 0)
+    }
+
+    /// Moves the laugh count when a rating change adds or removes a laugh
+    private func applyLikesDelta(for joke: Joke, previousRating: Int?, newRating: Int?) {
+        let delta = JokeEngagement.likesDelta(previousRating: previousRating, newRating: newRating)
+        guard delta != 0, let id = joke.firestoreId else { return }
+        var counts = counts(for: joke)
+        counts.laughs = max(counts.laughs + delta, 0)
+        liveCounts[id] = counts
+        Task { try? await firestoreService.adjustJokeLikes(jokeId: id, by: delta) }
+    }
+
+    /// The freshest copy of a joke: its rating and saved state as they are now
+    func joke(matching joke: Joke) -> Joke? {
+        if let found = jokes.first(where: {
+            if let id = joke.firestoreId, let otherId = $0.firestoreId { return id == otherId }
+            return $0.id == joke.id
+        }) {
+            return found
+        }
+        if let jokeOfTheDay, jokeOfTheDay.id == joke.id || (joke.firestoreId != nil && jokeOfTheDay.firestoreId == joke.firestoreId) {
+            return jokeOfTheDay
+        }
+        return nil
+    }
+
+    /// The joke a shared link points at: from the catalog on the device when it's
+    /// there, otherwise straight from Firestore. Nil when there is no such joke.
+    func jokeForLink(firestoreId: String) async -> Joke? {
+        if let local = jokes.first(where: { $0.firestoreId == firestoreId }) ?? catalog.jokes.first(where: { $0.firestoreId == firestoreId }) {
+            return applyingUserState(to: [local]).first
+        }
+        guard let fetched = try? await firestoreService.fetchJoke(byId: firestoreId) else { return nil }
+        let joke = applyingUserState(to: [fetched]).first
+        linkedJoke = joke
+        return joke
+    }
+
     // MARK: - Ratings
 
     func rateJoke(_ joke: Joke, rating: Int) {
@@ -589,6 +673,12 @@ final class JokeViewModel: ObservableObject {
             }
             return $0.id == joke.id
         })
+
+        applyLikesDelta(
+            for: joke,
+            previousRating: jokeIndex.map { jokes[$0].userRating } ?? joke.userRating,
+            newRating: rating == 0 ? nil : min(max(rating, 1), 5)
+        )
 
         if rating == 0 {
             storage.removeRating(for: joke.id, firestoreId: joke.firestoreId)
@@ -767,52 +857,11 @@ final class JokeViewModel: ObservableObject {
 
     // MARK: - Sharing
 
-    func shareJoke(_ joke: Joke) {
-        HapticManager.shared.success()
+    /// Shares the joke's card image and its link (mrfunnyjokes.app/j/<id>)
+    func shareJoke(_ joke: Joke, from surface: JokeShareService.Surface = .jokeSheet) {
         let jokeId = joke.firestoreId ?? joke.id.uuidString
         Task.detached { AnalyticsService.shared.logJokeShared(jokeId: jokeId, method: "share") }
-
-        // Get character name from joke's character field, fallback to generic app name
-        let characterName: String
-        if let characterId = joke.character,
-           let character = JokeCharacter.find(byId: characterId) {
-            characterName = character.name
-        } else {
-            characterName = "Mr. Funny Jokes"
-        }
-
-        let text = joke.formattedTextForSharing(characterName: characterName)
-
-        let activityVC = UIActivityViewController(
-            activityItems: [text],
-            applicationActivities: nil
-        )
-
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }),
-              let window = windowScene.windows.first(where: { $0.isKeyWindow }),
-              let rootVC = window.rootViewController else {
-            return
-        }
-
-        var topVC = rootVC
-        while let presented = topVC.presentedViewController {
-            topVC = presented
-        }
-
-        if let popover = activityVC.popoverPresentationController {
-            popover.sourceView = topVC.view
-            popover.sourceRect = CGRect(
-                x: topVC.view.bounds.midX,
-                y: topVC.view.bounds.midY,
-                width: 0,
-                height: 0
-            )
-            popover.permittedArrowDirections = []
-        }
-
-        topVC.present(activityVC, animated: true)
+        JokeShareService.shared.share(joke, from: surface)
     }
 
     func copyJoke(_ joke: Joke) {
@@ -831,6 +880,7 @@ final class JokeViewModel: ObservableObject {
 
         let text = joke.formattedTextForSharing(characterName: characterName)
         UIPasteboard.general.string = text
+        JokeShareService.shared.countShare(of: joke)
 
         copiedJokeId = joke.id
 

@@ -8,66 +8,45 @@ import SwiftUI
 
 struct SkeletonJokeOfTheDayView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header badge placeholder - matches "JOKE OF THE DAY" text
-            badgePlaceholder
-
-            // Setup text placeholder - two lines of .title3
-            setupTextPlaceholder
-
-            // Character and rating row placeholder
-            metadataRowPlaceholder
-        }
-        .padding(16)
-        .background(.brandYellowLight, in: RoundedRectangle(cornerRadius: 20))
-        .shimmer()
-    }
-
-    // MARK: - Badge Placeholder
-    // Matches the uppercase "JOKE OF THE DAY" badge text
-
-    private var badgePlaceholder: some View {
-        SkeletonShape(
-            width: 130,
-            height: 28,
-            cornerRadius: 6
-        )
-        .opacity(0.6)  // Slightly more subtle to match caption style
-    }
-
-    // MARK: - Setup Text Placeholder
-    // Matches two lines of .title3.weight(.semibold) (~25pt line height)
-
-    private var setupTextPlaceholder: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            SkeletonShape(height: 22, cornerRadius: 4)
-            GeometryReader { geo in
-                SkeletonShape(
-                    width: geo.size.width * 0.75,
-                    height: 22,
-                    cornerRadius: 4
-                )
-            }
-            .frame(height: 22)
-        }
-    }
-
-    // MARK: - Metadata Row Placeholder
-    // Matches the character avatar and name, and the rating prompt
-
-    private var metadataRowPlaceholder: some View {
-        HStack {
-            // Avatar + name placeholder
+        VStack(alignment: .leading, spacing: 0) {
+            // Avatar, "Joke of the Day" and the teller and date
             HStack(spacing: 12) {
                 SkeletonShape(width: 44, height: 44, cornerRadius: 22)
-                SkeletonShape(width: 80, height: 12, cornerRadius: 3)
+                VStack(alignment: .leading, spacing: 8) {
+                    SkeletonShape(width: 110, height: 13, cornerRadius: 3)
+                    SkeletonShape(width: 160, height: 11, cornerRadius: 3)
+                        .opacity(0.6)
+                }
+                Spacer(minLength: 0)
             }
 
-            Spacer()
+            // Two lines of .title2 (28pt line height, 3pt line spacing)
+            VStack(alignment: .leading, spacing: 11) {
+                SkeletonShape(height: 20, cornerRadius: 4)
+                GeometryReader { geo in
+                    SkeletonShape(width: geo.size.width * 0.7, height: 20, cornerRadius: 4)
+                }
+                .frame(height: 20)
+            }
+            .padding(.top, 22)
+            .padding(.bottom, 18)
 
-            // Rating emoji placeholder
-            SkeletonShape(width: 20, height: 16, cornerRadius: 4)
+            // Laugh, Share, More
+            HStack(spacing: 0) {
+                ForEach(0..<3, id: \.self) { _ in
+                    VStack(spacing: 8) {
+                        SkeletonShape(width: 24, height: 24, cornerRadius: 12)
+                        SkeletonShape(width: 28, height: 10, cornerRadius: 3)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 52)
+                }
+            }
+            .padding(.horizontal, -12)
+            .padding(.bottom, -12)
         }
+        .padding(20)
+        .background(.brandYellowLight, in: RoundedRectangle(cornerRadius: JokeOfTheDayView.cornerRadius, style: .continuous))
+        .shimmer()
     }
 }
 
