@@ -260,6 +260,7 @@ final class CharacterDetailViewModel: ObservableObject {
 
         let text = joke.formattedTextForSharing(characterName: character.name)
         UIPasteboard.general.string = text
+        JokeShareService.shared.countShare(of: joke)
 
         copiedJokeId = joke.id
 

@@ -2,7 +2,7 @@ import UIKit
 import LinkPresentation
 
 extension Notification.Name {
-    /// Posted when a share sheet finishes with a share. `userInfo["firestoreId"]` is the joke.
+    /// Posted when a joke is shared or copied. `userInfo["firestoreId"]` is the joke.
     static let jokeShareDidComplete = Notification.Name("jokeShareDidComplete")
 }
 
@@ -65,13 +65,7 @@ final class JokeShareService {
                     format: format.rawValue,
                     destination: activityType?.rawValue ?? "unknown"
                 )
-                guard let firestoreId = joke.firestoreId else { return }
-                NotificationCenter.default.post(
-                    name: .jokeShareDidComplete,
-                    object: nil,
-                    userInfo: ["firestoreId": firestoreId]
-                )
-                try? await FirestoreService.shared.incrementJokeShares(jokeId: firestoreId)
+                self.countShare(of: joke)
             }
         }
 
@@ -82,6 +76,18 @@ final class JokeShareService {
             popover.permittedArrowDirections = []
         }
         presenter.present(activityVC, animated: true)
+    }
+
+    /// Adds one to the joke's share count, on screen and in Firestore. A finished
+    /// share sheet counts, and so does the app's own Copy.
+    func countShare(of joke: Joke) {
+        guard let firestoreId = joke.firestoreId else { return }
+        NotificationCenter.default.post(
+            name: .jokeShareDidComplete,
+            object: nil,
+            userInfo: ["firestoreId": firestoreId]
+        )
+        Task { try? await FirestoreService.shared.incrementJokeShares(jokeId: firestoreId) }
     }
 
     private static func title(for joke: Joke) -> String {
