@@ -136,6 +136,12 @@ struct JokeShareCardView: View {
         }
         if joke.category == .knockKnock { base = 96 }
         if format == .story { base *= 1.12 }
+        // A long word caps the type, so it is never broken across lines
+        base = JokeArtwork.largestSizeKeepingWordsWhole(
+            for: joke,
+            width: size.width - insets.leading - insets.trailing,
+            upTo: base
+        )
         return LargestThatFits<JokeArtwork>.ladder(from: base, downTo: 30)
     }
 

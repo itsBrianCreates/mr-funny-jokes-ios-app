@@ -216,6 +216,38 @@ struct PortraitEdgeFade: View {
     }
 }
 
+// MARK: - Word Fit
+
+extension JokeArtwork {
+    /// The largest setup size, up to `limit`, at which every word of the joke fits on
+    /// one line of `width`. Text breaks a word that is wider than its line, which
+    /// leaves a stray "?" on a line by itself ("mathematician" / "?").
+    static func largestSizeKeepingWordsWhole(for joke: Joke, width: CGFloat, upTo limit: CGFloat) -> CGFloat {
+        // Knock-knock bubbles are set small enough that this doesn't come up
+        guard joke.category != .knockKnock, width > 0 else { return limit }
+
+        // Measured once at a reference size; width grows in step with point size
+        let reference: CGFloat = 100
+        let base = UIFont.systemFont(ofSize: reference, weight: .heavy)
+        let font = base.fontDescriptor.withDesign(.rounded).map { UIFont(descriptor: $0, size: reference) } ?? base
+        func widestWord(in text: String) -> CGFloat {
+            text.split(whereSeparator: \.isWhitespace)
+                .map { (String($0) as NSString).size(withAttributes: [.font: font]).width }
+                .max() ?? 0
+        }
+
+        // Width each part needs per point of setup size. The pill's type is 0.74 of
+        // the setup's, with 0.62 of its own size as padding on each side.
+        let setupNeed = widestWord(in: joke.setup + " " + joke.cardText) / reference
+        let pillNeed = joke.hasPunchline
+            ? (widestWord(in: joke.punchlineLines.joined(separator: " ")) / reference + 2 * 0.62) * 0.74
+            : 0
+        let need = max(setupNeed, pillNeed) * 1.03
+        guard need > 0 else { return limit }
+        return min(limit, (width / need).rounded(.down))
+    }
+}
+
 // MARK: - Fitting
 
 /// Draws `content` at the largest of `sizes` that fits the height on offer.

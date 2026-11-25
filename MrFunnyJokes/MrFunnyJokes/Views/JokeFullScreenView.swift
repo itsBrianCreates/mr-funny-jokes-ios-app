@@ -153,9 +153,13 @@ struct JokeFullScreenView: View {
 
     /// The joke at the largest type that fits; one too long for the screen scrolls
     private func jokeArea(in size: CGSize) -> some View {
-        let smallest = typeSize * 0.52
+        // Wide windows: keep lines a readable length
+        let width = isWideLayout ? size.width * 0.7 : size.width - 48
+        // A long word caps the type, so it is never broken across lines
+        let largest = JokeArtwork.largestSizeKeepingWordsWhole(for: joke, width: width, upTo: typeSize)
+        let smallest = min(typeSize * 0.52, largest)
         return ViewThatFits(in: .vertical) {
-            ForEach(LargestThatFits<JokeArtwork>.ladder(from: typeSize, downTo: smallest), id: \.self) { size in
+            ForEach(LargestThatFits<JokeArtwork>.ladder(from: largest, downTo: smallest), id: \.self) { size in
                 artwork(size: size)
             }
             ScrollView {
@@ -164,8 +168,7 @@ struct JokeFullScreenView: View {
             }
             .scrollIndicators(.hidden)
         }
-        // Wide windows: keep lines a readable length
-        .frame(maxWidth: isWideLayout ? size.width * 0.7 : .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: isWideLayout ? width : .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     private func artwork(size: CGFloat) -> some View {
