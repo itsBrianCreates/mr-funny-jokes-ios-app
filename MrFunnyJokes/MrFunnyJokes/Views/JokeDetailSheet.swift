@@ -263,7 +263,8 @@ struct JokeDetailContent: View {
             Button {
                 onShare()
             } label: {
-                CircleActionLabel(systemImage: "square.and.arrow.up", title: "Share", style: .prominent)
+                // The glyph's weight is in its box, below the arrow, so centered it looks low
+                CircleActionLabel(systemImage: "square.and.arrow.up", title: "Share", style: .prominent, iconNudge: -2)
             }
 
             Button {
@@ -440,6 +441,8 @@ private struct CircleActionLabel: View {
     let systemImage: String
     let title: String
     var style: Style = .plain
+    /// Moves the icon up (negative) or down inside the circle, for glyphs that look off-center
+    var iconNudge: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 6) {
@@ -447,6 +450,7 @@ private struct CircleActionLabel: View {
                 .font(.title3.weight(.medium))
                 .contentTransition(.symbolEffect(.replace))
                 .foregroundStyle(iconColor)
+                .offset(y: iconNudge)
                 .frame(width: 56, height: 56)
                 .background(circleColor, in: Circle())
 
