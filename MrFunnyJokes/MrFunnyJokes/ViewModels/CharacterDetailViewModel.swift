@@ -132,8 +132,15 @@ final class CharacterDetailViewModel: ObservableObject {
             previousRating: jokeIndex.map { jokes[$0].userRating } ?? joke.userRating,
             newRating: rating == 0 ? nil : min(max(rating, 1), 5)
         )
-        if likesDelta != 0, let firestoreId = joke.firestoreId {
-            Task { try? await firestoreService.adjustJokeLikes(jokeId: firestoreId, by: likesDelta) }
+        let dislikesDelta = JokeEngagement.dislikesDelta(
+            previousRating: jokeIndex.map { jokes[$0].userRating } ?? joke.userRating,
+            newRating: rating == 0 ? nil : min(max(rating, 1), 5)
+        )
+        if likesDelta != 0 || dislikesDelta != 0, let firestoreId = joke.firestoreId {
+            Task {
+                try? await firestoreService.adjustJokeLikes(jokeId: firestoreId, by: likesDelta)
+                try? await firestoreService.adjustJokeDislikes(jokeId: firestoreId, by: dislikesDelta)
+            }
         }
 
         if rating == 0 {

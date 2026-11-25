@@ -74,6 +74,20 @@ struct JokeDetailContent: View {
     @State private var isJokeIdCopied = false
     @State private var showingStylePicker = false
 
+    /// Vote counts read from Firestore when the joke opens, and the reader's rating
+    /// at that moment. The catalog's own counts can be a week old.
+    @State private var freshCounts: JokeCounts?
+    @State private var ratingWhenFetched: Int?
+
+    /// Counts for the rating buttons: the fetched numbers, moved by any vote the
+    /// reader has cast or changed since
+    private var voteCounts: (hilarious: Int, horrible: Int) {
+        guard let freshCounts else { return (joke.likes, joke.dislikes) }
+        let likes = JokeEngagement.likesDelta(previousRating: ratingWhenFetched, newRating: joke.userRating)
+        let dislikes = JokeEngagement.dislikesDelta(previousRating: ratingWhenFetched, newRating: joke.userRating)
+        return (max(freshCounts.laughs + likes, 0), max(freshCounts.horribles + dislikes, 0))
+    }
+
     @Environment(\.isWideLayout) private var isWideLayout
 
     /// The character associated with this joke, if any
@@ -94,6 +108,12 @@ struct JokeDetailContent: View {
             } else {
                 compactLayout
             }
+        }
+        .task(id: joke.firestoreId) {
+            guard let id = joke.firestoreId,
+                  let counts = try? await FirestoreService.shared.fetchJokeCounts(jokeId: id) else { return }
+            ratingWhenFetched = joke.userRating
+            freshCounts = counts
         }
         .background(alignment: .top) {
             if isWideLayout && showsWash {
@@ -125,7 +145,12 @@ struct JokeDetailContent: View {
             JokeLinksRow(joke: joke)
 
             // Rating section
-            BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
+            BinaryRatingView(
+                currentRating: joke.userRating,
+                hilariousCount: voteCounts.hilarious,
+                horribleCount: voteCounts.horrible,
+                onRate: onRate
+            )
 
             Divider()
 
@@ -164,7 +189,12 @@ struct JokeDetailContent: View {
 
             punchlineText(lines: joke.punchlineLines)
 
-            BinaryRatingView(currentRating: joke.userRating, onRate: onRate)
+            BinaryRatingView(
+                currentRating: joke.userRating,
+                hilariousCount: voteCounts.hilarious,
+                horribleCount: voteCounts.horrible,
+                onRate: onRate
+            )
 
             HStack(spacing: 10) {
                 saveAndCopyButtons(verticalPadding: 8)

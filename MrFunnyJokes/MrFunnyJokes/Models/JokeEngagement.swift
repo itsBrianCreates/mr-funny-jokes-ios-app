@@ -32,10 +32,21 @@ enum JokeEngagement {
         if wasLaughing && !isLaughing { return -1 }
         return 0
     }
+
+    /// How a rating change moves the joke's `dislikes` count: its Horrible votes (rating 1)
+    static func dislikesDelta(previousRating: Int?, newRating: Int?) -> Int {
+        let was = previousRating == 1
+        let isNow = newRating == 1
+        if isNow && !was { return 1 }
+        if was && !isNow { return -1 }
+        return 0
+    }
 }
 
-/// Live laugh and share counts for one joke
+/// Live counts for one joke. Laughs are its Hilarious votes.
 struct JokeCounts: Equatable {
     var laughs: Int
     var shares: Int
+    /// Horrible votes
+    var horribles: Int = 0
 }

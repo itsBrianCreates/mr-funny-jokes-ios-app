@@ -2,7 +2,17 @@ import SwiftUI
 
 struct BinaryRatingView: View {
     let currentRating: Int?
+    /// How many people voted each way. Shown beside the label, zero included; nil hides it.
+    var hilariousCount: Int? = nil
+    var horribleCount: Int? = nil
     let onRate: (Int) -> Void
+
+    private func count(for option: RatingOption) -> Int? {
+        switch option {
+        case .hilarious: return hilariousCount
+        case .horrible: return horribleCount
+        }
+    }
 
     enum RatingOption: CaseIterable {
         case hilarious
@@ -73,7 +83,16 @@ struct BinaryRatingView: View {
                     .font(.title3)
                 Text(option.name)
                     .font(.subheadline.weight(.medium))
+                if let count = count(for: option) {
+                    Text(JokeEngagement.compact(count))
+                        .font(.subheadline.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .contentTransition(.numericText())
+                }
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+            .padding(.horizontal, 8)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(
@@ -87,6 +106,9 @@ struct BinaryRatingView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(option.name)
+        .accessibilityValue(count(for: option).map { "\($0) votes" } ?? "")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
