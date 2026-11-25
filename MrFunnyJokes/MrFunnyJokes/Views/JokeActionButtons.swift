@@ -180,7 +180,7 @@ struct JokeMoreMenuItems: View {
             Label("Copy joke", systemImage: "doc.on.doc")
         }
         Button(action: onSave) {
-            Label(joke.isSaved ? "Saved" : "Save", systemImage: joke.isSaved ? "person.fill.checkmark" : "person")
+            Label(joke.isSaved ? "Saved" : "Save", systemImage: joke.isSaved ? "bookmark.fill" : "bookmark")
         }
         Divider()
         // The Horrible rating. Tapping it again takes it back.
@@ -214,7 +214,7 @@ private struct JokeCardMenu: ViewModifier {
                 Button {
                     showingStylePicker = true
                 } label: {
-                    Label("Styles", systemImage: "square.on.square")
+                    Label("Image", systemImage: "photo")
                 }
                 if let openFullScreenJoke {
                     Button {
@@ -228,7 +228,7 @@ private struct JokeCardMenu: ViewModifier {
                     Label("Copy joke", systemImage: "doc.on.doc")
                 }
                 Button(action: onSave) {
-                    Label(joke.isSaved ? "Saved" : "Save", systemImage: joke.isSaved ? "person.fill.checkmark" : "person")
+                    Label(joke.isSaved ? "Saved" : "Save", systemImage: joke.isSaved ? "bookmark.fill" : "bookmark")
                 }
             }
             .fullScreenCover(isPresented: $showingStylePicker) {

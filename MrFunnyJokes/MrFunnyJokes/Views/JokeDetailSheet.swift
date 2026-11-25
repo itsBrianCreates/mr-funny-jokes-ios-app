@@ -12,6 +12,19 @@ struct JokeDetailSheet: View {
     @Environment(\.isWideLayout) private var isWideLayout
     @Environment(\.openJokes) private var openJokes
 
+    /// Height of the joke, rating and actions, measured once they're laid out
+    @State private var contentHeight: CGFloat?
+
+    /// The sheet opens just tall enough to show everything down to the actions, so
+    /// a long joke doesn't leave them cut off at half height. Until the content is
+    /// measured it's the usual half-height sheet.
+    private var detents: Set<PresentationDetent> {
+        if isWideLayout { return [.large] }
+        guard let contentHeight else { return [.medium, .large] }
+        // 56 is the sheet's own bar with the close button
+        return [.height(contentHeight + 56), .large]
+    }
+
     /// Tapping a chip in the sheet closes the sheet first; the page is pushed on the
     /// screen underneath
     private var openJokesClosingSheet: OpenJokesAction? {
@@ -30,7 +43,8 @@ struct JokeDetailSheet: View {
                 onShare: onShare,
                 onCopy: onCopy,
                 onRate: onRate,
-                onSave: onSave
+                onSave: onSave,
+                onContentHeightChange: { contentHeight = $0 }
             )
             .environment(\.openJokes, openJokesClosingSheet)
             .navigationBarTitleDisplayMode(.inline)
@@ -48,7 +62,7 @@ struct JokeDetailSheet: View {
         }
         // Wide windows are short (iPhone Duo inner display, landscape): a half-height
         // sheet there cuts off the rating and actions, so open at full height.
-        .presentationDetents(isWideLayout ? [.large] : [.medium, .large])
+        .presentationDetents(detents)
         .presentationDragIndicator(.visible)
         .presentationBackground(.ultraThinMaterial)
     }
@@ -69,6 +83,9 @@ struct JokeDetailContent: View {
     /// The wash of the teller's color behind the wide layout. Off where the screen
     /// behind already has one (character pages).
     var showsWash = true
+
+    /// Reports the compact layout's height, so the sheet can open tall enough to show all of it
+    var onContentHeightChange: ((CGFloat) -> Void)? = nil
 
     /// Tracks whether the joke ID was copied to clipboard
     @State private var isJokeIdCopied = false
@@ -107,6 +124,9 @@ struct JokeDetailContent: View {
                 wideLayout
             } else {
                 compactLayout
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                        onContentHeightChange?(height)
+                    }
             }
         }
         .task(id: joke.firestoreId) {
@@ -152,17 +172,8 @@ struct JokeDetailContent: View {
                 onRate: onRate
             )
 
-            Divider()
-
-            // Share and Styles on top, Save and Copy under them, all as tall as the rating buttons
-            VStack(spacing: 12) {
-                HStack(spacing: 10) {
-                    shareButtons(verticalPadding: 7)
-                }
-                HStack(spacing: 10) {
-                    saveAndCopyButtons(verticalPadding: 7)
-                }
-            }
+            // No divider: round actions under pill ratings already read as two groups
+            actionRow
 
             jokeIdButton
 
@@ -196,10 +207,7 @@ struct JokeDetailContent: View {
                 onRate: onRate
             )
 
-            HStack(spacing: 10) {
-                saveAndCopyButtons(verticalPadding: 8)
-                shareButtons(verticalPadding: 8)
-            }
+            actionRow
 
             jokeIdButton
         }
@@ -247,76 +255,49 @@ struct JokeDetailContent: View {
 
     // MARK: - Shared Pieces
 
-    /// Share goes out in one tap with the style used last; Styles opens the
-    /// picker to see the image and change how it looks first.
-    @ViewBuilder
-    private func shareButtons(verticalPadding: CGFloat) -> some View {
-        Button {
-            onShare()
-        } label: {
-            HStack {
-                Image(systemName: "square.and.arrow.up")
-                Text("Share")
-                    .font(.body.weight(.semibold))
+    /// One row of round buttons, the shape of the iOS share sheet: Share, Image,
+    /// Save, Copy. Share is the only filled one and goes out in one tap with the
+    /// style used last; Image opens the picker to change how the image looks first.
+    private var actionRow: some View {
+        HStack(alignment: .top, spacing: 0) {
+            Button {
+                onShare()
+            } label: {
+                CircleActionLabel(systemImage: "square.and.arrow.up", title: "Share", style: .prominent)
             }
-            .frame(maxWidth: .infinity, minHeight: 24)
-            .padding(.vertical, verticalPadding)
-        }
-        .buttonStyle(.borderedProminent)
-        .tint(.blue)
 
-        Button {
-            HapticManager.shared.lightTap()
-            showingStylePicker = true
-        } label: {
-            HStack {
-                Image(systemName: "square.on.square")
-                Text("Styles")
-                    .font(.body.weight(.semibold))
+            Button {
+                HapticManager.shared.lightTap()
+                showingStylePicker = true
+            } label: {
+                CircleActionLabel(systemImage: "photo", title: "Image")
             }
-            .frame(minHeight: 24)
-            .padding(.vertical, verticalPadding)
-            .padding(.horizontal, 4)
-        }
-        .buttonStyle(.bordered)
-        .tint(.blue)
-        .fullScreenCover(isPresented: $showingStylePicker) {
-            ShareStylePickerView(joke: joke, surface: .stylePicker)
-        }
-    }
+            .fullScreenCover(isPresented: $showingStylePicker) {
+                ShareStylePickerView(joke: joke, surface: .stylePicker)
+            }
 
-    @ViewBuilder
-    private func saveAndCopyButtons(verticalPadding: CGFloat) -> some View {
-        Button {
-            onSave()
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: joke.isSaved ? "person.fill" : "person")
-                    .contentTransition(.symbolEffect(.replace))
-                Text(joke.isSaved ? "Saved" : "Save")
-                    .font(.body.weight(.semibold))
+            Button {
+                onSave()
+            } label: {
+                CircleActionLabel(
+                    systemImage: joke.isSaved ? "bookmark.fill" : "bookmark",
+                    title: joke.isSaved ? "Saved" : "Save",
+                    style: joke.isSaved ? .done : .plain
+                )
             }
-            .frame(maxWidth: .infinity, minHeight: 24)
-            .padding(.vertical, verticalPadding)
+
+            Button {
+                onCopy()
+            } label: {
+                CircleActionLabel(
+                    systemImage: isCopied ? "checkmark" : "doc.on.doc",
+                    title: isCopied ? "Copied" : "Copy",
+                    style: isCopied ? .done : .plain
+                )
+            }
         }
-        .buttonStyle(.bordered)
-        .tint(joke.isSaved ? .green : .blue)
+        .buttonStyle(.plain)
         .animation(.easeInOut(duration: 0.2), value: joke.isSaved)
-
-        Button {
-            onCopy()
-        } label: {
-            HStack {
-                Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                    .contentTransition(.symbolEffect(.replace))
-                Text(isCopied ? "Copied" : "Copy")
-                    .font(.body.weight(.semibold))
-            }
-            .frame(maxWidth: .infinity, minHeight: 24)
-            .padding(.vertical, verticalPadding)
-        }
-        .buttonStyle(.bordered)
-        .tint(isCopied ? .green : .blue)
         .animation(.easeInOut(duration: 0.2), value: isCopied)
     }
 
@@ -440,4 +421,57 @@ struct JokeDetailContent: View {
                 onSave: {}
             )
         }
+}
+
+// MARK: - Circle Action Label
+
+/// An icon in a circle with a one-word label under it. Each one takes an equal
+/// share of the row, so the whole column is the tap area.
+private struct CircleActionLabel: View {
+    enum Style {
+        /// Gray circle: the default
+        case plain
+        /// Filled blue: the one action the row leads with
+        case prominent
+        /// Green: the action has just been done (Saved, Copied)
+        case done
+    }
+
+    let systemImage: String
+    let title: String
+    var style: Style = .plain
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Image(systemName: systemImage)
+                .font(.title3.weight(.medium))
+                .contentTransition(.symbolEffect(.replace))
+                .foregroundStyle(iconColor)
+                .frame(width: 56, height: 56)
+                .background(circleColor, in: Circle())
+
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+    }
+
+    private var iconColor: Color {
+        switch style {
+        case .plain: return .primary
+        case .prominent: return .white
+        case .done: return .green
+        }
+    }
+
+    private var circleColor: Color {
+        switch style {
+        case .plain: return Color(.secondarySystemFill)
+        case .prominent: return .blue
+        case .done: return Color.green.opacity(0.18)
+        }
+    }
 }

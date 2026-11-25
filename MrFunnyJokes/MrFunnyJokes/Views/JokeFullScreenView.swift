@@ -217,7 +217,7 @@ struct JokeFullScreenView: View {
         }
     }
 
-    // MARK: - Laugh, Share, Styles
+    // MARK: - Laugh, Share, Image
 
     private var actionRow: some View {
         let counts = viewModel.counts(for: joke)
@@ -246,7 +246,7 @@ struct JokeFullScreenView: View {
                 pickerSurface = .stylePicker
                 showingStylePicker = true
             } label: {
-                StackedActionLabel(systemImage: "square.on.square", label: "Styles", tint: colors.text)
+                StackedActionLabel(systemImage: "photo", label: "Image", tint: colors.text)
             }
             .buttonStyle(.plain)
         }
