@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Laugh Button
 
-/// Laugh is the Hilarious rating: an outline face until tapped, then 😂 with a burst
+/// Laugh is the Hilarious rating: an outline face until tapped, then a filled one with a burst
 /// of laughing faces floating up. Tapping again takes the laugh back.
 struct LaughButton: View {
     let isOn: Bool
@@ -35,9 +35,10 @@ struct LaughButton: View {
             let layout = StackedActionLabel.layout(isInline: isInline)
             layout {
                 ZStack {
+                    // Both states are drawn at the same size, so nothing shrinks on a vote
                     if isOn {
-                        Text("😂")
-                            .font(.system(size: isInline ? iconHeight * 0.9 : iconHeight))
+                        FaceIcon(mood: .smile, isFilled: true)
+                            .frame(width: iconHeight, height: iconHeight)
                             .transition(.scale(scale: 0.4).combined(with: .opacity))
                     } else {
                         FaceIcon(mood: .smile)
@@ -56,6 +57,8 @@ struct LaughButton: View {
                     .font(StackedActionLabel.countFont(isInline: isInline).weight(isOn ? .bold : .semibold))
                     .monospacedDigit()
                     .contentTransition(.numericText())
+                    // On a card the count takes the face's color once it's lit
+                    .foregroundStyle(isOn && isInline ? FaceIcon.laughTint : tint)
             }
             .foregroundStyle(tint)
             .actionHitArea(isInline: isInline)
@@ -133,8 +136,8 @@ private struct LaughBurst: View {
 
 // MARK: - Horrible Button
 
-/// The Horrible rating on a feed card: an outline frown until tapped, then 🫠.
-/// Tapping again takes the vote back.
+/// The Horrible rating on a feed card: an outline frown until tapped, then a queasy
+/// green face that wobbles into place. Tapping again takes the vote back.
 struct HorribleButton: View {
     let isOn: Bool
     /// The Horrible count
@@ -143,28 +146,38 @@ struct HorribleButton: View {
     let onToggle: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var wobble = false
 
     var body: some View {
-        Button(action: onToggle) {
+        Button {
+            let turningOn = !isOn
+            onToggle()
+            guard turningOn, !reduceMotion else { return }
+            wobble = true
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.3)) {
+                wobble = false
+            }
+        } label: {
             let iconHeight = StackedActionLabel.iconHeight(isInline: true)
             HStack(spacing: 5) {
                 ZStack {
                     if isOn {
-                        Text("🫠")
-                            .font(.system(size: iconHeight * 0.9))
+                        FaceIcon(mood: .frown, isFilled: true)
                             .transition(.scale(scale: 0.4).combined(with: .opacity))
                     } else {
                         FaceIcon(mood: .frown)
-                            .frame(width: iconHeight, height: iconHeight)
                             .transition(.opacity)
                     }
                 }
                 .frame(width: iconHeight, height: iconHeight)
+                .scaleEffect(wobble ? 1.35 : 1)
+                .rotationEffect(.degrees(wobble ? -20 : 0))
 
                 Text(label)
                     .font(StackedActionLabel.countFont(isInline: true).weight(isOn ? .bold : .semibold))
                     .monospacedDigit()
                     .contentTransition(.numericText())
+                    .foregroundStyle(isOn ? FaceIcon.horribleTint : tint)
             }
             .foregroundStyle(tint)
             .actionHitArea(isInline: true)
@@ -180,15 +193,24 @@ struct HorribleButton: View {
 
 // MARK: - Face Icon
 
-/// The outline face of an unlit Laugh or Horrible button. Drawn here rather than with
-/// the `face.smiling` symbol, which the system swaps for a solid face in dark mode and
-/// which has no frowning partner.
+/// The Laugh and Horrible faces, drawn here so the unlit outline and the lit, filled
+/// face are the same size and shape. Unlit is an outline in the current foreground
+/// style. Lit, Laugh is a yellow face laughing with tears and Horrible a queasy green
+/// one. (The `face.smiling` symbol turns solid in dark mode and has no frowning
+/// partner; emoji draw smaller than a symbol of the same size.)
 struct FaceIcon: View {
     enum Mood {
         case smile, frown
     }
 
     let mood: Mood
+    var isFilled = false
+
+    /// The lit faces' colors, for the count beside them
+    static let laughTint = Color(light: Color(red: 0.76, green: 0.50, blue: 0.0),
+                                 dark: Color(red: 1.0, green: 0.80, blue: 0.20))
+    static let horribleTint = Color(light: Color(red: 0.24, green: 0.52, blue: 0.12),
+                                    dark: Color(red: 0.55, green: 0.82, blue: 0.30))
 
     var body: some View {
         Canvas { context, size in
@@ -197,30 +219,87 @@ struct FaceIcon: View {
             func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
                 CGPoint(x: origin.x + x * side, y: origin.y + y * side)
             }
-            let line = side * 0.085
+            func oval(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> Path {
+                let center = point(x, y)
+                return Path(ellipseIn: CGRect(x: center.x - width * side / 2, y: center.y - height * side / 2,
+                                              width: width * side, height: height * side))
+            }
+            func curve(_ from: (CGFloat, CGFloat), _ control: (CGFloat, CGFloat), _ to: (CGFloat, CGFloat)) -> Path {
+                var path = Path()
+                path.move(to: point(from.0, from.1))
+                path.addQuadCurve(to: point(to.0, to.1), control: point(control.0, control.1))
+                return path
+            }
+            func round(_ width: CGFloat) -> StrokeStyle {
+                StrokeStyle(lineWidth: width * side, lineCap: .round, lineJoin: .round)
+            }
+            let face = CGRect(origin: origin, size: CGSize(width: side, height: side))
 
-            let outline = CGRect(origin: origin, size: CGSize(width: side, height: side))
-                .insetBy(dx: line / 2, dy: line / 2)
-            context.stroke(Path(ellipseIn: outline), with: .foreground, lineWidth: line)
-
-            let eye = CGSize(width: side * 0.095, height: side * 0.135)
-            for x in [0.355, 0.645] {
-                let center = point(x, 0.41)
-                let rect = CGRect(x: center.x - eye.width / 2, y: center.y - eye.height / 2,
-                                  width: eye.width, height: eye.height)
-                context.fill(Path(ellipseIn: rect), with: .foreground)
+            guard isFilled else {
+                let line = side * 0.085
+                context.stroke(Path(ellipseIn: face.insetBy(dx: line / 2, dy: line / 2)),
+                               with: .foreground, lineWidth: line)
+                context.fill(oval(0.355, 0.41, 0.095, 0.135), with: .foreground)
+                context.fill(oval(0.645, 0.41, 0.095, 0.135), with: .foreground)
+                let mouth = mood == .smile
+                    ? curve((0.30, 0.59), (0.50, 0.87), (0.70, 0.59))
+                    : curve((0.32, 0.72), (0.50, 0.50), (0.68, 0.72))
+                context.stroke(mouth, with: .foreground, style: round(0.085))
+                return
             }
 
-            var mouth = Path()
+            func fillFace(top: Color, bottom: Color, edge: Color) {
+                let edgeWidth = side * 0.05
+                let circle = Path(ellipseIn: face.insetBy(dx: edgeWidth / 2, dy: edgeWidth / 2))
+                context.fill(circle, with: .linearGradient(
+                    Gradient(colors: [top, bottom]),
+                    startPoint: point(0.5, 0), endPoint: point(0.5, 1)
+                ))
+                context.stroke(circle, with: .color(edge), lineWidth: edgeWidth)
+            }
+
             switch mood {
             case .smile:
-                mouth.move(to: point(0.30, 0.59))
-                mouth.addQuadCurve(to: point(0.70, 0.59), control: point(0.50, 0.87))
+                let ink = Color(red: 0.33, green: 0.17, blue: 0.04)
+                fillFace(top: Color(red: 1.0, green: 0.89, blue: 0.33),
+                         bottom: Color(red: 1.0, green: 0.70, blue: 0.05),
+                         edge: Color(red: 0.80, green: 0.50, blue: 0.0))
+
+                // Eyes squeezed shut
+                context.stroke(curve((0.25, 0.45), (0.345, 0.30), (0.44, 0.45)), with: .color(ink), style: round(0.075))
+                context.stroke(curve((0.56, 0.45), (0.655, 0.30), (0.75, 0.45)), with: .color(ink), style: round(0.075))
+
+                // Wide open mouth: teeth along the top, tongue at the bottom
+                var mouth = curve((0.25, 0.56), (0.50, 1.02), (0.75, 0.56))
+                mouth.closeSubpath()
+                context.fill(mouth, with: .color(ink))
+                context.drawLayer { layer in
+                    layer.clip(to: mouth)
+                    layer.fill(oval(0.50, 0.84, 0.34, 0.20), with: .color(Color(red: 1.0, green: 0.42, blue: 0.42)))
+                    layer.fill(Path(CGRect(origin: point(0.2, 0.56), size: CGSize(width: side * 0.6, height: side * 0.075))),
+                               with: .color(.white))
+                }
+
+                // Tears of laughter
+                let tear = Color(red: 0.22, green: 0.66, blue: 0.98)
+                context.fill(oval(0.15, 0.56, 0.15, 0.20), with: .color(tear))
+                context.fill(oval(0.85, 0.56, 0.15, 0.20), with: .color(tear))
+
             case .frown:
-                mouth.move(to: point(0.32, 0.72))
-                mouth.addQuadCurve(to: point(0.68, 0.72), control: point(0.50, 0.50))
+                let ink = Color(red: 0.11, green: 0.27, blue: 0.05)
+                fillFace(top: Color(red: 0.72, green: 0.88, blue: 0.36),
+                         bottom: Color(red: 0.40, green: 0.70, blue: 0.20),
+                         edge: Color(red: 0.24, green: 0.50, blue: 0.11))
+
+                // Worried brows, wide eyes and a mouth that can't hold it in
+                context.stroke(curve((0.22, 0.37), (0.33, 0.29), (0.43, 0.27)), with: .color(ink), style: round(0.06))
+                context.stroke(curve((0.78, 0.37), (0.67, 0.29), (0.57, 0.27)), with: .color(ink), style: round(0.06))
+                context.fill(oval(0.345, 0.47, 0.105, 0.14), with: .color(ink))
+                context.fill(oval(0.655, 0.47, 0.105, 0.14), with: .color(ink))
+                var mouth = curve((0.28, 0.71), (0.39, 0.59), (0.50, 0.69))
+                mouth.addQuadCurve(to: point(0.72, 0.67), control: point(0.61, 0.79))
+                context.stroke(mouth, with: .color(ink), style: round(0.08))
             }
-            context.stroke(mouth, with: .foreground, style: StrokeStyle(lineWidth: line, lineCap: .round))
         }
         .accessibilityHidden(true)
     }
@@ -303,7 +382,10 @@ private extension View {
 /// faces and the text beside them match
 enum JokeCardMetrics {
     /// The teller's picture and the Laugh and Horrible faces
-    static let rowIconSize: CGFloat = 24
+    static let rowIconSize: CGFloat = 20
+    /// The teller's name, and the icons and counts until they're lit: grey, so the
+    /// joke and the teller's picture are what the eye lands on
+    static let quietColor = Color.primary.opacity(0.6)
     /// The teller's name and the counts (the counts add weight)
     static let rowFont: Font = .footnote
 }
@@ -327,12 +409,14 @@ struct InlineVoteCounts: View {
             LaughButton(
                 isOn: laughed,
                 label: JokeEngagement.compact(max(counts.laughs, laughed ? 1 : 0)),
+                tint: JokeCardMetrics.quietColor,
                 isInline: true,
                 onToggle: onLaugh
             )
             HorribleButton(
                 isOn: votedHorrible,
                 label: JokeEngagement.compact(max(counts.horribles, votedHorrible ? 1 : 0)),
+                tint: JokeCardMetrics.quietColor,
                 onToggle: onHorrible
             )
         }
@@ -359,6 +443,7 @@ struct InlineJokeActions: View {
             LaughButton(
                 isOn: joke.userRating == 5,
                 label: JokeEngagement.compact(counts.laughs),
+                tint: JokeCardMetrics.quietColor,
                 isInline: true,
                 onToggle: onLaugh
             )
@@ -367,6 +452,7 @@ struct InlineJokeActions: View {
                 StackedActionLabel(
                     systemImage: "square.and.arrow.up",
                     label: JokeEngagement.compact(counts.shares),
+                    tint: JokeCardMetrics.quietColor,
                     isInline: true
                 )
             }
@@ -383,7 +469,7 @@ struct InlineJokeActions: View {
                     onNotFunny: onNotFunny
                 )
             } label: {
-                StackedActionLabel(systemImage: "ellipsis", label: "", isInline: true)
+                StackedActionLabel(systemImage: "ellipsis", label: "", tint: JokeCardMetrics.quietColor, isInline: true)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("More")

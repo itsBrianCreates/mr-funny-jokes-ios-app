@@ -104,7 +104,7 @@ struct JokeOfTheDayView: View {
                         // Darker than .secondary, which is too faint on the tinted card
                         Text(character.name)
                             .font(JokeCardMetrics.rowFont.weight(.medium))
-                            .foregroundStyle(.primary.opacity(0.7))
+                            .foregroundStyle(JokeCardMetrics.quietColor)
                             .lineLimit(1)
                     }
                 }

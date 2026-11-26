@@ -158,7 +158,7 @@ struct CharacterIndicatorView: View {
                 .font(JokeCardMetrics.rowFont.weight(.medium))
                 // The picture carries the teller's color; the name stays quiet.
                 // Same as the Joke of the Day's teller name.
-                .foregroundStyle(.primary.opacity(0.7))
+                .foregroundStyle(JokeCardMetrics.quietColor)
                 .lineLimit(1)
         }
     }

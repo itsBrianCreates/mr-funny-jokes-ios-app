@@ -271,7 +271,7 @@ struct CharacterJokeCardView: View {
                 Text(joke.category.rawValue)
                     .font(JokeCardMetrics.rowFont.weight(.medium))
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(JokeCardMetrics.quietColor)
         }
         .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         .jokeCardMenu(joke: joke, onCopy: onCopy, onSave: onSave)
