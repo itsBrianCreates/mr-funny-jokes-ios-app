@@ -15,14 +15,17 @@ struct SkeletonCardView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 6) {
             // Setup text placeholder - matches .title3 font height (~20pt)
             setupTextPlaceholder
 
-            // Category and rating row placeholder
+            // The teller, then Laugh, Share, More: as tall as the real row's 44pt buttons
             metadataRowPlaceholder
+                .frame(height: 44)
         }
-        .padding()
+        .padding(.horizontal, 16)
+        .padding(.top, 20)
+        .padding(.bottom, 4)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
         .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         .shimmer()
@@ -53,17 +56,18 @@ struct SkeletonCardView: View {
     // MARK: - Metadata Row Placeholder
 
     private var metadataRowPlaceholder: some View {
-        HStack {
-            // Category icon + text placeholder
-            HStack(spacing: 4) {
-                SkeletonShape(width: 14, height: 14, cornerRadius: 3)
-                SkeletonShape(width: 70, height: 12, cornerRadius: 3)
-            }
+        HStack(spacing: 4) {
+            // Teller picture and name
+            SkeletonShape(width: 20, height: 20, cornerRadius: 10)
+            SkeletonShape(width: 60, height: 12, cornerRadius: 3)
 
             Spacer()
 
-            // Rating emoji placeholder (optional, shown on some cards)
-            SkeletonShape(width: 20, height: 16, cornerRadius: 4)
+            // Laugh, Share, More
+            ForEach(0..<3, id: \.self) { _ in
+                SkeletonShape(width: 28, height: 16, cornerRadius: 4)
+                    .padding(.leading, 10)
+            }
         }
     }
 }

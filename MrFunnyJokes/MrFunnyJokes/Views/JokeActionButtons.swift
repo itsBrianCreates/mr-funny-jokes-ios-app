@@ -9,6 +9,8 @@ struct LaughButton: View {
     /// The laugh count
     let label: String
     var tint: Color = .primary
+    /// Icon and count side by side, for the bottom row of a card
+    var isInline = false
     /// Called with the new state
     let onToggle: (_ isOn: Bool) -> Void
 
@@ -29,22 +31,24 @@ struct LaughButton: View {
                 bounce = false
             }
         } label: {
-            VStack(spacing: 4) {
+            let iconHeight = StackedActionLabel.iconHeight(isInline: isInline)
+            let layout = StackedActionLabel.layout(isInline: isInline)
+            layout {
                 ZStack {
                     if isOn {
                         Text("😂")
-                            .font(.system(size: StackedActionLabel.iconHeight))
+                            .font(.system(size: iconHeight))
                             .transition(.scale(scale: 0.4).combined(with: .opacity))
                     } else {
                         Image(systemName: "face.smiling")
                             .resizable()
                             .scaledToFit()
                             .fontWeight(.medium)
-                            .frame(width: StackedActionLabel.iconHeight, height: StackedActionLabel.iconHeight)
+                            .frame(width: iconHeight, height: iconHeight)
                             .transition(.opacity)
                     }
                 }
-                .frame(height: 28)
+                .frame(height: isInline ? iconHeight : 28)
                 .scaleEffect(bounce ? 1.45 : 1)
                 .background {
                     LaughBurst(trigger: burstCount)
@@ -56,8 +60,7 @@ struct LaughButton: View {
                     .contentTransition(.numericText())
             }
             .foregroundStyle(tint)
-            .frame(maxWidth: .infinity, minHeight: 52)
-            .contentShape(Rectangle())
+            .actionHitArea(isInline: isInline)
         }
         .buttonStyle(.plain)
         .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: isOn)
@@ -132,33 +135,121 @@ private struct LaughBurst: View {
 
 // MARK: - Stacked Action Button
 
-/// An icon with a small label under it, for the Laugh / Share / More row
+/// An icon with a small label under it, for the Laugh / Share / More row.
+/// Inline, the label sits beside a slightly smaller icon and an empty label is left out.
 struct StackedActionLabel: View {
     let systemImage: String
     let label: String
     var tint: Color = .primary
+    var isInline = false
 
     /// Height every icon in the row is drawn at, the laughing face included
     static let iconHeight: CGFloat = 23
 
+    static func iconHeight(isInline: Bool) -> CGFloat {
+        isInline ? 20 : iconHeight
+    }
+
+    static func layout(isInline: Bool) -> AnyLayout {
+        isInline ? AnyLayout(HStackLayout(spacing: 5)) : AnyLayout(VStackLayout(spacing: 4))
+    }
+
     var body: some View {
-        VStack(spacing: 4) {
+        let iconHeight = Self.iconHeight(isInline: isInline)
+        let layout = Self.layout(isInline: isInline)
+        layout {
             // Sized by height, not point size: the share arrow is a tall glyph and
             // drew larger than the face beside it at the same point size
             Image(systemName: systemImage)
                 .resizable()
                 .scaledToFit()
                 .fontWeight(.medium)
-                .frame(width: Self.iconHeight - 2, height: Self.iconHeight)
-                .frame(height: 28)
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .monospacedDigit()
-                .contentTransition(.numericText())
+                .frame(width: iconHeight - 2, height: iconHeight)
+                .frame(height: isInline ? iconHeight : 28)
+            if !(isInline && label.isEmpty) {
+                Text(label)
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+            }
         }
         .foregroundStyle(tint)
-        .frame(maxWidth: .infinity, minHeight: 52)
-        .contentShape(Rectangle())
+        .actionHitArea(isInline: isInline)
+    }
+}
+
+private extension View {
+    /// Stacked buttons share the row's width; inline ones are as wide as their content,
+    /// never smaller than 44 by 44
+    @ViewBuilder
+    func actionHitArea(isInline: Bool) -> some View {
+        if isInline {
+            self
+                .padding(.horizontal, 9)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+        } else {
+            self
+                .frame(maxWidth: .infinity, minHeight: 52)
+                .contentShape(Rectangle())
+        }
+    }
+}
+
+// MARK: - Card Actions
+
+/// Laugh, Share and More on one line, at the trailing end of a card's bottom row.
+/// Used by the Joke of the Day and every feed card.
+struct InlineJokeActions: View {
+    let joke: Joke
+    let counts: JokeCounts
+    /// Called with the new Laugh state
+    let onLaugh: (Bool) -> Void
+    let onShare: () -> Void
+    let onCopy: () -> Void
+    let onSave: () -> Void
+    /// The Horrible rating, under More
+    let onNotFunny: () -> Void
+
+    @State private var showingStylePicker = false
+
+    var body: some View {
+        HStack(spacing: 0) {
+            LaughButton(
+                isOn: joke.userRating == 5,
+                label: JokeEngagement.compact(counts.laughs),
+                isInline: true,
+                onToggle: onLaugh
+            )
+
+            Button(action: onShare) {
+                StackedActionLabel(
+                    systemImage: "square.and.arrow.up",
+                    label: JokeEngagement.compact(counts.shares),
+                    isInline: true
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Share")
+            .accessibilityValue("\(counts.shares) shares")
+
+            Menu {
+                JokeMoreMenuItems(
+                    joke: joke,
+                    onCreateImage: { showingStylePicker = true },
+                    onCopy: onCopy,
+                    onSave: onSave,
+                    onNotFunny: onNotFunny
+                )
+            } label: {
+                StackedActionLabel(systemImage: "ellipsis", label: "", isInline: true)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("More")
+        }
+        .fullScreenCover(isPresented: $showingStylePicker) {
+            ShareStylePickerView(joke: joke)
+        }
     }
 }
 

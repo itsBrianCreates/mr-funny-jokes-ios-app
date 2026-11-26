@@ -16,7 +16,6 @@ struct JokeOfTheDayView: View {
     /// The Horrible rating, under More
     let onNotFunny: () -> Void
 
-    @State private var showingStylePicker = false
     @State private var isAppearing = false
 
     static let cornerRadius: CGFloat = 20
@@ -24,14 +23,9 @@ struct JokeOfTheDayView: View {
     /// The character associated with this joke, if any
     private var jokeCharacter: JokeCharacter? { joke.teller }
 
-    /// "Tuesday, Nov 24"
+    /// "Tuesday, Nov 24", shown when the joke is opened full screen
     static var todayString: String {
         Date().formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
-    }
-
-    /// The teller, then the date
-    private var byline: String {
-        [jokeCharacter?.name, Self.todayString].compactMap { $0 }.joined(separator: " · ")
     }
 
     /// Background color - uses character's themed background if available
@@ -44,19 +38,14 @@ struct JokeOfTheDayView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Button {
-                HapticManager.shared.mediumImpact()
-                onOpen()
-            } label: {
+            Button(action: open) {
                 jokeSection
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .combine)
             .accessibilityHint(joke.hasPunchline ? "Opens the joke to show the punchline" : "Opens the joke")
 
-            actionRow
-                .padding(.horizontal, 8)
-                .padding(.bottom, 8)
+            bottomRow
         }
         .background(cardBackground, in: RoundedRectangle(cornerRadius: Self.cornerRadius, style: .continuous))
         .scaleEffect(isAppearing ? 1 : 0.95)
@@ -66,40 +55,20 @@ struct JokeOfTheDayView: View {
                 isAppearing = true
             }
         }
-        .fullScreenCover(isPresented: $showingStylePicker) {
-            ShareStylePickerView(joke: joke)
-        }
+    }
+
+    private func open() {
+        HapticManager.shared.mediumImpact()
+        onOpen()
     }
 
     // MARK: - Joke
 
     private var jokeSection: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            // Text on the left so the card scans down one edge; the teller's picture on the right
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Joke of the Day")
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(.primary)
-
-                    // Darker than .secondary, which is too faint on the tinted card
-                    Text(byline)
-                        .font(.footnote)
-                        .foregroundStyle(.primary.opacity(0.65))
-                }
-                .lineLimit(1)
-
-                Spacer(minLength: 0)
-
-                if let character = jokeCharacter {
-                    Image(character.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 44, height: 44)
-                        .clipShape(Circle())
-                        .accessibilityHidden(true)
-                }
-            }
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Joke of the Day")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(.primary)
 
             // Setup only; the punchline waits for the tap
             Text(joke.cardText)
@@ -112,43 +81,52 @@ struct JokeOfTheDayView: View {
         }
         .padding(.horizontal, 20)
         .padding(.top, 20)
-        .padding(.bottom, 14)
+        .padding(.bottom, 6)
         .contentShape(Rectangle())
     }
 
-    // MARK: - Laugh, Share, More
+    // MARK: - Teller, then Laugh, Share, More
 
-    private var actionRow: some View {
+    /// The same row as a feed card: who tells it on the left, the actions on the right.
+    /// The teller's side opens the joke like the text above it.
+    private var bottomRow: some View {
         HStack(spacing: 0) {
-            LaughButton(
-                isOn: joke.userRating == 5,
-                label: JokeEngagement.compact(counts.laughs),
-                onToggle: onLaugh
+            Button(action: open) {
+                HStack(spacing: 6) {
+                    if let character = jokeCharacter {
+                        Image(character.imageName)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 24, height: 24)
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
+
+                        // Darker than .secondary, which is too faint on the tinted card
+                        Text(character.name)
+                            .font(.footnote.weight(.medium))
+                            .foregroundStyle(.primary.opacity(0.7))
+                            .lineLimit(1)
+                    }
+                }
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("Opens the joke")
+
+            InlineJokeActions(
+                joke: joke,
+                counts: counts,
+                onLaugh: onLaugh,
+                onShare: onShare,
+                onCopy: onCopy,
+                onSave: onSave,
+                onNotFunny: onNotFunny
             )
-
-            Button(action: onShare) {
-                StackedActionLabel(
-                    systemImage: "square.and.arrow.up",
-                    label: JokeEngagement.compact(counts.shares)
-                )
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Share")
-            .accessibilityValue("\(counts.shares) shares")
-
-            Menu {
-                JokeMoreMenuItems(
-                    joke: joke,
-                    onCreateImage: { showingStylePicker = true },
-                    onCopy: onCopy,
-                    onSave: onSave,
-                    onNotFunny: onNotFunny
-                )
-            } label: {
-                StackedActionLabel(systemImage: "ellipsis", label: "More")
-            }
-            .buttonStyle(.plain)
         }
+        .padding(.leading, 20)
+        .padding(.trailing, 8)
+        .padding(.bottom, 8)
     }
 }
 

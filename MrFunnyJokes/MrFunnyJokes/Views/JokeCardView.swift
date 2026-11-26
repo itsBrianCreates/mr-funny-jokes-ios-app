@@ -8,6 +8,12 @@ struct JokeCardView: View {
     let onRate: (Int) -> Void
     let onSave: () -> Void
     let onView: () -> Void
+    /// Laugh and share counts; the joke's own when not given
+    var counts: JokeCounts? = nil
+    /// Called with the new Laugh state; falls back to `onRate`
+    var onLaugh: ((Bool) -> Void)? = nil
+    /// Share from the card's own button; falls back to `onShare`
+    var onCardShare: (() -> Void)? = nil
     /// When set, a tap hands the joke to the caller instead of opening this card's own sheet
     var onSelect: (() -> Void)? = nil
     /// Highlights the card while its joke is shown in a detail pane
@@ -21,62 +27,33 @@ struct JokeCardView: View {
         return JokeCharacter.find(byName: characterName)
     }
 
+    private func open() {
+        HapticManager.shared.mediumImpact()
+        if let onSelect {
+            onSelect()
+        } else {
+            showingSheet = true
+        }
+        onView()
+    }
+
     var body: some View {
-        Button {
-            HapticManager.shared.mediumImpact()
-            if let onSelect {
-                onSelect()
-            } else {
-                showingSheet = true
-            }
-            onView()
-        } label: {
-            VStack(alignment: .leading, spacing: 12) {
-                // Setup only; the punchline waits for the tap
-                Text(joke.cardText)
-                    .font(.title3.weight(.medium))
-                    .foregroundStyle(.primary)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    // Never give up lines to the flexible row below
-                    .fixedSize(horizontal: false, vertical: true)
-
-                // Character, category and rating row
-                HStack(spacing: 8) {
-                    // Character indicator (if available)
-                    if let character = jokeCharacter {
-                        CharacterIndicatorView(character: character)
-                    }
-
-                    // Category
-                    HStack(spacing: 4) {
-                        Image(systemName: joke.category.icon)
-                        Text(joke.category.rawValue)
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                    Spacer()
-
-                    if let rating = joke.userRating {
-                        CompactRatingView(rating: rating)
-                    }
-                }
-                // Sits at the bottom when a grid row stretches the card. A flexible frame
-                // rather than a Spacer, which would double the gap above this row.
-                .frame(maxHeight: .infinity, alignment: .bottom)
-            }
-            .frame(maxHeight: .infinity, alignment: .top)
-            .padding()
-            .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
-            .overlay {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(Color.accessibleYellow, lineWidth: 2)
-                }
+        JokeCardLayout(
+            joke: joke,
+            counts: counts ?? JokeCounts(laughs: joke.likes, shares: joke.shares),
+            background: AnyShapeStyle(.cardBackground),
+            selectionColor: isSelected ? .accessibleYellow : nil,
+            onOpen: open,
+            onLaugh: onLaugh ?? { isOn in onRate(isOn ? 5 : 0) },
+            onShare: onCardShare ?? onShare,
+            onCopy: onCopy,
+            onSave: onSave,
+            onNotFunny: { onRate(joke.userRating == 1 ? 0 : 1) }
+        ) {
+            if let character = jokeCharacter {
+                CharacterIndicatorView(character: character)
             }
         }
-        .buttonStyle(.plain)
         .jokeCardMenu(joke: joke, onCopy: onCopy, onSave: onSave)
         .sheet(isPresented: $showingSheet) {
             JokeDetailSheet(
@@ -89,6 +66,83 @@ struct JokeCardView: View {
                 onSave: onSave
             )
         }
+    }
+}
+
+// MARK: - Card Layout
+
+/// A feed card: the setup, then one row with who tells it (or the joke type on a
+/// character's page) on the left and Laugh, Share and More on the right. The Joke of
+/// the Day is the same card with a title. The text and the left of the row open the
+/// joke; the buttons act in place.
+struct JokeCardLayout<Byline: View>: View {
+    let joke: Joke
+    let counts: JokeCounts
+    let background: AnyShapeStyle
+    /// Outline while the joke is shown in a detail pane
+    var selectionColor: Color? = nil
+    let onOpen: () -> Void
+    let onLaugh: (Bool) -> Void
+    let onShare: () -> Void
+    let onCopy: () -> Void
+    let onSave: () -> Void
+    let onNotFunny: () -> Void
+    @ViewBuilder let byline: Byline
+
+    private let shape = RoundedRectangle(cornerRadius: 16)
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Button(action: onOpen) {
+                // Setup only; the punchline waits for the tap
+                Text(joke.cardText)
+                    .font(.title3.weight(.medium))
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    // Never give up lines to the flexible row below
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding([.horizontal, .top], 16)
+                    .padding(.bottom, 2)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint(joke.hasPunchline ? "Opens the joke to show the punchline" : "Opens the joke")
+
+            HStack(spacing: 0) {
+                Button(action: onOpen) {
+                    byline
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Opens the joke")
+
+                InlineJokeActions(
+                    joke: joke,
+                    counts: counts,
+                    onLaugh: onLaugh,
+                    onShare: onShare,
+                    onCopy: onCopy,
+                    onSave: onSave,
+                    onNotFunny: onNotFunny
+                )
+            }
+            .padding(.leading, 16)
+            .padding(.trailing, 6)
+            .padding(.bottom, 4)
+            // Sits at the bottom when a grid row stretches the card. A flexible frame
+            // rather than a Spacer, which would add a gap above this row.
+            .frame(maxHeight: .infinity, alignment: .bottom)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+        .background(background, in: shape)
+        .overlay {
+            if let selectionColor {
+                shape.strokeBorder(selectionColor, lineWidth: 2)
+            }
+        }
+        .contentShape(.contextMenuPreview, shape)
     }
 }
 

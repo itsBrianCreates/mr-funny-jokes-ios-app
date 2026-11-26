@@ -9,16 +9,9 @@ import SwiftUI
 struct SkeletonJokeOfTheDayView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Avatar, "Joke of the Day" and the teller and date
-            HStack(spacing: 12) {
-                SkeletonShape(width: 44, height: 44, cornerRadius: 22)
-                VStack(alignment: .leading, spacing: 8) {
-                    SkeletonShape(width: 110, height: 13, cornerRadius: 3)
-                    SkeletonShape(width: 160, height: 11, cornerRadius: 3)
-                        .opacity(0.6)
-                }
-                Spacer(minLength: 0)
-            }
+            // "Joke of the Day"
+            SkeletonShape(width: 110, height: 13, cornerRadius: 3)
+                .padding(.vertical, 2.5)
 
             // Two lines of .title2 (28pt line height, 3pt line spacing)
             VStack(alignment: .leading, spacing: 11) {
@@ -28,23 +21,23 @@ struct SkeletonJokeOfTheDayView: View {
                 }
                 .frame(height: 20)
             }
-            .padding(.top, 22)
-            .padding(.bottom, 18)
+            .padding(.top, 14)
+            .padding(.bottom, 10)
 
-            // Laugh, Share, More
-            HStack(spacing: 0) {
+            // The teller, then Laugh, Share, More
+            HStack(spacing: 6) {
+                SkeletonShape(width: 24, height: 24, cornerRadius: 12)
+                SkeletonShape(width: 60, height: 11, cornerRadius: 3)
+                Spacer(minLength: 0)
                 ForEach(0..<3, id: \.self) { _ in
-                    VStack(spacing: 8) {
-                        SkeletonShape(width: 24, height: 24, cornerRadius: 12)
-                        SkeletonShape(width: 28, height: 10, cornerRadius: 3)
-                    }
-                    .frame(maxWidth: .infinity, minHeight: 52)
+                    SkeletonShape(width: 30, height: 18, cornerRadius: 5)
+                        .padding(.leading, 12)
                 }
             }
-            .padding(.horizontal, -12)
-            .padding(.bottom, -12)
+            .frame(height: 44)
         }
-        .padding(20)
+        .padding([.horizontal, .top], 20)
+        .padding(.bottom, 8)
         .background(.brandYellowLight, in: RoundedRectangle(cornerRadius: JokeOfTheDayView.cornerRadius, style: .continuous))
         .shimmer()
     }

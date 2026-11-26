@@ -183,6 +183,10 @@ struct CharacterDetailView: View {
                         viewModel.markJokeViewed(joke)
                         selectedJokeId = joke.id
                     },
+                    counts: viewModel.counts(for: joke),
+                    onLaugh: { isOn in viewModel.laugh(joke, isOn: isOn) },
+                    onShare: { viewModel.shareJoke(joke, from: .feedCard) },
+                    onNotFunny: { viewModel.rateJoke(joke, rating: joke.userRating == 1 ? 0 : 1) },
                     onCopy: { viewModel.copyJoke(joke) },
                     onSave: { viewModel.saveJoke(joke) }
                 )
@@ -240,49 +244,37 @@ struct CharacterJokeCardView: View {
     /// Outline color when selected: the character's own color
     var accentColor: Color = .accessibleYellow
     let onSelect: () -> Void
+    let counts: JokeCounts
+    let onLaugh: (Bool) -> Void
+    let onShare: () -> Void
+    let onNotFunny: () -> Void
     let onCopy: () -> Void
     let onSave: () -> Void
 
     var body: some View {
-        Button {
-            HapticManager.shared.mediumImpact()
-            onSelect()
-        } label: {
-            VStack(alignment: .leading, spacing: 12) {
-                // Setup text
-                Text(joke.cardText)
-                    .font(.title3.weight(.medium))
-                    .foregroundStyle(.primary)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                // Category and rating row
-                HStack {
-                    HStack(spacing: 4) {
-                        Image(systemName: joke.category.icon)
-                        Text(joke.category.rawValue)
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                    Spacer()
-
-                    if let rating = joke.userRating {
-                        CompactRatingView(rating: rating)
-                    }
-                }
+        JokeCardLayout(
+            joke: joke,
+            counts: counts,
+            background: AnyShapeStyle(.regularMaterial),
+            selectionColor: isSelected ? accentColor : nil,
+            onOpen: {
+                HapticManager.shared.mediumImpact()
+                onSelect()
+            },
+            onLaugh: onLaugh,
+            onShare: onShare,
+            onCopy: onCopy,
+            onSave: onSave,
+            onNotFunny: onNotFunny
+        ) {
+            HStack(spacing: 4) {
+                Image(systemName: joke.category.icon)
+                Text(joke.category.rawValue)
             }
-            .padding()
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .overlay {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(accentColor, lineWidth: 2)
-                }
-            }
-            .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
-        .buttonStyle(.plain)
+        .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         .jokeCardMenu(joke: joke, onCopy: onCopy, onSave: onSave)
     }
 }
