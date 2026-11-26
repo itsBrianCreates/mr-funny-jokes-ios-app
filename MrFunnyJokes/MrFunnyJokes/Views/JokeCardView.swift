@@ -156,7 +156,9 @@ struct CharacterIndicatorView: View {
             // Character name
             Text(character.name)
                 .font(JokeCardMetrics.rowFont.weight(.medium))
-                .foregroundStyle(character.color)
+                // The picture carries the teller's color; the name stays quiet.
+                // Same as the Joke of the Day's teller name.
+                .foregroundStyle(.primary.opacity(0.7))
                 .lineLimit(1)
         }
     }
