@@ -185,8 +185,7 @@ struct CharacterDetailView: View {
                     },
                     counts: viewModel.counts(for: joke),
                     onLaugh: { isOn in viewModel.laugh(joke, isOn: isOn) },
-                    onShare: { viewModel.shareJoke(joke, from: .feedCard) },
-                    onNotFunny: { viewModel.rateJoke(joke, rating: joke.userRating == 1 ? 0 : 1) },
+                    onHorrible: { viewModel.rateJoke(joke, rating: joke.userRating == 1 ? 0 : 1) },
                     onCopy: { viewModel.copyJoke(joke) },
                     onSave: { viewModel.saveJoke(joke) }
                 )
@@ -246,8 +245,8 @@ struct CharacterJokeCardView: View {
     let onSelect: () -> Void
     let counts: JokeCounts
     let onLaugh: (Bool) -> Void
-    let onShare: () -> Void
-    let onNotFunny: () -> Void
+    /// Toggles the Horrible rating
+    let onHorrible: () -> Void
     let onCopy: () -> Void
     let onSave: () -> Void
 
@@ -262,16 +261,16 @@ struct CharacterJokeCardView: View {
                 onSelect()
             },
             onLaugh: onLaugh,
-            onShare: onShare,
-            onCopy: onCopy,
-            onSave: onSave,
-            onNotFunny: onNotFunny
+            onHorrible: onHorrible
         ) {
-            HStack(spacing: 4) {
+            HStack(spacing: 6) {
                 Image(systemName: joke.category.icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: JokeCardMetrics.rowIconSize - 3, height: JokeCardMetrics.rowIconSize - 3)
                 Text(joke.category.rawValue)
+                    .font(JokeCardMetrics.rowFont.weight(.medium))
             }
-            .font(.caption)
             .foregroundStyle(.secondary)
         }
         .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)

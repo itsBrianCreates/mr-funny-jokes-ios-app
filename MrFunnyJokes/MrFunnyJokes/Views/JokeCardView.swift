@@ -8,12 +8,10 @@ struct JokeCardView: View {
     let onRate: (Int) -> Void
     let onSave: () -> Void
     let onView: () -> Void
-    /// Laugh and share counts; the joke's own when not given
+    /// Laugh and Horrible counts; the joke's own when not given
     var counts: JokeCounts? = nil
     /// Called with the new Laugh state; falls back to `onRate`
     var onLaugh: ((Bool) -> Void)? = nil
-    /// Share from the card's own button; falls back to `onShare`
-    var onCardShare: (() -> Void)? = nil
     /// When set, a tap hands the joke to the caller instead of opening this card's own sheet
     var onSelect: (() -> Void)? = nil
     /// Highlights the card while its joke is shown in a detail pane
@@ -40,15 +38,12 @@ struct JokeCardView: View {
     var body: some View {
         JokeCardLayout(
             joke: joke,
-            counts: counts ?? JokeCounts(laughs: joke.likes, shares: joke.shares),
+            counts: counts ?? JokeCounts(laughs: joke.likes, shares: joke.shares, horribles: joke.dislikes),
             background: AnyShapeStyle(.cardBackground),
             selectionColor: isSelected ? .accessibleYellow : nil,
             onOpen: open,
             onLaugh: onLaugh ?? { isOn in onRate(isOn ? 5 : 0) },
-            onShare: onCardShare ?? onShare,
-            onCopy: onCopy,
-            onSave: onSave,
-            onNotFunny: { onRate(joke.userRating == 1 ? 0 : 1) }
+            onHorrible: { onRate(joke.userRating == 1 ? 0 : 1) }
         ) {
             if let character = jokeCharacter {
                 CharacterIndicatorView(character: character)
@@ -72,9 +67,8 @@ struct JokeCardView: View {
 // MARK: - Card Layout
 
 /// A feed card: the setup, then one row with who tells it (or the joke type on a
-/// character's page) on the left and Laugh, Share and More on the right. The Joke of
-/// the Day is the same card with a title. The text and the left of the row open the
-/// joke; the buttons act in place.
+/// character's page) on the left and the Laugh and Horrible counts on the right.
+/// The text and the left of the row open the joke; the two faces vote in place.
 struct JokeCardLayout<Byline: View>: View {
     let joke: Joke
     let counts: JokeCounts
@@ -83,10 +77,8 @@ struct JokeCardLayout<Byline: View>: View {
     var selectionColor: Color? = nil
     let onOpen: () -> Void
     let onLaugh: (Bool) -> Void
-    let onShare: () -> Void
-    let onCopy: () -> Void
-    let onSave: () -> Void
-    let onNotFunny: () -> Void
+    /// Toggles the Horrible rating
+    let onHorrible: () -> Void
     @ViewBuilder let byline: Byline
 
     private let shape = RoundedRectangle(cornerRadius: 16)
@@ -118,14 +110,11 @@ struct JokeCardLayout<Byline: View>: View {
                 .buttonStyle(.plain)
                 .accessibilityHint("Opens the joke")
 
-                InlineJokeActions(
+                InlineVoteCounts(
                     joke: joke,
                     counts: counts,
                     onLaugh: onLaugh,
-                    onShare: onShare,
-                    onCopy: onCopy,
-                    onSave: onSave,
-                    onNotFunny: onNotFunny
+                    onHorrible: onHorrible
                 )
             }
             .padding(.leading, 16)
@@ -152,11 +141,11 @@ struct JokeCardLayout<Byline: View>: View {
 struct CharacterIndicatorView: View {
     let character: JokeCharacter
 
-    /// Size of the indicator circle
-    private let size: CGFloat = 20
+    /// The same size as the faces at the other end of the card's row
+    private let size = JokeCardMetrics.rowIconSize
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 6) {
             // Small circular character image
             Image(character.imageName)
                 .resizable()
@@ -166,8 +155,9 @@ struct CharacterIndicatorView: View {
 
             // Character name
             Text(character.name)
-                .font(.caption)
+                .font(JokeCardMetrics.rowFont.weight(.medium))
                 .foregroundStyle(character.color)
+                .lineLimit(1)
         }
     }
 }

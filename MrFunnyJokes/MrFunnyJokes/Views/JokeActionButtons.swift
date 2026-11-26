@@ -37,25 +37,23 @@ struct LaughButton: View {
                 ZStack {
                     if isOn {
                         Text("😂")
-                            .font(.system(size: iconHeight))
+                            .font(.system(size: isInline ? iconHeight * 0.9 : iconHeight))
                             .transition(.scale(scale: 0.4).combined(with: .opacity))
                     } else {
-                        Image(systemName: "face.smiling")
-                            .resizable()
-                            .scaledToFit()
-                            .fontWeight(.medium)
+                        FaceIcon(mood: .smile)
                             .frame(width: iconHeight, height: iconHeight)
                             .transition(.opacity)
                     }
                 }
-                .frame(height: isInline ? iconHeight : 28)
+                // Inline, lit and unlit take the same space, so the count doesn't shift
+                .frame(width: isInline ? iconHeight : nil, height: isInline ? iconHeight : 28)
                 .scaleEffect(bounce ? 1.45 : 1)
                 .background {
                     LaughBurst(trigger: burstCount)
                 }
 
                 Text(label)
-                    .font(.caption.weight(isOn ? .bold : .semibold))
+                    .font(StackedActionLabel.countFont(isInline: isInline).weight(isOn ? .bold : .semibold))
                     .monospacedDigit()
                     .contentTransition(.numericText())
             }
@@ -133,6 +131,101 @@ private struct LaughBurst: View {
     }
 }
 
+// MARK: - Horrible Button
+
+/// The Horrible rating on a feed card: an outline frown until tapped, then 🫠.
+/// Tapping again takes the vote back.
+struct HorribleButton: View {
+    let isOn: Bool
+    /// The Horrible count
+    let label: String
+    var tint: Color = .primary
+    let onToggle: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Button(action: onToggle) {
+            let iconHeight = StackedActionLabel.iconHeight(isInline: true)
+            HStack(spacing: 5) {
+                ZStack {
+                    if isOn {
+                        Text("🫠")
+                            .font(.system(size: iconHeight * 0.9))
+                            .transition(.scale(scale: 0.4).combined(with: .opacity))
+                    } else {
+                        FaceIcon(mood: .frown)
+                            .frame(width: iconHeight, height: iconHeight)
+                            .transition(.opacity)
+                    }
+                }
+                .frame(width: iconHeight, height: iconHeight)
+
+                Text(label)
+                    .font(StackedActionLabel.countFont(isInline: true).weight(isOn ? .bold : .semibold))
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+            }
+            .foregroundStyle(tint)
+            .actionHitArea(isInline: true)
+        }
+        .buttonStyle(.plain)
+        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: isOn)
+        .animation(.default, value: label)
+        .accessibilityLabel("Horrible")
+        .accessibilityValue(isOn ? "On, \(label) votes" : "\(label) votes")
+        .accessibilityAddTraits(isOn ? .isSelected : [])
+    }
+}
+
+// MARK: - Face Icon
+
+/// The outline face of an unlit Laugh or Horrible button. Drawn here rather than with
+/// the `face.smiling` symbol, which the system swaps for a solid face in dark mode and
+/// which has no frowning partner.
+struct FaceIcon: View {
+    enum Mood {
+        case smile, frown
+    }
+
+    let mood: Mood
+
+    var body: some View {
+        Canvas { context, size in
+            let side = min(size.width, size.height)
+            let origin = CGPoint(x: (size.width - side) / 2, y: (size.height - side) / 2)
+            func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+                CGPoint(x: origin.x + x * side, y: origin.y + y * side)
+            }
+            let line = side * 0.085
+
+            let outline = CGRect(origin: origin, size: CGSize(width: side, height: side))
+                .insetBy(dx: line / 2, dy: line / 2)
+            context.stroke(Path(ellipseIn: outline), with: .foreground, lineWidth: line)
+
+            let eye = CGSize(width: side * 0.095, height: side * 0.135)
+            for x in [0.355, 0.645] {
+                let center = point(x, 0.41)
+                let rect = CGRect(x: center.x - eye.width / 2, y: center.y - eye.height / 2,
+                                  width: eye.width, height: eye.height)
+                context.fill(Path(ellipseIn: rect), with: .foreground)
+            }
+
+            var mouth = Path()
+            switch mood {
+            case .smile:
+                mouth.move(to: point(0.30, 0.59))
+                mouth.addQuadCurve(to: point(0.70, 0.59), control: point(0.50, 0.87))
+            case .frown:
+                mouth.move(to: point(0.32, 0.72))
+                mouth.addQuadCurve(to: point(0.68, 0.72), control: point(0.50, 0.50))
+            }
+            context.stroke(mouth, with: .foreground, style: StrokeStyle(lineWidth: line, lineCap: .round))
+        }
+        .accessibilityHidden(true)
+    }
+}
+
 // MARK: - Stacked Action Button
 
 /// An icon with a small label under it, for the Laugh / Share / More row.
@@ -146,8 +239,13 @@ struct StackedActionLabel: View {
     /// Height every icon in the row is drawn at, the laughing face included
     static let iconHeight: CGFloat = 23
 
+    /// Inline, a face is as tall as the teller's picture at the other end of the row
     static func iconHeight(isInline: Bool) -> CGFloat {
-        isInline ? 20 : iconHeight
+        isInline ? JokeCardMetrics.rowIconSize : iconHeight
+    }
+
+    static func countFont(isInline: Bool) -> Font {
+        isInline ? JokeCardMetrics.rowFont : .caption
     }
 
     static func layout(isInline: Bool) -> AnyLayout {
@@ -160,15 +258,18 @@ struct StackedActionLabel: View {
         layout {
             // Sized by height, not point size: the share arrow is a tall glyph and
             // drew larger than the face beside it at the same point size
+            // Inline, a glyph is drawn a little shorter than the round faces and
+            // pictures beside it, which is what makes them look the same size
+            let glyphHeight = isInline ? iconHeight - 3 : iconHeight
             Image(systemName: systemImage)
                 .resizable()
                 .scaledToFit()
                 .fontWeight(.medium)
-                .frame(width: iconHeight - 2, height: iconHeight)
+                .frame(width: glyphHeight - 2, height: glyphHeight)
                 .frame(height: isInline ? iconHeight : 28)
             if !(isInline && label.isEmpty) {
                 Text(label)
-                    .font(.caption.weight(.semibold))
+                    .font(Self.countFont(isInline: isInline).weight(.semibold))
                     .monospacedDigit()
                     .contentTransition(.numericText())
             }
@@ -196,10 +297,50 @@ private extension View {
     }
 }
 
-// MARK: - Card Actions
+// MARK: - Card Row
 
-/// Laugh, Share and More on one line, at the trailing end of a card's bottom row.
-/// Used by the Joke of the Day and every feed card.
+/// Sizes shared by both ends of a card's bottom row, so the teller's picture, the
+/// faces and the text beside them match
+enum JokeCardMetrics {
+    /// The teller's picture and the Laugh and Horrible faces
+    static let rowIconSize: CGFloat = 24
+    /// The teller's name and the counts (the counts add weight)
+    static let rowFont: Font = .footnote
+}
+
+/// Laugh and Horrible with their counts, at the trailing end of a feed card's bottom
+/// row. Sharing, copying and saving are in the joke sheet and under press and hold.
+struct InlineVoteCounts: View {
+    let joke: Joke
+    let counts: JokeCounts
+    /// Called with the new Laugh state
+    let onLaugh: (Bool) -> Void
+    /// Toggles the Horrible rating
+    let onHorrible: () -> Void
+
+    var body: some View {
+        // Feed counts come from the catalog copy, which can be up to a week behind
+        // and may not include the reader's own vote yet. A lit face never shows 0.
+        let laughed = joke.userRating == 5
+        let votedHorrible = joke.userRating == 1
+        HStack(spacing: 0) {
+            LaughButton(
+                isOn: laughed,
+                label: JokeEngagement.compact(max(counts.laughs, laughed ? 1 : 0)),
+                isInline: true,
+                onToggle: onLaugh
+            )
+            HorribleButton(
+                isOn: votedHorrible,
+                label: JokeEngagement.compact(max(counts.horribles, votedHorrible ? 1 : 0)),
+                onToggle: onHorrible
+            )
+        }
+    }
+}
+
+/// Laugh, Share and More on one line, at the trailing end of the Joke of the Day's
+/// bottom row.
 struct InlineJokeActions: View {
     let joke: Joke
     let counts: JokeCounts

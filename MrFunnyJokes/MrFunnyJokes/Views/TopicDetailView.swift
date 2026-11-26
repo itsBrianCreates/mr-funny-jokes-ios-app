@@ -72,7 +72,6 @@ private struct JokeCollectionPage: View {
                             onView: { viewModel.markJokeViewed(joke) },
                             counts: viewModel.counts(for: joke),
                             onLaugh: { isOn in viewModel.laugh(joke, isOn: isOn, surface: "feed_card") },
-                            onCardShare: { viewModel.shareJoke(joke, from: .feedCard) },
                             onSelect: { selectedJokeId = joke.id },
                             isSelected: isSplit && selectedJokeId == joke.id
                         )

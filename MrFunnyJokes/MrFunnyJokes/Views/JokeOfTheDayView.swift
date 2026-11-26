@@ -97,13 +97,13 @@ struct JokeOfTheDayView: View {
                         Image(character.imageName)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 24, height: 24)
+                            .frame(width: JokeCardMetrics.rowIconSize, height: JokeCardMetrics.rowIconSize)
                             .clipShape(Circle())
                             .accessibilityHidden(true)
 
                         // Darker than .secondary, which is too faint on the tinted card
                         Text(character.name)
-                            .font(.footnote.weight(.medium))
+                            .font(JokeCardMetrics.rowFont.weight(.medium))
                             .foregroundStyle(.primary.opacity(0.7))
                             .lineLimit(1)
                     }
