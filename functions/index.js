@@ -6,6 +6,8 @@
  * Exports:
  * - aggregateRankings: Scheduled function (daily at midnight ET)
  * - triggerAggregation: HTTP endpoint for manual triggering
+ * - pickDailyJoke: Scheduled function (daily at 3am ET), fills daily_jokes (see daily-joke.js)
+ * - jokePage: the mrfunnyjokes.app website
  *
  * Rating logic:
  * - Ratings 4-5 = "hilarious"
@@ -256,6 +258,27 @@ exports.triggerAggregation = onRequest(async (req, res) => {
       success: false,
       error: error.message
     });
+  }
+});
+
+// ============================================
+// SCHEDULED FUNCTION: Joke of the Day, daily at 3am ET
+// Keeps today and the next days filled in daily_jokes, so every reader sees the
+// same joke. Days are filled ahead, so the hour it runs at does not matter.
+// ============================================
+const { ensureDailyJokes } = require("./daily-joke");
+exports.pickDailyJoke = onSchedule({
+  schedule: "0 3 * * *",
+  timeZone: "America/New_York",
+  retryCount: 3,
+  memory: "256MiB"
+}, async () => {
+  try {
+    const results = await ensureDailyJokes(db);
+    logger.info("Daily jokes checked", { results });
+  } catch (error) {
+    logger.error("Picking the daily joke failed", { error: error.message, stack: error.stack });
+    throw error; // Re-throw to trigger retry
   }
 });
 
