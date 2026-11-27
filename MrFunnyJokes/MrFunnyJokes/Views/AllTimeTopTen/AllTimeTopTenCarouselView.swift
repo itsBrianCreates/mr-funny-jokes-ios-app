@@ -56,7 +56,7 @@ struct AllTimeTopTenCard: View {
                 // The number says what it counts; nothing shows before the first rating
                 if totalRatings > 0 {
                     Text(ratingsText)
-                        .font(.subheadline)
+                        .font(JokeCardMetrics.rowFont)
                         .monospacedDigit()
                         .foregroundStyle(JokeCardMetrics.quietColor)
                         .lineLimit(1)
