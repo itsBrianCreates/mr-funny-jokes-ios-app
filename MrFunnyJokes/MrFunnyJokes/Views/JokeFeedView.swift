@@ -280,6 +280,9 @@ struct JokeFeedView: View {
                 ))
             }
         }
+        // The zero-height anchor still takes one row of spacing; take it back so the
+        // characters sit right under the bar
+        .padding(.top, -16)
     }
 
     /// Full-width content below the joke grid

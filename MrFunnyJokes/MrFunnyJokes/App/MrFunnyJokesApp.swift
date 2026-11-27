@@ -341,7 +341,9 @@ struct MainContentView: View {
                 }
             )
             .navigationTitle(headerTitle)
-            .navigationBarTitleDisplayMode(.large)
+            // Small and in the bar: it only says which joke type is showing, and a
+            // large title pushed the characters and the joke of the day down
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     filterMenu

@@ -23,7 +23,9 @@ struct CharacterCarouselView: View {
     var body: some View {
         // Horizontal scrolling carousel
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 20) {
+            // Sized so all five fit without scrolling, across an iPhone and in the
+            // list pane of a wide window (about 360pt on the iPhone Duo)
+            HStack(spacing: 12) {
                 ForEach(characters) { character in
                     CharacterCircleView(character: character)
                         .onTapGesture {
@@ -57,10 +59,10 @@ struct CharacterCircleView: View {
     let character: JokeCharacter
 
     /// Size of the circular image
-    private let circleSize: CGFloat = 80
+    private let circleSize: CGFloat = 56
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             // Circular character image
             Image(character.imageName)
                 .resizable()
@@ -78,6 +80,8 @@ struct CharacterCircleView: View {
                 .fontWeight(.medium)
                 .foregroundStyle(.primary)
                 .lineLimit(1)
+                // "Mr. Funny" is a hair wider than the circle
+                .minimumScaleFactor(0.85)
         }
         .frame(width: circleSize)
         .contentShape(Rectangle())
