@@ -114,7 +114,8 @@ struct SeasonalTopicCardView: View {
                     .foregroundStyle(.tertiary)
             }
             .padding(16)
-            .background(topic.color.opacity(0.15), in: RoundedRectangle(cornerRadius: 16))
+            // Neutral, like the joke cards: on Home only the Joke of the Day is tinted
+            .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
     }

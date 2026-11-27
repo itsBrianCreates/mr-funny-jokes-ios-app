@@ -33,10 +33,6 @@ struct AllTimeTopTenCarouselView: View {
 struct AllTimeTopTenCard: View {
     let type: RankingType
 
-    private var tint: Color {
-        type == .hilarious ? FaceIcon.laughTint : FaceIcon.horribleTint
-    }
-
     var body: some View {
         HStack(spacing: 10) {
             FaceIcon(type)
@@ -57,7 +53,8 @@ struct AllTimeTopTenCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 14)
         .padding(.vertical, 16)
-        .background(tint.opacity(0.15), in: RoundedRectangle(cornerRadius: 16))
+        // Neutral, like the joke cards: the face carries the color
+        .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         .contentShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Top 10, \(type == .hilarious ? "most hilarious" : "most horrible")")
