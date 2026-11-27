@@ -6,8 +6,10 @@ struct TopicBrowseView: View {
     let onSelect: (JokeTopic) -> Void
 
     /// Grows with Dynamic Type, so large text gets one wide column instead of
-    /// two columns of cut-off names
-    @ScaledMetric(relativeTo: .headline) private var minimumTileWidth: CGFloat = 150
+    /// two columns of cut-off names. Wide enough that a wide window (iPhone Duo)
+    /// gets four columns with every name on one line, not five with names broken
+    /// mid-word; an iPhone still gets two.
+    @ScaledMetric(relativeTo: .headline) private var minimumTileWidth: CGFloat = 170
 
     private var columns: [GridItem] {
         [GridItem(.adaptive(minimum: minimumTileWidth), spacing: 12)]
@@ -65,9 +67,11 @@ private struct TopicTile: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 12)
             .padding(.vertical, 14)
+            // Every tile in a row is as tall as the tallest, so a name on two
+            // lines doesn't leave its neighbours shorter
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .background(topic.color.opacity(0.15), in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
