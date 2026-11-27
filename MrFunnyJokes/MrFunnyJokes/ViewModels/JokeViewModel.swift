@@ -83,6 +83,13 @@ final class JokeViewModel: ObservableObject {
         return inSeason + outOfSeason
     }
 
+    /// The Home feed's order with no joke-type filter: what follows a joke opened
+    /// full screen from outside a list
+    var homeFeedOrder: [Joke] {
+        let now = Date()
+        return jokes.filter { !$0.isOutOfSeason(on: now) } + jokes.filter { $0.isOutOfSeason(on: now) }
+    }
+
     // Jokes that have been saved by the user (sorted by most recently saved)
     var savedJokes: [Joke] {
         let saved = jokes.filter { $0.isSaved }

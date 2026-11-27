@@ -523,6 +523,7 @@ private struct JokeCardMenu: ViewModifier {
     let onSave: () -> Void
 
     @Environment(\.openFullScreenJoke) private var openFullScreenJoke
+    @Environment(\.jokePagingList) private var pagingList
     @State private var showingStylePicker = false
 
     func body(content: Content) -> some View {
@@ -540,7 +541,7 @@ private struct JokeCardMenu: ViewModifier {
                 }
                 if let openFullScreenJoke {
                     Button {
-                        openFullScreenJoke(joke)
+                        openFullScreenJoke(joke, list: pagingList)
                     } label: {
                         Label("Open full screen", systemImage: "arrow.up.left.and.arrow.down.right")
                     }

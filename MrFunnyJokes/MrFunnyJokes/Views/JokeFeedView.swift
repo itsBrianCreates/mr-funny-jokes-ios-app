@@ -84,6 +84,7 @@ struct JokeFeedView: View {
             JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
                 feedScrollView(proxy: proxy, isSplit: isSplit)
             }
+            .environment(\.jokePagingList, feedJokes)
             .navigationDestination(item: $allTimeTopTenDestination) { type in
                 AllTimeTopTenDetailView(
                     viewModel: rankingsViewModel,

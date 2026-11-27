@@ -209,11 +209,12 @@ struct MainContentView: View {
                 viewModel: jokeViewModel,
                 openedJoke: presented.joke,
                 isJokeOfTheDay: presented.isJokeOfTheDay,
+                list: presented.list,
                 isDark: colorScheme == .dark
             )
         }
-        .environment(\.openFullScreenJoke, OpenFullScreenJokeAction { joke, isJokeOfTheDay in
-            fullScreenJoke = FullScreenJoke(joke: joke, isJokeOfTheDay: isJokeOfTheDay)
+        .environment(\.openFullScreenJoke, OpenFullScreenJokeAction { joke, isJokeOfTheDay, list in
+            fullScreenJoke = FullScreenJoke(joke: joke, isJokeOfTheDay: isJokeOfTheDay, list: list)
         })
         // Sheets presented from here open joke pages on Home.
         // Each tab's stack replaces this with its own.

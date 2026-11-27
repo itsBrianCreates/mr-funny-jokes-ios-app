@@ -46,6 +46,7 @@ struct CharacterDetailView: View {
         )
         // Jokes opened here show this character as plain text, not a link back to this page
         .environment(\.currentJokeDestination, .character(character))
+        .environment(\.jokePagingList, viewModel.filteredJokes)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task {

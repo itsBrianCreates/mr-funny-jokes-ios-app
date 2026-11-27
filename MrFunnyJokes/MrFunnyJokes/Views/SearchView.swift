@@ -80,6 +80,7 @@ struct SearchView: View {
                 JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
                     resultsList(isSplit: isSplit)
                 }
+                .environment(\.jokePagingList, searchResults)
             }
         }
         // Always shown: the browse grid scrolls, and the default drawer hides until pulled down
