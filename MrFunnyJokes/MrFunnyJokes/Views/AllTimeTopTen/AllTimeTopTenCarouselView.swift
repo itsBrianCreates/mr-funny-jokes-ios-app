@@ -1,106 +1,66 @@
 import SwiftUI
 
-/// A section showing "All-Time Top 10" header with chevron and two category cards below
+/// The way into the All-Time Top 10 from Home: two compact cards side by side, one for
+/// the funniest jokes and one for the worst, each with its vote face. No heading above
+/// them; the cards say what they are.
 struct AllTimeTopTenCarouselView: View {
     @ObservedObject var viewModel: AllTimeRankingsViewModel
     let onCardTap: (RankingType) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header row with title and chevron
-            AllTimeTop10Header {
-                HapticManager.shared.mediumImpact()
-                onCardTap(.hilarious) // Default to hilarious when tapping header
-            }
-
-            // Two cards side by side
-            HStack(spacing: 12) {
-                if viewModel.isLoading {
-                    AllTimeTopTenCardSkeleton()
-                    AllTimeTopTenCardSkeleton()
-                } else {
-                    AllTimeTopTenCard(
-                        type: .hilarious,
-                        totalRatings: viewModel.totalHilariousRatings,
-                        hasData: viewModel.hasDataFor(type: .hilarious)
-                    )
-                    .onTapGesture {
+        HStack(spacing: 12) {
+            if viewModel.isLoading {
+                AllTimeTopTenCardSkeleton()
+                AllTimeTopTenCardSkeleton()
+            } else {
+                ForEach(RankingType.allCases) { type in
+                    Button {
                         HapticManager.shared.mediumImpact()
-                        onCardTap(.hilarious)
+                        onCardTap(type)
+                    } label: {
+                        AllTimeTopTenCard(type: type)
                     }
-
-                    AllTimeTopTenCard(
-                        type: .horrible,
-                        totalRatings: viewModel.totalHorribleRatings,
-                        hasData: viewModel.hasDataFor(type: .horrible)
-                    )
-                    .onTapGesture {
-                        HapticManager.shared.mediumImpact()
-                        onCardTap(.horrible)
-                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
     }
 }
 
-// MARK: - Header with Chevron
-
-struct AllTimeTop10Header: View {
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 6) {
-                Text("All-Time Top 10")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(.primary)
-
-                Image(systemName: "chevron.right")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.secondary)
-
-                Spacer()
-            }
-            .padding(.leading, 2) // Align with card content
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 // MARK: - All-Time Top Ten Card
 
-/// A compact card for Hilarious or Horrible category - soft background style
+/// One row, like the in-season topic card: the face, "Top 10", and which list it is
 struct AllTimeTopTenCard: View {
     let type: RankingType
-    let totalRatings: Int
-    let hasData: Bool
+
+    private var tint: Color {
+        type == .hilarious ? FaceIcon.laughTint : FaceIcon.horribleTint
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: 10) {
             FaceIcon(type)
-                .frame(width: 32, height: 32)
+                .frame(width: 30, height: 30)
 
-            // Title
-            Text(type.title)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Top 10")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
 
-            // Subtitle - rating count or status
-            if hasData && totalRatings > 0 {
-                Text("\(totalRatings) ratings")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            } else {
-                Text("Rate jokes to rank")
-                    .font(.caption)
+                Text(type == .hilarious ? "Most hilarious" : "Most horrible")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(.cardBackground, in: RoundedRectangle(cornerRadius: 14))
-        .contentShape(Rectangle())
+        .padding(.horizontal, 14)
+        .padding(.vertical, 16)
+        .background(tint.opacity(0.15), in: RoundedRectangle(cornerRadius: 16))
+        .contentShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Top 10, \(type == .hilarious ? "most hilarious" : "most horrible")")
     }
 }
 
@@ -108,19 +68,18 @@ struct AllTimeTopTenCard: View {
 
 struct AllTimeTopTenCardSkeleton: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // Emoji skeleton
-            SkeletonShape(width: 32, height: 32, cornerRadius: 8)
+        HStack(spacing: 10) {
+            SkeletonShape(width: 30, height: 30, cornerRadius: 15)
 
-            // Title skeleton
-            SkeletonShape(width: 90, height: 16, cornerRadius: 4)
-
-            // Subtitle skeleton
-            SkeletonShape(width: 110, height: 14, cornerRadius: 4)
+            VStack(alignment: .leading, spacing: 2) {
+                SkeletonShape(width: 60, height: 18, cornerRadius: 4)
+                SkeletonShape(width: 96, height: 16, cornerRadius: 4)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(.cardBackground, in: RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 16)
+        .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         .shimmer()
     }
 }
@@ -129,54 +88,24 @@ struct AllTimeTopTenCardSkeleton: View {
 
 #Preview {
     VStack(spacing: 24) {
-        // Full carousel view
         AllTimeTopTenCarouselView(
-            viewModel: {
-                let vm = AllTimeRankingsViewModel()
-                return vm
-            }(),
+            viewModel: AllTimeRankingsViewModel(),
             onCardTap: { type in
                 print("Tapped: \(type)")
             }
         )
-        .padding(.horizontal)
 
-        Divider()
-
-        // Skeleton state
-        VStack(alignment: .leading, spacing: 12) {
-            AllTimeTop10Header {}
-
-            HStack(spacing: 12) {
-                AllTimeTopTenCardSkeleton()
-                AllTimeTopTenCardSkeleton()
-            }
+        HStack(spacing: 12) {
+            AllTimeTopTenCard(type: .hilarious)
+            AllTimeTopTenCard(type: .horrible)
         }
-        .padding(.horizontal)
 
-        Divider()
-
-        // Individual cards with data
-        VStack(alignment: .leading, spacing: 12) {
-            AllTimeTop10Header {}
-
-            HStack(spacing: 12) {
-                AllTimeTopTenCard(
-                    type: .hilarious,
-                    totalRatings: 2847,
-                    hasData: true
-                )
-
-                AllTimeTopTenCard(
-                    type: .horrible,
-                    totalRatings: 1523,
-                    hasData: true
-                )
-            }
+        HStack(spacing: 12) {
+            AllTimeTopTenCardSkeleton()
+            AllTimeTopTenCardSkeleton()
         }
-        .padding(.horizontal)
 
         Spacer()
     }
-    .padding(.top)
+    .padding()
 }
