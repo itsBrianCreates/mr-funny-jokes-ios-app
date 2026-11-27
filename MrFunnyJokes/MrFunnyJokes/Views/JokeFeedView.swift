@@ -382,6 +382,6 @@ struct EndOfFeedView: View {
             }
         )
         .navigationTitle("All Jokes")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

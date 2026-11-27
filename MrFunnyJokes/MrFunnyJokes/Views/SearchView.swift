@@ -173,6 +173,6 @@ struct SearchView: View {
     NavigationStack {
         SearchView(viewModel: JokeViewModel())
             .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
     }
 }

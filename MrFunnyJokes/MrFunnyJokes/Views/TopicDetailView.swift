@@ -88,7 +88,7 @@ private struct JokeCollectionPage: View {
         .environment(\.currentJokeDestination, destination)
         .environment(\.jokePagingList, jokes)
         .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             updateOrder()
         }

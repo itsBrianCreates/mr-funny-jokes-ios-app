@@ -63,7 +63,7 @@ struct AllTimeTopTenDetailView: View {
             containerWidth = width
         }
         .navigationTitle("All-Time Top 10")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     /// Countdown cards for one ranking, or its loading / empty state
