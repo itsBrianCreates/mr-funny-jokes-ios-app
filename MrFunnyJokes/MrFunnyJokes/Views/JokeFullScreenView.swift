@@ -53,13 +53,29 @@ struct JokeFullScreenView: View {
 
                 VStack(alignment: .leading, spacing: 0) {
                     topBar
-                    labels
-                        .padding(.top, 14)
-                        .padding(.bottom, 18)
-                    jokeArea(in: geometry.size)
-                    actionRow
+                    if isWideLayout {
+                        // A wide window (iPhone Duo, open): the joke is one column in
+                        // the middle of the screen, with the actions centered under it
+                        let width = Self.wideColumnWidth(in: geometry.size)
+                        VStack(alignment: .leading, spacing: 0) {
+                            labels
+                                .padding(.bottom, 18)
+                            fittedJoke(width: width)
+                        }
+                        .frame(maxWidth: width, alignment: .leading)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        actionRow
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        labels
+                            .padding(.top, 14)
+                            .padding(.bottom, 18)
+                        fittedJoke(width: geometry.size.width - 48)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        actionRow
+                    }
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, isWideLayout ? 32 : 24)
             }
             .contentShape(Rectangle())
             .onTapGesture { revealNext() }
@@ -117,7 +133,8 @@ struct JokeFullScreenView: View {
             }
             .accessibilityLabel("More")
         }
-        .padding(.top, 8)
+        // A wide window has no status bar or notch above the buttons to space them
+        .padding(.top, isWideLayout ? 24 : 8)
     }
 
     private func chromeIcon(_ systemName: String) -> some View {
@@ -152,9 +169,7 @@ struct JokeFullScreenView: View {
     // MARK: - Joke
 
     /// The joke at the largest type that fits; one too long for the screen scrolls
-    private func jokeArea(in size: CGSize) -> some View {
-        // Wide windows: keep lines a readable length
-        let width = isWideLayout ? size.width * 0.7 : size.width - 48
+    private func fittedJoke(width: CGFloat) -> some View {
         // A long word caps the type, so it is never broken across lines
         let largest = JokeArtwork.largestSizeKeepingWordsWhole(for: joke, width: width, upTo: typeSize)
         let smallest = min(typeSize * 0.52, largest)
@@ -168,7 +183,11 @@ struct JokeFullScreenView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .frame(maxWidth: isWideLayout ? width : .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    /// Wide windows: lines of a readable length
+    private static func wideColumnWidth(in size: CGSize) -> CGFloat {
+        min(size.width * 0.7, 700)
     }
 
     private func artwork(size: CGFloat) -> some View {
@@ -250,7 +269,7 @@ struct JokeFullScreenView: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(.bottom, 6)
+        .padding(.bottom, isWideLayout ? 20 : 6)
         .frame(maxWidth: isWideLayout ? 420 : .infinity)
     }
 }
