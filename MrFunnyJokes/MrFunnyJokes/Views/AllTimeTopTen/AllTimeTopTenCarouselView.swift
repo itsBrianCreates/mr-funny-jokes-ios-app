@@ -29,7 +29,7 @@ struct AllTimeTopTenCarouselView: View {
 
 // MARK: - All-Time Top Ten Card
 
-/// One row, like the in-season topic card: the face, "Top 10", and which list it is
+/// The face, which list it is, and "Top 10" under it
 struct AllTimeTopTenCard: View {
     let type: RankingType
 
@@ -39,11 +39,12 @@ struct AllTimeTopTenCard: View {
                 .frame(width: 30, height: 30)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Top 10")
+                // The word that differs leads, so the two cards don't scan the same
+                Text(type.title)
                     .font(.headline)
                     .foregroundStyle(.primary)
 
-                Text(type.title)
+                Text("Top 10")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -57,7 +58,7 @@ struct AllTimeTopTenCard: View {
         .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         .contentShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Top 10, \(type.title)")
+        .accessibilityLabel("\(type.title), top 10")
     }
 }
 
