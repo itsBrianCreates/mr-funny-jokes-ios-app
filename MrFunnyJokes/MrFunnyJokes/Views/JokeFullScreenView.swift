@@ -51,12 +51,21 @@ struct JokeFullScreenView: View {
                 colors.background
                     .ignoresSafeArea()
 
+                // A camera in a corner (iPhone Duo, closed) makes the safe area
+                // narrower all the way down. Only the top buttons need to stay clear
+                // of it; the joke and the actions use the whole width.
+                let insets = geometry.safeAreaInsets
+                let fullWidth = geometry.size.width + insets.leading + insets.trailing
                 VStack(alignment: .leading, spacing: 0) {
                     topBar
+                        // No status bar or notch above the buttons to space them
+                        .padding(.top, insets.top < 20 ? 24 : 8)
+                        .padding(.leading, insets.leading)
+                        .padding(.trailing, insets.trailing)
                     if isWideLayout {
                         // A wide window (iPhone Duo, open): the joke is one column in
                         // the middle of the screen, with the actions centered under it
-                        let width = Self.wideColumnWidth(in: geometry.size)
+                        let width = Self.wideColumnWidth(in: fullWidth)
                         VStack(alignment: .leading, spacing: 0) {
                             labels
                                 .padding(.bottom, 18)
@@ -70,12 +79,13 @@ struct JokeFullScreenView: View {
                         labels
                             .padding(.top, 14)
                             .padding(.bottom, 18)
-                        fittedJoke(width: geometry.size.width - 48)
+                        fittedJoke(width: fullWidth - 48)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         actionRow
                     }
                 }
                 .padding(.horizontal, isWideLayout ? 32 : 24)
+                .ignoresSafeArea(.container, edges: .horizontal)
             }
             .contentShape(Rectangle())
             .onTapGesture { revealNext() }
@@ -133,8 +143,6 @@ struct JokeFullScreenView: View {
             }
             .accessibilityLabel("More")
         }
-        // A wide window has no status bar or notch above the buttons to space them
-        .padding(.top, isWideLayout ? 24 : 8)
     }
 
     private func chromeIcon(_ systemName: String) -> some View {
@@ -186,8 +194,8 @@ struct JokeFullScreenView: View {
     }
 
     /// Wide windows: lines of a readable length
-    private static func wideColumnWidth(in size: CGSize) -> CGFloat {
-        min(size.width * 0.7, 700)
+    private static func wideColumnWidth(in width: CGFloat) -> CGFloat {
+        min(width * 0.7, 700)
     }
 
     private func artwork(size: CGFloat) -> some View {
