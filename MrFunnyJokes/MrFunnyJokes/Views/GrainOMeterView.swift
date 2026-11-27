@@ -50,8 +50,8 @@ struct BinaryRatingView: View {
 
         var name: String {
             switch self {
-            case .hilarious: return "Hilarious"
-            case .horrible: return "Horrible"
+            case .hilarious: return "Funny"
+            case .horrible: return "Not funny"
             }
         }
 

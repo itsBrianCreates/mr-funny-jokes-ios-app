@@ -104,6 +104,12 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 
 ---
 
+### Rating Words
+
+Readers see **Funny** and **Not funny**, never Hilarious or Horrible: on the joke sheet's rating pills, the Top 10 switch, the More menu and VoiceOver labels. The Top 10 cards on Home say "Funniest" and "Least funny". In code and data the old names stay (`RankingType.hilarious` / `.horrible`, `HorribleButton`, the `hilarious` / `horrible` analytics values, `rating_events`); where this file says Hilarious, Horrible or Laugh it means those.
+
+---
+
 ## Bug Prevention Patterns
 
 ### Value Copy Pitfall (SwiftUI)

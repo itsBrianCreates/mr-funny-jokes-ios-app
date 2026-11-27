@@ -66,8 +66,8 @@ struct LaughButton: View {
         .buttonStyle(.plain)
         .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: isOn)
         .animation(.default, value: label)
-        .accessibilityLabel("Laugh")
-        .accessibilityValue(isOn ? "On, \(label) laughs" : "\(label) laughs")
+        .accessibilityLabel("Funny")
+        .accessibilityValue(isOn ? "On, \(label) votes" : "\(label) votes")
         .accessibilityAddTraits(isOn ? .isSelected : [])
     }
 }
@@ -185,7 +185,7 @@ struct HorribleButton: View {
         .buttonStyle(.plain)
         .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: isOn)
         .animation(.default, value: label)
-        .accessibilityLabel("Horrible")
+        .accessibilityLabel("Not funny")
         .accessibilityValue(isOn ? "On, \(label) votes" : "\(label) votes")
         .accessibilityAddTraits(isOn ? .isSelected : [])
     }

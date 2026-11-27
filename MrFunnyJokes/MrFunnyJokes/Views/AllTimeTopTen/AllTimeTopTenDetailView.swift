@@ -120,7 +120,7 @@ struct EmptyStateView: View {
                 .frame(width: 64, height: 64)
 
             // Title
-            Text("No \(type.rawValue) Jokes Yet")
+            Text("Nothing here yet")
                 .font(.title2.weight(.semibold))
 
             // Description

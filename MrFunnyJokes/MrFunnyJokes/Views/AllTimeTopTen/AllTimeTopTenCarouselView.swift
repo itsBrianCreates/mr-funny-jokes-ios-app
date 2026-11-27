@@ -43,7 +43,7 @@ struct AllTimeTopTenCard: View {
                     .font(.headline)
                     .foregroundStyle(.primary)
 
-                Text(type == .hilarious ? "Most hilarious" : "Most horrible")
+                Text(type.title)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -57,7 +57,7 @@ struct AllTimeTopTenCard: View {
         .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         .contentShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Top 10, \(type == .hilarious ? "most hilarious" : "most horrible")")
+        .accessibilityLabel("Top 10, \(type.title)")
     }
 }
 
