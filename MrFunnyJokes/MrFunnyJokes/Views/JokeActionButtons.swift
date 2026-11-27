@@ -119,8 +119,8 @@ private struct LaughBurst: View {
         @State private var isFloating = false
 
         var body: some View {
-            Text("😂")
-                .font(.system(size: particle.size))
+            FaceIcon(mood: .smile, isFilled: true)
+                .frame(width: particle.size, height: particle.size)
                 .scaleEffect(isFloating ? 0.5 : 1)
                 .rotationEffect(.degrees(isFloating ? particle.spin : 0))
                 .offset(x: isFloating ? particle.drift : 0, y: isFloating ? -particle.rise : 0)
@@ -136,8 +136,8 @@ private struct LaughBurst: View {
 
 // MARK: - Horrible Button
 
-/// The Horrible rating on a feed card: an outline frown until tapped, then a queasy
-/// green face that wobbles into place. Tapping again takes the vote back.
+/// The Horrible rating on a feed card: an outline frown until tapped, then a red
+/// frowning face that wobbles into place. Tapping again takes the vote back.
 struct HorribleButton: View {
     let isOn: Bool
     /// The Horrible count
@@ -194,10 +194,11 @@ struct HorribleButton: View {
 // MARK: - Face Icon
 
 /// The Laugh and Horrible faces, drawn here so the unlit outline and the lit, filled
-/// face are the same size and shape. Unlit is an outline in the current foreground
-/// style. Lit, Laugh is a yellow face laughing with tears and Horrible a queasy green
-/// one. (The `face.smiling` symbol turns solid in dark mode and has no frowning
-/// partner; emoji draw smaller than a symbol of the same size.)
+/// face are the same size and shape, and used everywhere the app shows the two votes.
+/// Unlit is an outline in the current foreground style. Lit, Laugh is a yellow face
+/// laughing with its eyes shut and Horrible a red frowning one. No tears: they turn
+/// to specks at card size. (The `face.smiling` symbol turns solid in dark mode and
+/// has no frowning partner; emoji draw smaller than a symbol of the same size.)
 struct FaceIcon: View {
     enum Mood {
         case smile, frown
@@ -209,8 +210,18 @@ struct FaceIcon: View {
     /// The lit faces' colors, for the count beside them
     static let laughTint = Color(light: Color(red: 0.76, green: 0.50, blue: 0.0),
                                  dark: Color(red: 1.0, green: 0.80, blue: 0.20))
-    static let horribleTint = Color(light: Color(red: 0.24, green: 0.52, blue: 0.12),
-                                    dark: Color(red: 0.55, green: 0.82, blue: 0.30))
+    static let horribleTint = Color(light: Color(red: 0.83, green: 0.16, blue: 0.14),
+                                    dark: Color(red: 1.0, green: 0.42, blue: 0.38))
+
+    /// The lit face for a ranking list
+    init(_ type: RankingType) {
+        self.init(mood: type == .hilarious ? .smile : .frown, isFilled: true)
+    }
+
+    init(mood: Mood, isFilled: Bool = false) {
+        self.mood = mood
+        self.isFilled = isFilled
+    }
 
     var body: some View {
         Canvas { context, size in
@@ -280,25 +291,18 @@ struct FaceIcon: View {
                                with: .color(.white))
                 }
 
-                // Tears of laughter
-                let tear = Color(red: 0.22, green: 0.66, blue: 0.98)
-                context.fill(oval(0.15, 0.56, 0.15, 0.20), with: .color(tear))
-                context.fill(oval(0.85, 0.56, 0.15, 0.20), with: .color(tear))
-
             case .frown:
-                let ink = Color(red: 0.11, green: 0.27, blue: 0.05)
-                fillFace(top: Color(red: 0.72, green: 0.88, blue: 0.36),
-                         bottom: Color(red: 0.40, green: 0.70, blue: 0.20),
-                         edge: Color(red: 0.24, green: 0.50, blue: 0.11))
+                let ink = Color(red: 0.30, green: 0.03, blue: 0.03)
+                fillFace(top: Color(red: 1.0, green: 0.50, blue: 0.44),
+                         bottom: Color(red: 0.91, green: 0.24, blue: 0.21),
+                         edge: Color(red: 0.70, green: 0.12, blue: 0.11))
 
-                // Worried brows, wide eyes and a mouth that can't hold it in
-                context.stroke(curve((0.22, 0.37), (0.33, 0.29), (0.43, 0.27)), with: .color(ink), style: round(0.06))
-                context.stroke(curve((0.78, 0.37), (0.67, 0.29), (0.57, 0.27)), with: .color(ink), style: round(0.06))
-                context.fill(oval(0.345, 0.47, 0.105, 0.14), with: .color(ink))
-                context.fill(oval(0.655, 0.47, 0.105, 0.14), with: .color(ink))
-                var mouth = curve((0.28, 0.71), (0.39, 0.59), (0.50, 0.69))
-                mouth.addQuadCurve(to: point(0.72, 0.67), control: point(0.61, 0.79))
-                context.stroke(mouth, with: .color(ink), style: round(0.08))
+                // Worried brows, and the outline's eyes and frown
+                context.stroke(curve((0.22, 0.34), (0.33, 0.26), (0.43, 0.25)), with: .color(ink), style: round(0.06))
+                context.stroke(curve((0.78, 0.34), (0.67, 0.26), (0.57, 0.25)), with: .color(ink), style: round(0.06))
+                context.fill(oval(0.345, 0.46, 0.105, 0.14), with: .color(ink))
+                context.fill(oval(0.655, 0.46, 0.105, 0.14), with: .color(ink))
+                context.stroke(curve((0.31, 0.75), (0.50, 0.55), (0.69, 0.75)), with: .color(ink), style: round(0.085))
             }
         }
         .accessibilityHidden(true)

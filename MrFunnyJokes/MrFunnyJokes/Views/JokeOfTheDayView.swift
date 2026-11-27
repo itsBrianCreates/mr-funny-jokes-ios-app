@@ -67,8 +67,8 @@ struct JokeOfTheDayView: View {
     private var jokeSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Joke of the Day")
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(.primary)
+                .font(.subheadline)
+                .foregroundStyle(JokeCardMetrics.quietColor)
 
             // Setup only; the punchline waits for the tap
             Text(joke.cardText)

@@ -18,10 +18,10 @@ struct BinaryRatingView: View {
         case hilarious
         case horrible
 
-        var emoji: String {
+        var mood: FaceIcon.Mood {
             switch self {
-            case .hilarious: return "😂"
-            case .horrible: return "🫠"
+            case .hilarious: return .smile
+            case .horrible: return .frown
             }
         }
 
@@ -42,7 +42,7 @@ struct BinaryRatingView: View {
         var selectedColor: Color {
             switch self {
             case .hilarious: return .accessibleYellow
-            case .horrible: return .red
+            case .horrible: return FaceIcon.horribleTint
             }
         }
     }
@@ -79,8 +79,9 @@ struct BinaryRatingView: View {
             }
         } label: {
             HStack(spacing: 8) {
-                Text(option.emoji)
-                    .font(.title3)
+                // The same faces as the cards: an outline until it's your vote
+                FaceIcon(mood: option.mood, isFilled: isSelected)
+                    .frame(width: 22, height: 22)
                 Text(option.name)
                     .font(.subheadline.weight(.medium))
                 if let count = count(for: option) {
@@ -119,11 +120,11 @@ struct CompactRatingView: View {
         if let rating = rating {
             switch rating {
             case 5:
-                Text("😂")
-                    .font(.callout)
+                FaceIcon(mood: .smile, isFilled: true)
+                    .frame(width: 18, height: 18)
             case 1:
-                Text("🫠")
-                    .font(.callout)
+                FaceIcon(mood: .frown, isFilled: true)
+                    .frame(width: 18, height: 18)
             default:
                 EmptyView()
             }

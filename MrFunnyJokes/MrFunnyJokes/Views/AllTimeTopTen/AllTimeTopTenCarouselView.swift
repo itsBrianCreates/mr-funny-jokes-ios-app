@@ -78,9 +78,8 @@ struct AllTimeTopTenCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            // Emoji
-            Text(type.emoji)
-                .font(.system(size: 32))
+            FaceIcon(type)
+                .frame(width: 32, height: 32)
 
             // Title
             Text(type.title)

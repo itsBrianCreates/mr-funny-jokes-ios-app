@@ -96,17 +96,6 @@ struct Joke: Identifiable, Codable, Equatable {
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
     }
 
-    var ratingEmoji: String? {
-        guard let rating = userRating else { return nil }
-        switch rating {
-        case 1: return "🫠"
-        case 5: return "😂"
-        default: return nil
-        }
-    }
-
-    static let ratingEmojis = ["🫠", "😂"]
-
     /// The same `id` for a Firestore joke every time it is decoded, so a joke keeps its
     /// place in lists, its selection and its scroll anchor when the catalog is re-fetched.
     static func stableID(forFirestoreId firestoreId: String) -> UUID {

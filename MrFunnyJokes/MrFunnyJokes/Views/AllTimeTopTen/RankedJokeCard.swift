@@ -68,8 +68,8 @@ struct RankedJokeCard: View {
 
                         // Rating count with emoji
                         HStack(spacing: 4) {
-                            Text(rankingType.emoji)
-                                .font(.caption)
+                            FaceIcon(rankingType)
+                                .frame(width: 14, height: 14)
                             Text("\(rankedJoke.count)")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(.secondary)

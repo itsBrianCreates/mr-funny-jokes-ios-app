@@ -148,13 +148,6 @@ enum RankingType: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var emoji: String {
-        switch self {
-        case .hilarious: return "😂"
-        case .horrible: return "🫠"
-        }
-    }
-
     var title: String {
         switch self {
         case .hilarious: return "Most Hilarious"
