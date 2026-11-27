@@ -106,7 +106,7 @@ Use native SwiftUI components. Do not invent custom implementations when a nativ
 
 ### Rating Words
 
-Readers see **Funny** and **Not funny**, never Hilarious or Horrible: on the joke sheet's rating pills, the Top 10 switch, the More menu and VoiceOver labels. Home has one Top 10 card, one line like the in-season card: both faces and "Top 10 funny and not funny". It opens the Funny list; the switch on that page goes to Not funny. In code and data the old names stay (`RankingType.hilarious` / `.horrible`, `HorribleButton`, the `hilarious` / `horrible` analytics values, `rating_events`); where this file says Hilarious, Horrible or Laugh it means those.
+Readers see **Funny** and **Not funny**, never Hilarious or Horrible: on the joke sheet's rating pills, the Top 10 switch, the More menu and VoiceOver labels. Home has one Top 10 banner (`AllTimeTopTenCard`): the Funny face and its community vote total on the left, "Top 10 / by your votes" in the middle, the Not funny total and face on the right, on a soft yellow-to-red wash kept quieter than the Joke of the Day. Each half opens its own list. In code and data the old names stay (`RankingType.hilarious` / `.horrible`, `HorribleButton`, the `hilarious` / `horrible` analytics values, `rating_events`); where this file says Hilarious, Horrible or Laugh it means those.
 
 ---
 
