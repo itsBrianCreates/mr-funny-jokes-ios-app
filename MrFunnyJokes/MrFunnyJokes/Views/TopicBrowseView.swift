@@ -101,7 +101,8 @@ struct SeasonalTopicCardView: View {
                         .font(.headline)
                         .foregroundStyle(.primary)
 
-                    Text("\(count) jokes for the season")
+                    // No count: the card is an invitation, not a tally
+                    Text("In season now")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
