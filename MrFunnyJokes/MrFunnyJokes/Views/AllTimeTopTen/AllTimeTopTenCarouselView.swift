@@ -40,16 +40,11 @@ struct AllTimeTopTenCard: View {
         }
         .overlay {
             // Sits between the two halves; a tap here lands on whichever half is under it
-            VStack(spacing: 1) {
-                Text("Top 10")
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                Text("by your votes")
-                    .font(.caption)
-                    .foregroundStyle(JokeCardMetrics.quietColor)
-            }
-            .lineLimit(1)
-            .allowsHitTesting(false)
+            Text("Top 10")
+                .font(.headline)
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .allowsHitTesting(false)
             .accessibilityHidden(true)
         }
         .background {
@@ -65,7 +60,7 @@ struct AllTimeTopTenCard: View {
         .clipShape(shape)
     }
 
-    /// One end of the banner: the face on the outside, the vote total and its name beside it
+    /// One end of the banner: the face on the outside, then the list's name with its vote total under it
     private func side(_ type: RankingType, votes: Int) -> some View {
         let isFunny = type == .hilarious
         return Button {
@@ -74,12 +69,13 @@ struct AllTimeTopTenCard: View {
             HStack(spacing: 8) {
                 if isFunny { face(type) }
                 VStack(alignment: isFunny ? .leading : .trailing, spacing: 1) {
-                    Text(JokeEngagement.compact(votes))
-                        .font(.headline)
-                        .monospacedDigit()
-                        .foregroundStyle(.primary)
                     Text(type.rawValue)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    // "votes" says what the number is, now that nothing else does
+                    Text("\(JokeEngagement.compact(votes)) votes")
                         .font(.caption)
+                        .monospacedDigit()
                         .foregroundStyle(JokeCardMetrics.quietColor)
                 }
                 .lineLimit(1)
