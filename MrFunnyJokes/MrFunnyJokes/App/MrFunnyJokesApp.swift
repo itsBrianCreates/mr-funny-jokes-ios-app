@@ -389,7 +389,7 @@ struct MainContentView: View {
         NavigationStack(path: $meNavigationPath) {
             MeView(viewModel: jokeViewModel)
                 .navigationTitle("My Jokes")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
@@ -412,7 +412,7 @@ struct MainContentView: View {
         NavigationStack(path: $searchNavigationPath) {
             SearchView(viewModel: jokeViewModel)
                 .navigationTitle("Search")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
                 .jokeDestinations(viewModel: jokeViewModel)
         }
         .environment(\.openJokes, OpenJokesAction { searchNavigationPath.append($0) })
