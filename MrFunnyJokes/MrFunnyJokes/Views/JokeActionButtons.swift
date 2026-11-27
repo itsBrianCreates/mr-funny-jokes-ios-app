@@ -73,7 +73,7 @@ struct LaughButton: View {
 }
 
 /// Five to seven laughing faces that float up from the button, drift, shrink and fade
-private struct LaughBurst: View {
+struct LaughBurst: View {
     let trigger: Int
 
     private struct Particle: Identifiable {
