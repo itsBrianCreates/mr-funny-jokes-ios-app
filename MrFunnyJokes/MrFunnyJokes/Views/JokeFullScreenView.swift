@@ -283,24 +283,37 @@ private struct JokeFullScreenPage: View {
             .background(colors.text.opacity(0.12), in: Circle())
     }
 
-    /// The same two lines as the Home card: what this is, then who and when.
-    /// Any other joke just names its teller.
+    /// Who tells it: their picture, then the same lines as the Home card. The joke
+    /// of the day says so, with the teller and date under it in the quieter color;
+    /// any other joke just names its teller, in that quieter color.
     private var labels: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            if isJokeOfTheDay {
-                Text("Joke of the Day")
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(colors.text)
-                Text([joke.teller?.name, JokeOfTheDayView.todayString].compactMap { $0 }.joined(separator: " · "))
-                    .font(.footnote)
-                    .foregroundStyle(colors.text.opacity(0.65))
-            } else if let teller = joke.teller {
-                Text(teller.name)
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(colors.text)
+        HStack(spacing: 10) {
+            if let teller = joke.teller {
+                Image(teller.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 32, height: 32)
+                    .clipShape(Circle())
+                    // The picture's own background is the page's color; the ring sets it apart
+                    .overlay(Circle().strokeBorder(.white, lineWidth: 1.5))
+                    .accessibilityHidden(true)
             }
+            VStack(alignment: .leading, spacing: 2) {
+                if isJokeOfTheDay {
+                    Text("Joke of the Day")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(colors.text)
+                    Text([joke.teller?.name, JokeOfTheDayView.todayString].compactMap { $0 }.joined(separator: " · "))
+                        .font(.footnote)
+                        .foregroundStyle(colors.text.opacity(0.7))
+                } else if let teller = joke.teller {
+                    Text(teller.name)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(colors.text.opacity(0.7))
+                }
+            }
+            .lineLimit(1)
         }
-        .lineLimit(1)
         .accessibilityElement(children: .combine)
     }
 
