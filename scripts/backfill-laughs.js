@@ -12,6 +12,7 @@
  * Usage:
  *   node backfill-laughs.js           # Dry run: prints what would change
  *   node backfill-laughs.js --apply   # Backs up current values, then writes
+ *   node backfill-laughs.js --horrible [--apply]   # Same for Horrible votes (`dislikes`)
  */
 
 import { initializeApp, cert } from "firebase-admin/app";
@@ -25,6 +26,10 @@ initializeApp({ credential: cert(JSON.parse(readFileSync(join(__dirname, "servic
 const db = getFirestore();
 
 const APPLY = process.argv.includes("--apply");
+// --horrible fills `dislikes` from Horrible votes; the default fills `likes` from Hilarious ones
+const HORRIBLE = process.argv.includes("--horrible");
+const FIELD = HORRIBLE ? "dislikes" : "likes";
+const IS_VOTE = (rating) => (HORRIBLE ? rating <= 2 : rating >= 4);
 
 async function main() {
   const [events, jokes] = await Promise.all([
@@ -32,11 +37,11 @@ async function main() {
     db.collection("jokes").get(),
   ]);
 
-  // One laugh per device per joke, however many weeks they voted in
+  // One vote per device per joke, however many weeks they voted in
   const devicesByJoke = {};
   events.forEach((doc) => {
     const event = doc.data();
-    if (event.rating >= 4 && event.joke_id && event.device_id) {
+    if (IS_VOTE(event.rating) && event.joke_id && event.device_id) {
       (devicesByJoke[event.joke_id] ||= new Set()).add(event.device_id);
     }
   });
@@ -44,7 +49,7 @@ async function main() {
   const changes = [];
   jokes.forEach((doc) => {
     const laughs = devicesByJoke[doc.id]?.size || 0;
-    const current = doc.data().likes || 0;
+    const current = doc.data()[FIELD] || 0;
     // Never lower a count: a joke may have laughs that logged no event
     if (laughs > current) {
       changes.push({ id: doc.id, from: current, to: laughs, ref: doc.ref });
@@ -52,7 +57,7 @@ async function main() {
   });
 
   const total = changes.reduce((sum, change) => sum + (change.to - change.from), 0);
-  console.log(`${changes.length} jokes to update, ${total} laughs added`);
+  console.log(`${FIELD}: ${changes.length} jokes to update, ${total} votes added`);
   console.log(`Highest: ${Math.max(0, ...changes.map((change) => change.to))}`);
 
   if (!APPLY) {
@@ -60,14 +65,14 @@ async function main() {
     return;
   }
 
-  const backupPath = join(__dirname, `likes-backup-${new Date().toISOString().replace(/[:.]/g, "-")}.json`);
+  const backupPath = join(__dirname, `${FIELD}-backup-${new Date().toISOString().replace(/[:.]/g, "-")}.json`);
   writeFileSync(backupPath, JSON.stringify(changes.map(({ id, from, to }) => ({ id, from, to })), null, 2));
   console.log(`Backup: ${backupPath}`);
 
   for (let start = 0; start < changes.length; start += 400) {
     const batch = db.batch();
     for (const change of changes.slice(start, start + 400)) {
-      batch.update(change.ref, { likes: change.to });
+      batch.update(change.ref, { [FIELD]: change.to });
     }
     await batch.commit();
   }

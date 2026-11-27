@@ -240,6 +240,14 @@ final class FirestoreService {
         ])
     }
 
+    /// Moves a joke's `dislikes` (its Horrible votes) up or down by one
+    func adjustJokeDislikes(jokeId: String, by delta: Int) async throws {
+        guard delta != 0 else { return }
+        try await db.collection(jokesCollection).document(jokeId).updateData([
+            "dislikes": FieldValue.increment(Int64(delta))
+        ])
+    }
+
     /// Counts one completed share of a joke
     func incrementJokeShares(jokeId: String) async throws {
         try await db.collection(jokesCollection).document(jokeId).updateData([
@@ -254,7 +262,8 @@ final class FirestoreService {
         guard let data = document.data() else { return nil }
         return JokeCounts(
             laughs: max((data["likes"] as? Int) ?? 0, 0),
-            shares: max((data["shares"] as? Int) ?? 0, 0)
+            shares: max((data["shares"] as? Int) ?? 0, 0),
+            horribles: max((data["dislikes"] as? Int) ?? 0, 0)
         )
     }
 

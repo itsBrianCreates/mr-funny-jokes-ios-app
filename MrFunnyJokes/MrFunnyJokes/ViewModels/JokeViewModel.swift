@@ -83,6 +83,13 @@ final class JokeViewModel: ObservableObject {
         return inSeason + outOfSeason
     }
 
+    /// The Home feed's order with no joke-type filter: what follows a joke opened
+    /// full screen from outside a list
+    var homeFeedOrder: [Joke] {
+        let now = Date()
+        return jokes.filter { !$0.isOutOfSeason(on: now) } + jokes.filter { $0.isOutOfSeason(on: now) }
+    }
+
     // Jokes that have been saved by the user (sorted by most recently saved)
     var savedJokes: [Joke] {
         let saved = jokes.filter { $0.isSaved }
@@ -203,7 +210,7 @@ final class JokeViewModel: ObservableObject {
             .sink { [weak self] notification in
                 guard let self, let id = notification.userInfo?["firestoreId"] as? String else { return }
                 let joke = self.jokes.first { $0.firestoreId == id } ?? self.jokeOfTheDay ?? self.linkedJoke
-                var counts = self.liveCounts[id] ?? JokeCounts(laughs: joke?.likes ?? 0, shares: joke?.shares ?? 0)
+                var counts = self.liveCounts[id] ?? JokeCounts(laughs: joke?.likes ?? 0, shares: joke?.shares ?? 0, horribles: joke?.dislikes ?? 0)
                 counts.shares += 1
                 self.liveCounts[id] = counts
             }
@@ -538,7 +545,7 @@ final class JokeViewModel: ObservableObject {
         // Save and sync to widget
         jokeOfTheDayId = jokeIdentifier
         saveJokeOfTheDayToWidget(newJoke)
-        liveCounts[jokeIdentifier] = JokeCounts(laughs: newJoke.likes, shares: newJoke.shares)
+        liveCounts[jokeIdentifier] = JokeCounts(laughs: newJoke.likes, shares: newJoke.shares, horribles: newJoke.dislikes)
 
         // Also cache the data locally for fallback
         cachedJokeOfTheDayData = SharedJokeOfTheDay(
@@ -601,7 +608,7 @@ final class JokeViewModel: ObservableObject {
 
     func counts(for joke: Joke) -> JokeCounts {
         if let id = joke.firestoreId, let live = liveCounts[id] { return live }
-        return JokeCounts(laughs: joke.likes, shares: joke.shares)
+        return JokeCounts(laughs: joke.likes, shares: joke.shares, horribles: joke.dislikes)
     }
 
     /// Reads a joke's current counts from Firestore. Called for the Joke of the Day
@@ -624,14 +631,19 @@ final class JokeViewModel: ObservableObject {
         rateJoke(joke, rating: isOn ? 5 : 0)
     }
 
-    /// Moves the laugh count when a rating change adds or removes a laugh
+    /// Moves the Hilarious and Horrible counts when a rating change adds or removes a vote
     private func applyLikesDelta(for joke: Joke, previousRating: Int?, newRating: Int?) {
-        let delta = JokeEngagement.likesDelta(previousRating: previousRating, newRating: newRating)
-        guard delta != 0, let id = joke.firestoreId else { return }
+        let likes = JokeEngagement.likesDelta(previousRating: previousRating, newRating: newRating)
+        let dislikes = JokeEngagement.dislikesDelta(previousRating: previousRating, newRating: newRating)
+        guard likes != 0 || dislikes != 0, let id = joke.firestoreId else { return }
         var counts = counts(for: joke)
-        counts.laughs = max(counts.laughs + delta, 0)
+        counts.laughs = max(counts.laughs + likes, 0)
+        counts.horribles = max(counts.horribles + dislikes, 0)
         liveCounts[id] = counts
-        Task { try? await firestoreService.adjustJokeLikes(jokeId: id, by: delta) }
+        Task {
+            try? await firestoreService.adjustJokeLikes(jokeId: id, by: likes)
+            try? await firestoreService.adjustJokeDislikes(jokeId: id, by: dislikes)
+        }
     }
 
     /// The freshest copy of a joke: its rating and saved state as they are now

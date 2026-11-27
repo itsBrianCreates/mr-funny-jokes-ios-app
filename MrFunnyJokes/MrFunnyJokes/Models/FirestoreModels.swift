@@ -143,22 +143,17 @@ struct RankedJoke: Identifiable {
 
 /// Type of ranking list
 enum RankingType: String, CaseIterable, Identifiable {
-    case hilarious = "Hilarious"
-    case horrible = "Horrible"
+    // Shown as the list's name. The cases keep the names the data uses
+    // (`rating_events`, analytics); readers see the plainer words.
+    case hilarious = "Funny"
+    case horrible = "Not funny"
 
     var id: String { rawValue }
 
-    var emoji: String {
-        switch self {
-        case .hilarious: return "😂"
-        case .horrible: return "🫠"
-        }
-    }
-
     var title: String {
         switch self {
-        case .hilarious: return "Most Hilarious"
-        case .horrible: return "Most Horrible"
+        case .hilarious: return "Funniest"
+        case .horrible: return "Least funny"
         }
     }
 

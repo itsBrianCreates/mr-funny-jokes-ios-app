@@ -24,9 +24,13 @@ struct AllTimeTopTenDetailView: View {
                     HStack(alignment: .top, spacing: 16) {
                         ForEach(RankingType.allCases) { type in
                             LazyVStack(spacing: 12) {
-                                Text("\(type.emoji) \(type.rawValue)")
-                                    .font(.title3.weight(.semibold))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                HStack(spacing: 8) {
+                                    FaceIcon(type)
+                                        .frame(width: 22, height: 22)
+                                    Text(type.rawValue)
+                                        .font(.title3.weight(.semibold))
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.top, 4)
 
                                 rankingList(for: type)
@@ -38,7 +42,7 @@ struct AllTimeTopTenDetailView: View {
                         // Segmented control
                         Picker("Category", selection: $selectedType) {
                             ForEach(RankingType.allCases) { type in
-                                Text("\(type.emoji) \(type.rawValue)").tag(type)
+                                Text(type.rawValue).tag(type)
                             }
                         }
                         .pickerStyle(.segmented)
@@ -59,7 +63,7 @@ struct AllTimeTopTenDetailView: View {
             containerWidth = width
         }
         .navigationTitle("All-Time Top 10")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     /// Countdown cards for one ranking, or its loading / empty state
@@ -112,16 +116,15 @@ struct EmptyStateView: View {
         VStack(spacing: 16) {
             Spacer()
 
-            // Large emoji
-            Text(type.emoji)
-                .font(.system(size: 64))
+            FaceIcon(type)
+                .frame(width: 64, height: 64)
 
             // Title
-            Text("No \(type.rawValue) Jokes Yet")
+            Text("Nothing here yet")
                 .font(.title2.weight(.semibold))
 
             // Description
-            Text("Be one of the first to rate jokes!\nJokes rated \(type == .hilarious ? "Hilarious 😂" : "Horrible 🫠") will appear here.")
+            Text("Be one of the first to rate jokes!\nJokes rated \(type.rawValue) will appear here.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

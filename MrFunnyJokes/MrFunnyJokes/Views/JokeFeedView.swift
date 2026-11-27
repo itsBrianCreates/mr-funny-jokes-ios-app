@@ -84,6 +84,7 @@ struct JokeFeedView: View {
             JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
                 feedScrollView(proxy: proxy, isSplit: isSplit)
             }
+            .environment(\.jokePagingList, feedJokes)
             .navigationDestination(item: $allTimeTopTenDestination) { type in
                 AllTimeTopTenDetailView(
                     viewModel: rankingsViewModel,
@@ -120,6 +121,8 @@ struct JokeFeedView: View {
                             onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
                             onSave: { viewModel.saveJoke(joke) },
                             onView: { viewModel.markJokeViewed(joke) },
+                            counts: viewModel.counts(for: joke),
+                            onLaugh: { isOn in viewModel.laugh(joke, isOn: isOn, surface: "feed_card") },
                             onSelect: { selectedJokeId = joke.id },
                             isSelected: isSplit && selectedJokeId == joke.id
                         )
@@ -277,6 +280,9 @@ struct JokeFeedView: View {
                 ))
             }
         }
+        // The zero-height anchor still takes one row of spacing; take it back so the
+        // characters sit right under the bar
+        .padding(.top, -16)
     }
 
     /// Full-width content below the joke grid
@@ -376,6 +382,6 @@ struct EndOfFeedView: View {
             }
         )
         .navigationTitle("All Jokes")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -80,6 +80,7 @@ struct SearchView: View {
                 JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
                     resultsList(isSplit: isSplit)
                 }
+                .environment(\.jokePagingList, searchResults)
             }
         }
         // Always shown: the browse grid scrolls, and the default drawer hides until pulled down
@@ -154,6 +155,8 @@ struct SearchView: View {
                         onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
                         onSave: { viewModel.saveJoke(joke) },
                         onView: {},
+                        counts: viewModel.counts(for: joke),
+                        onLaugh: { isOn in viewModel.laugh(joke, isOn: isOn, surface: "feed_card") },
                         onSelect: { selectedJokeId = joke.id },
                         isSelected: isSplit && selectedJokeId == joke.id
                     )
@@ -170,6 +173,6 @@ struct SearchView: View {
     NavigationStack {
         SearchView(viewModel: JokeViewModel())
             .navigationTitle("Search")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -209,11 +209,12 @@ struct MainContentView: View {
                 viewModel: jokeViewModel,
                 openedJoke: presented.joke,
                 isJokeOfTheDay: presented.isJokeOfTheDay,
+                list: presented.list,
                 isDark: colorScheme == .dark
             )
         }
-        .environment(\.openFullScreenJoke, OpenFullScreenJokeAction { joke, isJokeOfTheDay in
-            fullScreenJoke = FullScreenJoke(joke: joke, isJokeOfTheDay: isJokeOfTheDay)
+        .environment(\.openFullScreenJoke, OpenFullScreenJokeAction { joke, isJokeOfTheDay, list in
+            fullScreenJoke = FullScreenJoke(joke: joke, isJokeOfTheDay: isJokeOfTheDay, list: list)
         })
         // Sheets presented from here open joke pages on Home.
         // Each tab's stack replaces this with its own.
@@ -340,7 +341,9 @@ struct MainContentView: View {
                 }
             )
             .navigationTitle(headerTitle)
-            .navigationBarTitleDisplayMode(.large)
+            // Small and in the bar: it only says which joke type is showing, and a
+            // large title pushed the characters and the joke of the day down
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     filterMenu
@@ -386,7 +389,7 @@ struct MainContentView: View {
         NavigationStack(path: $meNavigationPath) {
             MeView(viewModel: jokeViewModel)
                 .navigationTitle("My Jokes")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
@@ -409,7 +412,7 @@ struct MainContentView: View {
         NavigationStack(path: $searchNavigationPath) {
             SearchView(viewModel: jokeViewModel)
                 .navigationTitle("Search")
-                .navigationBarTitleDisplayMode(.large)
+                .navigationBarTitleDisplayMode(.inline)
                 .jokeDestinations(viewModel: jokeViewModel)
         }
         .environment(\.openJokes, OpenJokesAction { searchNavigationPath.append($0) })

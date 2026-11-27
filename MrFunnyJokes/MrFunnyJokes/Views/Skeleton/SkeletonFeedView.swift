@@ -44,6 +44,6 @@ struct SkeletonFeedView: View {
     NavigationStack {
         SkeletonFeedView()
             .navigationTitle("All Jokes")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -161,6 +161,17 @@ extension JokeListDetailView {
 /// Shown in the detail pane until a joke is picked, so punchlines aren't spoiled
 struct JokePanePlaceholder: View {
     var body: some View {
+        // A scroll view like the opened joke that replaces it, though it never scrolls.
+        // On a wide window the navigation bar follows the pane's scroll view; with no
+        // scroll view here it followed the list instead, so the title scrolled away,
+        // this moved up, and the title stayed gone once a joke was opened.
+        ScrollView {
+            content
+        }
+        .scrollBounceBehavior(.basedOnSize)
+    }
+
+    private var content: some View {
         VStack(spacing: 16) {
             HStack(spacing: -14) {
                 ForEach(JokeCharacter.allCharacters) { character in
@@ -188,7 +199,8 @@ struct JokePanePlaceholder: View {
             }
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
+        .containerRelativeFrame(.vertical)
     }
 }
 

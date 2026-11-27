@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 /// Notification posted when a joke rating changes in any ViewModel
 /// Used to sync ratings across CharacterDetailViewModel and JokeViewModel
@@ -57,8 +58,22 @@ final class CharacterDetailViewModel: ObservableObject {
         return character.allowedCategories
     }
 
+    private var cancellables = Set<AnyCancellable>()
+
     init(character: JokeCharacter) {
         self.character = character
+
+        // A finished share bumps the joke's share count on screen
+        NotificationCenter.default.publisher(for: .jokeShareDidComplete)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                guard let self, let id = notification.userInfo?["firestoreId"] as? String,
+                      let joke = self.jokes.first(where: { $0.firestoreId == id }) else { return }
+                var counts = self.counts(for: joke)
+                counts.shares += 1
+                self.liveCounts[id] = counts
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Load Jokes
@@ -113,6 +128,26 @@ final class CharacterDetailViewModel: ObservableObject {
         selectedJokeType = category
     }
 
+    // MARK: - Counts
+
+    /// Laugh and share counts changed on this page, by Firestore ID
+    @Published private(set) var liveCounts: [String: JokeCounts] = [:]
+
+    func counts(for joke: Joke) -> JokeCounts {
+        if let id = joke.firestoreId, let live = liveCounts[id] { return live }
+        return JokeCounts(laughs: joke.likes, shares: joke.shares, horribles: joke.dislikes)
+    }
+
+    /// Laugh is the Hilarious rating; turning it off clears the rating.
+    func laugh(_ joke: Joke, isOn: Bool) {
+        if isOn {
+            let jokeId = joke.firestoreId ?? joke.id.uuidString
+            let characterId = joke.character ?? "unknown"
+            Task.detached { AnalyticsService.shared.logJokeLaughed(jokeId: jokeId, character: characterId, surface: "feed_card") }
+        }
+        rateJoke(joke, rating: isOn ? 5 : 0)
+    }
+
     // MARK: - Ratings
 
     func rateJoke(_ joke: Joke, rating: Int) {
@@ -132,8 +167,19 @@ final class CharacterDetailViewModel: ObservableObject {
             previousRating: jokeIndex.map { jokes[$0].userRating } ?? joke.userRating,
             newRating: rating == 0 ? nil : min(max(rating, 1), 5)
         )
-        if likesDelta != 0, let firestoreId = joke.firestoreId {
-            Task { try? await firestoreService.adjustJokeLikes(jokeId: firestoreId, by: likesDelta) }
+        let dislikesDelta = JokeEngagement.dislikesDelta(
+            previousRating: jokeIndex.map { jokes[$0].userRating } ?? joke.userRating,
+            newRating: rating == 0 ? nil : min(max(rating, 1), 5)
+        )
+        if likesDelta != 0 || dislikesDelta != 0, let firestoreId = joke.firestoreId {
+            var counts = counts(for: joke)
+            counts.laughs = max(counts.laughs + likesDelta, 0)
+            counts.horribles = max(counts.horribles + dislikesDelta, 0)
+            liveCounts[firestoreId] = counts
+            Task {
+                try? await firestoreService.adjustJokeLikes(jokeId: firestoreId, by: likesDelta)
+                try? await firestoreService.adjustJokeDislikes(jokeId: firestoreId, by: dislikesDelta)
+            }
         }
 
         if rating == 0 {
@@ -247,10 +293,10 @@ final class CharacterDetailViewModel: ObservableObject {
     // MARK: - Sharing
 
     /// Shares the joke's card image and its link (mrfunnyjokes.app/j/<id>)
-    func shareJoke(_ joke: Joke) {
+    func shareJoke(_ joke: Joke, from surface: JokeShareService.Surface = .jokeSheet) {
         let jokeId = joke.firestoreId ?? joke.id.uuidString
         Task.detached { AnalyticsService.shared.logJokeShared(jokeId: jokeId, method: "share") }
-        JokeShareService.shared.share(joke, from: .jokeSheet)
+        JokeShareService.shared.share(joke, from: surface)
     }
 
     func copyJoke(_ joke: Joke) {

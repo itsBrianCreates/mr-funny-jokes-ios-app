@@ -68,8 +68,8 @@ struct RankedJokeCard: View {
 
                         // Rating count with emoji
                         HStack(spacing: 4) {
-                            Text(rankingType.emoji)
-                                .font(.caption)
+                            FaceIcon(rankingType)
+                                .frame(width: 14, height: 14)
                             Text("\(rankedJoke.count)")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(.secondary)
@@ -82,6 +82,7 @@ struct RankedJokeCard: View {
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(.plain)
+        .jokeCardMenu(joke: rankedJoke.joke, onCopy: onCopy, onSave: onSave)
         .sheet(isPresented: $showingSheet) {
             JokeDetailSheet(
                 joke: rankedJoke.joke,

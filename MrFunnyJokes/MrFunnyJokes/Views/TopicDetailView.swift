@@ -70,6 +70,8 @@ private struct JokeCollectionPage: View {
                             onRate: { rating in viewModel.rateJoke(joke, rating: rating) },
                             onSave: { viewModel.saveJoke(joke) },
                             onView: { viewModel.markJokeViewed(joke) },
+                            counts: viewModel.counts(for: joke),
+                            onLaugh: { isOn in viewModel.laugh(joke, isOn: isOn, surface: "feed_card") },
                             onSelect: { selectedJokeId = joke.id },
                             isSelected: isSplit && selectedJokeId == joke.id
                         )
@@ -84,8 +86,9 @@ private struct JokeCollectionPage: View {
             }
         }
         .environment(\.currentJokeDestination, destination)
+        .environment(\.jokePagingList, jokes)
         .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             updateOrder()
         }

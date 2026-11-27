@@ -18,6 +18,7 @@ struct MeView: View {
             JokeListDetailView(viewModel: viewModel, selectedJokeId: $selectedJokeId) { isSplit in
                 savedJokesList(isSplit: isSplit)
             }
+            .environment(\.jokePagingList, viewModel.savedJokes)
         }
     }
 
