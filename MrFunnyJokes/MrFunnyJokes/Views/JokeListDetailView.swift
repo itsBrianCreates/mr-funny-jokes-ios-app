@@ -189,6 +189,9 @@ struct JokePanePlaceholder: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        // Centered on the whole pane, not the safe area: the bar's title scrolls away
+        // with the list on a wide window, which shrank the safe area and moved this up
+        .ignoresSafeArea(.container, edges: .vertical)
     }
 }
 
