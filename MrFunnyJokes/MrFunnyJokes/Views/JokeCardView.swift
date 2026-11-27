@@ -50,6 +50,10 @@ struct JokeCardView: View {
             }
         }
         .jokeCardMenu(joke: joke, onCopy: onCopy, onSave: onSave)
+        // A deep link or the daily notification goes somewhere else: close first
+        .onReceive(NotificationCenter.default.publisher(for: .closePresentedScreens)) { _ in
+            showingSheet = false
+        }
         .sheet(isPresented: $showingSheet) {
             JokeDetailSheet(
                 joke: joke,

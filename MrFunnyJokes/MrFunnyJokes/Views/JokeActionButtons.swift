@@ -478,6 +478,9 @@ struct InlineJokeActions: View {
             .buttonStyle(.plain)
             .accessibilityLabel("More")
         }
+        .onReceive(NotificationCenter.default.publisher(for: .closePresentedScreens)) { _ in
+            showingStylePicker = false
+        }
         .fullScreenCover(isPresented: $showingStylePicker) {
             ShareStylePickerView(joke: joke)
         }
@@ -553,6 +556,9 @@ private struct JokeCardMenu: ViewModifier {
                 Button(action: onSave) {
                     Label(joke.isSaved ? "Saved" : "Save", systemImage: joke.isSaved ? "bookmark.fill" : "bookmark")
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .closePresentedScreens)) { _ in
+                showingStylePicker = false
             }
             .fullScreenCover(isPresented: $showingStylePicker) {
                 ShareStylePickerView(joke: joke, surface: .cardMenu)

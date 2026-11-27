@@ -21,6 +21,16 @@ extension EnvironmentValues {
     }
 }
 
+// MARK: - Closing Presented Screens
+
+extension Notification.Name {
+    /// Posted when a deep link or the daily notification takes the reader somewhere
+    /// else. Anything presented over the tabs closes: joke sheets, Create image, Settings.
+    /// A sheet left open would cover the page the link opened, and the full screen
+    /// joke can't be presented while one is up.
+    static let closePresentedScreens = Notification.Name("closePresentedScreens")
+}
+
 // MARK: - Joke List-Detail View
 
 /// A joke list that opens the selected joke in a sheet on compact widths and in a pane
@@ -78,6 +88,10 @@ struct JokeListDetailView<ListContent: View>: View {
             geometry.size.width
         } action: { width in
             containerWidth = width
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .closePresentedScreens)) { _ in
+            // The pane beside the list is not in the way; only the sheet closes
+            if !isSplit { selectedJokeId = nil }
         }
         .sheet(item: compactSheetJoke) { joke in
             JokeDetailSheet(

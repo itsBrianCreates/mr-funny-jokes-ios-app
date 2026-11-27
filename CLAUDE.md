@@ -298,6 +298,8 @@ URL scheme `mrfunnyjokes://`, handled in `MainContentView.handleDeepLink`:
 | `mrfunnyjokes://search` | Search tab |
 | `mrfunnyjokes://topic/<topicId>` | That topic's page on the Search tab, e.g. `topic/christmas`, `topic/thanksgiving`. IDs are `JokeTopic.all` ids. An unknown ID just opens Search |
 
+A link, or a tap on the daily notification, first closes whatever is presented over the tabs: joke sheets, Create image, Settings, and the full screen joke unless the link opens one (`closePresentedScreens`, posted as `.closePresentedScreens` because each sheet keeps its own state). A sheet left open covered the page the link opened and blocked the full screen joke from presenting. The pane beside the list on a wide window stays.
+
 Test in the simulator: `xcrun simctl openurl booted "mrfunnyjokes://topic/christmas"`. A Universal Link only opens the app once `mrfunnyjokes.app` is serving the association file; until then test the joke page with `mrfunnyjokes://joke/<jokeId>`.
 
 ### Sharing Analytics

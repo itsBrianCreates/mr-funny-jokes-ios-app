@@ -196,6 +196,7 @@ struct MainContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .didTapJokeOfTheDayNotification)) { _ in
             // The daily notification opens today's joke full screen, over Home
+            closePresentedScreens(keepingFullScreenJoke: true)
             selectedTab = .home
             navigationPath = NavigationPath()
             scrollToJokeOfTheDay = true
@@ -245,7 +246,25 @@ struct MainContentView: View {
 
     // MARK: - Deep Linking
 
+    /// Closes whatever is presented over the tabs before a link or the daily
+    /// notification takes the reader somewhere else.
+    /// - Parameter keepingFullScreenJoke: true when the destination is a full screen
+    ///   joke, which replaces the one showing instead of closing and reopening it
+    private func closePresentedScreens(keepingFullScreenJoke: Bool = false) {
+        NotificationCenter.default.post(name: .closePresentedScreens, object: nil)
+        showingSettings = false
+        if !keepingFullScreenJoke { fullScreenJoke = nil }
+    }
+
     private func handleDeepLink(_ url: URL) {
+        let opensJoke: Bool
+        if url.scheme == "mrfunnyjokes" {
+            opensJoke = url.host == "jotd" || url.host == "joke"
+        } else {
+            opensJoke = url.pathComponents.filter { $0 != "/" }.first == "j"
+        }
+        closePresentedScreens(keepingFullScreenJoke: opensJoke)
+
         // Universal Link from a shared joke: https://mrfunnyjokes.app/j/<jokeId>
         if url.scheme == "https" || url.scheme == "http" {
             let parts = url.pathComponents.filter { $0 != "/" }
