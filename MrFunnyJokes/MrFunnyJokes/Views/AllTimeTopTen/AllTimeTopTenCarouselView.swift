@@ -1,9 +1,9 @@
 import SwiftUI
 
 /// The way into the All-Time Top 10 from Home: one banner, Funny against Not funny.
-/// Each end shows its face and how many votes the community has cast that way, on a
-/// soft wash that runs from the Funny yellow to the Not funny red. Each half opens
-/// its own list.
+/// A small "Top 10 jokes" label, then each end's face, name and community vote total,
+/// then a bar showing how the votes split, on a soft wash that runs from the Funny
+/// yellow to the Not funny red. Each half opens its own list.
 struct AllTimeTopTenCarouselView: View {
     @ObservedObject var viewModel: AllTimeRankingsViewModel
     let onCardTap: (RankingType) -> Void
@@ -34,18 +34,23 @@ struct AllTimeTopTenCard: View {
     private let shape = RoundedRectangle(cornerRadius: 16)
 
     var body: some View {
-        HStack(spacing: 0) {
-            side(.hilarious, votes: funnyVotes)
-            side(.horrible, votes: notFunnyVotes)
-        }
-        .overlay {
-            // Sits between the two halves; a tap here lands on whichever half is under it
-            Text("Top 10")
-                .font(.headline)
-                .foregroundStyle(.primary)
-                .lineLimit(1)
+        VStack(spacing: 0) {
+            // A small label, so the middle of the row below stays empty at any width
+            Text("Top 10 jokes")
+                .font(.caption)
+                .foregroundStyle(JokeCardMetrics.quietColor)
+                .padding(.top, 10)
                 .allowsHitTesting(false)
-            .accessibilityHidden(true)
+
+            HStack(spacing: 0) {
+                side(.hilarious, votes: funnyVotes)
+                side(.horrible, votes: notFunnyVotes)
+            }
+
+            voteBar
+                .padding(.horizontal, 14)
+                .padding(.bottom, 12)
+                .allowsHitTesting(false)
         }
         .background {
             // Quieter than the Joke of the Day: the faces' colors at low strength
@@ -60,6 +65,27 @@ struct AllTimeTopTenCard: View {
         .clipShape(shape)
     }
 
+    /// How the community's votes split: yellow for Funny, red for Not funny.
+    /// Even when nobody has voted; neither side shrinks to nothing.
+    private var voteBar: some View {
+        let total = funnyVotes + notFunnyVotes
+        let funnyShare = total == 0 ? 0.5 : min(max(Double(funnyVotes) / Double(total), 0.06), 0.94)
+        return GeometryReader { geometry in
+            let gap: CGFloat = 3
+            let width = max(geometry.size.width - gap, 0)
+            HStack(spacing: gap) {
+                // The face's own yellow; the count's amber reads as mustard on a bar
+                Capsule()
+                    .fill(Color(red: 1.0, green: 0.76, blue: 0.10))
+                    .frame(width: width * funnyShare)
+                Capsule()
+                    .fill(FaceIcon.horribleTint)
+            }
+        }
+        .frame(height: 5)
+        .accessibilityHidden(true)
+    }
+
     /// One end of the banner: the face on the outside, then the list's name with its vote total under it
     private func side(_ type: RankingType, votes: Int) -> some View {
         let isFunny = type == .hilarious
@@ -72,8 +98,7 @@ struct AllTimeTopTenCard: View {
                     Text(type.rawValue)
                         .font(.headline)
                         .foregroundStyle(.primary)
-                    // "votes" says what the number is, now that nothing else does
-                    Text("\(JokeEngagement.compact(votes)) votes")
+                    Text(JokeEngagement.compact(votes))
                         .font(.caption)
                         .monospacedDigit()
                         .foregroundStyle(JokeCardMetrics.quietColor)
@@ -83,7 +108,8 @@ struct AllTimeTopTenCard: View {
             }
             .frame(maxWidth: .infinity, alignment: isFunny ? .leading : .trailing)
             .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.top, 6)
+            .padding(.bottom, 10)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
