@@ -91,21 +91,15 @@ struct SeasonalTopicCardView: View {
             HapticManager.shared.lightTap()
             onTap()
         } label: {
+            // One line: the season's picture, its name, and a chevron
             HStack(spacing: 12) {
                 Text(topic.emoji)
-                    .font(.title)
+                    .font(.title2)
                     .accessibilityHidden(true)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("\(topic.name) jokes")
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-
-                    // No count: the card is an invitation, not a tally
-                    Text("In season now")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+                Text("\(topic.name) jokes")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
 
                 Spacer()
 
@@ -113,7 +107,8 @@ struct SeasonalTopicCardView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.tertiary)
             }
-            .padding(16)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             // Neutral, like the joke cards: on Home only the Joke of the Day is tinted
             .background(.cardBackground, in: RoundedRectangle(cornerRadius: 16))
         }
