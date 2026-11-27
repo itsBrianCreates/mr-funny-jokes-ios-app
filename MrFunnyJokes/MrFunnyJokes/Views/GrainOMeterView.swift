@@ -98,7 +98,8 @@ struct BinaryRatingView: View {
         return Button {
             HapticManager.shared.selection()
             withAnimation(.easeInOut(duration: 0.2)) {
-                onRate(option.rating)
+                // A second tap on your own vote takes it back, as on a card
+                onRate(isSelected ? 0 : option.rating)
             }
             if !isSelected { celebrate(option) }
         } label: {
